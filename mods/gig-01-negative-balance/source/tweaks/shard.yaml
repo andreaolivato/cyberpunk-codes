@@ -1,0 +1,25 @@
+# The data shard on the office desk (comic pp. 23-24).
+#
+# OUR OWN ITEM, CLONED FROM THE ONE THAT IS ALREADY IN THAT ROOM.
+#
+# The office desk ships a shard case holding `Items.generic_hanako_flowers_shard`
+# - "The Flowers of Silence. A biography of Hanako Arasaka." Reading it already
+# shows OUR note (Gig01_Shard.reds intercepts PopupsManager.OnShardRead during
+# the beat), but the loot list still showed the vanilla title, and the playtest was
+# right that this is not shippable: "people will not understand it."
+#
+# So the container keeps working exactly as the game built it and we change what
+# it HOLDS. This record is that item.
+#
+# `$base` copies everything - icon, quality, the readable behaviour - and we
+# override only what the player reads. The TweakDBID came out of the sector's
+# own instanceData (see tools/gen_sector.py); it is not guessable and was twice
+# called undiscoverable in this project before anyone looked in the world data.
+#
+# displayName / localizedDescription take a BARE ArchiveXL key, with no
+# `LocKey#` prefix - the same convention the journal uses (docs/gotchas.md #1).
+# The strings live in tools/gen_localization.py.
+Items.cc_g01_shard:
+  $base: Items.generic_hanako_flowers_shard
+  displayName: cc-g01-shard-item
+  localizedDescription: cc-g01-shard-item-desc

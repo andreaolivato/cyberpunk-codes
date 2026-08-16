@@ -1,0 +1,26 @@
+# Line endings, so a clone on any OS gets a clean checkout and the first person
+# to commit does not produce a whitespace-only diff across half the repo.
+#
+# The tree is mixed today (28 generated .json are CRLF, most sources are LF)
+# because the generators run on Windows and git was never told what to do about
+# it. `text=auto` normalises to LF in the repository and checks out whatever the
+# platform wants, so this settles it once.
+* text=auto
+
+# PowerShell is happiest with CRLF on Windows, and these scripts are Windows-only
+# by nature: they drive WolvenKit and the game install.
+*.ps1 text eol=crlf
+
+# Binary. Never normalise these, and never try to diff them as text.
+*.wem   binary
+*.archive binary
+*.anims binary
+*.ent   binary
+*.png   binary
+*.pdf   binary
+
+# Generated resources. They are committed on purpose, so a clone can build
+# without running anything, but a diff of a 12,588-line quest graph helps nobody.
+# Marking them linguist-generated keeps them out of GitHub's language stats and
+# collapses them in pull requests.
+mods/*/source/wkit/raw/** linguist-generated=true

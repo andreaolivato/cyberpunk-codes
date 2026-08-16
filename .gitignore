@@ -1,0 +1,48 @@
+# WolvenKit intermediates and build output
+**/source/wkit/_generated/
+**/source/wkit/**/packed/
+**/source/wkit/packed/*.archive
+**/source/wkit/packed/*.archive.xl
+*.csv.bak
+*.kark
+
+# Extracted base-game data is CACHE, never committed. It is game content pulled
+# out of the archives with WolvenKit and is rebuilt on demand: _anchor_cache by
+# tools/find_pin_anchors.py, _vo_cache by tools/vo_corpus.py, _lipsync_cache by
+# `gen_lipsync.py --rebuild` (about 40 seconds).
+#
+# Shipping extracted game data is what gets a mod taken down. Do not commit it.
+tools/_anchor_cache/
+tools/_vo_cache/
+tools/_lipsync_cache/
+**/source/wkit/_research/
+**/source/audio/**/*.Ogg
+**/source/audio/**/*.ogg
+
+# Release artifacts
+/dist/
+
+# Audio working files. The .wem that ship are tracked; these are not.
+**/source/audio/placeholder/
+**/source/audio/audition/
+**/source/audio/reference/
+
+# Credentials. Never committed, never echoed, never passed as a command-line
+# argument, because arguments show up in shell history.
+.secrets/
+.env
+
+# C++ build output for the native plugin. The source stays tracked; it is kept
+# as a working RED4ext + MASM scaffold for future native work.
+tools/native/**/build/
+
+# Python bytecode
+__pycache__/
+*.pyc
+
+# Editor and OS noise
+.vscode/
+*.log
+desktop.ini
+Thumbs.db
+~$*

@@ -1,0 +1,635 @@
+{
+  "Header": {
+    "WolvenKitVersion": "8.20.0",
+    "WKitJsonVersion": "0.0.9",
+    "GameVersion": 2310,
+    "DataType": "CR2W",
+    "ArchiveFileName": "en-us.json"
+  },
+  "Data": {
+    "Version": 195,
+    "BuildVersion": 0,
+    "RootChunk": {
+      "$type": "JsonResource",
+      "cookingPlatform": "PLATFORM_PC",
+      "root": {
+        "HandleId": "0",
+        "Data": {
+          "$type": "localizationPersistenceOnScreenEntries",
+          "entries": [
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Elena Ortega",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-elena-ortega-name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Elena",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-elena-short"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "V? It's Elena Ortega. I need your help.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-conv-title"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Nix",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-nix-name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "That ledger you sent me.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-nix-conv-title"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Negative Balance",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-gig-title"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Get inside the Arasaka compound",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-obj-office"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Find the terminal and read the ledger",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-obj-terminal"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Disconnect from the terminal",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-obj-disconnect"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Search the office desk",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-obj-shard"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Get clear of the compound",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-obj-nix"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Call Nix",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-obj-nixcall"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Wait for Nix to call back",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-obj-nixwait"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Get to the Arasaka estate in North Oak",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-obj-estate"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Find a way into the residence",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-obj-wayin"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Find Hoshino",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-obj-hoshino"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Take Hoshino out",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-obj-kill"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Upload the malware from his terminal",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-obj-malware"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Get out",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-obj-escape"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Stop by El Coyote Cojo",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-obj-epilogue"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Talk to Mama Welles",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-obj-mama"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Get a drink",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-obj-bar"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Hoshino",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-hoshino-name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "AUDIT LOGS",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-file-folder"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Arasaka Financial Services",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-file-owner"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "CURRENT QUARTER",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-file-date"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "ACCOUNT CLOSED  [ 03:19:22 ]",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-file-1-title"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "ARASAKA FINANCIAL SERVICES\nAUTOMATED CLEARANCE NOTICE\n\nFrom: Debt Resolution Node // AFS-12\nTo: Internal Ledger (Restricted)\n\nSUBJECT: ORTEGA, M.\nACCOUNT STATUS: CLOSED\nREASON: SUBJECT DECEASED\n\nOUTSTANDING DEBT: \u20ac$48,200\nSETTLED: \u20ac$0.00 (Debtor)\n\nCLEARANCE METHOD:\nPOLICY-BASED TRANSFER\n\nPOLICY ACTIVATED: 02:19\nSUBJECT DECEASED: 03:19",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-file-1-body"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "ACCOUNT CLOSED  [ 03:16:09 ]",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-file-2-title"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "ARASAKA FINANCIAL SERVICES\nAUTOMATED CLEARANCE NOTICE\n\nFrom: Debt Resolution Node // AFS-12\nTo: Internal Ledger (Restricted)\n\nSUBJECT: BAUTISTA, R.\nACCOUNT STATUS: CLOSED\nREASON: SUBJECT DECEASED\n\nOUTSTANDING DEBT: \u20ac$12,750\nSETTLED: \u20ac$0.00 (Debtor)\n\nCLEARANCE METHOD:\nPOLICY-BASED TRANSFER\n\nPOLICY ACTIVATED: 01:44\nSUBJECT DECEASED: 03:16",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-file-2-body"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "ACCOUNT CLOSED  [ 02:31:01 ]",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-file-3-title"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "ARASAKA FINANCIAL SERVICES\nAUTOMATED CLEARANCE NOTICE\n\nFrom: Debt Resolution Node // AFS-12\nTo: Internal Ledger (Restricted)\n\nSUBJECT: OKONKWO, D.\nACCOUNT STATUS: CLOSED\nREASON: SUBJECT DECEASED\n\nOUTSTANDING DEBT: \u20ac$91,400\nSETTLED: \u20ac$0.00 (Debtor)\n\nCLEARANCE METHOD:\nPOLICY-BASED TRANSFER\n\nPOLICY ACTIVATED: 00:58\nSUBJECT DECEASED: 02:31",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-file-3-body"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "ACCOUNT CLOSED  [ 02:14:54 ]",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-file-4-title"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "ARASAKA FINANCIAL SERVICES\nAUTOMATED CLEARANCE NOTICE\n\nFrom: Debt Resolution Node // AFS-12\nTo: Internal Ledger (Restricted)\n\nSUBJECT: VARGAS, L.\nACCOUNT STATUS: CLOSED\nREASON: SUBJECT DECEASED\n\nOUTSTANDING DEBT: \u20ac$7,090\nSETTLED: \u20ac$0.00 (Debtor)\n\nCLEARANCE METHOD:\nPOLICY-BASED TRANSFER\n\nPOLICY ACTIVATED: 23:02\nSUBJECT DECEASED: 02:14",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-file-4-body"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "ACCOUNT CLOSED  [ 01:55:21 ]",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-file-5-title"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "ARASAKA FINANCIAL SERVICES\nAUTOMATED CLEARANCE NOTICE\n\nFrom: Debt Resolution Node // AFS-12\nTo: Internal Ledger (Restricted)\n\nSUBJECT: MERCADO, A.\nACCOUNT STATUS: CLOSED\nREASON: SUBJECT DECEASED\n\nOUTSTANDING DEBT: \u20ac$63,880\nSETTLED: \u20ac$0.00 (Debtor)\n\nCLEARANCE METHOD:\nPOLICY-BASED TRANSFER\n\nPOLICY ACTIVATED: 00:31\nSUBJECT DECEASED: 01:55",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-file-5-body"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "CLEARANCE AUTHORIZATION  (RESTRICTED)",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-file-6-title"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "CLEARANCE AUTHORIZATION\nPolicy ID: AFS-LIFE-4471\n\nScope: 41 accounts, current quarter\n\nApproved by:\n- Node Override: EXEC-7 (Board-level)\n- K. Tanaka \u2013 Risk Operations\n- M. Hoshino \u2013 Policy Enforcement\n\nNotes:\nExpedited resolution authorized.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-file-6-body"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Data shard",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-shard-item"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Recovered from a desk in the Arasaka office in Arroyo.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-shard-item-desc"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "INTERNAL FINANCIAL NOTE",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-shard-title"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Third-party enforcement utilized for debt resolution.\nInternal assets not deployed.\nEnforcement executed via fixer-mediated contracts.\nIndependent mercenary operators.\nOutcome logged on contract completion.\nSubject status: DECEASED.\nCorporate liability: WAIVED.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-shard-body"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "COPYING RECORDS  24%",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-hud-dl-01"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "COPYING RECORDS  68%",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-hud-dl-02"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "RECORDS COPIED",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-hud-dl-03"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "ENCRYPTING LEDGER...",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-hud-send-01"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "SENDING TO NIX",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-hud-send-02"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "DELIVERED",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-hud-send-03"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Transferred to Nix. Fifteen thousand, up front.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-hud-paid"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Is this how you become a legend in Night City?",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-legend-01"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Killing to pad Arasaka's books?",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-legend-02"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "No.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-legend-03"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "A legend picks who pays",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-legend-04"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Skimmed from the payout account. Nobody left to miss it.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-reward"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "V",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-spk-v"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Johnny",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-spk-johnny"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Mama Welles",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-spk-mama"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "You look tired, mija.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-epi-01"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Long night.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-epi-02"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "She okay?",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-epi-03"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "She's in the back.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-epi-04"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Nova. I'll get a drink.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-epi-05"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Fucking Arasaka...",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-johnny-arasaka"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "That's not debt collection.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-term-01"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "It's a production line.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-term-02"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Insure them. Flatline them. Get the eddies.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-term-03"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Welcome to corporate efficiency.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-term-04"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Yeah. With a body count.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-term-05"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Guilty corpos. Sign-offs everywhere. No addresses.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-term-06"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "That's Arasaka.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-term-07"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "I need a netrunner.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-term-08"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "We know one.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-term-09"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "No more payouts.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-malware-v"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "No money, no bodies.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-malware-johnny"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "They always think names beat bullets.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-johnny-hoshino"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Mmm? You lost, merc?",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-hoshino-01"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "You know who I am.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-hoshino-02"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "I know what you signed. I know who paid for it.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-hoshino-03"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Ledger's closed.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-hoshino-04"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Arasaka compound",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-pin-pin-office"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Terminal",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-pin-pin-terminal"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Data shard",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-pin-pin-shard"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Arasaka estate",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-pin-pin-estate"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Hoshino",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-pin-pin-hoshino"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Hoshino's terminal",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-pin-pin-malware"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "El Coyote Cojo",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-pin-pin-epilogue"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "The bar",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-pin-pin-bar"
+            }
+          ]
+        }
+      }
+    },
+    "EmbeddedFiles": []
+  }
+}

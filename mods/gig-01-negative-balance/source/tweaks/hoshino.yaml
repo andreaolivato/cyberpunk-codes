@@ -1,0 +1,66 @@
+# Hoshino: the Arasaka exec who signs the contracts.
+#
+# Based on a corpo bodyguard so he wears a suit and can actually fight back
+# (the receptionist archetype we tried first was a friendly civilian: unarmed,
+# untargetable, and displayed as "Receptionist").
+#
+# displayName points at LocKey#<FNV1a64("cc-g01-hoshino-name")>, which is the
+# hash ArchiveXL registers our own localization string under.
+
+# HE MUST NOT OPEN FIRE DURING HIS OWN CONVERSATION (playtest, 2026-08-12: he
+# "still gets alert, still attacks, and also alerts other guards").
+#
+# The first attempt was a runtime AttitudeAgent.SetAttitudeGroup(n"neutral").
+# That group name IS valid (attitudeSystem.swift), so it was not a typo - it was
+# the wrong system. Attitude decides which side he is on in a fight. What made
+# him start one is SECURITY + REACTION:
+#
+#   securityAreaType: Restricted   -> he treats V as a trespasser and raises the
+#                                     alarm, which is also what pulls the guards
+#   the bodyguard base             -> an aggressive reaction preset
+#
+# Fixed at the record, where it belongs, rather than papered over from script:
+#   securityAreaType: Safe                     no trespass alarm
+#   reactionPreset: ReactionPresets.NoReaction  he does not react to V at all
+#
+# NoReaction is a real record (reactionComponent.swift:4548 fetches exactly this
+# id) and reactionPreset is a real Character field (characterRecord
+# .ReactionPreset(), tweakAIConditionChecks.swift:1444).
+#
+# The base stays a bodyguard on purpose: he still needs to wear a suit and be a
+# valid, targetable, killable combat NPC once V shoots him. Only his willingness
+# to START something is removed. Shooting him flips him hostile by the game's own
+# rules, so "peaceful until attacked" needs no extra code.
+# THIRD ATTEMPT. The first two failed because they were the wrong systems:
+#
+#   1. runtime AttitudeAgent.SetAttitudeGroup(n"neutral") - attitude decides
+#      which SIDE he is on once fighting starts, not whether he starts.
+#   2. securityAreaType + reactionPreset alone - stops the trespass alarm and
+#      the stim reactions, but he still SEES V and his inherited attitude group
+#      is still the bodyguard's hostile one.
+#
+# Reading Character_Record's actual field list (orphans.swift) instead of
+# guessing gave the two that were missing:
+#
+#   baseAttitudeGroup   (CName, Character_Record.BaseAttitudeGroup())
+#       The RECORD-level version of the runtime call that did not stick. He
+#       inherited the bodyguard's hostile group; "neutral" is a real group
+#       (attitudeSystem.swift, and NPCPuppet.swift:3479 compares this field
+#       against group names exactly like this).
+#   enableSensesOnStart (Bool, Character_Record.EnableSensesOnStart())
+#       He does not start looking for V at all. Belt and braces with the above:
+#       no detection, no alert, nothing to broadcast to the guards.
+#
+# The bodyguard base STAYS. He must remain a suited, targetable, killable NPC -
+# the receptionist archetype tried early on was unarmed and untargetable, which
+# is worse. Shooting him flips him hostile through the game's own damage
+# reaction, so "peaceful until attacked" still needs no script.
+Character.cc_g01_hoshino:
+  $base: Character.cpz_arasaka_bodyguard_ranged3_kenshin_mb_rare
+  displayName: LocKey#9345113511651514373
+  affiliation: Factions.Arasaka
+  securityAreaType: Safe
+  reactionPreset: ReactionPresets.NoReaction
+  baseAttitudeGroup: neutral
+  enableSensesOnStart: false
+  isPlayerCompanion: false

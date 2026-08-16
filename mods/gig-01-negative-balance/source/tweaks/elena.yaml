@@ -1,0 +1,22 @@
+# Elena Ortega - a VOICE, not a body.
+#
+# She never appears in the gig: she calls V at the start and spends the rest of
+# it hidden at El Coyote Cojo. This record exists only so the holocall scene has
+# an actor to hang her lines on, which is what puts her name over the subtitle
+# (the subtitle controller falls back to the speaker's display name). The scene
+# spawns her a kilometre away and a hundred metres down - see tools/gen_scenes.py.
+#
+# $base is Character.Mama_Welles because that id is VERIFIED (confirmed by
+# runtime inspection, see design.md) and female. Nothing about the base body is
+# ever seen. Do not swap it for a guessed record name: TweakDBIDs are
+# case-sensitive and a wrong one fails silently.
+#
+# displayName is LocKey#<FNV1a64("cc-g01-elena-short")> = "Elena". This is the
+# name that appears over her SUBTITLES; the phone contact keeps the full "Elena
+# Ortega" from the journal. Once the standard subtitle styling started showing
+# speaker names, the full name over every line was a mouthful.
+
+Character.cc_g01_elena:
+  $base: Character.Mama_Welles
+  displayName: LocKey#820265274062422583
+  isPlayerCompanion: false
