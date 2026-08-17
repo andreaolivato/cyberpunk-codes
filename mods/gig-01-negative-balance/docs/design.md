@@ -94,6 +94,12 @@ loot only, on the grounds that the point of the ending is the silence.
 - V: "End of the line." [VDB: likely, combat/finisher lines]
 
 ### Hoshino scene
+
+This is the draft taken off the comic. Two of its lines are not what shipped:
+Johnny is not in this scene at all, and Hoshino's second line became "Do you
+know who I am?". Both changes and their reasons are in `tools/gen_scenes.py`,
+`build_hoshino`.
+
 - Johnny: "That's what blood money buys. Soft chairs." [REWRITE. Stage as Johnny spawn-in by the couch]
 - Hoshino: "Mmm? You lost, merc?" (AI voice)
 - Hoshino: "You know who I am." (AI voice)
@@ -403,15 +409,17 @@ ArchiveXL 1.27.1, TweakXL 1.11.4, Codeware 1.20.3, CET 1.37.1.
 **ALL THREE OF THOSE ARE DONE.** The line that stood here, "NEXT: Batch C - 
 build the epilogue as a real `.scene`; Elena and Hoshino AI voices via
 Audioware; V/Johnny existing-line audit", is closed on every clause:
-the epilogue is `gig01_epilogue`, one of fourteen scenes; the voices are
+the epilogue is `gig01_epilogue`, one of fifteen scenes; the voices are
 ElevenLabs for all six speakers, not Audioware for two; and the existing-line
 audit was run against the whole 62,992-line corpus and killed the reuse premise
 (3 matches out of 59).
 
-**Build status: the gig plays end to end, fully voiced and lipsynced.** Playtest,
-2026-08-14, on the last three builds: *"Everything is perfect"*, *"It all works
-perfectly"*. What is still open is in `docs/backlog.md`; it is short,
-and none of it blocks a release.
+**Build status: released at 1.2.0 (2026-08-17).** The gig plays end to end,
+fully voiced and lipsynced. Playtest, 2026-08-14, on the last three builds:
+*"Everything is perfect"*, *"It all works perfectly"*. 1.1.x and 1.2.0 are field
+bug fixes on top of that, and `CHANGELOG.md` is the release-by-release account.
+What is still open is in `docs/backlog.md`; it is short, and none of it blocks a
+release.
 
 ## History
 

@@ -101,9 +101,12 @@ Four things learned the hard way:
 3. Parent the quest phase twice, to `base\quest\cyberpunk2077.quest` and
    `ep1\quest\ep1_standalone.quest`. Otherwise it does not exist for players who
    start from Phantom Liberty.
-4. Do not ship a world sector just to hold a marker node. A node in a mod sector
-   never registers its global name, so nothing can reference it. See
-   `docs/map-pins-playbook.md`.
+4. Anchor a map pin to a base-game node rather than to a marker node of your
+   own. A node you ship CAN be named, but only in the long
+   `$/03_night_city/#district/area/#node` form, and whether a pin resolves
+   against one has not been tested. The short `#node` form registers nothing,
+   which is what made this look impossible for months. See
+   `docs/map-pins-playbook.md` and `gotchas.md` #34.
 
 ## 4. Build the smallest thing that works
 

@@ -924,8 +924,12 @@ workspot.
 failure.** Plan the workspot as the fix, not as polish.
 
 The workspots vanilla uses are `worldWorkspotNode`s in the street story's own
-streaming sector. Whether a mod-authored one resolves as a NodeRef is untested,
-and mod-sector marker nodes are already known to fail for map pins.
+streaming sector. Whether a mod-authored one resolves as a NodeRef is untested.
+A node a mod ships can be named, but only in the long
+`$/03_night_city/#district/area/#node` form (`gotchas.md` #34), so anything
+tried here has to use that spelling: the short form this repo used everywhere
+registers nothing, and the map-pin attempt that failed on it was read for months
+as proof that mod nodes cannot be named at all.
 
 Two other things to copy from vanilla:
 

@@ -41,7 +41,7 @@ in the player's game.
 
 | Doc | For |
 |---|---|
-| [`docs/gotchas.md`](docs/gotchas.md) | 28 things that cost hours each. Read before starting |
+| [`docs/gotchas.md`](docs/gotchas.md) | 36 things that cost hours each. Read before starting |
 | [`docs/map-pins-playbook.md`](docs/map-pins-playbook.md) | Working map pins. Three ingredients, three failure modes |
 | [`docs/scene-playbook.md`](docs/scene-playbook.md) | Conversations, choices, holocalls, lipsync |
 | [`docs/computer-ui-playbook.md`](docs/computer-ui-playbook.md) | Mod content on a base-game computer, and shards |
@@ -57,9 +57,9 @@ in the player's game.
 - A map pin needs its own journal entry activated, not just its objective. An
   inactive pin is invisible, and every layer below then looks broken.
 - A quest map pin can't be un-shown. Activating one registers it forever.
-- Lipsync lands on the line's speaker, and only a scene can own one. Only a
-  script can put a body where the player is. A workspot is what makes the actor
-  render at all.
+- Lipsync lands on the line's speaker, and only a scene can own one. A scene can
+  also place that speaker where the player is standing, which a script cannot do
+  properly. A workspot is what makes the actor render at all.
 - A fact survives a save reload. A script field doesn't. Mixing them gives you a
   state machine that comes back half-reset. This shipped once and players found
   it.

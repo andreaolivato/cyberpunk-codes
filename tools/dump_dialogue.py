@@ -1,7 +1,7 @@
 r"""Dumps every SPOKEN line in the gig, as plain readable text.
 
 There was no such file before, and the words are not readable where they live:
-`gen_scenes.py` builds fourteen `.scene` graphs in which a line is an index into
+`gen_scenes.py` builds fifteen `.scene` graphs in which a line is an index into
 an array, keyed by a 64-bit RUID. This walks them and lays the script out.
 
 SPOKEN is the whole filter, and it is the same line the audio pipeline draws:

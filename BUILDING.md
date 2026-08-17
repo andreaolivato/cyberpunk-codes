@@ -110,7 +110,7 @@ python .\tools\gen_lipsync.py         # casts a VANILLA lipsync animation of
                                       #  Between gen_voice (durations) and
                                       #  gen_scenes (which reads the picks).
                                       #  `--rebuild` re-extracts its catalogue
-python .\tools\gen_scenes.py          # FOURTEEN .scene conversations - EVERY line
+python .\tools\gen_scenes.py          # FIFTEEN .scene conversations - EVERY line
                                       #  in the gig is a scene line, because a
                                       #  scene line is the only kind that can
                                       #  carry audio. Their text lives INSIDE

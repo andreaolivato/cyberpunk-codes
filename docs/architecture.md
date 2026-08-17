@@ -216,7 +216,7 @@ All tried in game on 2026-08-14. The log line tells them apart:
 |---|---|---|
 | anchor in an `exterior_*` sector | `Can't resolve ... position` | name resolved, node not streamed in |
 | **no** NodeRef, world coords in `offset` | *(no line at all)* | a quest pin with no reference is never spawned as a mappin, so nothing is asked for |
-| a marker node we ship | `Can't resolve ... reference` | a node in a mod sector never registers its global name |
+| a marker node we ship | `Can't resolve ... reference` | the name we wrote was not a name. See the correction below |
 
 The middle one is worth dwelling on: ArchiveXL fully supports a null-reference
 pin (`position = offset`) and it works for the POI: which resolved and drew
@@ -232,6 +232,18 @@ precedent they looked like, and three test sessions were spent on it. The
 generalisable rule: *counting uses in a shipped corpus is only evidence if their
 case is your case AND the thing you are copying actually works, verify both
 before building on it.*
+
+**And the reason given for it was wrong, measured 2026-08-17.** A node a mod
+ships DOES register a global name, provided the name is written as a full
+`$/03_night_city/#district/area/#node` path. The short `#node` form registers
+nothing, and the short form is what this repo wrote everywhere, which is what
+produced `Can't resolve ... reference`. `gotchas.md` #34 and `backlog.md` 11
+have the probe and its trap.
+
+What survives unchanged is the operational advice: this gig's pins anchor to
+base-game nodes, because whether a pin resolves against a long-form name of ours
+has still not been tested. What does not survive is "a mod cannot name a node",
+which was carried here for months and shaped the pin architecture.
 
 ### `cookedMultiData` is a red herring
 

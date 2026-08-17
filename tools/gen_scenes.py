@@ -1,6 +1,6 @@
 r"""Generates the gig's .scene resources - real scene-system conversations.
 
-FOURTEEN scenes, all built by the same builder. ALL_BUILDERS at the bottom is
+FIFTEEN scenes, all built by the same builder. ALL_BUILDERS at the bottom is
 the list; gen_voice reads it too, so it is the one place scenes are enumerated.
 
   gig01_elena_call  Elena's opening holocall (was an SMS thread)

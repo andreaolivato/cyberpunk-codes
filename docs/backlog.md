@@ -34,6 +34,7 @@ being given it.
 | 6 | The `[F]` interaction prompt on a mod-placed object. UNSOLVED and deliberately parked; seven approaches ruled out, each with its outcome |
 | 10h | The questphase is registered under two quest roots. Deliberate, and nobody has confirmed what a save with both live does |
 | 10i | Reload crashes on a 400-mod install. No mechanism found; waiting on logs and an A/B test |
+| 12 | Mama Welles's stand-in is buried the way Hoshino's speaker was. Left alone until a playtest can reach it |
 
 Everything else is closed. Two entries look open and are not: 2f (re-time
 scenes from real clip length) shipped as `durations.json`, and 0b is the
@@ -53,7 +54,7 @@ release checklist, all of it struck through.
 | 7, 8 | Post-release bug reports and their fixes, including the office doors |
 | 9 | Placing a scene actor relative to the player. Corrects two claims this register had wrong, and deletes the burial-and-lift workaround built on them |
 | 11 | A node this mod ships CAN be addressed by name, in the long form only. Corrects the map-pin playbook, and opens communities as the route to a mod-placed NPC |
-| 10 | The 1.2.0 bug pass: a fast-travel lock bound to the wrong state, a gig that never switched itself off, the guard spawn, and a decline that answered. 10h and 10i are the two still open |
+| 10 | The 1.2.0 bug pass: a fast-travel lock bound to the wrong state, a gig that never switched itself off, the guard spawn, a decline that answered, and (10k) a voice-only actor buried into the room below. 10h and 10i are the two still open |
 
 `architecture.md` holds the same findings organised by subsystem rather than by
 the question that produced them, and is the better read if you are looking for
@@ -479,11 +480,17 @@ in and out: arasaka, terminal (p25 merged back in), shard_read, legend, graves,
 kill, malware, bar. **Recipe: `docs/scene-playbook.md`, "THE SPLIT-OWNERSHIP
 RECIPE"**. It matches the shipped code, not the first draft.
 
-**Hoshino and Mama Welles keep buried voice-only speakers and get no visible
+**Hoshino and Mama Welles keep voice-only speakers and get no visible
 lipsync. That is not a TODO.** A scene actor exists only while its scene runs;
 both of them must exist before anyone speaks (V finds and shoots Hoshino; Mama
 lives in that bar). Nothing can be made to work there without changing what
 those beats ARE.
+
+*Corrected 2026-08-17: this said BURIED speakers, and Hoshino's is not buried
+any more. Burying one under a fixed anchor put a body in the room below the
+terrace, so his stands a kilometre away with 2D lines instead. See 10k, and 12
+for Mama's, which still is. The point of this paragraph, that neither can be the
+visible body, is unchanged.*
 
 **DONE 2026-08-14**: the dead script path and the lipsync diagnostics are
 deleted, ~360 lines out of `Gig01_Encounter.reds` plus their facts from the CET
@@ -694,6 +701,12 @@ the player's, and an `around_player` marker's rotation is not knowable. Vanilla
 does not do it either (`sts_pac_cvi_02_johnny.scene` gives its actor its own
 spawn-marker node and a zero offset). **That is still true and is why the script
 keeps placement in the split above.**
+
+*Half of it stopped being true on 2026-08-16. An `around_player` marker's
+rotation IS knowable: five runs measured +Y as forward and +X as right in V's
+own frame, so a horizontal offset can be aimed and `yaw_to_face_player` computes
+the facing from it. See "What it fixes" further down this section. What survives
+is the practical split, since the script already holds the placement maths.*
 
 The research below is what got him on screen and is kept for gigs 02-04.
 
