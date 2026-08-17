@@ -242,6 +242,23 @@ public class NegativeBalanceStart extends ScriptableSystem {
             return;
         }
 
+        // HOLD THE TRIGGER, for testing anything that is not the gig itself.
+        //
+        // Set cc_g01_dev_hold to 1 and the gig will not offer itself; clear it
+        // and the next check picks up where it left off. Deliberately does NOT
+        // set m_settled, because settling is one-way and this has to be
+        // releasable without a reload.
+        //
+        // It exists because the bench scenes play outside the gig, and a tester
+        // parked in the world for an hour otherwise collects Elena's call every
+        // few minutes for the whole session. Same shape as cc_g01_no_scene: a
+        // shipped diagnostic fact that defaults to 0 and does nothing.
+        if qs.GetFactStr("cc_g01_dev_hold") > 0 {
+            this.m_step += 1;
+            this.Schedule(CCGig01StartRules.DelaySeconds(this.m_step));
+            return;
+        }
+
         if this.AlreadyRunning(qs) {
             this.m_settled = true;
             return;

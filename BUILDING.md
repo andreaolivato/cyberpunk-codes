@@ -122,13 +122,6 @@ python .\tools\gen_shard_ent.py       # the physical data shard on the office
                                       #  with an interaction + mesh. A mod
                                       #  .ent can only name a class the GAME
                                       #  ships - see the file's header
-python .\tools\gen_workspot_ent.py    # the invisible device entity that lets
-                                      #  SCRIPT put an NPC in a workspot. This
-                                      #  is how the SCENE's Johnny is both
-                                      #  placed and made visible: the workspot
-                                      #  plays THROUGH the device, so the
-                                      #  device's position AND orientation are
-                                      #  what he ends up at and facing
 python .\tools\gen_sector.py          # the world sector + streaming block that
                                       #  put the shard entity on the office
                                       #  desk. Rarely re-run - only when the

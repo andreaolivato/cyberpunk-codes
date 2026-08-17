@@ -116,7 +116,10 @@ protected cb func OnShardReadClosed(data: ref<inkGameNotificationData>) -> Bool 
     let result: Bool = wrappedMethod(data);
     let game: GameInstance = this.GetPlayerControlledObject().GetGame();
     let qs: ref<QuestsSystem> = GameInstance.GetQuestsSystem(game);
+    // Cheapest first, and the first one is "is this gig over". A finished gig
+    // should read no facts at all on somebody else's shard.
     if IsDefined(qs)
+        && qs.GetFact(n"cc_g01_done") <= 0
         && qs.GetFact(CCG01Shard.OpenFact()) > 0
         && qs.GetFact(CCG01Shard.ReadFact()) == 0 {
         qs.SetFact(CCG01Shard.ReadFact(), 1);

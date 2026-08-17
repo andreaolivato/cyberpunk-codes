@@ -39,6 +39,19 @@ public class NegativeBalanceSystem extends ScriptableSystem {
         if IsDefined(player) {
             let qs: ref<QuestsSystem> = GameInstance.GetQuestsSystem(game);
 
+            // A FINISHED GIG COSTS THE SAVE NOTHING. Stop rescheduling once
+            // cc_g01_done is set; NegativeBalanceStart's m_settled latch is the
+            // model, and this system had no equivalent, so it polled once a
+            // second for the rest of the playthrough.
+            //
+            // The stop is not persistent and does not need to be: OnAttach runs
+            // on every load, one tick reads the fact and stops again. Clearing
+            // cc_g01_done from the dev menu therefore does not restart the tick
+            // within a session, only a reload does.
+            if qs.GetFactStr("cc_g01_done") > 0 {
+                return;
+            }
+
             // Arrival at the office pin. NegativeBalanceEncounter also sets this
             // fact, on a wider radius around the compound entry, so in practice
             // that one fires first; this keeps the pin itself as a trigger in

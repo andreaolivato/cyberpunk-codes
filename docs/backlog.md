@@ -32,6 +32,8 @@ being given it.
 |---|---|
 | 4 | Housekeeping: the toolkit split left three loose ends (`gen_localization` unsplit, the gig-01 anchors stated twice, and the attitude and Johnny-placement redscript still inline) |
 | 6 | The `[F]` interaction prompt on a mod-placed object. UNSOLVED and deliberately parked; seven approaches ruled out, each with its outcome |
+| 10h | The questphase is registered under two quest roots. Deliberate, and nobody has confirmed what a save with both live does |
+| 10i | Reload crashes on a 400-mod install. No mechanism found; waiting on logs and an A/B test |
 
 Everything else is closed. Two entries look open and are not: 2f (re-time
 scenes from real clip length) shipped as `durations.json`, and 0b is the
@@ -49,6 +51,9 @@ release checklist, all of it struck through.
 | 3c, 3d, 3e | Three features deliberately NOT built. The reasoning is the value |
 | 5 | Three refinements from playing the finished gig |
 | 7, 8 | Post-release bug reports and their fixes, including the office doors |
+| 9 | Placing a scene actor relative to the player. Corrects two claims this register had wrong, and deletes the burial-and-lift workaround built on them |
+| 11 | A node this mod ships CAN be addressed by name, in the long form only. Corrects the map-pin playbook, and opens communities as the route to a mod-placed NPC |
+| 10 | The 1.2.0 bug pass: a fast-travel lock bound to the wrong state, a gig that never switched itself off, the guard spawn, and a decline that answered. 10h and 10i are the two still open |
 
 `architecture.md` holds the same findings organised by subsystem rather than by
 the question that produced them, and is the better read if you are looking for
@@ -1640,3 +1645,599 @@ added the only path in the file that hangs up a ringing call
 pending, which this save has none of, so it would point at an odd fact
 state rather than at that code. It is still the first place to look, because it
 is the only ring-and-die path left.
+
+## 9. Placing a scene actor relative to the player: SOLVED
+
+Filed 2026-08-16, from a Nexus report of Johnny appearing in a T-pose for
+about a second. The T-pose turned out to be a symptom. This section is the
+cause, and it is the most reusable finding here: any mod that wants
+a scene character to appear next to the player, facing them, anywhere in the
+world, can stop working around the problem described below because the problem
+does not exist.
+
+### What this project believed, and how wrong it was
+
+A scene's `sceneLocation` can be a `scnWorldMarker` of type `Tag` with the tag
+`around_player`, which stages the scene at the player instead of at a fixed
+world node. `scene-playbook.md` and `gen_scenes.py` both carried two claims
+about it:
+
+1. the marker "IS NOT ON THE PLAYER", it "lands a few metres to one side";
+2. the marker's rotation is "not knowable", so a horizontal `spawnOffset`
+   cannot be aimed and an actor "ends up in front, behind or sideways
+   depending on where the player happens to be looking".
+
+Both are false. The evidence behind them was one playtest sentence about how a
+voice SOUNDED, from an actor who was 2.5 m underground at the time: *"still
+feels very far, like on the right of where I am"*. That is the floor between
+listener and speaker, not a horizontal offset. It was written up as fact, given
+a `DO NOT`, and never measured.
+
+### The measurements
+
+Two quest facts written from redscript at the moment the scene spawns its
+actor, read off a debug menu. Distance and bearing from the player, bearing in
+world terms, and height difference.
+
+| `spawnOffset.position` | Result | Runs |
+|---|---|---|
+| (0, 0, −2.5) | 0.00 m horizontally, 2.50 m below V | 2, facings 175° apart |
+| (0, 2, 0) | 2.00 m away, 0° off dead ahead | 2, facings 180° apart |
+| (1.1, 1.8, 0) | 2.10 m away, 32° off ahead, on the RIGHT | 1 |
+| (−1.1, 2.4, 0) | 2.64 m away, 24° off ahead, on the LEFT | 1 |
+
+The two-run pairs are the load-bearing ones. In each pair the bearing from the
+player's own facing stayed the same while the bearing in world terms moved by
+180°, which is only possible if the marker turns with the player.
+
+So, for a scene staged on `around_player`:
+
+- the marker sits at the player's **exact** x and y;
+- the marker **carries the player's rotation**;
+- in `spawnOffset.position`, **+Y is forward and +X is right**, in the player's
+  own frame;
+- `spawnOffset.orientation` is in that same frame.
+
+### The recipe
+
+Set two fields on the actor's `spawnDespawnParams`:
+
+```python
+spawnOffset.position    = (aside, ahead, 0.0)
+spawnOffset.orientation = yaw_to_face_player((aside, ahead, 0.0))
+```
+
+`aside` is positive to the right, `ahead` is positive forward, both in metres.
+`yaw_to_face_player` lives in `tools/questkit/scene.py`:
+
+```python
+def yaw_to_face_player(offset):
+    return math.degrees(math.atan2(offset[0], -offset[1]))
+```
+
+and the quaternion it becomes is a plain rotation about Z:
+
+```python
+half = math.radians(yaw) / 2.0
+{'$type': 'Quaternion', 'i': 0, 'j': 0,
+ 'k': math.sin(half), 'r': math.cos(half)}
+```
+
+**Do not type the yaw by hand.** A fixed 180 is the obvious guess, it is
+correct only when the actor is dead ahead, and it fails quietly everywhere
+else: at (1.1, 1.8) it left the actor looking 32° past the player's shoulder,
+which reads on screen as talking to nobody. The helper returns 180 for the
+dead-ahead case, so the guess is a special case of the formula.
+
+Yaw is counter-clockwise seen from above, which is where the sign in the
+formula comes from.
+
+### What it fixes
+
+Everything below existed to work around a marker believed to be unaimable, and
+none of it is needed:
+
+| Was needed | Why it existed |
+|---|---|
+| Actor buried 2.5 m down | straight down is the one offset that needs no knowledge of the marker's rotation |
+| A second, script-spawned body | the buried actor could not be seen |
+| An invisible workspot device entity | the only way script can place a puppet, since `Teleport` ignores the position for one |
+| Arrival and exit effects | to cover the moment the script lifted him |
+| A 40 m targeting query, 6.6 times a second, up to 90 s per beat | to find the actor again after the scene spawned him |
+
+Removing them removes the T-pose with them. The pose came from the handover
+between the scene's workspot and the script's, and with the scene placing the
+actor there is no handover. Confirmed in game: the actor arrives already posed.
+
+It also removes a class of failure worth naming for anyone doing this on a
+heavily modded install. The script route searched for any entity within 40 m
+whose record matched, which on a large load order can find another mod's copy
+of the same character. Scene placement never searches.
+
+### What is still true from the old advice
+
+- A line's speaker must be a scene actor for lipsync and for a mod voiceover
+  map to key on it. That has not changed, and it is why the words were in a
+  scene in the first place.
+- Audio falls off with distance rather than switching off, so a speaker who
+  must be heard has to actually be near the listener.
+- Vanilla's one shipped Johnny scene staged on a Tag marker
+  (`sts_pac_cvi_02_johnny.scene`) gives its actor its own `spawnMarkerNodeRef`
+  and a zero offset, so there is still no vanilla precedent for offsetting off
+  a Tag marker. That is an absence of precedent. It works, measured five times.
+
+### The general lesson
+
+`gotchas.md` #31. A claim that forecloses an approach earns a measurement
+before it earns a `DO NOT`, because a wrong "impossible" is never retested. Two
+facts and a debug menu settled in ten minutes what three months of reasoning
+had settled wrongly.
+
+---
+
+## 10. Post-release bug pass: Nexus 1.1.3, plus a read-through. 2026-08-16/17
+
+Two Nexus reports opened this, and reading the tree for anything of the same
+shape found four more that nobody had reported. Which is which is stated for
+each item, because it decides what a changelog may claim.
+
+### 10a. Fast travel blocked for the rest of the save: REPORTED, FIXED
+
+*"every fast travel point unavailable after ignoring the phone a few times"*,
+in play 2026-08-16. The only item on this list a player hit and could describe.
+
+`Gig01_Holocall.ApplyLock()` asked for `AddFastTravelLock` whenever a call was
+in state 1, and the comment beside it called state 1 "ringing". It is not. It is
+"we rang, and we are waiting to see whether it is answered", and that wait is
+the entire retry back-off: 24 s, 30, 30, 60, then 300 s from the fifth ring
+onward. The phone itself rings for eight seconds.
+
+So a lock meant to cover eight seconds covered five-minute stretches with one
+tick of daylight between them. It was wrong from the first ring too, just less
+visibly: 24 s of lock for 8 s of ringing.
+
+Fixed by bounding the lock to the ring rather than to the state. `m_waited` is
+counted in live ticks and the live tick is 0.2 s, so the ring window is 45
+ticks. State 4 (V dialling out) is genuinely dialling for its whole length and
+keeps its lock throughout. The unconditional first pass stays: locks are saved,
+so a stuck one has to be lifted on load (`gotchas.md` #24).
+
+**A CONVERSATION IS NOT LOCKED, AND THAT IS NOT A SIDE EFFECT OF THIS FIX.**
+Raised 2026-08-17 on seeing a fast travel terminal offer a destination during
+Elena's call. Both versions ask for the lock on states 1 and 4 only, and an
+answered call is state 2 then 3, so a conversation was never covered in 1.1.3
+either. What changed is that the old lock leaked past the ring and often was
+never lifted, so any call following an ignored ring inherited a lock that made
+it look deliberate.
+
+Leaving it that way is a decision, and there is now a measurement behind it.
+Playtest, 2026-08-17: fast travelling mid-call, the call carries on across the
+loading screen and the beat completes. So the terminal being usable costs
+nothing.
+
+Locking a conversation would cost something. State 3 waits on `<prefix>_end`
+from the quest phase and has NO timeout, so a lock held there would outlive any
+scene that failed to finish, which is this same bug arriving by a new route. If
+it is ever wanted, it has to be bounded by a tick cap the way the ring is, never
+by the state alone.
+
+### 10b. The mod never switched itself off: FOUND BY READING, FIXED
+
+Nothing anywhere checked `cc_g01_done`. After the gig finished:
+
+- three systems kept rescheduling for the rest of the save. `NegativeBalance`
+  every 1.0 s, `NegativeBalanceEncounter` every 1.5 s, `NegativeBalanceHolocall`
+  every 2.0 s. Only `NegativeBalanceStart` latched off, and it was the model
+  copied.
+- the door and computer wraps were gated on `cc_g01_accepted`, which never
+  returns to 0. So the five Arasaka office doors were still pumped up to ON on
+  every sector attach, and the ledger was still rewritten into the office
+  computer on every visit.
+
+**The honest framing, which matters for a changelog.** This was found while
+investigating a Steam Deck report of choppiness after completing the gig.
+Measured, the idle cost is about twenty fact reads a second, which does not
+obviously explain a stutter. It is done because a finished side gig should cost
+a save nothing, not because it is proven to fix that report.
+
+Two ordering constraints made this more than adding a fact check:
+
+- the holocall tick may only stop AFTER `ApplyLock` has had its one
+  unconditional pass, or the fix in 10a strands the very lock it exists to
+  lift;
+- the encounter tick may only stop once it has given back everything it took:
+  `mama_is_talking`, her voiceset, the way-in mappin, our stand-in, and the
+  payout. Stopping on the fact alone would latch each of those on for the rest
+  of the save, which is the class of bug the stop is meant to end.
+
+Neither stop is persistent, and neither needs to be. `OnAttach` runs on every
+load, one tick re-checks and stops again. Clearing `cc_g01_done` from the dev
+menu therefore does not restart a tick within a session; reload.
+
+### 10c. The office guards: REPORTED, three faults in one place, FIXED
+
+*"when I reached the area where the NPCs should have been, they simply weren't
+there. I checked the emails on the computer, turned around, and the NPCs
+suddenly spawned directly in front of me."*
+
+- **The trigger missed the room.** One 60 m sphere on `CompoundEntry`. Measured:
+  the office terminal is 63.5 m from that anchor and the terminal room door
+  67.7 m. Anyone who reached the computer without crossing the bubble found an
+  empty building. The office is now measured from the building as well as the
+  gate (the terminal at 25 m), and the spawn test is wider again, 100 m on the
+  gate, so the walk in has runway.
+- **Twenty entities in one tick**, requested at the moment the player arrives.
+  They are spread over a callback chain now, one squad a second.
+- **A silently binned squad never returned.** Each guard is placed only if
+  `FindPointInSphereOnlyHumanNavmesh` answers OK, and `m_officeSpawned` was set
+  BEFORE the spawning, so a navmesh that was not ready binned all twenty and the
+  gig recorded the job as done. `SpawnSquad` returns a count now, an empty squad
+  is asked for again up to five times, and the site latches only on a non-zero
+  total.
+
+`Notify("Arasaka security on site")` also fired in the tick the entities were
+requested in, announcing an empty compound. It moved to the end of the chain.
+
+Written up as `gotchas.md` #32, because all three generalise.
+
+Two facts report the outcome for testing: `cc_g01_dbg_office_guards` and
+`cc_g01_dbg_estate_guards`, the counts actually placed.
+
+**Second pass, 2026-08-17, after playing it.** The first fix worked and left two
+things half done, both found in play.
+
+The two spheres became **the outline**. Four corners of the industrial park were
+walked and captured (`compound_1` to `compound_4`), giving a convex ~38,500 m2
+polygon that contains every anchor the gig uses here, and
+`CCGig01Places.InsideCompound` is now what says "V is on site". The 60 m sphere
+on the gate stays alongside it so arriving at the marked entrance still counts
+before the outline is crossed. The estate got the same treatment: its trigger
+is now the gate at 45 m, or Hoshino at 70 m, **or `InsideEstate`**, the twenty
+points that were already walked for the way-in objective in 1.1.0. A player who
+comes over the back wall gets the same estate as one who drove to the gate.
+
+And **the site latch became one bit per anchor**, which is the fix for the
+report that entering the estate the back way gave Hoshino but no guards. The
+difference between them is the whole explanation: Hoshino is placed straight at
+his captured position, while every guard first has to pass
+`FindPointInSphereOnlyHumanNavmesh`, and that query only answers where the
+navmesh is streamed in. Come in from behind and the gate, the approach and the
+grounds are far away and unstreamed, so those squads were dropped - and the site
+latched anyway on the two that did land.
+
+Now each anchor carries its own bit, an anchor that failed is asked again every
+six seconds while V is on site, and an anchor is only ever populated once, so
+clearing a compound and standing in it cannot produce a second wave. Bounded at
+60 squad attempts per site per session, so an anchor that can never be populated
+costs a fixed amount rather than one attempt a second forever.
+
+The mask is an `Int32` and not an `array<Bool>` on purpose: arrays on a
+`ScriptableSystem` come back from an older save at the wrong length, which is
+the trap at the top of `Gig01_Holocall.reds`. An `Int32` cannot be the wrong
+length. It needs a `Bit(i)` lookup table because **redscript has no `<<`**;
+`&` and `|` are fine. Both were established by compiling a throwaway file
+rather than by assuming.
+
+The two debug facts ACCUMULATE now, because a site can fill in over several
+passes.
+
+### 10d. The estate squad: same burst, one size bigger. FIXED
+
+26 entities in one tick. Its trigger geometry was already sound (the gate at
+45 m or Hoshino at 70 m, and the estate terminal is 34 m from Hoshino), so this
+was the burst only, not the gap. Same chain. Hoshino himself is spawned first
+and outside the chain, guarded by his own latch so a retried chain cannot put a
+second one on the terrace.
+
+### 10e. The attitude retry budget: FOUND BY READING, WIDENED
+
+Every spawned guard gets `SetHostile`, which retried up to seven times at 1.5 s.
+That 10.5 s budget was sized on the development machine against the
+all-at-once burst. A guard who takes longer than that to stream in keeps his
+record's default attitude, and the compound list is mostly `sts_*` street-story
+security which does not treat V as an enemy, so the symptom would be "the guards
+ignore me": the 2026-08-13 bug arriving by a new route, from a budget rather
+than from a missing call. Now 40 tries, 60 s. Only a guard who never resolves at
+all pays for the higher cap.
+
+### 10f. The Mama Welles stand-in: A DEFENSIVE CHANGE, NOT A BUG FIX
+
+`DespawnMamaWelles` ran only on the epilogue's own path, on
+`cc_g01_epilogue_scene_done`. It is now also called from the "not accepted, or
+done" branch, next to `ReleaseMama` and `HideWayInMarker`, which sit outside
+the gate for the same reason: anything this gig takes from the world should be
+given back by every path out of it, not only the expected one.
+
+**Read that as symmetry, not as a bug.** The reasoning that produced it was
+that an epilogue finishing by an unusual route could leave our duplicate
+standing in El Coyote. Nobody has ever seen that happen, no player reported it,
+and no test has produced it. It was inferred from reading the code and it
+remains inferred.
+
+So it is deliberately NOT in the 1.2.0 changelog. A changelog entry would tell
+players a bug existed, and the honest position is that we do not know whether
+it ever did. `gotchas.md` #31 cuts both ways: an impression is not a
+measurement, and that applies to a bug you think you have found as much as to
+one you think you have ruled out.
+
+### 10g. Johnny's exit flash, as a scene event: BUILT
+
+Scene-placing Johnny (section 9) removed the script that used to play
+`johnny_teleport_start` on him and delete him 0.25 s later, so the actor popped
+when the scene exited.
+
+`scneventsVFXEvent` is the replacement, and it passes the `gotchas.md` #17 test
+by measurement rather than by looking right: 1161 of the 7067 `.scene` files in
+`basegame_4_gamedata.archive` carry one. Every field was copied from
+`q101_07c_johnny_triggers.scene`, which plays this exact effect on Johnny twice.
+
+Two traps settled there, written up in `scene-playbook.md` and `gotchas.md` #33:
+`effectInstanceId` is `4294967295`, not zero, because zero is a real index into
+the scene's own `effectDefinitions`; and a named effect needs no declaration
+anywhere, because it resolves against the performer's own entity.
+
+`questkit.scene.Scene.fire_vfx` emits it, and `stage_johnny` fires one on all
+seven beats 250 ms before the last section ends, the same number as the
+`cc_g01_johnny_exit` cue. The cue stays: it costs one quest node and it is the
+only signal a future script could use.
+
+### 10k. Hoshino appeared in the wrong place, then vanished: REPORTED, FIXED
+
+Nexus, against 1.1.3: *"For me he just spawned out of no where on the first
+floor, though he was half-way in a pillar. Once I selected one of the dialog
+options, he disappeared and is now no where to be found."*
+
+**The body in that report is the scene's, not the one you fight.** The gig ships
+two Hoshinos while `gig01_hoshino.scene` runs, and both carry
+`Character.cc_g01_hoshino`: the one `Gig01_Encounter` spawns at captured
+coordinates and the player shoots, and the one the scene spawns so his words
+carry audio and a name over the subtitle. Arriving from nowhere, standing inside
+geometry and vanishing when the dialogue ends are properties of a scene actor,
+which is created when its scene starts and deleted when it exits.
+
+The scene's one was buried at `(0, 0, -2.5)` from `ANCHOR_ESTATE`, on the
+assumption that 2.5 m below a marker is under the floor. **Measured in game,
+2026-08-17, and it is not.** The anchor resolves to (297.0, 1051.0, 229.2). The
+burial point is (297.0, 1051.0, 226.7), which is 3.2 m below the terrace the
+conversation happens on, and teleporting there puts you in a furnished room with
+a window onto that terrace. That is the room the report describes.
+
+Two reasons the assumption failed, and both generalise:
+
+- **A marker's height is not a floor.** `ANCHOR_ESTATE` is a security camera, so
+  its height is a mounting height. What is 2.5 m below it is whatever the
+  building puts there. `gotchas.md` #36.
+- **The number was never checkable at the desk.** The anchor's transform is in
+  no file: cooked sectors store their node refs as hashes, and the one place the
+  name is spelled out is the always-loaded name registry, which is a list of
+  names and carries no positions. Searched for the string and for the FNV1a64 of
+  three spellings across all 2356 quest sectors, all 2402 interior sectors and
+  the exteriors covering the estate, with no hit. `ResolveNodeRef` in game
+  answers in a second, and section 11 already had the probe.
+
+**The fix removes the body rather than moving it.** The scene's Hoshino now
+stands where every other voice-only actor in `gen_scenes.py` stands, a kilometre
+out and a hundred metres down, so there is nothing to see, walk into or watch
+disappear. His lines are made non-positional to stay audible, which is how Elena
+and Nix have always worked. Burying him deeper was the alternative and it had no
+safe depth: the road tunnels under the North Oak villa.
+
+**Which field makes a line 2D, separated at last.** `inner=True` sets
+`voExpression` and `visualStyle` together, and every previous reading came from
+a line with both. So his two lines shipped routed differently in the same
+conversation: h01 with the VO expression alone, h02 with both. Both were
+audible, and both subtitles read "Hoshino: ..." in ordinary styling. So
+`voExpression: Vo_Expression_InnerDialog` carries the 2D behaviour on its own,
+and `visualStyle: innerDialog` changes nothing visible for a speaker who is not
+Johnny. `questkit.scene.Scene.section` takes `inner_vo` for this, and both of
+his lines use it.
+
+Verified in the same run by counting rather than by looking: a targeting query
+with `TargetingSet.Complete` reaches through walls, and it never saw more than
+one body carrying his record at any point in the approach or the conversation.
+
+### 10h. The double quest-phase registration: OPEN, not a known bug
+
+The mod's `.archive.xl` registers the questphase under the base game's quest
+root AND under Phantom Liberty's standalone one. That is deliberate, so a
+Phantom Liberty standalone start gets the gig. Nobody has confirmed what happens
+on a save where both roots are live, if that is even possible. Written down so
+it is not re-derived.
+
+### 10j. Long-pressing T declined the call, then answered it. FIXED
+
+Reported in play 2026-08-17: holding T to decline Elena's call answers it
+instead. The first reading of this blamed vanilla, and the dev menu's call trace
+settled it in one look. It is this gig's bug.
+
+```
+289.6  phonecall_elena_ortega_with_player = 1   ring
+291.8  phonecall_elena_ortega_with_player = 3   Rejected
+293.3  phonecall_elena_ortega_with_player = 2   Talking
+```
+
+The decline lands at 291.8 exactly as it should, so the input works and
+`isRejectable` is not involved (it is read in one place, and only decides
+whether the button hint is drawn).
+
+What follows is vanilla's input handling, read out of
+`newHudPhoneGameController.script`: `PhoneReject` fires on
+`BUTTON_HOLD_COMPLETE` while the key is still down, and `PhoneInteract` fires
+again on `BUTTON_RELEASED` when it comes up, whose incoming-call branch queues
+a plain pickup with **no hold check at all**. That is the 2 at 293.3, a second
+and a half later.
+
+`PhoneSystem.OnPickupPhone` does guard against this, but only by phase: it
+ignores anything once the call has left `IncomingCall`. Vanilla gets there
+because its per-contact holocall phase reacts to `Rejected` and ends the call.
+**This file never reacted to `Rejected` at all**, so the chrome stayed up, still
+answerable, and the key release answered it.
+
+Fixed by ending the call ourselves on the next tick, 0.2 s later, which is
+comfortably inside the 1.5 s the trace measured, and then waiting out the
+ordinary back-off in a new state 5 rather than dropping to state 0, which would
+re-ring the phone immediately. It also fixes what a decline FELT like: the ring
+stopped but the banner stayed, because nothing except the 8 s timeout was going
+to take it down.
+
+The general point is the one this register keeps relearning. The first
+explanation was a plausible read of vanilla source that would have led to
+patching a base-game system for every call in the game. A trace the project
+already writes disproved it in one look. `gotchas.md` #31.
+
+### 10i. The reload crashes: NOT ACCEPTED, no mechanism found
+
+Reporter A, 400+ mods: crashes roughly every second save reload, against a
+baseline of one in twenty before installing.
+
+The mod ships **no native code**, so it cannot fault directly; it can only ask
+the engine to do something heavy. The only heavy thing it does at load is the
+spawn burst in 10c and 10d, which those fixes reduce.
+
+Logs and an A/B test with the mod's three folders removed are the only thing
+that can settle it. If their redscript log shows a compile failure that changes
+everything, and would explain unrelated mods breaking too.
+
+---
+
+## 11. Can a node this mod ships be addressed by name? YES, measured 2026-08-17
+
+The question decides how a mod places a custom NPC who has to speak. A scene
+acquires an actor through a NodeRef, and so does every quest node that could
+keep one hidden until the gig wants him. If a name we ship never registers,
+such an NPC must be TWO bodies: one the script spawns and the player can shoot,
+one the scene spawns so the words carry audio and lipsync.
+
+`map-pins-playbook.md` said it never registers. **That is wrong, and this
+section is the correction.**
+
+### The finding
+
+**A node in a mod sector DOES register a global name, provided the name is
+written as a full path. The short form does not.**
+
+| Name written as | `ResolveNodeRef` |
+|---|---|
+| `$/03_night_city/#c_santo_domingo/arroyo/#cc_g01_probe_full` | resolves, and reaches a LIVE ENTITY |
+| `#cc_g01_probe_bare` | nothing at all |
+
+The base game only ever writes the long form: every one of the 33506 nodeRefs
+in `always_loaded_0` is a full path. This project only ever wrote the short
+one, which is why the map-pin attempt failed and why the failure was read as
+"mod nodes cannot be named" rather than "that spelling is not a name".
+
+Naming is also what makes a node LOAD. Named probes were found in the world;
+anonymous ones at the same kind of spot, four metres away, were not.
+
+### The probe, which is reusable in ten minutes
+
+`Gig01_Lab.reds`. Four steps, each failing differently, and the codes are the
+point:
+
+```
+CreateNodeRef(path) -> ResolveNodeRef(nref, root) -> Cast<EntityID> -> FindEntityByID
+  1  the name meant nothing
+  2  resolved, not an entity id
+  3  a real entity id, nothing streamed
+  4  a live entity
+```
+
+`ResolveNodeRef` takes a **`GlobalNodeRef`** as its second argument, not the
+`GlobalNodeID` the game's own `.script` sources appear to pass. The compiler
+rejects the latter outright; a default-constructed local is the root.
+
+**READ CODE 3 WITH SUSPICION ON A LONG NAME.** An absolute `$/...` path is
+hashed rather than looked up, so ANY long string comes back 3, including one
+that was never shipped. Only 4 is evidence. On a short name the distinction is
+real: base-game short names read 3, ours read 1. A run without a long-form
+negative control is void, and the first run here was exactly that.
+
+### What a mod sector will and will not hold
+
+- **Many nodes.** An earlier failure to load more than one was self-inflicted:
+  `variantIndices` was written as one entry per node on the guess that it
+  indexed them. It does not. The game's own `always_loaded_0` has 5285 nodes,
+  15024 instances, and writes `[0]`. Indices pointing into an empty variant
+  table silently drop everything after the first node.
+- **Props, through `worldEntityNode`.** The shard has always worked this way.
+- **NOT people.** Two different character entity templates were placed as
+  `worldEntityNode` and neither instantiated. That fits the shipped data: a
+  real exterior sector holds 25 entity nodes, 77 static meshes and 71 smart
+  objects, and NO NPCs at all.
+
+### How NPCs actually get into the world
+
+Communities, and they are shippable. `always_loaded_0` holds exactly two node
+types: 4500 `worldStaticMarkerNode` (the spots) and 785
+`worldCompiledCommunityAreaNode` (which entry and phase uses which spot).
+
+The characters themselves live in a `.community` resource, of which 4033 ship:
+
+```
+communitySpawnEntry
+  characterRecordId : TweakDBID     <- a record we already ship
+  entryName         : CName
+  phases[] -> phaseName, appearances[]
+    timePeriods[] -> quantity, hour, markings[], spotNodeRefs[]
+```
+
+`characterRecordId` takes our own `Character.cc_g01_hoshino`, and
+`spotNodeRefs` takes NodeRefs, which the finding above says can be ours. The
+quest side is `questCommunityTemplate_NodeType`, in 1395 shipped questphases,
+which reactivates an entry by name against a spawner reference.
+
+So the honest statement is not "a mod cannot place an NPC". It is that
+`worldEntityNode` is the wrong node type for one.
+
+**Placing one is UNSOLVED.** How a `.community` resource gets bound to the world
+was not established, and nothing here should be read as a recipe.
+
+### What it is worth, and what is still open
+
+A pin cannot currently anchor to a node a mod ships, which is why gig 01 draws
+its route to the North Oak estate as a chain of markers advanced by script.
+Whether a pin resolves against a LONG-FORM name has not been tested. If it
+does, that whole layer becomes unnecessary.
+
+Nothing else here is a recipe. One body per speaking NPC instead of two would
+follow from placing an NPC in the world, and that is unsolved.
+
+### On testing this yourself
+
+The probe above is cheap to re-run and it is easy to run badly. Four attempts
+here failed on the BENCH rather than on the engine: a sector field guessed to
+mean something it did not, probes placed where furniture could hide them, a
+negative control in a different shape from the thing under test, and an entity
+template that was invisible by design.
+
+What worked was one build that tested every suspect at once, with each variable
+as its own labelled slot, positions in open air where nothing can occlude,
+detection by script THROUGH WALLS rather than by eye, and one slot holding an
+object known to exist as a calibration. A bench that can only be read by
+looking at something cannot tell absence from occlusion.
+
+---
+
+## 12. The Mama Welles stand-in is buried the same way Hoshino was
+
+Open, and deliberately not fixed in 1.2.0.
+
+`gig01_epilogue_standin` is the variant that plays when the base-game Mama
+Welles is not in El Coyote, and its speaker is a body buried 2.5 m below
+`OFFSET_MAMA`. That is the shape 10k has just shown can put a man in the room
+below, and the fix there is two lines: park the actor at the default offset and
+route her lines through `inner_vo`.
+
+Two things make it a weaker case than Hoshino's, and they are why it waited:
+
+- Her burial is better founded. `#sq018_pepevodka` was chosen for having an
+  IDENTITY orientation, its position was measured, and the offset is computed
+  onto her real mark rather than assumed, so the 2.5 m goes down from the floor
+  she stands on and not from a mounting bracket.
+- Her scene cannot be reached in a test run. It plays only when the base-game
+  Mama is absent, so shipping the change means shipping a path no playtest
+  covers, and the failure mode if the 2D routing does not hold for her is a
+  silent epilogue.
+
+The design call, 2026-08-17: leave it until it can be tested, or until a report
+says a second Mama Welles appears in the bar. Nobody has reported one.

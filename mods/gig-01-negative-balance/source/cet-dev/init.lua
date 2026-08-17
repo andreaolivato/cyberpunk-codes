@@ -38,6 +38,12 @@ local FACTS = {
     --  out - the only route to it drags vanilla's own dialogue options in
     --  with it. See docs/backlog.md 3d).
     "cc_g01_no_scene",
+    -- HOLD THE GIG. Set to 1 and Gig01_Start stops offering the gig, so Elena
+    -- never rings; clear it and the next check picks up where it left off. For
+    -- testing anything that is not the gig, where an hour parked in the world
+    -- otherwise collects her call every few minutes. It does not settle the
+    -- trigger, so it is releasable without a reload.
+    "cc_g01_dev_hold",
     -- Nix's call, same handshake with a different prefix.
     "cc_g01_nixcall_request",
     "cc_g01_nixcall_answered",
@@ -46,6 +52,21 @@ local FACTS = {
     "cc_g01_nixcall_done",
     "phonecall_cc_g01_nix_with_player",
     "cc_g01_office_reached",
+    -- READ THESE, do not set them. How many guards each site has PLACED so far,
+    -- accumulated by NegativeBalanceEncounter.FinishSpawn. Full strength is 20
+    -- at the office and 25 at the estate (Hoshino is not counted; he is spawned
+    -- outside the chain).
+    --
+    -- It counts UP as you move. Each of the five office anchors and six estate
+    -- anchors is filled separately, and an anchor whose navmesh is not streamed
+    -- in yet is retried every six seconds while you are on site - so entering
+    -- the estate over the back wall gives a low number that grows as you walk
+    -- towards the gate. A number that stays at 0 is the empty-site bug.
+    --
+    -- A guard is dropped when the navmesh query at his scattered spot fails, so
+    -- one or two short of full strength is normal and by design.
+    "cc_g01_dbg_office_guards",
+    "cc_g01_dbg_estate_guards",
     -- READ THESE, do not set them. The base game ships the doors onto the
     -- office floor with deviceState DISABLED and switches them on during
     -- "Gimme Danger", so a player who has not done that mission cannot get in
@@ -226,7 +247,9 @@ local TRACE_FACTS = {
     --  which is how `type: Tag` was proven dead rather than merely unproven
     --  (docs/backlog.md 2j); and the placement maths was right all along -
     --  `Teleport` ignores the position it is given for a puppet and drops him
-    --  on the player, which is why a workspot device does the placing).
+    --  on the player, which is why the script route needed a workspot device.
+    --  That whole route is gone as of 2026-08-17: every Johnny beat is placed
+    --  by its own scene, docs/backlog.md 9.)
     -- Added after 2026-08-12: "get clear of the compound never triggered" was
     -- reported, and the trace could only show it INDIRECTLY (nixcall_request
     -- implies it fired). Trace the fact itself so the next report is one line.
@@ -392,139 +415,6 @@ registerForEvent("onOverlayOpen", function() visible = true end)
 registerForEvent("onOverlayClose", function() visible = false end)
 
 
--- ============================================================ JOHNNY LAB
--- Live spawn bench, kept as a TOOL rather than as part of the gig. It is Lua,
--- so "Reload All Mods" is enough to iterate - no restart, no launch per guess.
---
--- THE QUESTION IT WAS BUILT FOR IS ANSWERED (2026-08-14): a spawned Johnny
--- resolves fine and is invisible because nothing is driving him. The apparition
--- renders only while he is in a WORKSPOT - phantomVisibleStates is
--- ["RootMotion","Workspot"] - and a body with no workspot is invisible AND
--- untargetable. The gig no longer spawns him from script at all; every beat is
--- scene-owned. This stays because the next gig will want a spawn bench.
-local johnnyLab = {
-    id = nil,
-    ent = nil,
-    status = "idle",
-    appearance = "silverhand_riot__not_blendable",
-    template = "",
-    appearances = {
-        "silverhand_riot__not_blendable",     -- blendable-free, vanilla precedent
-        "silverhand_clean_2020_not_blendable",-- blendable-free
-        "silverhand_default__cyberspace",     -- blendable-free, stylised
-        "silverhand_wounded",                 -- blendable-free
-        "q108_johnny_default",                -- blendable-free
-        "silverhand_default",                 -- BLENDABLE: expected invisible
-    },
-    -- VANILLA TEMPLATES ONLY. A hand-edited copy of johnny.ent crashed the game
-    -- on load (2026-08-12).
-    --
-    -- Long-bracket literals [[...]]: Lua does NOT process escapes inside them,
-    -- so depot backslashes need no doubling. Written as "..." these break the
-    -- whole file - \e in \entity is not a valid escape and CET refuses to load
-    -- the mod (2026-08-12).
-    templates = {
-        "",                                                       -- record's own
-        [[base\quest\primary_characters\johnny_mirror.ent]],       -- vanilla, no phantom
-        [[base\characters\entities\main_npc\silverhand.ent]],
-    },
-}
-
-local function johnnyNewSpec()
-    -- Two spellings exist across CET/Codeware versions; try both rather than
-    -- guess which this pair accepts.
-    local ok, spec = pcall(function() return NewObject('handle:DynamicEntitySpec') end)
-    if ok and spec then return spec end
-    ok, spec = pcall(function() return DynamicEntitySpec.new() end)
-    if ok and spec then return spec end
-    return nil
-end
-
-local function johnnySpawn()
-    local p = Game.GetPlayer()
-    if not p then johnnyLab.status = "no player" return end
-    local spec = johnnyNewSpec()
-    if not spec then johnnyLab.status = "DynamicEntitySpec unavailable" return end
-
-    local pos = p:GetWorldPosition()
-    local fwd = p:GetWorldForward()
-    spec.recordID = TweakDBID.new("Character.Silverhand")
-    if johnnyLab.template ~= "" then spec.templatePath = johnnyLab.template end
-    spec.appearanceName = CName.new(johnnyLab.appearance)
-    spec.position = Vector4.new(pos.x + fwd.x * 2.0, pos.y + fwd.y * 2.0, pos.z, 1.0)
-    spec.spawnInView = true
-    spec.active = true
-    spec.tags = { CName.new("cc_lab_johnny") }
-
-    local ok, id = pcall(function() return Game.GetDynamicEntitySystem():CreateEntity(spec) end)
-    if not ok then johnnyLab.status = "CreateEntity threw" return end
-    johnnyLab.id = id
-    johnnyLab.status = "spawn requested"
-    log("JOHNNY LAB spawn app=" .. johnnyLab.appearance .. " tpl=" .. johnnyLab.template)
-end
-
-local function johnnyInspect()
-    if not johnnyLab.id then johnnyLab.status = "nothing spawned" return end
-    local des = Game.GetDynamicEntitySystem()
-    local spawned = des:IsSpawned(johnnyLab.id)
-    johnnyLab.ent = des:GetEntity(johnnyLab.id)
-    if not johnnyLab.ent then
-        johnnyLab.status = "IsSpawned=" .. tostring(spawned) .. " but entity does NOT resolve"
-        log("JOHNNY LAB " .. johnnyLab.status)
-        return
-    end
-    local phantom, meshes = 0, 0
-    local ok, comps = pcall(function() return johnnyLab.ent:GetComponents() end)
-    if ok and comps then
-        for _, c in ipairs(comps) do
-            local cn = c:GetClassName().value
-            if cn:find("Phantom") then phantom = phantom + 1 end
-            if cn:find("Mesh") then meshes = meshes + 1 end
-        end
-    end
-    local app = "?"
-    pcall(function() app = johnnyLab.ent:GetCurrentAppearanceName().value end)
-    johnnyLab.status = string.format("resolved | app=%s | phantom=%d | mesh=%d", app, phantom, meshes)
-    log("JOHNNY LAB " .. johnnyLab.status)
-end
-
-local function johnnyDespawn()
-    if johnnyLab.id then
-        Game.GetDynamicEntitySystem():DeleteEntity(johnnyLab.id)
-        johnnyLab.id, johnnyLab.ent = nil, nil
-        johnnyLab.status = "deleted"
-    end
-end
-
-local function johnnyReapply()
-    if not johnnyLab.ent then johnnyLab.status = "inspect first" return end
-    pcall(function() johnnyLab.ent:ScheduleAppearanceChange(CName.new(johnnyLab.appearance)) end)
-    johnnyLab.status = "re-applied " .. johnnyLab.appearance
-end
-
-local function drawJohnnyLab()
-    if not ImGui.CollapsingHeader("Johnny lab") then return end
-    ImGui.Text("status: " .. johnnyLab.status)
-    ImGui.Separator()
-    ImGui.Text("appearance")
-    for _, a in ipairs(johnnyLab.appearances) do
-        if ImGui.RadioButton(a, johnnyLab.appearance == a) then johnnyLab.appearance = a end
-    end
-    ImGui.Separator()
-    ImGui.Text("template (blank = the record's own)")
-    for _, t in ipairs(johnnyLab.templates) do
-        local label = t == "" and "(record default)" or t
-        if ImGui.RadioButton(label, johnnyLab.template == t) then johnnyLab.template = t end
-    end
-    ImGui.Separator()
-    if ImGui.Button("SPAWN") then johnnySpawn() end
-    ImGui.SameLine()
-    if ImGui.Button("INSPECT") then johnnyInspect() end
-    ImGui.SameLine()
-    if ImGui.Button("RE-APPLY APPEARANCE") then johnnyReapply() end
-    ImGui.SameLine()
-    if ImGui.Button("DELETE") then johnnyDespawn() end
-end
 
 registerForEvent("onDraw", function()
     if not visible then return end
@@ -532,8 +422,6 @@ registerForEvent("onDraw", function()
         ImGui.End()
         return
     end
-
-    drawJohnnyLab()
 
     local qs = Game.GetQuestsSystem()
 
@@ -1178,6 +1066,70 @@ registerForEvent("onDraw", function()
     for _, c in ipairs(capturedList) do
         ImGui.Text(string.format("  %s: %.1f %.1f %.1f", c.name, c.x, c.y, c.z))
     end
+
+    -- ===================================================== THE HOSHINO BENCH
+    --
+    -- Two readings for one open bug, taken in the same playthrough. The
+    -- reasoning is in Gig01_Bench.reds; this presses the buttons and shows the
+    -- numbers.
+    ImGui.Spacing()
+    ImGui.Text("Hoshino bench")
+    ImGui.Separator()
+
+    -- 1. WHERE IS THE SCENE ANCHOR? Only answerable at the estate: a node
+    --    reports a position while its sector is streamed in and not before.
+    if ImGui.Button("RESOLVE THE SCENE ANCHOR (do this at the estate)") then
+        local ok, err = pcall(function()
+            Game.GetQuestsSystem():SetFactStr("cc_g01_bench_go", 1)
+            log("bench: anchor requested, the answer lands within a second")
+        end)
+        if not ok then log("bench anchor failed: " .. tostring(err)) end
+    end
+    do
+        local qs = Game.GetQuestsSystem()
+        local st = qs:GetFactStr("cc_g01_bench_anchor")
+        if st == 4 then
+            local ax = qs:GetFactStr("cc_g01_bench_ax") / 10.0
+            local ay = qs:GetFactStr("cc_g01_bench_ay") / 10.0
+            local az = qs:GetFactStr("cc_g01_bench_az") / 10.0
+            ImGui.Text(string.format("  anchor: %.1f %.1f %.1f", ax, ay, az))
+            ImGui.Text(string.format("  where 1.1.3 buried him: %.1f %.1f %.1f", ax, ay, az - 2.5))
+            if ImGui.Button("TELEPORT TO THE OLD BURIAL SPOT") then
+                teleportTo({ x = ax, y = ay, z = az - 2.5, w = 1.0 })
+            end
+            ImGui.TextDisabled("Rock or under a floor = the burial worked. A room,")
+            ImGui.TextDisabled("a pillar or open air = that is what the report saw.")
+        elseif st == 3 then
+            ImGui.TextDisabled("anchor: the name resolves, nothing streamed. Try it at the estate.")
+        elseif st == 1 then
+            ImGui.TextDisabled("anchor: THE NAME MEANT NOTHING. The scene has no marker.")
+        else
+            ImGui.TextDisabled("anchor: not read yet.")
+        end
+    end
+
+    -- 2. IS THERE STILL A SECOND BODY NEXT TO V? Counted through walls, so an
+    --    absent body and a hidden one read differently. Switch it on before
+    --    walking up to him: his scene lasts seconds.
+    ImGui.Spacing()
+    local watchOn = Game.GetQuestsSystem():GetFactStr("cc_g01_bench_watch") > 0
+    if ImGui.Button(watchOn and "HOSHINO WATCH: ON (click to stop)"
+                             or "HOSHINO WATCH: off (click to start)") then
+        Game.GetQuestsSystem():SetFactStr("cc_g01_bench_watch", watchOn and 0 or 1)
+    end
+    do
+        local qs = Game.GetQuestsSystem()
+        ImGui.Text(string.format("  now: %d within 60 m, furthest %.1f m",
+            qs:GetFactStr("cc_g01_bench_n"), qs:GetFactStr("cc_g01_bench_d") / 10.0))
+        ImGui.Text(string.format("  most seen at once: %d, furthest %.1f m",
+            qs:GetFactStr("cc_g01_bench_peak"), qs:GetFactStr("cc_g01_bench_peakd") / 10.0))
+        if ImGui.Button("reset the peak") then
+            qs:SetFactStr("cc_g01_bench_peak", 0)
+            qs:SetFactStr("cc_g01_bench_peakd", 0)
+        end
+    end
+    ImGui.TextDisabled("1 through the whole conversation = only the man you fight.")
+    ImGui.TextDisabled("2 = a second body is still being staged beside you.")
 
     ImGui.Spacing()
     ImGui.Text("Teleports")

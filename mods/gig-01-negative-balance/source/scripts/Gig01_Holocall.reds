@@ -99,7 +99,7 @@ public class NegativeBalanceHolocall extends ScriptableSystem {
     // base-game one that our conversation merges into.
 
     // 0 idle, 1 ringing, 2 answered (holding one tick), 3 talking, 4 dialling
-    // out, 9 finished.
+    // out, 5 declined and waiting out the back-off, 9 finished.
     //
     // State 2 exists purely so a crash can be attributed. Raising the call UI
     // and letting the quest phase into the scene used to happen in the same
@@ -229,6 +229,22 @@ public class NegativeBalanceHolocall extends ScriptableSystem {
     // have re-rung a ringing phone after 2.4 s and cut V's dial tone to 0.2 s.
     // Whenever the cadence moves, these move with it.
     private func DialToneTicks() -> Int32 { return 10; }     // ~2 s
+
+    // HOW LONG THE PHONE ACTUALLY RINGS, which is not how long state 1 lasts.
+    //
+    // HudPhoneGameController's m_TimeoutPeroid rings for 8 s and then gives up.
+    // State 1 outlives that by the whole retry back-off, so anything scoped to
+    // "the phone is ringing" has to be measured here rather than off the state.
+    // A second of margin covers the tick the ring was placed on and the tick
+    // that notices it timed out. See ApplyLock(), which is the only caller and
+    // the reason this exists.
+    private func RingSeconds() -> Float { return 9.0; }
+
+    // In LIVE ticks, derived the same way RetryTicks is, so a change to the
+    // cadence carries both with it.
+    private func RingTicks() -> Int32 {
+        return Cast<Int32>(this.RingSeconds() / this.TickLive());
+    }
 
     // HOW LONG BEFORE RINGING AGAIN, by how many times it has already rung.
     //
@@ -421,6 +437,23 @@ public class NegativeBalanceHolocall extends ScriptableSystem {
             call += 1;
         }
         this.ApplyLock();
+
+        // STOP FOR GOOD ONCE THE GIG IS OVER, but only AFTER ApplyLock has had
+        // its one unconditional pass. The order matters: that pass is what lifts
+        // a fast-travel lock saved by a previous session (docs/gotchas.md #24),
+        // and stopping before it would strand exactly the lock this system
+        // exists to clean up. m_ftKnown is set by the call above, so by the time
+        // this is read the pass has happened.
+        //
+        // Every call is finished by then anyway - the gig cannot close with one
+        // in flight - so nothing is cut off mid-ring. Not persistent: OnAttach
+        // schedules again on the next load, one tick lifts any stale lock and
+        // stops. Clearing cc_g01_done from the dev menu does not restart it
+        // within a session.
+        if GameInstance.GetQuestsSystem(this.GetGameInstance()).GetFactStr("cc_g01_done") > 0 {
+            return;
+        }
+
         this.Schedule(live ? this.TickLive() : this.TickIdle());
     }
 
@@ -442,6 +475,23 @@ public class NegativeBalanceHolocall extends ScriptableSystem {
     // for. Not during a conversation - a lock's blast radius should be the
     // smallest window that solves the problem.
     //
+    // "RINGING" IS NOT THE SAME AS "STATE 1", and reading it as if it were
+    // BROKE FAST TRAVEL FOR THE REST OF THE SAVE. Reported in play 2026-08-16:
+    // every fast travel point unavailable after ignoring the phone a few times.
+    //
+    // State 1 is "we rang, and we are waiting to see whether it is answered",
+    // and that wait is the entire back-off in RetrySeconds: 24 s, 30, 30, 60,
+    // then 300 s from the fifth ring onward. The phone itself rings for 8 s. So
+    // asking for the lock on state 1 alone covered five-minute stretches with
+    // one tick of daylight between them, and it was wrong from the first ring
+    // too, just less visibly: 24 s of lock for 8 s of ringing.
+    //
+    // The lock is therefore bounded by m_waited, which counts the live ticks
+    // this call has spent in state 1 and is exact because a call in state 1
+    // always reports live. State 4 is genuinely dialling for its whole length
+    // (DialToneTicks, then it connects), so it keeps its lock throughout.
+    // docs/gotchas.md #24.
+    //
     // DERIVED, NEVER REMEMBERED. The safety argument rests on that. The lock
     // is recomputed from the call states on every tick, so:
     //   * `EvaluateFastTravelLocksOnRestore` in the game's own code says locks
@@ -458,7 +508,10 @@ public class NegativeBalanceHolocall extends ScriptableSystem {
         let want: Bool = false;
         let call: Int32 = 0;
         while call < this.CallCount() {
-            if this.m_state[call] == 1 || this.m_state[call] == 4 {
+            if this.m_state[call] == 1 && this.m_waited[call] <= this.RingTicks() {
+                want = true;
+            }
+            if this.m_state[call] == 4 {
                 want = true;
             }
             call += 1;
@@ -611,18 +664,73 @@ public class NegativeBalanceHolocall extends ScriptableSystem {
                     this.Call(call, questPhoneCallPhase.StartCall);
                     this.m_state[call] = 2;
                 } else {
-                    // Rang out or was dismissed. Wait and try again; a missed
-                    // call must not strand the gig. The phone itself rings for
-                    // 8 s, so the shortest wait has to comfortably outlast that
-                    // or we would re-ring a phone that is still ringing.
-                    //
-                    // The wait GROWS with each unanswered ring - see
-                    // RetrySeconds. It never stops, it just stops nagging.
-                    this.m_waited[call] += 1;
-                    if this.m_waited[call] > this.RetryTicks(this.m_rings[call]) {
-                        this.m_state[call] = 0;
+                    if qs.GetFactStr(this.PhoneFact(call))
+                        == EnumInt(questPhoneTalkingState.Rejected) {
+                        // DECLINED. END THE CALL OURSELVES, AND DO IT NOW.
+                        //
+                        // Reported in play 2026-08-17: long-pressing T to
+                        // decline answered the call instead. It is this file's
+                        // bug, not the game's, and the dev menu's call trace
+                        // shows the whole thing:
+                        //
+                        //   289.6  phonecall_..._with_player = 1   ring
+                        //   291.8  phonecall_..._with_player = 3   Rejected
+                        //   293.3  phonecall_..._with_player = 2   Talking
+                        //
+                        // The decline lands at 291.8, exactly as it should.
+                        // What follows is vanilla's own input handling:
+                        // `PhoneReject` fires on BUTTON_HOLD_COMPLETE while
+                        // the key is still down, and `PhoneInteract` fires
+                        // again on BUTTON_RELEASED when it comes up, whose
+                        // incoming-call branch queues a plain pickup with no
+                        // hold check at all. That is the 2 at 293.3, a second
+                        // and a half later.
+                        //
+                        // `PhoneSystem.OnPickupPhone` only ignores it once the
+                        // call has left the IncomingCall phase - and vanilla
+                        // gets there because its per-contact holocall phase
+                        // reacts to Rejected and ends the call. We never did,
+                        // so the chrome stayed up, still answerable, and the
+                        // release answered it.
+                        //
+                        // So: end the call on the next tick, 0.2 s later,
+                        // which is comfortably inside the 1.5 s the trace
+                        // measured. It also fixes what the decline FELT like -
+                        // the ring stopped but the banner stayed, because
+                        // nothing but the 8 s timeout was going to take it
+                        // down.
+                        this.Call(call, questPhoneCallPhase.EndCall);
+                        this.m_state[call] = 5;
                         this.m_waited[call] = 0;
+                    } else {
+                        // Rang out. Wait and try again; a missed call must not
+                        // strand the gig. The phone itself rings for 8 s, so
+                        // the shortest wait has to comfortably outlast that or
+                        // we would re-ring a phone that is still ringing.
+                        //
+                        // The wait GROWS with each unanswered ring - see
+                        // RetrySeconds. It never stops, it just stops nagging.
+                        this.m_waited[call] += 1;
+                        if this.m_waited[call] > this.RetryTicks(this.m_rings[call]) {
+                            this.m_state[call] = 0;
+                            this.m_waited[call] = 0;
+                        }
                     }
+                }
+                break;
+            case 5:
+                // Declined, chrome down, waiting out the back-off.
+                //
+                // A separate state rather than dropping straight to 0, because
+                // 0's job is to ring: going there would re-ring the phone 0.2 s
+                // after the player waved it away. The wait is the same one an
+                // unanswered ring gets, and m_rings was already counted when we
+                // rang, so declining and ignoring back off identically. That is
+                // deliberate; see RetrySeconds.
+                this.m_waited[call] += 1;
+                if this.m_waited[call] > this.RetryTicks(this.m_rings[call]) {
+                    this.m_state[call] = 0;
+                    this.m_waited[call] = 0;
                 }
                 break;
             case 4:

@@ -141,15 +141,15 @@
                 "$type": "Quaternion",
                 "i": 0,
                 "j": 0,
-                "k": 0,
-                "r": 1
+                "k": -0.9888829578676007,
+                "r": 0.148695983937109
               },
               "position": {
                 "$type": "Vector4",
                 "W": 0,
-                "X": 0.0,
-                "Y": 0.0,
-                "Z": -2.5
+                "X": -0.8,
+                "Y": 2.6,
+                "Z": 0.0
               }
             },
             "spawnOnStart": 1,
@@ -158,7 +158,7 @@
               "$storage": "string",
               "$value": "Character.Silverhand"
             },
-            "validateSpawnPostion": 0
+            "validateSpawnPostion": 1
           },
           "spawnSetParams": {
             "$type": "scnSpawnSetParams",
@@ -529,7 +529,7 @@
       "ridResources": [],
       "sceneCategoryTag": "dialoguesQuests",
       "sceneGraph": {
-        "HandleId": "21",
+        "HandleId": "22",
         "Data": {
           "$type": "scnSceneGraph",
           "endNodes": [
@@ -621,7 +621,7 @@
                         "$type": "scnscreenplayItemId",
                         "id": 1
                       },
-                      "startTime": 1200,
+                      "startTime": 2200,
                       "type": "0",
                       "visualStyle": "innerDialog",
                       "voParams": {
@@ -661,7 +661,7 @@
                         "$type": "scnscreenplayItemId",
                         "id": 257
                       },
-                      "startTime": 2590,
+                      "startTime": 3590,
                       "type": "0",
                       "visualStyle": "innerDialog",
                       "voParams": {
@@ -683,6 +683,49 @@
                   {
                     "HandleId": "6",
                     "Data": {
+                      "$type": "scneventsVFXEvent",
+                      "action": "Play",
+                      "duration": 0,
+                      "effectEntry": {
+                        "$type": "scnEffectEntry",
+                        "effectInstanceId": {
+                          "$type": "scnEffectInstanceId",
+                          "effectId": {
+                            "$type": "scnEffectId",
+                            "id": 4294967295
+                          },
+                          "id": 4294967295
+                        },
+                        "effectName": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "johnny_teleport_start"
+                        }
+                      },
+                      "executionTagFlags": 0,
+                      "id": {
+                        "$type": "scnSceneEventId",
+                        "id": "2388143271494283682"
+                      },
+                      "muteSound": 0,
+                      "nodeRef": {
+                        "$type": "NodeRef",
+                        "$storage": "uint64",
+                        "$value": "0"
+                      },
+                      "performerId": {
+                        "$type": "scnPerformerId",
+                        "id": 1
+                      },
+                      "scalingData": null,
+                      "sequenceShift": 0,
+                      "startTime": 8410,
+                      "type": "0"
+                    }
+                  },
+                  {
+                    "HandleId": "7",
+                    "Data": {
                       "$type": "scneventsSocket",
                       "duration": 0,
                       "executionTagFlags": 0,
@@ -696,7 +739,7 @@
                         "ordinal": 0
                       },
                       "scalingData": null,
-                      "startTime": 7410,
+                      "startTime": 8410,
                       "type": "0"
                     }
                   }
@@ -786,12 +829,12 @@
                 ],
                 "sectionDuration": {
                   "$type": "scnSceneTime",
-                  "stu": 7660
+                  "stu": 8660
                 }
               }
             },
             {
-              "HandleId": "7",
+              "HandleId": "8",
               "Data": {
                 "$type": "scnEndNode",
                 "ffStrategy": "automatic",
@@ -804,7 +847,7 @@
               }
             },
             {
-              "HandleId": "8",
+              "HandleId": "9",
               "Data": {
                 "$type": "scnQuestNode",
                 "ffStrategy": "automatic",
@@ -857,7 +900,7 @@
                   }
                 ],
                 "questNode": {
-                  "HandleId": "9",
+                  "HandleId": "10",
                   "Data": {
                     "$type": "questUseWorkspotNodeDefinition",
                     "entityReference": {
@@ -887,7 +930,7 @@
                     },
                     "id": 4,
                     "paramsV1": {
-                      "HandleId": "10",
+                      "HandleId": "11",
                       "Data": {
                         "$type": "scnUseSceneWorkspotParamsV1",
                         "changeWorkspot": 1,
@@ -967,7 +1010,7 @@
                     },
                     "sockets": [
                       {
-                        "HandleId": "11",
+                        "HandleId": "12",
                         "Data": {
                           "$type": "questSocketDefinition",
                           "connections": [],
@@ -980,7 +1023,7 @@
                         }
                       },
                       {
-                        "HandleId": "12",
+                        "HandleId": "13",
                         "Data": {
                           "$type": "questSocketDefinition",
                           "connections": [],
@@ -993,7 +1036,7 @@
                         }
                       },
                       {
-                        "HandleId": "13",
+                        "HandleId": "14",
                         "Data": {
                           "$type": "questSocketDefinition",
                           "connections": [],
@@ -1006,7 +1049,7 @@
                         }
                       },
                       {
-                        "HandleId": "14",
+                        "HandleId": "15",
                         "Data": {
                           "$type": "questSocketDefinition",
                           "connections": [],
@@ -1024,7 +1067,7 @@
               }
             },
             {
-              "HandleId": "15",
+              "HandleId": "16",
               "Data": {
                 "$type": "scnQuestNode",
                 "ffStrategy": "automatic",
@@ -1063,13 +1106,13 @@
                   }
                 ],
                 "questNode": {
-                  "HandleId": "16",
+                  "HandleId": "17",
                   "Data": {
                     "$type": "questFactsDBManagerNodeDefinition",
                     "id": 5,
                     "sockets": [
                       {
-                        "HandleId": "17",
+                        "HandleId": "18",
                         "Data": {
                           "$type": "questSocketDefinition",
                           "connections": [],
@@ -1082,7 +1125,7 @@
                         }
                       },
                       {
-                        "HandleId": "18",
+                        "HandleId": "19",
                         "Data": {
                           "$type": "questSocketDefinition",
                           "connections": [],
@@ -1095,7 +1138,7 @@
                         }
                       },
                       {
-                        "HandleId": "19",
+                        "HandleId": "20",
                         "Data": {
                           "$type": "questSocketDefinition",
                           "connections": [],
@@ -1109,7 +1152,7 @@
                       }
                     ],
                     "type": {
-                      "HandleId": "20",
+                      "HandleId": "21",
                       "Data": {
                         "$type": "questSetVar_NodeType",
                         "factName": "cc_g01_johnny_exit",
@@ -1295,7 +1338,7 @@
       ],
       "workspots": [
         {
-          "HandleId": "22",
+          "HandleId": "23",
           "Data": {
             "$type": "scnWorkspotData_ExternalWorkspotResource",
             "dataId": {

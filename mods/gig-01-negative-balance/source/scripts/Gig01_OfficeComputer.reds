@@ -154,7 +154,17 @@ public final func CCG01EnsureLedger() -> Void {
     if !this.CCG01IsOfficeTerminal() {
         return;
     }
-    if GameInstance.GetQuestsSystem(this.GetGameInstance()).GetFactStr("cc_g01_accepted") <= 0 {
+    let qs: ref<QuestsSystem> = GameInstance.GetQuestsSystem(this.GetGameInstance());
+    if qs.GetFactStr("cc_g01_accepted") <= 0 {
+        return;
+    }
+    // ...AND ONLY UNTIL THE GIG IS OVER. cc_g01_accepted never returns to 0, so
+    // it was the whole gate and the ledger was rebuilt into this computer on
+    // every visit for the rest of the save. Leaving the folder in place is the
+    // right outcome - V read it, it is evidence, and pulling it back out would
+    // be a mod deleting something the player found - so this stops writing
+    // rather than reverting.
+    if qs.GetFactStr("cc_g01_done") > 0 {
         return;
     }
 
@@ -194,7 +204,6 @@ public final func CCG01EnsureLedger() -> Void {
     // appending again would grow the array by one folder per load. The fact
     // below is the durable "we already installed it" marker, and we always
     // append last, so the last folder is ours.
-    let qs: ref<QuestsSystem> = GameInstance.GetQuestsSystem(this.GetGameInstance());
     if mine < 0 && qs.GetFactStr("cc_g01_ledger_installed") > 0 && folders > 0 {
         mine = folders - 1;
     }

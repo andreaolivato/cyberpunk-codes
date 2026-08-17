@@ -79,10 +79,25 @@ All tried in game on 2026-08-14. The log line tells the three apart.
 |---|---|---|
 | anchor in an ordinary `exterior_*` sector | `Can't resolve ... position` | name resolved, node not streamed in |
 | no NodeRef, world coords in `offset` | *(no line at all)* | a quest pin with no reference is never spawned as a mappin, so nothing is asked for |
-| a marker node you ship yourself | `Can't resolve ... reference` | a node in a mod sector never registers its global name |
+| a marker node you ship yourself | `Can't resolve ... reference` | the name was written in the SHORT form, which is not a name. See the correction below |
 
 `position` means the name resolved and the node was not there. `reference` means
 the name meant nothing.
+
+**CORRECTION, 2026-08-17: the reason given above was wrong, and the paragraph
+below is left standing only because its OUTCOME was real.**
+
+A node in a mod sector does register a global name. What it will not accept is
+the short `#name` spelling, which is what this repo wrote and what produced
+`Can't resolve ... reference`. Written as a full `$/03_night_city/...` path,
+the same node resolves, and resolves to a live entity. Measured with a script
+probe and a proper negative control; see `backlog.md` 11 for the recipe and the
+codes.
+
+Whether a PIN accepts it is still untested. The three failures below were all
+measured with the short form, so "our own marker nodes provably do not resolve"
+is not established, and re-testing one with a long-form name costs a single
+build.
 
 Shipping your own marker nodes is the tempting one, and it does not work.
 Californication and OneMoreLight both do it, and playtesting confirmed their pins
@@ -254,7 +269,9 @@ none. Measured with `find_pin_anchors.py` for gig 01's six way-in points:
 | the other five | 52-75 m |
 
 A route drawn through points 50-75 m off is worse than no route, and shipping
-our own marker nodes provably does not resolve.
+our own marker nodes did not resolve when it was tried. See the correction
+above before repeating that: it was tried with the short-form name, which is
+not a name the engine accepts, and the long form does resolve.
 
 So the chain of pins is the path. One pin active at a time, advanced by script as
 the player reaches each: `Gig01_Encounter.ShowWayInMarker`. It is not a route

@@ -114,27 +114,31 @@ Never renumber. Append.
       forty lines below. When porting a routine, carry over what its comments
       record, not only the code.
 
-16. A lipsynced NPC is scene-owned and script-placed. Lipsync lands on the
-    line's speaker and only a scene can own one; only a script can put a body
-    where the player is. Recipe: `scene-playbook.md`, "THE SPLIT-OWNERSHIP
-    RECIPE".
+16. A lipsynced NPC must be the SCENE's own actor, because lipsync lands on the
+    line's speaker and only a scene can own a speaker.
 
-    Five traps, one test session each:
+    **The second half of this entry was wrong for months and is corrected
+    here.** It read "and script-placed: only a script can put a body where the
+    player is". A scene can, and the whole architecture built on that sentence
+    is gone. See #31, `backlog.md` 9, and the recipe in `scene-playbook.md`,
+    "STAGING A CHARACTER WHO SPEAKS, LIPSYNCS AND STANDS BESIDE V".
 
-    - A workspot is what makes the actor exist at all. Without one he is
-      invisible AND untargetable, so the script cannot even find him.
-    - One staging window per SCENE, not per staging. A window spanning two
-      scenes stages the first and silently refuses the second.
-    - The SCENE must time the exit. Anchoring it to placement anchors a fixed
-      thing to a varying one.
+    What still holds, each of it a test session:
+
+    - A workspot is what makes the actor exist at all.
+      `gamePhantomEntityComponent.phantomVisibleStates` is
+      `["RootMotion", "Workspot"]`, so without one he is invisible AND
+      untargetable. Fire it at t=0 of the scene's FIRST section.
+    - The SCENE must time the exit, and must play it. It is the only thing that
+      knows its own length, and it deletes its actors on the frame it exits.
     - A scene actor cannot exist before its own scene starts. This decides which
-      scene a line has to live in.
-    - The workspot device carries the FACING as well as the position. The
-      workspot plays through the device, so its `orientation` wins over the
-      puppet's.
-
-    `Teleport` is not the way to place a puppet. It ignores the position and
-    drops him on the player. Use a workspot device.
+      scene a line has to live in, and which characters can use any of this at
+      all: one who has to be found, talked to or killed outside his scene
+      cannot.
+    - `Teleport` is not the way to place a puppet from script. It ignores the
+      position and drops him on the player. This no longer matters here, since
+      nothing places a puppet from script, but the API still reads as though it
+      works.
 
 17. An enum member is no proof the engine implements it.
     `gameEntityReferenceType.Tag` exists, is the right shape for the job, and is
@@ -213,6 +217,20 @@ Never renumber. Append.
     which means a stuck one persists for the rest of the save and reads as "this mod
     broke fast travel". Derive the lock from live state every tick, and force one
     unconditional pass per session so a lock saved by a previous run is lifted.
+
+    **Deriving it correctly is not enough if the state means something wider
+    than its name.** Reported in play on 2026-08-16: every fast travel point
+    unavailable after ignoring the phone a few times. The lock was derived from
+    live state exactly as written above, and it was still wrong, because it
+    asked "is this call in state 1", and the comment beside it called state 1
+    "ringing". State 1 is *we rang and are waiting to see if it is answered*,
+    and that wait is the whole retry back-off: 24 s, 30, 30, 60, then 300 s
+    from the fifth ring on. The phone itself rings for eight seconds.
+
+    So a lock intended to cover eight seconds covered five-minute stretches
+    with a single tick of daylight between them. Bound a lock to the thing it
+    is named after, and check what the state actually spans rather than what it
+    is called.
 
 25. A quest map pin cannot be un-shown. Activating a `gameJournalQuestMapPin`
     registers it; setting it back to `Inactive` with `ChangeEntryState` leaves
@@ -303,3 +321,192 @@ Never renumber. Append.
     Check your own output for it: any control byte sitting mid-line in
     generated text is almost certainly this. Four of them shipped here before
     anyone looked.
+
+29. **A synchronous resource reference on a dynamically spawned entity hard
+    crashes the game.**
+
+    `workWorkspotResourceComponent` offers three slots for the same animation:
+
+    | Field | Kind |
+    |---|---|
+    | `workspotResource` | `raRef`, loaded asynchronously |
+    | `deviceWorkspotResourceSync` | `rRef`, loaded with the entity |
+    | `npcWorkspotResourceSync` | `rRef`, loaded with the entity |
+
+    Filling either sync slot on an entity spawned through
+    `DynamicEntitySystem` takes the process down on the frame the entity
+    streams in. Reproduced twice on 2026-08-16, one slot each, with the crash
+    landing at the test position and the log stopping at the spawn request.
+
+    The trap is that the field names read like the fix for a loading problem.
+    A body appearing before its animation has bound looks exactly like an async
+    load that has not finished, so the sync slot looks like the answer. It is
+    not, and the failure is not a warning or a missing animation, it is the
+    game closing.
+
+    Same shape as #17: the field exists, the name says what you want, and the
+    engine does not implement it the way you assume.
+
+30. **`DynamicEntitySpec.templatePath` is ignored when `recordID` is set.**
+
+    Set both and the character record's own entity template wins, silently.
+    Proven on 2026-08-16 by spawning two different templates and reading the
+    components back: both returned an identical `phantom 1 / mesh 22`, and one
+    of them is a template documented as carrying no phantom at all.
+
+    Drop the record and the template does apply, but what comes out is not a
+    puppet the workspot system will accept: `IsActorInWorkspot` never goes true
+    and the actor never moves.
+
+    So a spawned NPC is EITHER a record with its own template, OR a template
+    with no record and reduced capability. There is no combining them.
+
+    The CET dev menu's Johnny lab has offered template radio buttons since it
+    was built and every one of them spawns the same entity, because it sets both
+    fields. Read a component count back rather than trusting that a spec field
+    took: `GetCurrentAppearanceName()` and `GetComponents()` both answer, and
+    an hour of this session went on a test that had silently changed nothing.
+
+31. **An impression is not a measurement, and a `DO NOT` written on top of one
+    will outlive the evidence.**
+
+    `scene-playbook.md` carried a rule for months: an `around_player` scene
+    marker "IS NOT ON THE PLAYER, it lands a few metres to one side", and its
+    rotation is "not knowable", therefore **DO NOT** offset an actor from it.
+    A whole architecture was built to route around that: the speaker buried
+    2.5 m under the floor for his voice, a separate script-spawned body, a
+    workspot device to lift him, exit effects to cover the lift, and a 40 m
+    targeting sweep six times a second to find him again.
+
+    All of it rested on one playtest sentence about how a voice SOUNDED
+    (*"still feels very far, like on the right of where I am"*), from an actor
+    who was underground at the time. What that was hearing was the floor.
+
+    Measured on 2026-08-16, in five runs: the marker sits at V's EXACT x and y,
+    it carries V's rotation, +Y is forward and +X is right. The offset is
+    perfectly aimable. Every workaround above was unnecessary, and the T-pose
+    two Nexus reporters described was a side effect of the workaround rather
+    than of anything the engine forces.
+
+    What to take from it:
+
+    - A claim that FORECLOSES an approach earns a measurement before it earns a
+      `DO NOT`. The cost of a wrong "impossible" is unbounded, because nobody
+      re-tests it.
+    - Instrument the thing itself. Two facts written from script and read off
+      the dev menu settled in ten minutes what three months of reasoning did
+      not.
+    - "Vanilla never does this" is an absence of precedent. It is worth noting
+      and it is not evidence that something fails.
+    - Write down which sentences are measurements and which are impressions.
+
+32. **`CreateEntity` queues. A latch set on the REQUEST records a job that may
+    never have happened.**
+
+    Reported in play 2026-08-16, and the words name the symptom exactly:
+    *"when I reached the area where the NPCs should have been, they simply
+    weren't there. I checked the emails on the computer, turned around, and the
+    NPCs suddenly spawned directly in front of me."*
+
+    Two separate faults produce that one sentence, and both are worth carrying
+    into gigs 02-04.
+
+    **Asking for twenty entities in one tick.** `DynamicEntitySystem
+    .CreateEntity` returns an EntityID immediately and the body arrives later:
+    this project already knew that, because its own attitude code retries for
+    ten seconds waiting for one to resolve. Ask at the moment the player
+    arrives and the bodies land behind him while he walks on. Spread the
+    request over a callback chain and trigger it from further out, so the
+    approach absorbs the work.
+
+    **Latching on intent rather than on outcome.** `m_officeSpawned = true` was
+    set BEFORE the spawning, and each guard is placed only if
+    `FindPointInSphereOnlyHumanNavmesh` answers OK. A navmesh that is not ready
+    yet therefore binned all twenty and the gig recorded the site as populated,
+    with no second chance for the rest of the save. Count what was placed, latch
+    on a non-zero count, and retry otherwise. Same shape as #21, one level down.
+
+    A HUD banner is part of the outcome, not part of the request. "Arasaka
+    security on site" fired in the tick the entities were asked for, so it
+    announced an empty compound.
+
+33. **In a serialized resource, 0 usually means index zero, and "none" is
+    `4294967295`.**
+
+    `scnEffectInstanceId` reads like a handle that can be left empty, and
+    leaving it at 0 does not error: it points the event at entry 0 of the
+    scene's own `effectDefinitions`. In 1161 shipped scenes the value for "this
+    effect is named on the performer, not owned by the scene" is 4294967295 in
+    both halves of the struct, and the only `(0, 0)` in the file examined was a
+    genuine reference to that scene's one declared effect.
+
+    The same convention is everywhere in these formats and the sentinels are not
+    even all the same number: `scnActorId` and `scnLipsyncAnimSetSRRefId` use
+    4294967295 for none, `scnPerformerId` uses 4294967040 for "no performer, a
+    world effect". A `TweakDBID` or `NodeRef` really does use 0.
+
+    So do not reason about an empty id from its name. Dump a vanilla resource
+    that uses the field and copy what it writes.
+
+34. **A NodeRef has two spellings and only the long one is a name.**
+
+    `$/03_night_city/#c_santo_domingo/arroyo/#my_node` registers and resolves.
+    `#my_node` does not, for a node a mod ships. Every one of the 33506
+    nodeRefs in the game's `always_loaded_0` is the long form; this repo wrote
+    the short one everywhere, and read the resulting failure as "a node in a
+    mod sector never registers its global name". That claim then shaped the map
+    pin architecture for months. Measured and corrected 2026-08-17,
+    `backlog.md` 11.
+
+    **The probe for it has a trap of its own.** An absolute `$/...` path is
+    HASHED rather than looked up, so `ResolveNodeRef` reports a defined
+    reference for any long string, including one nothing ships. Only reaching a
+    live entity is evidence. A run whose negative control is a short name
+    cannot tell the two apart, and the first run here was exactly that and
+    looked like a breakthrough for twenty minutes.
+
+35. **`worldEntityNode` places props, not people.**
+
+    Two different character entity templates were shipped in a mod sector as
+    `worldEntityNode` and neither instantiated, while a prop node four metres
+    away resolved to a live entity. The shipped data says the same thing: a
+    real exterior sector holds 25 entity nodes, 77 static meshes and 71 smart
+    objects, and no NPCs at all.
+
+    NPCs come from COMMUNITIES. `always_loaded_0` holds exactly two node types,
+    4500 `worldStaticMarkerNode` for the spots and 785
+    `worldCompiledCommunityAreaNode` binding entry and phase to spot. The
+    characters live in a `.community` resource, 4033 of which ship, whose
+    `communitySpawnEntry.characterRecordId` is a TweakDBID and whose
+    `timePeriods[].spotNodeRefs` are NodeRefs. Both are things a mod can
+    author, which is why #34 matters.
+
+    Before concluding a thing cannot be placed, check which NODE TYPE the base
+    game places it with. Two failed templates say nothing if the node type was
+    never the right one.
+
+36. **A marker's height is not a floor, so burying an actor under one is a
+    guess.**
+
+    Hiding a voice-only scene actor by spawning it a couple of metres below the
+    scene's marker works only if the marker stands on ground. Gig 01 buried one
+    2.5 m under `#q113_dvc_arasaka_estate_camera_010`, which is a security
+    camera, so its height is a mounting height. The burial landed 3.2 m below
+    the terrace where the conversation happens, inside a furnished room one
+    storey down, and players saw a man appear there and vanish when the
+    dialogue ended.
+
+    The height cannot be checked at the desk either. A cooked sector stores its
+    node refs as hashes, and the only place a name is written out is the
+    always-loaded name registry, which carries no positions. Resolving the ref
+    in game is the whole measurement:
+
+    ```
+    ResolveNodeRef(CreateNodeRef(path), root) -> Cast<EntityID> -> FindEntityByID
+    ent.GetWorldPosition()
+    ```
+
+    Prefer not needing the number. A line with `voExpression:
+    Vo_Expression_InnerDialog` plays 2D, so its speaker can stand a kilometre
+    away where nothing can see it, and no burial has to be justified. See
+    `backlog.md` 10k.

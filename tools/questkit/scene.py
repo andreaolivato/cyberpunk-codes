@@ -28,6 +28,7 @@ by ArchiveXL under `localization: subtitles:`. Ship a scene without one and
 everything works except the words. See docs/scene-playbook.md.
 """
 import json
+import math
 import os
 
 # --------------------------------------------------------------- per-mod config
@@ -106,8 +107,10 @@ def configure(out_dir, scene_depot, subtitle_out, subtitle_map_out,
 # rather than being a hint alongside a node.
 #
 # So a scene can be staged at the player, and a spawnDespawn actor's spawnOffset
-# is then relative to V - exactly what Gig01_Encounter's SpawnJohnny does by
-# hand, except that a scene line carries a RUID and can therefore be VOICED.
+# is then relative to V, in V's own frame: +Y forward, +X right. Measured in
+# game five times, docs/backlog.md 9. That is what makes a scene able to place
+# its own speaker beside the player, which is the whole reason no script places
+# anyone any more.
 #
 # gen_questphase.add_scene() turns this sentinel into the Tag marker; it is not
 # a NodeRef and must not be written as one.
@@ -209,12 +212,16 @@ MS_VOICED_PAD = 350
 
 # THE BODY DOUBLE, AND THE ONE THING IN THIS FILE THAT IS A GAMBLE.
 #
-# Lipsync plays on the line's SPEAKER, and in eleven of this gig's fourteen
-# scenes the speaker is not the body you can see. That split is deliberate and
-# it works, confirmed in game: the script owns placement, visibility and the
-# exit FX, the scene owns the words, and the scene's actor is buried 2.5 m under
-# the floor so there is never a second body in the room. A lipsync animation on
-# that actor moves an invisible mouth.
+# Lipsync plays on the line's SPEAKER, and that is why a speaker who has to be
+# SEEN must be the scene's own actor. Johnny is, in all seven of his beats: the
+# scene places him, poses him, and glitches him out, so the mouth that moves is
+# the body on screen.
+#
+# It is still not true of everyone. A speaker who has to exist before or after
+# his scene cannot be a scene actor at all - Hoshino is found and shot outside
+# his, Mama Welles is a base-game NPC in a bar - so those two keep a voice-only
+# actor buried 2.5 m under the floor, and a lipsync animation on that actor
+# moves an invisible mouth.
 #
 # `scnAdditionalSpeakerRole.OnlyLipsync` is the engine's own answer, and vanilla
 # ships it for exactly this shape of problem: `q000_kid_01b_meet_your_fixer` and
@@ -349,6 +356,44 @@ def line_ms(text, scene=None, key=None):
 
 
 # ---------------------------------------------------------------- primitives
+
+def yaw_to_face_player(offset):
+    """The yaw that turns an actor at `offset` back to look at the player.
+
+    ONLY MEANINGFUL ON AN `around_player` MARKER, where the offset is in V's own
+    frame. All three facts below were measured in game on 2026-08-16, not
+    assumed:
+
+      * the marker sits at V's EXACT x and y (`dist` 0 cm on two runs)
+      * +Y is FORWARD (an offset of (0, 2, 0) landed 2.00 m dead ahead on two
+        runs facing 180 degrees apart)
+      * +X is RIGHT (an offset of (1.1, 1.8, 0) landed 2.10 m away, 32 degrees
+        off dead ahead, on the right-hand side)
+
+    A FIXED 180 IS NOT THE ANSWER, and that is the trap this function exists to
+    close. 180 points him at V only when he is directly ahead; at (1.1, 1.8) it
+    left him looking 32 degrees wide, which is visible.
+
+    Yaw is counter-clockwise seen from above, so a heading of theta faces
+    (-sin, cos). Facing V from `offset` means facing (-x, -y), which gives
+    atan2(x, -y). Straight ahead returns 180, matching the run that worked.
+    """
+    return math.degrees(math.atan2(offset[0], -offset[1]))
+
+
+def _yaw_quat(yaw):
+    """A rotation about Z, as the game writes quaternions.
+
+    yaw 0 returns the exact integer identity the generator emitted before this
+    existed, so every scene that does not set a yaw stays byte-identical and a
+    rebuild shows only what actually changed.
+    """
+    if yaw == 0.0:
+        return {'$type': 'Quaternion', 'i': 0, 'j': 0, 'k': 0, 'r': 1}
+    half = math.radians(yaw) / 2.0
+    return {'$type': 'Quaternion', 'i': 0, 'j': 0,
+            'k': math.sin(half), 'r': math.cos(half)}
+
 def cname(v):
     return {'$type': 'CName', '$storage': 'string', '$value': v if v else 'None'}
 
@@ -530,7 +575,8 @@ class Scene:
         return self.lipsync_sets.index(pick['anims']), pick['voicetag']
 
     # -- actors ------------------------------------------------------------
-    def add_johnny(self, appearance=JOHNNY_SOLID, offset=(0.0, 0.0, 0.0)):
+    def add_johnny(self, appearance=JOHNNY_SOLID, offset=(0.0, 0.0, 0.0),
+                   yaw=0.0):
         """Johnny's relic apparition, as a PRESENT actor.
 
         Every value here is copied from a shipped scene where he speaks
@@ -547,13 +593,13 @@ class Scene:
         (add_workspot_node + fire_workspot) or he is invisible either way.
         """
         return self.add_actor(JOHNNY_ACTOR, 'Character.Silverhand',
-                              offset=offset,
+                              offset=offset, yaw=yaw,
                               appearance=appearance,
                               voicetag='1103967280742240508',
                               validate=1)
 
     def add_actor(self, actor_name, record, offset=(1000.0, 1000.0, -100.0),
-                  appearance='default', voicetag='0', validate=0):
+                  appearance='default', voicetag='0', validate=0, yaw=0.0):
         """A speaking NPC the scene spawns itself.
 
         The offset puts the body a kilometre away and a hundred metres down:
@@ -619,7 +665,18 @@ class Scene:
                 'spawnMarkerType': 'Local',
                 'spawnOffset': {
                     '$type': 'Transform',
-                    'orientation': {'$type': 'Quaternion', 'i': 0, 'j': 0, 'k': 0, 'r': 1},
+                    # `yaw` IS IN THE PLAYER'S FRAME when the scene is staged
+                    # on an `around_player` marker, exactly like the position
+                    # beside it. MEASURED IN GAME, 2026-08-16: an actor at
+                    # offset (0, 2, 0) landed 2.00 m dead ahead of V on two
+                    # runs facing 180 degrees apart - bearing from V's facing
+                    # 359 and 0 degrees, bearing in world terms 76 and 256.
+                    #
+                    # That kills the claim this file carried for months, that
+                    # the marker's rotation is not knowable and a horizontal
+                    # offset therefore cannot be aimed. It can. 180 turns the
+                    # actor back to face V.
+                    'orientation': _yaw_quat(yaw),
                     'position': {'$type': 'Vector4', 'W': 0,
                                  'X': offset[0], 'Y': offset[1], 'Z': offset[2]}},
                 'spawnOnStart': 1,
@@ -1066,9 +1123,20 @@ class Scene:
                            'nodeId': node_id(nid), 'outputSockets': []})
         return nid
 
-    def section(self, spoken, holocall=False, inner=False, tail_ms=0,
-                lead_ms=700):
+    def section(self, spoken, holocall=False, inner=False, inner_vo=False,
+                tail_ms=0, lead_ms=700):
         """A block of dialogue. `spoken` is [(line_index, text), ...].
+
+        `inner_vo` is `inner` split in half: the inner-dialog VO expression,
+        which is what makes a line play 2D, without the inner-dialog subtitle
+        styling, which is Johnny's relic register and belongs to him. It exists
+        for a speaker who is standing in front of V and must be heard rather
+        than located - see build_hoshino in gen_scenes.py.
+
+        Which of the two fields carries the 2D behaviour has never been
+        separated: `inner` sets both, and the evidence for 2D (Johnny audible
+        from a misplaced marker while Mama Welles was not) came from a line
+        with both set. So `inner_vo` is a candidate, not a known-good.
 
         Lines are laid end to end: each event's startTime is the running total,
         and sectionDuration is the sum. With no audio, these numbers are the
@@ -1164,7 +1232,8 @@ class Scene:
                     # Spoken = face to face, Phone = through the call UI. There
                     # is no "Normal": the enum starts at Vo_Expression_Spoken.
                     'voExpression': ('Vo_Expression_Phone' if holocall else
-                                     'Vo_Expression_InnerDialog' if inner else
+                                     'Vo_Expression_InnerDialog'
+                                     if (inner or inner_vo) else
                                      'Vo_Expression_Spoken'),
                 },
             }})
@@ -1509,32 +1578,130 @@ class Scene:
         return self.fire_event(section, ws_node, start_time)
 
     def stage_johnny(self, first_section, last_section, actor=JOHNNY_ACTOR):
-        """The scene half of the split-ownership recipe, in one call.
+        """Everything a visible scene actor needs, in one call.
 
-        Two events, and BOTH of them have already been got wrong once:
+        The name is historical: nothing here is specific to Johnny except the
+        default actor. Position and facing are set on the actor itself, by
+        add_johnny; this adds the two things that are per-SECTION and cannot be.
 
-          the workspot, at t=0 of the FIRST section. It is not decoration - it
-          is what makes the actor exist to the renderer AND to the targeting
-          query, so a late one means the script cannot even find him to place
-          him. Passing the wrong section here is silent: firing an events socket
-          on a valid section is valid whichever section it is.
+          the workspot, at t=0 of the FIRST section. It is not decoration -
+          `gamePhantomEntityComponent.phantomVisibleStates` is
+          ["RootMotion","Workspot"], so without one the actor is invisible AND
+          untargetable. Passing the wrong section here is silent: firing an
+          events socket on a valid section is valid whichever section it is.
 
-          the exit cue, 250 ms before the LAST section ends, so the script can
-          glitch him out before the scene deletes him. Timed here because the
-          scene is the only thing that knows its own length; computing it
-          script-side anchored it to placement time and fired five seconds late.
+          the exit, 250 ms before the LAST section ends. A scene deletes its
+          spawnDespawn actors on the frame it exits, so without this he pops.
+          Timed here because the scene is the only thing that knows its own
+          length; the deleted script route computed it from placement time
+          instead and fired five seconds late.
 
         MUST be called after every link_section on those sections - output
         sockets are written in order and validate() enforces it.
 
-        Full recipe and the rule for where it may be used at all:
-        docs/scene-playbook.md, "THE SPLIT-OWNERSHIP RECIPE".
+        Full recipe: docs/scene-playbook.md, "STAGING A CHARACTER WHO SPEAKS,
+        LIPSYNCS AND STANDS BESIDE V".
         """
         self.fire_workspot(first_section, self.add_workspot_node(actor),
                            start_time=0)
         dur = self._node(last_section)['sectionDuration']['stu']
+        exit_at = max(dur - 250, 0)
+        # THE EXIT FLASH. A scene removes its spawnDespawn actors on the frame
+        # it exits, so without this the apparition simply pops out of existence.
+        # The old script route covered it by playing the same effect and
+        # deleting the body 0.25 s later, calibrated by ear across 1.2 / 0.45 /
+        # 0.25 s; that listener went with the script placement.
+        #
+        # The scene plays it itself now, which is better than the listener was:
+        # no polling, no search for the body, and the timing is the scene's own
+        # to the millisecond rather than a tick boundary. Same number as the cue
+        # below, so the flash and the cue agree.
+        self.fire_vfx(last_section, 'johnny_teleport_start',
+                      self.performer_id(actor), start_time=exit_at)
+        # The cue stays even though nothing listens to it now. It costs one
+        # quest node and it is the only signal a future script could use.
         self.fire_event(last_section, self.add_fact_node('cc_g01_johnny_exit'),
-                        start_time=max(dur - 250, 0))
+                        start_time=exit_at)
+
+    def performer_id(self, actor_name):
+        """The performer id of a named scene actor.
+
+        Performer ids are actor id + 1, which is the convention add_actor
+        already writes into every scnPerformerSymbol. Looked up by name rather
+        than passed in, because every stage_johnny caller has the name and none
+        of them keeps the id.
+        """
+        for a in self.actors:
+            if a['actorName'] == actor_name:
+                return a['actorId']['id'] + 1
+        raise SystemExit('%s: no actor named %s' % (self.name, actor_name))
+
+    def fire_vfx(self, section, effect, performer, start_time=0, action='Play'):
+        """Play a named effect on a performer, from the scene itself.
+
+        `scneventsVFXEvent` is what vanilla uses for this, and it is used a lot:
+        1161 of the 7067 shipped .scene files carry one (counted 2026-08-17 by
+        extracting every scene from basegame_4_gamedata.archive). That count is
+        the gotcha #17 check, not a formality - an event class existing in
+        Codeware's dump is no evidence the engine implements it, and this
+        project has already shipped one enum member that looked right and killed
+        the game three seconds into its scene.
+
+        Every field below is q101_07c_johnny_triggers.scene's, which plays
+        `johnny_teleport_start` on Johnny twice. Two things it settles:
+
+        effectInstanceId IS NOT ZERO. It is 4294967295 in both halves, and zero
+        would be wrong rather than merely empty: zero is a real index into the
+        scene's own `effectDefinitions`, so an event written with it points at a
+        scene effect resource we do not ship. In that one file, 27 of 28 events
+        carry the sentinel and the one that carries (0, 0) is the scene's own
+        q101_pills_spill.effect, declared in effectDefinitions with effectId 0.
+
+        A NAMED EFFECT NEEDS NO DECLARATION ANYWHERE. `johnny_teleport_start`
+        does not appear in that scene's effectDefinitions at all; only the
+        pills do. Effects named on an event resolve against the performer's own
+        entity, which is also how the deleted script route played this one.
+
+        A performer-attached effect leaves nodeRef at 0 and names a performer; a
+        WORLD effect is the mirror image, performerId 4294967040 and a real
+        nodeRef (that file's `q101_shower` on #mq000_shower). We only ever want
+        the first.
+
+        A wrong CName does nothing at all and looks identical to no event, so
+        the shipped names are listed in docs/scene-playbook.md and must never be
+        guessed.
+
+        No output socket, unlike fire_event: this fires an effect, not a branch.
+        """
+        node = self._node(section)
+        if node['$type'] != 'scnSectionNode':
+            raise SystemExit('%s: fire_vfx needs a section, got %s'
+                             % (self.name, node['$type']))
+        node['events'].append({'HandleId': '@ev', 'Data': {
+            '$type': 'scneventsVFXEvent',
+            'action': action,
+            'duration': 0,
+            'effectEntry': {
+                '$type': 'scnEffectEntry',
+                'effectInstanceId': {
+                    '$type': 'scnEffectInstanceId',
+                    'effectId': {'$type': 'scnEffectId', 'id': 4294967295},
+                    'id': 4294967295,
+                },
+                'effectName': cname(effect),
+            },
+            'executionTagFlags': 0,
+            'id': {'$type': 'scnSceneEventId',
+                   'id': ruid('ev-vfx/%s/%d/%s/%d'
+                              % (self.name, section, effect, start_time))},
+            'muteSound': 0,
+            'nodeRef': noderef(None),
+            'performerId': {'$type': 'scnPerformerId', 'id': performer},
+            'scalingData': None,
+            'sequenceShift': 0,
+            'startTime': start_time,
+            'type': '0',
+        }})
 
     def fire_event(self, section, target, start_time=0):
         """Fire a terminal quest node from a section at a given time.

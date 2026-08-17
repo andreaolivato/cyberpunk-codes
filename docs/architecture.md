@@ -42,7 +42,7 @@ had gone stale in three rows.
 | ArchiveXL | loads journal / localization / voiceover map / lipmap / streaming / questphase extensions via `.archive.xl` |
 | redscript | gameplay logic + UI wraps, ships as source, compiles at game launch |
 | TweakXL | database records. In use, `source/tweaks/shard.yaml` |
-| Codeware | scripting utilities. In use, `DynamicEntitySystem` spawns the Mama Welles stand-in and the workspot device that places Johnny |
+| Codeware | scripting utilities. In use, `DynamicEntitySystem` spawns the guards, Hoshino and the Mama Welles stand-in |
 | CET (Lua) | dev tooling only, never shipped gameplay logic |
 
 **Audioware is NOT a dependency and is not shipped.** It sat in this table for
@@ -580,11 +580,19 @@ so every NPC this gig places is script-spawned.
 | Hoshino | `Character.cc_g01_hoshino` | ours, via TweakXL (`source/tweaks/hoshino.yaml`), the one place the "clone an Arasaka record" plan was actually needed |
 | guards, netrunners, snipers | ten vanilla `Character.arasaka_*` / `nok_*` / `sts_std_arr_*` records | listed in `Gig01_Encounter.reds`; vanilla records need no TweakXL at all |
 | Mama Welles stand-in | `Character.Mama_Welles` | only spawned if the REAL one is absent; the script prefers her |
-| the workspot device | `cc_g01_workspot.ent` | not an NPC, the invisible entity that positions AND turns Johnny |
 
-**Johnny is NOT spawned by script.** He is a scene actor in every beat, because
-lipsync lands on the line's speaker. See "THE SPLIT-OWNERSHIP RECIPE" in
-`docs/scene-playbook.md`.
+**Johnny is NOT spawned or placed by script, and nothing searches for him.**
+Each of his seven beats is staged entirely by its own scene: the actor is
+offset from an `around_player` marker, turned to face V by a computed yaw, made
+visible by a workspot, and glitched out by a `scneventsVFXEvent` 250 ms before
+the scene ends. One call does all of it, `Scene.stage_johnny`.
+
+That replaced a script route that buried the scene's actor under the floor and
+lifted a second body into place, which is where the T-pose, the mid-air
+arrivals and the risk of grabbing another mod's Silverhand all came from. See
+"STAGING A CHARACTER WHO SPEAKS, LIPSYNCS AND STANDS BESIDE V" in
+`docs/scene-playbook.md`, and `docs/backlog.md` 9 for the measurements that
+made it possible.
 
 **TweakDBIDs are case-sensitive and are not reliably discoverable from files on
 disk.** `Character.Mama_Welles` and her position were found with the CET dev

@@ -32,7 +32,7 @@ confirmed to exist, which "Read" is not (TweakDB record names are not
 discoverable from the files on disk). It is also the honest verb: in vanilla you
 pick a shard up and the reader opens, which is this beat.
 
-Same authoring rules as gen_workspot_ent.py, and they are not optional:
+The authoring rules below are not optional:
   * NO `compiledData` - WolvenKit regenerates it from `components` on write, and
     hand-writing the buffer produces no output file at all;
   * components are INLINE objects, `entity` is a {HandleId, Data} handle.

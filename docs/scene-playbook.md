@@ -242,50 +242,146 @@ than an unvoiceable caption.** A `spawnDespawn` actor's `spawnOffset` is then
 relative to V, precisely what a script-side `DynamicEntitySpec` spawn was
 doing by hand. Except a scene line carries a RUID and can therefore be voiced.
 
-Use it for a beat whose position is not known in advance **and whose speaker does
-not need to be heard from a place**. Read the next paragraph before relying on
-it. Use a NodeRef when the beat has a real place (a bar counter, a specific
-room) and you want the actor exactly there.
+Use it for any beat whose position is not known in advance. Use a NodeRef when
+the beat has a real place (a bar counter, a specific room) and you want the
+actor exactly there.
 
-**`around_player` IS NOT ON THE PLAYER.** It lands a few metres to one side,
-and the offset is audible.
+**`around_player` sits on the player exactly, and it carries V's rotation.**
+Measured in game, five runs (`backlog.md` §9):
 
-Playtest, on Mama Welles speaking from a buried actor at offset
-(0, 0, −2.5) off a Tag marker: *"still feels very far, like on the right of
-where I am"*.
+| Offset given | Where the actor landed | Runs |
+|---|---|---|
+| (0, 0, −2.5) | 0.00 m horizontally from V, 2.50 m down | 2, facings 175° apart |
+| (0, 2, 0) | 2.00 m, 0° off dead ahead | 2, facings 180° apart |
+| (1.1, 1.8, 0) | 2.10 m, 32° off ahead, on the RIGHT | 1 |
+| (−1.1, 2.4, 0) | 2.64 m, 24° off ahead, on the LEFT | 1 |
 
-So the tag is only good enough when position does not matter.
+So the marker is at V's exact x and y, and in `spawnOffset`, **+Y is FORWARD
+and +X is RIGHT**, in V's own frame. An offset can be aimed. The recipe is
+below.
 
-Which turns on ONE field:
+Line style still turns on ONE field:
 
 | line style | positional? | marker |
 |---|---|---|
 | `holocall=True` (`isHolocallSpeaker`) | no, 2D through the phone | anything |
-| `inner=True` (`Vo_Expression_InnerDialog`) | no, 2D, in V's head | `around_player` is fine |
+| `inner_vo=True` (`Vo_Expression_InnerDialog`) | no, 2D | anything, including nowhere |
+| `inner=True` (the same, plus `visualStyle: innerDialog`) | no, 2D, in V's head | `around_player` is fine |
 | default (`Vo_Expression_Spoken`) | yes | a real anchor near the speaker |
 
-The middle row is the useful discovery, and it came free: Johnny and Mama Welles
-had *identical* setups. Buried actor, Tag marker, and he was fine while she was
-not. The only difference between them is `inner`. So an inner-dialog speaker
-needs no placement at all, precisely right for a relic in someone's head.
+The 2D rows are the useful discovery, and the first came free: Johnny and Mama
+Welles had *identical* setups. Buried actor, Tag marker, and he was fine while
+she was not. The only difference between them is `inner`.
 
-**DO NOT OFFSET AN ACTOR FROM A TAG MARKER TO PUT HIM BESIDE V.** The marker's
-rotation is not knowable, so a horizontal offset does not track which way V is
-facing. He ends up in front, behind or sideways depending on where the player
-happens to be looking. Vanilla never does this: `sts_pac_cvi_02_johnny.scene`,
-the one shipped Johnny scene staged with a Tag marker, gives its actor **its own
-`spawnMarkerNodeRef` and a zero offset**.
+**`inner` sets two fields, and only one of them does that work.** Separated in
+game 2026-08-17 by routing the two lines of one conversation differently: with
+`voExpression` alone, and with both. Both were audible and both subtitles read
+the same, so `voExpression` carries the 2D behaviour and `visualStyle:
+innerDialog` is styling that changes nothing visible on a speaker who is not
+Johnny. Use `inner_vo` for anyone who is not a relic in somebody's head: an
+Arasaka fixer standing in front of V should sound un-located without his
+subtitle claiming to be a hallucination.
 
-So split the job:
+A speaker whose lines are 2D needs no placement at all, which is worth more than
+it sounds. The actor can sit at the default offset a kilometre out, where it
+cannot be seen, walked into, or watched disappearing when the scene exits. Every
+attempt to HIDE a body instead is a guess about the geometry under a marker, and
+`gotchas.md` #36 is what one of those cost.
 
-| what | where it belongs |
-|---|---|
-| a body that must be seen in a particular spot | the SCRIPT (`DynamicEntitySpec`, player-relative maths, its own workspot and exit FX) |
-| the words | a scene actor buried straight down (0, 0, −2.5) |
+### Putting an actor in front of V, facing him: the whole recipe
 
-Straight down is the only offset that needs no knowledge of the marker's
-rotation, and it is close enough to be heard while leaving no second body in the
-room. That is what gig 01 ships for Johnny, Hoshino and Mama Welles.
+Two fields on the actor's `spawnDespawnParams`, and nothing else:
+
+```python
+spawnOffset.position     = (aside, ahead, 0)   # metres, in V's frame
+spawnOffset.orientation  = yaw_to_face_player((aside, ahead, 0))
+```
+
+`aside` is positive to the RIGHT, `ahead` is positive FORWARD, both in metres.
+`questkit.scene.yaw_to_face_player` returns the yaw that turns the actor back to
+look at V from wherever the offset puts him.
+
+**Never type the yaw by hand.** A fixed 180 is the obvious guess and it is
+correct only from dead ahead: at (1.1, 1.8) it left the actor looking 32 degrees
+past V's shoulder, which reads on screen as talking to nobody. The helper
+returns 180 for the dead-ahead case, so the guess is a special case of it.
+
+What this gives, confirmed in game on the arasaka beat:
+
+- the scene places the actor, so he arrives already posed. **No T-pose.**
+- no burial, no script placement, no workspot device, no per-tick targeting query
+- he is the line's speaker, so lipsync and the voiceover map still work
+- it works anywhere, so a beat whose position is unknown in advance needs no
+  special handling
+
+Vanilla's one Tag-marker Johnny scene (`sts_pac_cvi_02_johnny.scene`) gives its
+actor its own `spawnMarkerNodeRef` and a zero offset, so there is no vanilla
+precedent for offsetting off a Tag marker. That is an absence of precedent
+rather than evidence against, and it is worth knowing before you assume the
+approach is standard.
+
+#### The exit flash: the scene plays it itself
+
+A scene removes its `spawnDespawn` actors on the frame it exits, so without an
+effect the actor POPS out of existence rather than fading. Arrival is fine, it
+comes free with the workspot's own materialisation.
+
+The old script route covered this by playing `johnny_teleport_start` on him and
+deleting him 0.25 s later, so the vanish happened behind the flash. That
+calibration was made by ear across 1.2 / 0.45 / 0.25 s. With the scene owning
+the actor there is nothing to delete and no hook to hang a listener on, and a
+1.5 s script tick cannot catch a 250 ms window in any case: the old code polled
+at 0.15 s to manage it.
+
+**`scneventsVFXEvent` is the answer, and it is a shipped, heavily used class.**
+1161 of the 7067 `.scene` files in `basegame_4_gamedata.archive` carry one
+(counted 2026-08-17). `questkit.scene.Scene.fire_vfx` emits it and
+`stage_johnny` fires one 250 ms before the last section ends, on the same number
+as the `cc_g01_johnny_exit` cue, which stays for a future script to use.
+
+Every field is `q101_07c_johnny_triggers.scene`'s, which plays this exact effect
+on Johnny twice. Two traps it settles:
+
+- **`effectInstanceId` is `4294967295`, not zero, in both halves.** Zero is a
+  real index into the scene's own `effectDefinitions`, so an event written with
+  it points at an effect resource the scene does not ship. In that file 27 of 28
+  events carry the sentinel; the one that carries `(0, 0)` is the scene's own
+  `q101_pills_spill.effect`, declared with `effectId: 0`.
+- **A named effect needs no declaration anywhere.** `johnny_teleport_start` is
+  not in that scene's `effectDefinitions` at all. Effects named on an event
+  resolve against the performer's own entity.
+
+A performer-attached effect leaves `nodeRef` at 0 and names a performer
+(`actorId + 1`). A WORLD effect is the mirror image: `performerId` 4294967040
+and a real `nodeRef`.
+
+The effect names are shipped and must never be guessed:
+`johnny_teleport_start`, `johnny_teleport_end`, `johnny_appear_glitch`,
+`johnny_spawn_slow` / `_normal` / `_fast`, `glitch`,
+`johnny_glitch_idle_01..03`. A wrong CName does nothing at all and looks
+exactly like the bug you are chasing.
+
+#### A scene-placed actor does not sit perfectly on uneven ground
+
+Seen in play 2026-08-17: Johnny clips scenery and his feet sink below the
+pavement on a kerb. Harmless for an apparition. It matters because it decides
+how any future SOLID NPC gets placed.
+
+The offset is baked at build time and measured from V's own Z, so any difference
+between the ground under V and the ground under the actor shows as sinking or
+floating. `validateSpawnPostion` does not help: it rejects grossly invalid
+spawns rather than fine-placing anyone.
+
+Two honest options for a solid NPC, and they cannot be combined:
+
+| Route | Ground | Pose |
+|---|---|---|
+| Fixed world anchor (NodeRef), authored on real geometry | exact | correct, no T-pose |
+| Script placement with a navmesh query | exact | **T-pose**, see `backlog.md` 9 |
+| Scene placement on `around_player` (what ships now) | approximate | correct, no T-pose |
+
+Runtime ground-snapping and scene-owned posing are mutually exclusive: only a
+script can query the navmesh, and only a scene can pose the actor on arrival.
 
 **Audio falls off with distance. It is not on/off.** The playtest report of
 Mama Welles as *"low and far, almost cannot hear it"* established two things at
@@ -742,137 +838,57 @@ marker plus (1000, 1000, -100) - a kilometre out. A "speakers further apart than
 6 m" condition is true the instant the scene starts. It stays unshipped until the
 voice-only-actor design goes away.
 
-### Moving a scene-spawned body from script: the way out of two bodies
+### The script placement route: BUILT, SHIPPED, AND DELETED 2026-08-17
 
-The reason this gig has two Johnnys is that a scene actor's `spawnOffset` is in
-the MARKER's frame and an `around_player` marker's rotation is not knowable, so
-the scene cannot put him beside V. Hence: script owns the body, scene owns the
-words, and the scene's actor is buried.
+Everything below this heading used to be the recipe. It is kept in one short
+section because the findings inside it are reusable and because a route that was
+shipped for months should not vanish without a record, but **do not build any of
+it**. The placement recipe above is the whole answer now.
 
-**There is a third arrangement, and both of its pieces are compiler-confirmed
-(2026-08-14).** Let the SCENE spawn him. As `build_bar` already does, and let
-the SCRIPT move him afterwards:
+What the route was, and why it existed: a scene actor's `spawnOffset` was
+believed to be unaimable, so the scene could not put an actor beside V. The
+workaround was to split him in two. The scene owned the words and buried its
+actor 2.5 m under the floor; the script found a second body with a 40 m
+targeting query, placed it with an invisible workspot device, and played arrival
+and exit effects to cover the handover.
 
-- **Find him:** the `FindMamaWelles` pattern in `Gig01_Encounter.reds`: a
-  `TargetSearchQuery` through `GetTargetParts`, matching `GetRecordID()`. A
-  scene-spawned actor has no tag and no `EntityID` we hold, but it is a puppet
-  in the world like any other, and there is exactly one `Character.Silverhand`.
-- **Move him:** `GameInstance.GetTeleportationFacility(game).Teleport(obj:
-  ref<GameObject>, pos: Vector4, angles: EulerAngles)`.
-  **`TeleportPuppetToPosition` does not exist**: that was the first guess and
-  `check-scripts.ps1` rejected it.
+It rested on a claim that was never measured and turned out to be false. The
+marker sits at V's exact position and carries V's rotation, so the offset is
+perfectly aimable. `backlog.md` 9 has the measurements and `gotchas.md` #31 has
+the lesson. Deleting the workaround deleted, in one change: the T-pose two
+players reported (it was the bind pose flashing as the body moved between two
+workspots), the mid-air arrivals, a 40 m query running 6.6 times a second that
+could grab another mod's Silverhand, 645 lines of redscript, the workspot entity
+and its generator.
 
-Then there is ONE body: scene-owned, so it is the speaker and gets the lipsync,
-the audio and the name; script-positioned, so placement is the maths that
-already works. The costs are real. The workspot must be re-fired after the
-move, the exit FX goes back to the script, and a failure is visible (a Johnny in
-the wrong place) rather than silent.
+**Findings from it that still apply**, because they are about the engine rather
+than about the route:
 
-### The script route, for a Johnny who is NOT in a scene
-
-`WorkspotGameSystem` is reachable from script and AMM uses it for poses. Verified
-names (invented ones this project might have guessed - `PlayInWorkspot`,
-`StopInWorkspot`, `SendFastForwardSignal`, `SendJumpToAnimEnter` - **do not
-exist**):
-
-```
-GameInstance.GetWorkspotSystem(game) -> ref<WorkspotGameSystem>
-  PlayInDeviceSimple(device, actor, allowCameraMov, opt actorDataCompName, ...)
-  StopInDevice(actor, opt posDelta, opt orientDelta)
-  StopNpcInWorkspot(actor)
-  IsActorInWorkspot(actor) -> Bool
-  SendJumpToAnimEnt(actor, animName, instant)
-```
-
-`PlayInDeviceSimple` needs a "device" GameObject carrying a named
-`workWorkspotResourceComponent`. There is no generic base-game workspot marker
-entity, so this route needs a small custom `.ent` - which is what AMM ships
-(`base\amm_workspots\entity\workspot_anim.ent`, components
-`amm_workspot_base` / `amm_workspot_specialnpc` / `amm_workspot_custom_base`).
-
-All five names above are confirmed by the compiler, not by reading: they are
-in shipped `Gig01_Encounter.reds` and `check-scripts.ps1` passes, with
-`-SelfTest` proving the checker still detects breakage.
-
-**BUILT 2026-08-12**: `tools/gen_workspot_ent.py` emits the device, 702 bytes,
-at `mod\negative_balance\entity\cc_g01_workspot.ent`, one component named
-`cc_g01_johnny_stand`. Written from the component shape in the base game's
-`base\quest\character_vehicles\johnny_car.ent`. Not copied from AMM, which
-ships no LICENSE and whose README defers to its Nexus page; only the component
-shape is reused and it is engine API.
-
-Three things that are not guessable, each of which cost a failed conversion:
-
-- **`components` entries are inline objects, NOT `{HandleId, Data}` handles** -
-  the opposite of `entity`, and of scene events. WolvenKit rejects the file with
-  a bare `JsonException ... Path: $` naming only a line number.
-- **`entity` must be `gameObject`, not `entEntity`.** `PlayInDeviceSimple` takes
-  a `ref<GameObject>` and the script obtains it with `GetEntity(id) as
-  GameObject` - a cast that returns null for a plain `entEntity`. The device
-  would spawn perfectly and be unusable.
-- **Omit `compiledData` entirely.** WolvenKit regenerates it from `components`:
-  verified by round-tripping our own file, which came back with chunk 0 the
-  `gameObject` root, chunk 1 the component, and a consistent CruidDict. That
-  corroborates `docs/backlog.md` 3b's correction from the opposite direction -
-  authoring from scratch rather than editing an existing entity.
-
-Spawn it with `DynamicEntitySpec.templatePath`, at the actor's exact position and
-with no orientation (the workspot orients him; a rotation on the device
-fights it). Mind the ResRef doubled-backslash trap, `docs/gotchas.md` #13.
-
-`IsActorInWorkspot(johnny)` returning true while he stays invisible would
-falsify the whole workspot hypothesis in a single launch. The gig logs it as
-fact `cc_g01_dbg_johnny_ws`:
-
-    1  an entity never resolved
-    2  the call was made
-    3  called, but not in a workspot
-    4  in a workspot
-
-4 with nothing on screen
-is the one that matters - it means `phantomVisibleStates` is not the gate, and
-the next attempt should go at root motion or at removing the component.
-
-### Johnny's arrival and exit FX: SOLVED, confirmed in game 2026-08-12
-
-His arrival glitch is free: it is the workspot's own `meshDissolvingEnabled`
-running as the Workspot state begins. Nothing to author.
-
-His exit is not free, `DeleteEntity` removes the mesh on the frame it runs,
-so he pops. The fix, and it is now locked:
-
-```reds
-GameObjectEffectHelper.StartEffectEvent(johnny, n"johnny_teleport_start");
-// ...DeleteEntity 0.25 s later.
-```
-
-**The effect names are shipped data, not guesses.** `johnny.ent`'s
-`entEffectSpawnerComponent` declares Johnny's own FX and these are the usable
-ones:
-
-| name | file |
-|---|---|
-| `johnny_teleport_start` | leaving, this one |
-| `johnny_teleport_end` | arriving |
-| `johnny_appear_glitch` | `johnny_silverhand_appear_glitch.effect` |
-| `johnny_spawn_slow` / `_normal` / `_fast` | spawn variants |
-| `glitch` | `johnny_silverhand_holo.effect` |
-| `johnny_glitch_idle_01` / `_02` / `_03` | idle glitches |
-
-A wrong CName does nothing at all and is indistinguishable from the bug you are
-fixing, so take names from that list only.
-
-**0.25 s is calibrated, not arbitrary.** It is a cut-on-the-flash: the entity is
-deleted WHILE the glitch is still playing, so the vanish happens behind it.
-playtest feedback is the calibration curve - 
-
-- `1.2 s` → glitch, then he stands there normally, then pops (three phases)
-- `0.45 s` → "I still see johnny a bit before it disappears"
-- `0.25 s` → correct
-
-**Dead end, do not retry:** `StopInDevice()` on the theory that the arrival
-dissolve would run backwards when the workspot ends. It does nothing, leaving a
-workspot does not dissolve anything.
+- **`TeleportationFacility.Teleport` ignores the position for a puppet** and
+  drops him on the player. Measured: asked for a spot 210 cm from V, he landed
+  210 cm from it. This is why the route needed a workspot device at all.
+- **The workspot is not decoration, and the scene still fires one.**
+  `gamePhantomEntityComponent.phantomVisibleStates` is
+  `["RootMotion", "Workspot"]`, so a Johnny in a plain idle is invisible AND
+  untargetable. `stage_johnny` fires the workspot at t=0 of the first section
+  for this reason; see the workspot sections above.
+- **`WorkspotGameSystem`'s real method names**, all compiler-confirmed, since
+  the plausible-sounding ones (`PlayInWorkspot`, `StopInWorkspot`,
+  `SendFastForwardSignal`, `SendJumpToAnimEnter`) do not exist:
+  `PlayInDeviceSimple`, `StopInDevice`, `StopNpcInWorkspot`,
+  `IsActorInWorkspot`, `SendJumpToAnimEnt`.
+- **Three traps in authoring a `.ent` by hand**, each of which cost a failed
+  conversion. `components` entries are inline objects and NOT
+  `{HandleId, Data}` handles, which is the opposite of `entity` and of scene
+  events, and WolvenKit rejects the file with a bare `JsonException` naming only
+  a line number. `entity` must be `gameObject` and not `entEntity`, or the cast
+  every script does returns null. And `compiledData` must be omitted entirely,
+  because WolvenKit regenerates it from `components`.
+- **`DynamicEntitySpec.templatePath` is ignored when `recordID` is set**, so a
+  spawned NPC is either a record with its own template or a template with no
+  record and reduced capability. `gotchas.md` #30.
+- **A synchronous resource reference on a dynamically spawned entity hard
+  crashes the game.** `gotchas.md` #29.
 
 ### Root motion is NOT a script route
 
@@ -1012,79 +1028,37 @@ PLAYER's body type, not the speaker's, and an NPC line is one recording:
 `sts_hey_gle_04_johnny.scene` asks for an `m_` animation that does not exist in
 Johnny's set.
 
-## THE SPLIT-OWNERSHIP RECIPE: a body that lipsyncs AND is placed correctly
+## STAGING A CHARACTER WHO SPEAKS, LIPSYNCS AND STANDS BESIDE V
 
-**Confirmed in game 2026-08-14: *"It's 100% perfect."*** This is the pattern to
-copy for any character who has to speak, lipsync and stand somewhere the scene
-cannot put him. Read the whole thing before applying it; five of the six steps
-are load-bearing and each one was arrived at by a failure.
+**One call does all of it: `Scene.stage_johnny(first_section, last_section)`.**
+Confirmed in game 2026-08-17 across all seven of gig 01's Johnny beats.
 
-### The problem it solves
+The name is historical. Nothing in it is specific to Johnny except the default
+actor, and it is the pattern to copy for any character who has to appear next to
+the player, face them, talk, and leave.
 
-Lipsync lands on the line's SPEAKER, and only a scene can own a speaker. A
-scene cannot place an actor where the player is: the offset is measured from a
-marker, and an `around_player` marker is neither on the player nor of knowable
-rotation. Nothing else tracks V. A NodeRef resolves a static world node baked
-at build time, and mod-authored sector nodes never resolve at all.
+It does three things, and each one is above in this file:
 
-So: the scene owns the body, the script owns the position.
-
-| | owner |
+| | how |
 |---|---|
-| the body, and therefore the mouth | scene, he is the line's speaker |
-| where he stands | script, `PlayInDeviceSimple` on a device at player-relative maths |
-| arrival + exit glitch | script |
-| the words, subtitle, speaker name | scene |
+| where he stands, and which way he faces | `spawnOffset.position` + `yaw_to_face_player`, on an `around_player` marker |
+| that he can be seen at all | a workspot fired at t=0 of the FIRST section |
+| that he does not pop when he goes | `scneventsVFXEvent` playing `johnny_teleport_start` on the LAST section, 250 ms before it ends |
 
-### The six steps
+**This used to be a six-step split between a scene and a script**, with the
+speaker buried under the floor and a second body lifted into place. That is
+gone; see "The script placement route" above for what it was and which of its
+findings survive. What follows is what is still true about scene-owned actors,
+all of it independent of how they are placed.
 
-1. **Scene actor, BURIED, with an appearance and a workspot.**
-   `offset=(0, 0, -2.5)`, `validate=0`, `appearance=JOHNNY_GHOST`. Underground
-   is how he is unseen until placed - *not* by leaving the workspot off (step 2).
-   The player's first sight of him is the arrival glitch, in the right place.
+### The workspot is load-bearing, and it must fire on the FIRST section
 
-2. **Fire the workspot at t=0 of the scene's FIRST section.**
-   `gamePhantomEntityComponent.phantomVisibleStates` gates the WHOLE entity, so
-   no workspot means invisible and untargetable - the script can then never
-   find him to place him. That is a deadlock. It also bites if the workspot
-   fires late: reference the first section by name, never by a variable that
-   used to mean "first". `Scene.stage_johnny(first, last)` does this and step 6
-   together and is the only thing that should be called.
-
-3. **Script finds him by record, excluding its own.**
-   The `FindMamaWelles` targeting-query pattern (`TSQ_NPC`,
-   `TargetingSet.Complete`, `maxDistance 40`), matching `GetRecordID()`.
-
-4. **Script places him with a workspot DEVICE - not `Teleport`.**
-   `TeleportationFacility.Teleport` compiles, moves a puppet, and **ignores the
-   position, putting him on the player** (measured: asked for a spot 210 cm from
-   V, he landed 210 cm from it). Spawn `cc_g01_workspot.ent` at the computed
-   spot and call `PlayInDeviceSimple`. **Its own EntityID field, deleted and
-   respawned per staging** - the device IS the position, so a beat inheriting
-   the last one's device puts him at the last beat's spot.
-
-5. **Poll at 0.15 s, generously bounded, ONE STAGING PER BEAT.**
-   The system tick is far too coarse - he is visible the moment his workspot
-   starts, so a late correction is *watched*. Bound at ~90 s, not 6: the staging
-   fact can fire many seconds before the scene exists. Key the "already
-   staged" guard to a BEAT ID, or a long window keeps re-running the query.
-
-6. **Arrival FX one poll LATE; the SCENE times the exit.**
-   `johnny_teleport_end` fired 150 ms after `PlayInDeviceSimple`, not in the
-   same frame - otherwise the glitch plays over the bind pose and he is a
-   da Vinci man. For the exit the scene fires a fact from an events socket
-   250 ms before its last section ends and the poll catches it. **Never compute
-   the exit from placement time**: that anchors the one fixed thing in the beat
-   to the one thing that varies, and it fired five seconds after the scene had
-   deleted him.
-
-### ONE WINDOW PER SCENE, NOT PER STAGING
-
-The single most expensive mistake in the rollout, made twice. While a SCRIPT
-owned the body, one spawn covered several scenes and he simply stayed. A
-scene-owned body is created and destroyed by its own scene, so **every scene
-needs its own staging window and its own beat id**. A window spanning two
-scenes stages the first and silently refuses the second.
+`gamePhantomEntityComponent.phantomVisibleStates` is
+`["RootMotion", "Workspot"]`, so an actor in a plain idle is invisible AND
+untargetable. Fire it late and he is missing for the part of the scene before
+it. Reference the first section by name, never by a variable that used to mean
+"first": passing the wrong section here is silent, because firing an events
+socket on a valid section is valid whichever section it is.
 
 ### WHERE IT APPLIES, AND WHERE IT CANNOT
 

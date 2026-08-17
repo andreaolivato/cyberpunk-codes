@@ -147,9 +147,9 @@
               "position": {
                 "$type": "Vector4",
                 "W": 0,
-                "X": 0.0,
-                "Y": 0.0,
-                "Z": -2.5
+                "X": 1000.0,
+                "Y": 1000.0,
+                "Z": -100.0
               }
             },
             "spawnOnStart": 1,
@@ -703,7 +703,7 @@
                         "ignoreSpeakerIncapacitation": 1,
                         "isHolocallSpeaker": 0,
                         "voContext": "Vo_Context_Quest",
-                        "voExpression": "Vo_Expression_Spoken"
+                        "voExpression": "Vo_Expression_InnerDialog"
                       }
                     }
                   }
@@ -795,7 +795,7 @@
                         "ignoreSpeakerIncapacitation": 1,
                         "isHolocallSpeaker": 0,
                         "voContext": "Vo_Context_Quest",
-                        "voExpression": "Vo_Expression_Spoken"
+                        "voExpression": "Vo_Expression_InnerDialog"
                       }
                     }
                   }

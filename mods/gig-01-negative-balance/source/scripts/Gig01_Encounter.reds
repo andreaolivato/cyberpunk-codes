@@ -37,6 +37,56 @@ public abstract class CCGig01Places {
     public static func OfficeTerminal() -> Vector4 { return new Vector4(-251.915, -1456.364, 14.600, 1.0); }
     public static func OfficeGuardPost() -> Vector4 { return new Vector4(-245.680, -1452.315, 14.600, 1.0); }
 
+    // Is V standing inside the Arasaka Industrial Park, by any route at all?
+    //
+    // Same job as InsideEstate below, and it exists for the same reason: the
+    // guards used to be triggered by one 60 m sphere on the gate, and the site
+    // does not fit inside it. The office terminal is 63.5 m from that anchor
+    // and the terminal room door 67.7 m, so a player who reached the computer
+    // without crossing the bubble found an empty building (Nexus, 1.1.3).
+    //
+    // FOUR CORNERS, WALKED AND CAPTURED in playtest 2026-08-17 (`compound_1`
+    // to `compound_4` in captured_positions.txt). Convex, ~38,500 m2, and it
+    // contains every anchor this gig uses here: all five doors, all five guard
+    // posts, the terminal, the shard and the map pin.
+    //
+    // The Z band is the same asymmetric rule as Near(): the captures span
+    // 7.65 to 22.6, the office floor is at 14.6 and the ground floor at 8.6,
+    // so the floor is set just below the lowest capture rather than at zero.
+    // A band reaching further down would take in whatever passes underneath.
+    public static func InsideCompound(pos: Vector4) -> Bool {
+        if pos.Z < 2.0 || pos.Z > 45.0 {
+            return false;
+        }
+        // Cheap rejection first: this runs on a tick that ticks everywhere in
+        // the city, and the crossing test below is four iterations.
+        if pos.X < -389.3 || pos.X > -113.0 || pos.Y < -1567.9 || pos.Y > -1299.6 {
+            return false;
+        }
+        let xs: array<Float> = [-113.001, -282.899, -389.293, -239.160];
+        let ys: array<Float> = [-1398.983, -1299.636, -1463.909, -1567.924];
+        let n: Int32 = ArraySize(xs);
+        let inside: Bool = false;
+        let i: Int32 = 0;
+        let j: Int32 = n - 1;
+        while i < n {
+            // Half-open rule, written as two Bools and an explicit xor, so a
+            // point level with a vertex is counted once. Same shape as
+            // InsideEstate; see it for why `!=` on Bools is not used.
+            let above_i: Bool = ys[i] > pos.Y;
+            let above_j: Bool = ys[j] > pos.Y;
+            if (above_i && !above_j) || (!above_i && above_j) {
+                let t: Float = (pos.Y - ys[i]) / (ys[j] - ys[i]);
+                if pos.X < xs[i] + t * (xs[j] - xs[i]) {
+                    inside = !inside;
+                }
+            }
+            j = i;
+            i += 1;
+        }
+        return inside;
+    }
+
     // --- Arasaka estate, North Oak ---
     public static func EstateGate() -> Vector4 { return new Vector4(384.181, 1164.724, 220.643, 1.0); }
     // Two extra posts, captured in-game in playtest, 2026-08-12 ("spawn more guards
@@ -225,8 +275,40 @@ public abstract class CCGig01Places {
 
 public class NegativeBalanceEncounter extends ScriptableSystem {
 
-    private let m_officeSpawned: Bool;
-    private let m_estateSpawned: Bool;
+    // WHICH ANCHORS AT EACH SITE HAVE BEEN POPULATED, one bit per squad.
+    //
+    // A single "the site is done" Bool is what made the estate half-empty when
+    // approached from behind, and the explanation is worth keeping: Hoshino is
+    // placed straight at his captured position, while every GUARD has to pass
+    // FindPointInSphereOnlyHumanNavmesh first. That query only answers where
+    // the navmesh is streamed in. Come over the back wall and the gate, the
+    // approach and the grounds are far away and unstreamed, so those squads
+    // were dropped - and the site latched anyway on the two that did land.
+    //
+    // Per anchor, so an anchor that failed is asked again as the player moves
+    // and its sector streams in. An anchor is only ever populated once, so
+    // clearing a compound and standing in it cannot spawn a second wave.
+    //
+    // A mask rather than an array: redscript arrays on a ScriptableSystem come
+    // back from an old save at the wrong length, which is the trap written up
+    // at the top of Gig01_Holocall. An Int32 cannot be the wrong length. Bit()
+    // is a table because redscript has no `<<` (it has `&` and `|`).
+    private let m_officeMask: Int32;
+    private let m_estateMask: Int32;
+    // A staggered spawn chain is running for that site. Separate from the mask
+    // because the chain takes seconds and the tick is 1.5 s, so without this a
+    // second chain would start on top of the first.
+    private let m_officeBusy: Bool;
+    private let m_estateBusy: Bool;
+    // Ticks until the next audit of the site's unpopulated anchors. Starts at
+    // 0, so the first tick inside the region acts immediately.
+    private let m_officeAudit: Int32;
+    private let m_estateAudit: Int32;
+    // Squad attempts made at this site this session. Bounded: an anchor whose
+    // navmesh never answers is one we cannot populate, and asking every six
+    // seconds for the rest of the visit buys nothing.
+    private let m_officeTries: Int32;
+    private let m_estateTries: Int32;
     private let m_hoshinoId: EntityID;
     private let m_hoshinoSpawned: Bool;
     private let m_hoshinoSeenAlive: Bool;   // only then can we call him dead
@@ -265,16 +347,6 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
     // Placement latch: 1 = no body found yet, 2 = placed. NOT a diagnostic -
     // this is what stops him being re-placed every tick, and what re-arms the
     // next beat. The cc_g01_dbg_lip_* facts that used to shadow it are gone.
-    private let m_lipMove: Int32;
-    private let m_lipAhead: Float;      // this beat's placement offsets, hand-
-    private let m_lipAside: Float;      // tuned against real geometry
-    private let m_lipFastRunning: Bool;  // the 0.15 s placement poll is armed
-    private let m_lipFastTries: Int32;   // bounded at 40 (~6 s)
-    private let m_lipWsId: EntityID;    // the scene Johnny's OWN workspot device
-    private let m_lipWsSpawned: Bool;
-    private let m_lipFxPending: Bool;   // fire the arrival glitch next poll
-    private let m_lipBeat: Int32;       // which staging is armed, so one beat
-    private let m_lipDone: Bool;        // cannot stage itself twice
 
     // THE FIRST TICK IS 0.5 s, NOT 6: A BUG FIX (2026-08-15).
     //
@@ -323,7 +395,18 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
 
     // ---------------------------------------------------------------- spawning
     // Scatters a squad around a point so it reads as a patrol, not a lineup.
-    private func SpawnSquad(center: Vector4, count: Int32, tag: CName, estate: Bool) -> Void {
+    //
+    // RETURNS HOW MANY WERE ACTUALLY PLACED, and the caller has to read it.
+    //
+    // Every guard below is dropped when the navmesh query fails, which is
+    // correct on its own. What was wrong is that nothing counted: the latch
+    // saying the site was populated was set BEFORE any of this ran, so a
+    // navmesh that was not ready yet binned all twenty guards and the gig
+    // recorded the job as done. The player then walks into an empty compound
+    // and there is no second chance for the rest of the save. This is the same
+    // shape as docs/gotchas.md #21: a latch set on intent rather than on
+    // outcome.
+    private func SpawnSquad(center: Vector4, count: Int32, tag: CName, estate: Bool) -> Int32 {
         let records: array<TweakDBID>;
         if estate {
             records = [
@@ -364,6 +447,7 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
         // that can all be fought is a better encounter than seven where two are
         // furniture.
         let nav: ref<NavigationSystem> = GameInstance.GetNavigationSystem(this.GetGameInstance());
+        let placed: Int32 = 0;
         let i: Int32 = 0;
         while i < count {
             let angle: Float = Cast<Float>(i) * 2.4;
@@ -409,52 +493,321 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
                 if !estate {
                     this.SetHostile(id);
                 }
+                placed += 1;
             }
             i += 1;
         }
+        return placed;
+    }
+
+    // ------------------------------------------------- ONE SQUAD PER CALLBACK
+    //
+    // TWENTY ENTITIES IN ONE TICK IS THE BUG A REPORTER DESCRIBED: *"when I
+    // reached the area where the NPCs should have been, they simply weren't
+    // there. I checked the emails on the computer, turned around, and the NPCs
+    // suddenly spawned directly in front of me."*
+    //
+    // `CreateEntity` queues rather than creates - this file already knows that,
+    // which is why MakeHostile retries for ten seconds waiting for a body to
+    // resolve - so asking for twenty at the moment the player arrives means
+    // twenty bodies resolving somewhere behind him while he walks on. The estate
+    // asked for twenty-six.
+    //
+    // So the squads are spread over a callback chain instead, and the trigger
+    // moved further out (see the tick) so the walk in absorbs the work. Nothing
+    // else about the placement changed: same anchors, same sizes, same order.
+    //
+    // The table is written out rather than passed in, because the chain has to
+    // be resumable from a step index and a callback cannot carry an array.
+    private func SquadSteps(estate: Bool) -> Int32 {
+        if estate { return 6; }
+        return 5;
+    }
+
+    private func SquadCenter(estate: Bool, step: Int32) -> Vector4 {
+        if estate {
+            switch step {
+                case 0: return CCGig01Places.EstateGate();
+                case 1: return CCGig01Places.EstateApproach();
+                case 2: return CCGig01Places.EstateGrounds();
+                case 3: return CCGig01Places.EstateGarden();
+                case 4: return CCGig01Places.EstateSideEntry();
+                default: return CCGig01Places.EstateTerminal();
+            }
+        }
+        switch step {
+            case 0: return CCGig01Places.CompoundEntry();
+            case 1: return CCGig01Places.InnerEntry();
+            case 2: return CCGig01Places.OfficeEntry();
+            case 3: return CCGig01Places.OfficeGuardPost();
+            default: return CCGig01Places.TerminalRoomEntry();
+        }
+    }
+
+    private func SquadSize(estate: Bool, step: Int32) -> Int32 {
+        if estate {
+            switch step {
+                case 0: return 4;
+                case 1: return 4;
+                case 2: return 4;
+                case 3: return 6;
+                case 4: return 4;
+                default: return 3;
+            }
+        }
+        switch step {
+            case 0: return 4;
+            case 1: return 4;
+            case 2: return 4;
+            case 3: return 5;
+            default: return 3;
+        }
+    }
+
+    // A second between squads: five office squads take four seconds, six estate
+    // squads five. Both are comfortably inside the walk the widened trigger now
+    // buys, and neither asks the engine for more than six bodies at once.
+    private func SquadGap() -> Float { return 1.0; }
+
+    // How many times one squad may be asked for again WITHIN ONE PASS when the
+    // navmesh answered nothing at all. Five seconds, then the pass moves on
+    // rather than stalling the whole site on one anchor; the audit below comes
+    // back to it.
+    private func MaxSquadTries() -> Int32 { return 5; }
+
+    // Ticks between audits of a site's unpopulated anchors. Four ticks is 6 s,
+    // which is roughly how long it takes to walk far enough for another sector
+    // to have streamed in.
+    private func AuditTicks() -> Int32 { return 4; }
+
+    // Squad attempts allowed at one site per session, across all audits. The
+    // stop that makes an unpopulatable anchor cost a bounded amount rather than
+    // one attempt a second for as long as the player stands there.
+    private func MaxSquadAttempts() -> Int32 { return 60; }
+
+    // One bit per squad anchor. A table, because redscript has no `<<`. Six
+    // entries covers both sites; SquadSteps is 5 and 6.
+    private func Bit(i: Int32) -> Int32 {
+        switch i {
+            case 0: return 1;
+            case 1: return 2;
+            case 2: return 4;
+            case 3: return 8;
+            case 4: return 16;
+            default: return 32;
+        }
+    }
+
+    // Every anchor at this site has been populated at least once.
+    private func SiteFull(estate: Bool) -> Bool {
+        let mask: Int32 = estate ? this.m_estateMask : this.m_officeMask;
+        let i: Int32 = 0;
+        while i < this.SquadSteps(estate) {
+            if (mask & this.Bit(i)) == 0 {
+                return false;
+            }
+            i += 1;
+        }
+        return true;
+    }
+
+    private func MarkAnchor(estate: Bool, step: Int32) -> Void {
+        if estate {
+            this.m_estateMask = this.m_estateMask | this.Bit(step);
+        } else {
+            this.m_officeMask = this.m_officeMask | this.Bit(step);
+        }
+    }
+
+    private func AnchorDone(estate: Bool, step: Int32) -> Bool {
+        let mask: Int32 = estate ? this.m_estateMask : this.m_officeMask;
+        return (mask & this.Bit(step)) != 0;
+    }
+
+    public func SpawnStep(estate: Bool, step: Int32, tries: Int32, placed: Int32) -> Void {
+        // Skip anchors already populated. Done here rather than by the caller
+        // so an audit can start at 0 every time and still cost nothing for the
+        // anchors that are already dealt with.
+        let s: Int32 = step;
+        while s < this.SquadSteps(estate) && this.AnchorDone(estate, s) {
+            s += 1;
+        }
+        if s >= this.SquadSteps(estate) {
+            this.FinishSpawn(estate, placed);
+            return;
+        }
+        let budget: Int32 = estate ? this.m_estateTries : this.m_officeTries;
+        if budget >= this.MaxSquadAttempts() {
+            this.FinishSpawn(estate, placed);
+            return;
+        }
+        if estate {
+            this.m_estateTries += 1;
+        } else {
+            this.m_officeTries += 1;
+        }
+
+        let n: Int32 = this.SpawnSquad(this.SquadCenter(estate, s),
+                                       this.SquadSize(estate, s),
+                                       n"cc_g01_guard", estate);
+        // An empty squad means the navmesh was not ready at that anchor, not
+        // that the anchor is bad: every one of them was walked and captured.
+        // Ask again a few times, then leave the bit CLEAR and move on, so the
+        // audit picks it up once the player has walked closer.
+        let nextStep: Int32 = s + 1;
+        let nextTries: Int32 = 0;
+        if n > 0 {
+            this.MarkAnchor(estate, s);
+        } else {
+            if tries < this.MaxSquadTries() && s == step {
+                nextStep = s;
+                nextTries = tries + 1;
+            }
+        }
+        let cb: ref<CCGig01SpawnStep> = new CCGig01SpawnStep();
+        cb.system = this;
+        cb.estate = estate;
+        cb.step = nextStep;
+        cb.tries = nextTries;
+        cb.placed = placed + n;
+        GameInstance.GetDelaySystem(this.GetGameInstance())
+            .DelayCallback(cb, this.SquadGap(), false);
+    }
+
+    // THE BANNER GOES HERE, at the end, and that is the other half of the fix.
+    // It used to be the last line of SpawnOfficeSecurity, which ran in the tick
+    // the entities were merely REQUESTED in - so "Arasaka security on site"
+    // announced a compound that was still empty.
+    //
+    // The latch is set here too, and only on a real placement. A chain that
+    // placed nobody leaves it clear, so the tick starts another one.
+    public func FinishSpawn(estate: Bool, placed: Int32) -> Void {
+        // The chain runs on delayed callbacks, so its last link can land after
+        // the player has quit to the menu. Gig01_Start's header is the reason
+        // this is checked rather than assumed: dereferencing a system that is
+        // not there yet flatlined the game once already.
+        let qs: ref<QuestsSystem> = GameInstance.GetQuestsSystem(this.GetGameInstance());
+        if !IsDefined(qs) {
+            this.m_officeBusy = false;
+            this.m_estateBusy = false;
+            return;
+        }
+        // The fact ACCUMULATES across audits, because a site can be filled in
+        // more than one pass now: enter the estate over the back wall and the
+        // near anchors populate at once while the gate fills in as you walk
+        // back down to it. A per-pass value would read as the site emptying.
+        let key: String = estate ? "cc_g01_dbg_estate_guards" : "cc_g01_dbg_office_guards";
+        if estate {
+            this.m_estateBusy = false;
+        } else {
+            this.m_officeBusy = false;
+        }
+        if placed <= 0 {
+            return;
+        }
+        qs.SetFactStr(key, qs.GetFactStr(key) + placed);
+        if estate {
+            CCSharedHud.Notify(this.GetGameInstance(), "Estate security on site");
+        } else {
+            CCSharedHud.Notify(this.GetGameInstance(), "Arasaka security on site");
+        }
+    }
+
+    // Called from the tick on every pass the player is inside a site's region.
+    //
+    // Cheap when there is nothing to do: one Bool, one loop over at most six
+    // bits, and a counter. It only starts a chain when an anchor is still
+    // unpopulated, no chain is running, and the audit countdown has run out.
+    //
+    // This replaces a single "the site is done" latch, which is what left the
+    // estate half-empty when entered from behind. See m_estateMask.
+    private func AuditSite(estate: Bool) -> Void {
+        if this.SiteFull(estate) {
+            return;
+        }
+        if estate {
+            if this.m_estateBusy {
+                return;
+            }
+            this.m_estateAudit -= 1;
+            if this.m_estateAudit > 0 {
+                return;
+            }
+            this.m_estateAudit = this.AuditTicks();
+            if this.m_estateTries >= this.MaxSquadAttempts() {
+                return;
+            }
+            this.m_estateBusy = true;
+            this.SpawnEstateSecurity();
+            return;
+        }
+        if this.m_officeBusy {
+            return;
+        }
+        this.m_officeAudit -= 1;
+        if this.m_officeAudit > 0 {
+            return;
+        }
+        this.m_officeAudit = this.AuditTicks();
+        if this.m_officeTries >= this.MaxSquadAttempts() {
+            return;
+        }
+        this.m_officeBusy = true;
+        this.SpawnOfficeSecurity();
     }
 
     private func SpawnOfficeSecurity() -> Void {
-        this.SpawnSquad(CCGig01Places.CompoundEntry(), 4, n"cc_g01_guard", false);
-        this.SpawnSquad(CCGig01Places.InnerEntry(), 4, n"cc_g01_guard", false);
-        this.SpawnSquad(CCGig01Places.OfficeEntry(), 4, n"cc_g01_guard", false);
-        this.SpawnSquad(CCGig01Places.OfficeGuardPost(), 5, n"cc_g01_guard", false);
-        this.SpawnSquad(CCGig01Places.TerminalRoomEntry(), 3, n"cc_g01_guard", false);
-        CCSharedHud.Notify(this.GetGameInstance(), "Arasaka security on site");
+        this.SpawnStep(false, 0, 0, 0);
     }
 
     private func SpawnEstateSecurity() -> Void {
-        this.SpawnSquad(CCGig01Places.EstateGate(), 4, n"cc_g01_guard", true);
-        this.SpawnSquad(CCGig01Places.EstateApproach(), 4, n"cc_g01_guard", true);
-        this.SpawnSquad(CCGig01Places.EstateGrounds(), 4, n"cc_g01_guard", true);
-        this.SpawnSquad(CCGig01Places.EstateGarden(), 6, n"cc_g01_guard", true);
-        this.SpawnSquad(CCGig01Places.EstateSideEntry(), 4, n"cc_g01_guard", true);
-        this.SpawnSquad(CCGig01Places.EstateTerminal(), 3, n"cc_g01_guard", true);
-
-        // Hoshino himself. Our own record (suit, armed, named).
+        // HOSHINO FIRST, and outside the chain. He is the objective, he is one
+        // entity, and a guard arriving a second later costs nothing while a
+        // Hoshino arriving late is the beat. Guarded by his own latch so a
+        // retried chain cannot put a second one on the terrace.
+        //
+        // Our own record (suit, armed, named).
         // YAW 140.8 = the captured 50.8 turned 90 degrees ANTICLOCKWISE.
         // playtest, 2026-08-14, from a screenshot: he delivered "Mmm? You lost,
         // merc?" with his back to V, facing out over the terrace. Yaw is
         // counter-clockwise seen from above, so anticlockwise is +90.
         // Same spot - only the facing changed.
-        this.m_hoshinoId = CCSharedWorld.Spawn(t"Character.cc_g01_hoshino",
-            CCGig01Places.Hoshino(), 140.8, n"cc_g01_hoshino");
-        this.m_hoshinoSpawned = true;
-        // ...and NOT shooting at V while they talk.
-        //
-        // He spawned hostile like the guards, so he opened fire during his own
-        // conversation (playtest, 2026-08-12). That is wrong for the scene and
-        // wrong for the character: the whole point of him is that he is an
-        // administrator, not a soldier. He signs, he does not fight.
-        //
-        // Neutral until provoked. AttitudeAgent.SetAttitudeGroup is how vanilla
-        // moves an NPC between sides (aiRole.swift:232, dynamicSpawnSystem
-        // .swift:72 sets n"hostile" the same way). Shooting him flips him back
-        // by the game's own reaction rules, so "until we attack" comes for free -
-        // we do not have to watch for it.
-        this.SetNeutral(this.m_hoshinoId);
-        CCSharedHud.Notify(this.GetGameInstance(), "Estate security on site");
+        if !this.m_hoshinoSpawned {
+            this.m_hoshinoId = CCSharedWorld.Spawn(t"Character.cc_g01_hoshino",
+                CCGig01Places.Hoshino(), 140.8, n"cc_g01_hoshino");
+            this.m_hoshinoSpawned = true;
+            this.SetNeutral(this.m_hoshinoId);
+        }
+        this.SpawnStep(true, 0, 0, 0);
     }
+
+    // WHY HOSHINO IS SPAWNED NEUTRAL, which is the SetNeutral call above.
+    //
+    // He spawned hostile like the guards, so he opened fire during his own
+    // conversation (playtest, 2026-08-12). That is wrong for the scene and
+    // wrong for the character: the whole point of him is that he is an
+    // administrator, not a soldier. He signs, he does not fight.
+    //
+    // Neutral until provoked. AttitudeAgent.SetAttitudeGroup is how vanilla
+    // moves an NPC between sides (aiRole.swift:232, dynamicSpawnSystem
+    // .swift:72 sets n"hostile" the same way). Shooting him flips him back
+    // by the game's own reaction rules, so "until we attack" comes for free:
+    // we do not have to watch for it.
+
+    // HOW LONG AN ATTITUDE MAY TAKE TO STICK. 1.5 s a try, so this is 60 s.
+    //
+    // It was 6 tries, 10.5 s, and that budget was sized on this machine against
+    // the old all-at-once burst. On a slower one, or a heavily modded load
+    // order, a guard that takes longer than that to stream in keeps his
+    // record's default attitude, and the compound list is mostly `sts_*`
+    // street-story security which does not treat V as an enemy. The symptom is
+    // "the guards ignore me" - the 2026-08-13 bug arriving by a new route, from
+    // a budget rather than from a missing call.
+    //
+    // The cost of the higher cap is only paid by a guard who never resolves at
+    // all: everyone else returns on the try that finds him. With the burst now
+    // staggered, that should be the first or second.
+    private func MaxAttitudeTries() -> Int32 { return 40; }
 
     // Move a spawned NPC out of the hostile group so he will not open fire.
     //
@@ -480,7 +833,7 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
         }
         // Not streamed in yet. Try a few more times rather than silently give up
         // and leave him shooting through his own dialogue.
-        if tries < 6 {
+        if tries < this.MaxAttitudeTries() {
             let cb: ref<CCGig01MakeNeutral> = new CCGig01MakeNeutral();
             cb.system = this;
             cb.target = id;
@@ -532,7 +885,7 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
                 return;
             }
         }
-        if tries < 6 {
+        if tries < this.MaxAttitudeTries() {
             let cb: ref<CCGig01MakeHostile> = new CCGig01MakeHostile();
             cb.system = this;
             cb.target = id;
@@ -541,491 +894,26 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
         }
     }
 
-    // ---------------------------------------------------------------- Johnny
-    // Johnny's apparition, spawned NEXT TO V wherever V happens to be.
-    //
-    // A .scene actor cannot do this: it spawns at the scene's fixed marker, so
-    // a beat that can happen anywhere - like the moment Elena's location lands -
-    // would materialise him in an Arroyo car park while V is across the city.
-    // The dynamic-entity route has no such limit, which is how AMM and friends
-    // put him on screen.
-    //
-    // Character.Silverhand and silverhand_default are the VERIFIED ids from
-    // vanilla scene data (docs/scene-playbook.md, "Johnny's apparition"); the
-    // appearance is what buys the see-through, rim-lit, glitching look.
-    //
-    // The trade-off vs a scene actor: no dialogue choices and no lipsync here.
-    // What we DO get is a real GameObject to hang the line on, which means the
-    // subtitle can name him - the scene line does that now.
-    // ahead / aside are metres in V's frame. They are arguments rather than
-    // constants because the right staging depends on the room: out in the open
-    // he can stand in front of V, but at the office terminal V is nose-to-screen
-    // against a desk and anything "ahead" is inside the wall.
-    // ======================================================================
-    // THE ONE THING BEING TESTED, 2026-08-14. Everything else is untouched.
-    // ======================================================================
-    //
-    // Lipsync works, and it works on the SCENE'S actor (playtest: "the second
-    // johnny is perfectly lip synced"). The scene's actor is the one this gig
-    // cannot place: a `.scene` is baked before the game runs, so it cannot say
-    // "in front of V", only "somewhere around the marker" - and an
-    // `around_player` marker's rotation is not knowable. He lands behind V.
-    //
-    // the proposal, and it is the right one: read V's position and facing
-    // at RUNTIME and put him in front. The script can do that maths - it does
-    // it in SpawnJohnny below, and has since August. What it has never done is
-    // MOVE a body the scene owns.
-    //
-    // So this is the single untested step, and nothing else changes: find the
-    // scene's Johnny and teleport him to the spot SpawnJohnny would have used.
-    // The script's own Johnny still spawns, the scene still spawns its own, and
-    // there are still two of them - collapsing to one is the NEXT change, and
-    // only if this one works.
-    //
-    // TWO SILVERHANDS, AND TELLING THEM APART. Both carry
-    // Character.Silverhand, so the record alone is ambiguous. Ours is the one
-    // whose EntityID is m_johnnyId; anything else with that record is the
-    // scene's. That is the whole discriminator and it is exact.
-    //
-    // Read `cc_g01_dbg_lip_move` in call_trace.log:
-    //   1 = no second Silverhand found - the scene's actor is not there, or the
-    //       targeting query cannot see him
-    //   2 = found him and called Teleport
-    //
-    // `Teleport` is confirmed by the compiler and has NEVER BEEN RUN. The real
-    // unknown is not the call, it is whether it survives the workspot he is
-    // standing in - the animation may fight it or snap him back. That is what
-    // one press of the dev button answers.
-    // Poll every 0.15 s until he is placed, instead of waiting on the 1.5 s
-    // encounter tick.
-    //
-    // THE HOP IS A SAMPLING PROBLEM, not a placement one. The scene stages him
-    // at the around_player marker - behind V, unaimable - and he is visible the
-    // instant his workspot starts. Everything after that is correct; the only
-    // thing wrong is that the correction arrives up to 1.5 s late and the player
-    // watches it happen. At 0.15 s it lands inside his arrival dissolve.
-    //
-    // Bounded twice over: it stops as soon as he is placed, and after 40 tries
-    // (6 s) regardless, so a beat that never stages an actor cannot leave a
-    // callback chain running for the rest of the session.
-    // The scene's Johnny glitches out just before the scene removes him, so the
-    // vanish happens behind the flash instead of being a pop. Same effect and
-    // the same 0.25 s cut approved in playtest for the script-spawned one; only the
-    // body it is fired on has changed.
-    //
-    // Finds him again rather than holding a reference: the scene owns this
-    // entity and may have disposed of it already if anything ran long. A miss
-    // is silent and costs exactly the pop we are trying to avoid, which is why
-    // this is not worth guarding harder.
-    public func LipExitJohnny() -> Void {
-        let player: ref<PlayerPuppet> = GameInstance.GetPlayerSystem(this.GetGameInstance())
-            .GetLocalPlayerMainGameObject() as PlayerPuppet;
-        if !IsDefined(player) {
-            return;
-        }
-        let johnny: ref<GameObject> = this.FindSceneJohnny(player);
-        if IsDefined(johnny) {
-            GameObjectEffectHelper.StartEffectEvent(johnny, n"johnny_teleport_start");
-        }
-    }
 
-    // Arms the placement for ONE beat. Every Johnny beat calls this instead of
-    // SpawnJohnny, with the offsets that beat used to spawn him at.
+    // NO SCRIPT PLACES JOHNNY ANY MORE, and nothing here should start.
     //
-    // Resetting is the whole job: eight beats share these fields, and a beat
-    // that inherited the last one's device would put Johnny at the previous
-    // beat's position - the device is spawned AT a spot and the workspot is
-    // what moves him to it. LipReset deletes it; do not "optimise" that away.
-    private func ArmLipPlacement(beat: Int32, ahead: Float, aside: Float) -> Void {
-        // ONLY m_lipFastRunning guards this. It used to also return when
-        // m_lipMove == 2, and that was a LATCH THAT KILLED EVERY LATER BEAT.
-        //
-        // m_lipMove goes to 2 on placement and only back to 0 when the poll
-        // sees the scene's exit cue. If the poll expires first, the flag sticks
-        // at 2 for the rest of the playthrough and no later window can ever
-        // arm. That is exactly what happened once gig01_netrunner was merged
-        // in: gig01_terminal became a 25-SECOND scene, the poll's 30 s budget
-        // started before the scene did, and it burned out mid-conversation -
-        // so Johnny was missing from "Ledger's closed." and "No more payouts."
-        // (playtest, 2026-08-14).
-        //
-        // Re-arming from scratch every time the poll is idle costs one find per
-        // tick and cannot latch. LipReset below clears the previous staging.
-        if this.m_lipFastRunning {
-            return;
-        }
-        // ONE STAGING PER BEAT. Without this the re-arm above would restart the
-        // 0.15 s poll on every 1.5 s tick for as long as the window is open -
-        // and some windows stay open for minutes of walking (kill's runs until
-        // the malware is uploaded). A 40 m targeting query six times a second
-        // for that long is not free.
-        //
-        // The beat id is what makes it safe to re-arm at all: a DIFFERENT beat
-        // always stages, the same one never stages twice.
-        if this.m_lipBeat == beat && this.m_lipDone {
-            return;
-        }
-        this.LipReset();
-        this.m_lipBeat = beat;
-        this.m_lipDone = false;
-        this.m_lipAhead = ahead;
-        this.m_lipAside = aside;
-        this.m_lipFastRunning = true;
-        this.m_lipFastTries = 0;
-        // Clear the scene's exit signal before the beat, so a later staging
-        // cannot inherit a set fact and glitch him out the instant he arrives.
-        GameInstance.GetQuestsSystem(this.GetGameInstance())
-            .SetFactStr("cc_g01_johnny_exit", 0);
-        this.PlaceSceneJohnnyFast();
-    }
-
-    // Back to "nothing staged": the device goes, the bookkeeping goes, and
-    // m_lipMove returns to 0 so the next beat's window can arm.
-    private func LipReset() -> Void {
-        if this.m_lipWsSpawned {
-            GameInstance.GetDynamicEntitySystem().DeleteEntity(this.m_lipWsId);
-            this.m_lipWsSpawned = false;
-        }
-        this.m_lipMove = 0;
-        this.m_lipFxPending = false;
-    }
-
-    public func PlaceSceneJohnnyFast() -> Void {
-        let player: ref<PlayerPuppet> = GameInstance.GetPlayerSystem(this.GetGameInstance())
-            .GetLocalPlayerMainGameObject() as PlayerPuppet;
-        if !IsDefined(player) {
-            this.m_lipFastRunning = false;
-            return;
-        }
-        let qs: ref<QuestsSystem> = GameInstance.GetQuestsSystem(this.GetGameInstance());
-        if this.m_lipFxPending {
-            // One poll after placement: the workspot idle is running now, so
-            // the arrival glitch plays over a posed body instead of a T-pose.
-            this.m_lipFxPending = false;
-            let arrived: ref<GameObject> = this.FindSceneJohnny(player);
-            if IsDefined(arrived) {
-                GameObjectEffectHelper.StartEffectEvent(arrived, n"johnny_teleport_end");
-            }
-        }
-        if this.m_lipMove != 2 {
-            this.PlaceSceneJohnny(player, this.m_lipAhead, this.m_lipAside);
-        } else {
-            // PLACED - now the same poll watches for the scene telling us it is
-            // about to remove him, and fires his exit glitch within 150 ms.
-            //
-            // This replaced a DelayCallback scheduled at placement time, which
-            // could not work and did not: it was anchored to the one moment in
-            // the beat that VARIES. Measured 2026-08-14 - placement landed 5.5 s
-            // into a 7.8 s scene, so the exit fired 5 s after the scene had
-            // already deleted him and he simply popped.
-            //
-            // cc_g01_johnny_exit is set by the SCENE, from an events socket
-            // 250 ms before its last section ends (gen_scenes.build_arasaka).
-            // The scene knows its own length exactly; this script never has to.
-            if qs.GetFactStr("cc_g01_johnny_exit") > 0 {
-                this.LipExitJohnny();
-                this.m_lipFastRunning = false;
-                this.m_lipDone = true;
-                // Tear the staging down so the NEXT beat can arm. Without this
-                // m_lipMove stays 2 for the rest of the playthrough and every
-                // later Johnny stays buried under the floor, silent and unseen.
-                this.LipReset();
-                return;
-            }
-        }
-        this.m_lipFastTries += 1;
-        // 200 tries = 30 s, and the number matters. It was 40 (6 s), armed at
-        // cc_g01_johnny_cue - which fires from inside Elena's call, up to seven
-        // seconds before the arasaka scene exists at all. The poll was dead
-        // before the actor was born, every time, and placement fell back to the
-        // 1.5 s tick. The window this runs inside is bounded by johnny_done, so
-        // 30 s is "until the beat is over" rather than a timeout anyone waits on.
-        // 600 tries = 90 s, comfortably longer than the longest beat
-        // (gig01_terminal is 25 s of dialogue and the poll arms before it
-        // starts). This is "until the beat is over", not a timeout anyone
-        // waits on - it stops the moment the exit cue arrives.
-        if this.m_lipFastTries > 600 {
-            this.m_lipFastRunning = false;
-            // Give up on THIS beat rather than hammering the query for the rest
-            // of the window. 90 s is far longer than any beat takes to start.
-            this.m_lipDone = true;
-            return;
-        }
-        let again: ref<CCGig01LipPlace> = new CCGig01LipPlace();
-        again.system = this;
-        GameInstance.GetDelaySystem(this.GetGameInstance())
-            .DelayCallback(again, 0.15, false);
-    }
-
-    private func FindSceneJohnny(player: ref<PlayerPuppet>) -> ref<GameObject> {
-        // Same shape as FindMamaWelles, which is proven in game. TSQ_NPC with
-        // the complete targeting set so walls do not hide him.
-        let query: TargetSearchQuery = TSQ_NPC();
-        query.testedSet = TargetingSet.Complete;
-        query.includeSecondaryTargets = false;
-        query.ignoreInstigator = true;
-        query.maxDistance = 40.0;
-        query.filterObjectByDistance = true;
-
-        let parts: array<TS_TargetPartInfo>;
-        GameInstance.GetTargetingSystem(this.GetGameInstance())
-            .GetTargetParts(player, query, parts);
-
-        let i: Int32 = 0;
-        while i < ArraySize(parts) {
-            let target: ref<GameObject> = TS_TargetPartInfo.GetComponent(parts[i]).GetEntity() as GameObject;
-            let puppet: ref<ScriptedPuppet> = target as ScriptedPuppet;
-            // The script used to spawn a SECOND Silverhand, so this had to
-            // exclude its own by EntityID or it would find that one and place it
-            // instead of the scene's. There is only one Johnny now, so the
-            // exclusion went with the path that created the ambiguity.
-            if IsDefined(puppet)
-                && puppet.GetRecordID() == t"Character.Silverhand" {
-                return puppet;
-            }
-            i += 1;
-        }
-        return null;
-    }
-
-    // Put the scene's Johnny `ahead` metres along V's facing, `aside` metres to
-    // the right of it, turned back towards V. The offsets come from the
-    // script-owned SpawnJohnny this replaced; they were tuned by hand against
-    // real geometry and are not to be re-derived.
-    private func PlaceSceneJohnny(player: ref<PlayerPuppet>, ahead: Float,
-                                  aside: Float) -> Void {
-        let johnny: ref<GameObject> = this.FindSceneJohnny(player);
-        if !IsDefined(johnny) {
-            this.m_lipMove = 1;
-            return;
-        }
-        // ONCE PER APPEARANCE, not once per tick. m_lipMove goes back to 1 the
-        // moment he is gone, which re-arms this for the next beat. Without it
-        // the poll would re-place him every 0.15 s for the length of the scene.
-        if this.m_lipMove == 2 {
-            return;
-        }
-        let pos: Vector4 = player.GetWorldPosition();
-        let fwd: Vector4 = player.GetWorldForward();
-        let spot: Vector4 = new Vector4(
-            pos.X + fwd.X * ahead - fwd.Y * aside,
-            pos.Y + fwd.Y * ahead + fwd.X * aside,
-            pos.Z,
-            1.0);
-        let toV: Vector4 = new Vector4(pos.X - spot.X, pos.Y - spot.Y, 0.0, 1.0);
-        let angles: EulerAngles;
-        angles.Yaw = Vector4.Heading(toV);
-
-        // =================================================================
-        // NOT `Teleport`. IT MOVES HIM TO V, NOT TO THE POSITION IT IS GIVEN.
-        // =================================================================
-        //
-        // Measured 2026-08-14, and this is why the diagnostic existed:
-        //     cc_g01_dbg_lip_want = 210   the spot asked for IS 2.1 m from V
-        //     cc_g01_dbg_lip_err  = 210   he ended up 2.1 m FROM that spot
-        // Two equal numbers, and the only point 2.1 m from the spot that V can
-        // be standing on is V. So the maths was right all along and
-        // `TeleportationFacility.Teleport(obj, pos, angles)` - which compiles,
-        // and which does move him - ignores the position for a puppet and puts
-        // him on the player. Do not reach for it again to place an NPC.
-        //
-        // THE PROVEN TOOL WAS ALREADY IN THIS FILE. `SpawnJohnny` does not
-        // position Johnny by teleporting him either: it spawns an invisible
-        // workspot DEVICE at the spot and calls PlayInDeviceSimple, and the
-        // workspot places him. That is confirmed in game since 2026-08-12 and
-        // it is what puts the script's Johnny exactly where he belongs.
-        //
-        // So do the same thing to the scene's Johnny. It also earns the
-        // apparition for free: `phantomVisibleStates` is
-        // ["RootMotion","Workspot"], so a workspot is what makes the
-        // see-through appearance render at all.
-        // ITS OWN device and its own bookkeeping. m_johnnyWsId belongs to
-        // SpawnJohnny, and during this beat BOTH are running - sharing the
-        // field would have one of them stealing the other's device. That is
-        // exactly the class of bug that broke Johnny three times in one evening
-        // (docs/gotchas.md #15: when you write a field, look up who else reads
-        // it).
-        // THE DEVICE'S ORIENTATION IS WHAT HE ENDS UP FACING, and leaving it out
-        // is why he had his back to V. playtest, 2026-08-14: "when I read the
-        // shard... he's not facing V, he's from behind", and the same at
-        // "Ledger's closed."
-        //
-        // The workspot plays THROUGH this device, so the device's transform wins
-        // over whatever orientation the puppet has. With no orientation set the
-        // spec gets identity - yaw 0 - so Johnny faced world north in every
-        // beat, regardless of where V was standing. That is why most beats
-        // looked right: V happened to be facing the right way. It was luck, not
-        // placement, and the two beats that failed are the two where V's facing
-        // is fixed by the furniture (the office desk) or by the approach (over
-        // Hoshino's body).
-        //
-        // `angles` above already holds the heading from the spot back to V. It
-        // was computed and then never used - the line below is the whole fix.
-        //
-        // THIS WAS KNOWN AND WAS LOST IN THE PORT. The script-owned SpawnJohnny
-        // carried this exact line and a comment recording the same symptom found
-        // on 2026-08-12; when placement moved to the scene-owned path the
-        // position came across and the orientation did not. When porting a
-        // routine, port what its comments say it learned, not only what it does.
-        let des: ref<DynamicEntitySystem> = GameInstance.GetDynamicEntitySystem();
-        if !this.m_lipWsSpawned {
-            let dev: ref<DynamicEntitySpec> = new DynamicEntitySpec();
-            dev.templatePath = r"mod\\negative_balance\\entity\\cc_g01_workspot.ent";
-            dev.position = spot;
-            dev.orientation = EulerAngles.ToQuat(angles);
-            dev.persistState = false;
-            dev.persistSpawn = false;
-            dev.alwaysSpawned = false;
-            dev.spawnInView = true;
-            dev.active = true;
-            dev.tags = [n"cc_g01_lip_ws"];
-            this.m_lipWsId = des.CreateEntity(dev);
-            this.m_lipWsSpawned = true;
-            return;      // let it stream in; the next tick puts him in it
-        }
-        let device: ref<GameObject> = des.GetEntity(this.m_lipWsId) as GameObject;
-        if !IsDefined(device) {
-            return;      // still streaming - try again next tick
-        }
-        GameInstance.GetWorkspotSystem(this.GetGameInstance())
-            .PlayInDeviceSimple(device, johnny, false, n"cc_g01_johnny_stand");
-
-        // ...AND MATERIALISE HIM HERE, so the arrival reads as deliberate.
-        //
-        // He is already visible at the marker by the time we move him, so the
-        // move is seen. Firing his own arrival effect at the DESTINATION covers
-        // it: the glitch happens where he ends up rather than where he came
-        // from, which is the same cut-on-the-flash trick as his exit.
-        //
-        // `johnny_teleport_end` is the arriving counterpart of
-        // `johnny_teleport_start`, and both are declared in johnny.ent's
-        // entEffectSpawnerComponent - shipped names, not guesses. A wrong CName
-        // does nothing at all and is indistinguishable from the bug you are
-        // fixing, so they come from that list only (docs/scene-playbook.md).
-        // THE ARRIVAL FX IS DEFERRED ONE POLL: the deferral is the T-pose fix.
-        //
-        // playtest, 2026-08-14: *"during the glitch he has his arms like open
-        // like the da vinci man"*. That is the bind pose: the effect used to
-        // fire in the same frame as PlayInDeviceSimple, before the workspot's
-        // idle had taken over the skeleton, so the glitch played over an
-        // unanimated puppet. 150 ms later he is standing properly and the
-        // glitch reads as it does everywhere else.
-        //
-        // NOTHING ABOUT THE ANIMATION CHANGES - the design asked for the appear/
-        // disappear to be left alone if touching it caused problems, and this
-        // does not touch it. Only when the effect starts.
-        this.m_lipFxPending = true;
-
-        // ...AND BOOK HIS EXIT NOW, because nothing else will.
-        //
-        // A scene despawns its spawnDespawn actors the frame it exits, so the
-        // scene's Johnny POPS - and calibrated in playtest the alternative by ear
-        // across three values in August: glitch, then delete 0.25 s later,
-        // cutting on the flash. That calibration is not being thrown away just
-        // because the body changed owner.
-        //
-        // HIS EXIT IS NOT BOOKED HERE ANY MORE, which is the fix rather than
-        // an omission. It used to be a DelayCallback at placement + 7.29 s -
-        // the scene's length minus the calibrated cut - which anchored the one
-        // fixed thing in the beat to the one thing that varies. Measured
-        // 2026-08-14: placement landed 5.5 s into a 7.8 s scene, so the glitch
-        // was scheduled for five seconds after the scene had deleted him.
-        //
-        // The scene fires `cc_g01_johnny_exit` from an events socket 250 ms
-        // before its last section ends, and the poll above catches it within
-        // 150 ms. No constant is mirrored between the two files now.
-        this.m_lipMove = 2;
-    }
-
-    // ======================================================================
-    // THE SCRIPT-OWNED JOHNNY IS GONE. Deleted 2026-08-14, after the playthrough.
-    // ======================================================================
+    // Every beat is a scene actor, staged by its own scene in front of V and
+    // facing V. The offsets live in tools/gen_scenes.py BEAT_STAGING and the
+    // facing is computed, never written by hand.
     //
-    // SpawnJohnny, ProbeJohnny, EnterJohnnyWorkspot, SetJohnnyFace,
-    // ProbeJohnnyWorkspot, LeaveJohnny, DissolveJohnny, DespawnJohnny,
-    // JohnnyObject, the m_johnny* fields and the cc_g01_dbg_johnny* facts all
-    // lived between here and the next section. They had been inert since every
-    // beat became scene-owned - m_johnnySpawned could no longer become true -
-    // and were kept only as a fallback until playtesting had covered the gig through.
-    // He has, twice, and the verdict was "Perfect", so live code that does
-    // nothing is now just an invitation to debug it.
+    // The two things a script route would have to solve, and why it no
+    // longer has to:
+    //   placement  `Teleport` ignores the position for a puppet and drops
+    //              him on the player, so a script needs a workspot device.
+    //              A scene needs nothing.
+    //   the pose   moving a body between two workspots flashes the bind
+    //              pose, which is the T-pose two players reported. A
+    //              scene-placed actor arrives already posed.
     //
-    // What that path knew, and where it survives:
+    // His face is still unset. SetJohnnyFace applied a preset from
+    // ReactionComponent's own table (3/7 = disgust); see docs/backlog.md if
+    // his expression ever reads blank.
     //
-    //   placement    ArmLipPlacement / PlaceSceneJohnny above. The offsets were
-    //                copied from its SpawnJohnny calls and are not to be
-    //                re-derived; `Teleport` is NOT the way to place a puppet
-    //                (it ignores the position and drops him on the player), so
-    //                the workspot device is.
-    //   FACING       the device's orientation is what he ends up facing. This
-    //                is the one thing the port lost, and it cost the 2026-08-14
-    //                "he's from behind" report - see PlaceSceneJohnny.
-    //   the exit     glitch on johnny_teleport_start, delete 0.25 s later,
-    //                calibrated by ear across 1.2 / 0.45 / 0.25 s. The scene
-    //                times it now (LipExitJohnny); the 0.25 s is unchanged.
-    //   his face     SetJohnnyFace applied a facial preset from
-    //                ReactionComponent's own table (3/7 = disgust, 3/1 =
-    //                aggressive). Nothing sets one on the scene's actor - see
-    //                docs/backlog.md if his expression ever reads blank.
-    //
-    // Johnny's own FX names, which are shipped and must never be guessed:
-    // johnny_teleport_start / johnny_teleport_end / johnny_appear_glitch /
-    // johnny_spawn_slow / johnny_spawn_normal / johnny_spawn_fast / glitch /
-    // johnny_glitch_idle_01..03. A wrong CName does NOTHING and looks exactly
-    // like the bug you are chasing.
-
-    // CloseAfter(fact, seconds) and SetFactNow lived here. They delayed a
-    // quest-advancing fact until a caption had been read, because the objective
-    // banner, the completion UI and the reward notification all draw OVER a
-    // subtitle and once ate a line whole. Removed 2026-08-13 with the captions:
-    // the quest phase owns that timing now (a scene tail plus an add_delay), and
-    // the rule survives in gen_questphase.py where it is enforced.
-
-    // REMOVED, both of them, and worth saying why so nobody rebuilds them:
-    //
-    // SetInteractions(obj, enable) queued an InteractionSetEnableEvent to switch
-    // an object's interaction prompts off - the way VehicleComponent hides a
-    // car's trunk prompt. It does NOT suppress an NPC's dialogue: Mama Welles
-    // kept offering her normal conversation right through the epilogue
-    // (playtest, 2026-08-12). Deleted rather than left in place, because a failed
-    // re-enable would leave a base-game NPC mute for the rest of the save - a
-    // real risk in exchange for nothing. the design call: accept vanilla's options.
-    //
-    // ChoiceHubUp() read UIInteractions.DialogChoiceHubs to hold a beat back
-    // while a menu was on screen. It worked, and it STRANDED THE GIG - Johnny
-    // never appeared at the bar and the quest could not close. Presentation is
-    // not worth gating completion on.
-    //
-    // "V is plugged into something" - the estate terminal's upload waits on this.
-    //
-    // There is NO query API for the active UI context on UISystem, so this reads
-    // the player state machine blackboard, which `deviceBase
-    // .SetZoomBlackboardValues` drives for every device zoom however it is
-    // entered or left (docs/computer-ui-playbook.md).
-    //
-    // Two flags, not one. IsUIZoomDevice is the screen actually being up;
-    // IsInteractingWithDevice is the broader "engaged with a device" state and
-    // covers anything there that does not zoom. Either counts as plugged in -
-    // being strict here risks a gig that cannot be finished, and the failure
-    // would look like nothing at all happening.
-    //
-    // DO NOT swap this for wrapping OnToggleZoomInteraction and reading
-    // IsAdvancedInteractionModeOn(). It looks right and it compiles, and closing
-    // a computer screen does not route through it, so it never fires - tested
-    // 2026-08-11 and written up in the playbook.
-    // ------------------------------------------------------------------- HUD
-    // SimpleMessageType drives the colour of the banner: Neutral reads blue,
-    // Negative red, Connection is the netrunner/link styling.
-    // The ledger download, played once V is off the terminal screen (the HUD is
-    // hidden while the device zoom is up). The last step sets
-    // cc_g01_terminal_done, so the "get clear of the compound" objective only
-    // appears after the data is actually away.
-    // THREE steps, not five. "SENDING TO NIX... / SENT." used to be steps 3 and
-    // 4 and it was invented: in the comic V copies the records, unplugs, and
-    // only works out on the way out that he needs a netrunner (p25), then calls
-    // Nix from the street (p26). Nothing is transmitted from inside the
-    // building - which is also why the gig already holds Nix's call until V is
-    // clear of the compound.
     public func DownloadStep(step: Int32) -> Void {
         switch step {
             case 0:
@@ -1518,6 +1406,10 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
         let player: ref<PlayerPuppet> = GameInstance.GetPlayerSystem(game)
             .GetLocalPlayerMainGameObject() as PlayerPuppet;
 
+        // Set at the very end of the pass below, once the gig is finished AND
+        // everything this system took has been given back. See it for the rule.
+        let stop: Bool = false;
+
         if IsDefined(player) {
             let qs: ref<QuestsSystem> = GameInstance.GetQuestsSystem(game);
             let pos: Vector4 = player.GetWorldPosition();
@@ -1542,6 +1434,19 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
             // not be.
             if !accepted || qs.GetFactStr("cc_g01_done") > 0 {
                 this.ReleaseMama(qs, player);
+                // AND TAKE THE STAND-IN WITH HER, for the same reason and by
+                // the same rule. The only other DespawnMamaWelles call is on
+                // the epilogue's own path (cc_g01_epilogue_scene_done), so an
+                // epilogue that finishes by any other route - the anti-stall
+                // below, a dev-menu fact, a gig closed out of order - left our
+                // duplicate standing in El Coyote for the rest of the session,
+                // beside the real Mama Welles if she was there.
+                //
+                // Nobody reported this. It was found by reading, looking for
+                // anything that could outlive the gig, and it costs one Bool
+                // read: DespawnMamaWelles returns immediately unless we really
+                // did spawn her.
+                this.DespawnMamaWelles();
             }
 
             // ...and the same discipline for the way-in marker, for the same
@@ -1567,37 +1472,49 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
             // docs/backlog.md 2j; the rule it taught, that a diagnostic must not
             // be gated on anything downstream of what it measures, is docs/gotchas.md #17.
 
-            // MOVE THE SCENE'S JOHNNY IN FRONT OF V.
+            // NOTHING HERE PLACES JOHNNY, and there is no window to arm.
             //
-            // Gated on the arasaka beat's own window. (The dev-button route is
-            // gone - see gen_questphase.py: a scene node cannot be entered from
-            // two places, which is why neither shortcut button ever worked).
-            // NOT gated on anything the test measures - if no second Silverhand
-            // is found, that is RECORDED as 1 rather than silently skipped.
-            //
-            // Outside the `accepted` block on purpose: gating a diagnostic
-            // behind a fact set downstream of the beat is the mistake that
-            // wasted a whole run on 2026-08-14.
-            //
-            // Deliberately excludes gig01_bar, whose Johnny is a scene actor
-            // already placed correctly by a FIXED anchor 1.65 m from the
-            // stools. Moving him in front of V would break a working beat.
-            //
-            // 1.8 / 1.1 are SpawnJohnny's own street numbers: ahead and to the
-            // right, in shot without blocking the view.
-            // (the arasaka beat's placement is armed from its own window inside
-            // the `accepted` block below, where SpawnJohnny used to be)
+            // The block that used to sit here moved the scene's Johnny in
+            // front of V, and it went with the rest of the script route on
+            // 2026-08-17. Each beat's scene now offsets him from an
+            // `around_player` marker, turns him to face V with a computed yaw,
+            // and glitches him out 250 ms before it ends. The offsets are
+            // tools/gen_scenes.py BEAT_STAGING; the mechanism is
+            // docs/backlog.md 9.
 
             if accepted && qs.GetFactStr("cc_g01_done") == 0 {
                 // Arrive at the compound: mark the objective, populate the site.
-                if Vector4.Distance(pos, CCGig01Places.CompoundEntry()) < 60.0 {
-                    if qs.GetFactStr("cc_g01_office_reached") == 0 {
-                        qs.SetFactStr("cc_g01_office_reached", 1);
-                    }
-                    if !this.m_officeSpawned {
-                        this.m_officeSpawned = true;
-                        this.SpawnOfficeSecurity();
-                    }
+                //
+                // TWO TESTS, NOT ONE, AND THE SPAWN ONE IS THE WIDER OF THEM.
+                //
+                // It used to be a single 60 m sphere on CompoundEntry, and the
+                // site does not fit inside it: the office terminal is 63.5 m
+                // from that anchor and the terminal room door 67.7 m. A player
+                // who reached the computer without crossing the bubble found an
+                // empty building, which is half of the report quoted on
+                // SpawnStep. So the office is measured from the BUILDING as
+                // well as from the gate.
+                //
+                // The spawn test is wider again, because the squads are now
+                // spread over a callback chain and that chain needs runway. 100 m
+                // on the gate is roughly 85 m out from the map pin: far enough
+                // that the walk in absorbs the work, close enough that nothing
+                // populates a compound the player is only driving past.
+                // THE OUTLINE, NOT A SPHERE. InsideCompound is the four walked
+                // corners; being anywhere in the industrial park counts, by
+                // whatever route. The 60 m sphere on the gate stays as well,
+                // so arriving at the marked entrance still reads as arriving
+                // before the outline is crossed.
+                let atOffice: Bool = CCGig01Places.InsideCompound(pos)
+                    || Vector4.Distance(pos, CCGig01Places.CompoundEntry()) < 60.0;
+                if atOffice && qs.GetFactStr("cc_g01_office_reached") == 0 {
+                    qs.SetFactStr("cc_g01_office_reached", 1);
+                }
+                // Spawning starts EARLIER than arriving, because the squads are
+                // spread over a callback chain and that chain needs runway.
+                if atOffice
+                    || Vector4.Distance(pos, CCGig01Places.CompoundEntry()) < 100.0 {
+                    this.AuditSite(false);
                 }
 
                 // The office ledger lives on the narrative computer's own screen
@@ -1690,8 +1607,8 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
                 // Johnny on cc_g01_shard_found so the open window re-staged him
                 // beside V at the desk. Deleted 2026-08-14: the shard beat is
                 // gig01_shard_read, which spawns its own actor when it starts,
-                // and ArmLipPlacement(6, ...) places him. A scene-owned body
-                // needs no re-staging because it did not exist a moment earlier.
+                // and its own scene stages him. A scene-owned body needs no
+                // re-staging because it did not exist a moment earlier.
 
                 // ANTI-STALL, and it now measures from THE SHARD.
                 //
@@ -1761,15 +1678,19 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
                 // and ~139 m away horizontally, so the two anchors are checked
                 // separately rather than with one big radius.
                 if qs.GetFactStr("cc_g01_nix_done") == 1 {
+                    // THE OUTLINE COUNTS TOO. The two spheres are the signposted
+                    // way in; InsideEstate is the twenty walked points, and it
+                    // is what makes a player who came over the wall or in from
+                    // the back get the same estate as one who drove to the gate.
+                    // Same correction as the way-in objective got in 1.1.0, now
+                    // applied to the guards.
                     if CCSharedWorld.Near(pos, CCGig01Places.EstateGate(), 45.0, 12.0, 25.0)
-                        || CCSharedWorld.Near(pos, CCGig01Places.Hoshino(), 70.0, 12.0, 25.0) {
+                        || CCSharedWorld.Near(pos, CCGig01Places.Hoshino(), 70.0, 12.0, 25.0)
+                        || CCGig01Places.InsideEstate(pos) {
                         if qs.GetFactStr("cc_g01_estate_reached") == 0 {
                             qs.SetFactStr("cc_g01_estate_reached", 1);
                         }
-                        if !this.m_estateSpawned {
-                            this.m_estateSpawned = true;
-                            this.SpawnEstateSecurity();
-                        }
+                        this.AuditSite(true);
                     }
 
                     // Reaching the door into the house. playtest, 2026-08-12: the
@@ -2173,181 +2094,15 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
                 }
             }
 
-            // ---------------------------------------------------- JOHNNY
+            // JOHNNY IS PLACED BY HIS SCENE, not from here. Each beat's
+            // scene stages him in front of V and facing V, using the
+            // measured properties of an `around_player` marker: it sits on
+            // the player and carries the player's rotation. See
+            // tools/gen_scenes.py BEAT_STAGING and docs/backlog.md 9.
             //
-            // THE SCRIPT OWNS HIS BODY AGAIN, and the scenes own his words.
-            //
-            // The first cut of the caption conversion made him a present actor
-            // inside each scene, positioned by a spawnOffset copied from the
-            // SpawnJohnny call it replaced. That was a unit error: `ahead` and
-            // `aside` are FORWARD and SIDEWAYS in the player's frame, and a
-            // Transform's X and Y are map axes, so he stopped tracking which way
-            // V faces. Playtest: "before Johnny appeared right in front of V, now
-            // it seems he's behind." It cannot be fixed by choosing better
-            // numbers - the rotation of an around_player marker is not knowable,
-            // and vanilla's only Tag-staged Johnny scene does not offset from it
-            // at all (its actor carries its own spawnMarkerNodeRef).
-            //
-            // So: SpawnJohnny does the placement (real player-relative maths),
-            // the script workspot renders the apparition, DissolveJohnny gives
-            // him the calibrated 0.25 s exit - all three confirmed in game - and
-            // the scene's own Johnny actor is buried 2.5 m down, purely so the
-            // line has a speaker close enough to be HEARD and a Character record
-            // to take his name from.
-            //
-            // Each beat spawns him on the fact its scene waits on, so he is
-            // standing there before the scene starts talking.
-            // BOUNDED BY johnny_done, LIKE THE OTHER TWO - and this one is a
-            // REGRESSION FIX, 2026-08-13: "Johnny no longer appears to say
-            // 'fucking Arasaka', what happened??"
-            //
-            // What happened is that this window used to close on
-            // cc_g01_call_done, and earlier the same day the holocall tick was
-            // sped up from 2.0 s to 0.2 s while a call is hanging up - to close
-            // the silence before this very line. That turned a window with up to
-            // two seconds of slack into one about a fifth of a second wide,
-            // and the encounter tick only runs every 1.5 s. The spawn became a
-            // race against a timer it usually lost.
-            //
-            // A staging window must be bounded by the beat, never by a timer
-            // somewhere else that happens to be nearby. johnny_done is the
-            // quest phase's own "he is finished here" signal: it is set to 0
-            // before the arasaka scene and to 1 after it, which marks out this
-            // window and nothing else.
-            //
-            // terminal_left <= 0 keeps it from reopening at the office, where
-            // johnny_cue is still set and johnny_done goes back to 0.
-            if qs.GetFactStr("cc_g01_johnny_cue") > 0
-                && qs.GetFactStr("cc_g01_terminal_left") <= 0
-                && qs.GetFactStr("cc_g01_johnny_done") <= 0 {
-                // ============================================================
-                // NO SCRIPT-SPAWNED JOHNNY IN THIS BEAT ANY MORE. 2026-08-14.
-                // ============================================================
-                //
-                // There is ONE Johnny here now: the scene's own actor. He is
-                // the line's SPEAKER, so he lipsyncs (which a script-spawned
-                // body can never do - nothing can bind a scene line to it), and
-                // this script does the two jobs the scene cannot: it PLACES him
-                // in front of V, and it gives him his exit glitch.
-                //
-                // The old call was `SpawnJohnny(player, 1.8, 1.1, 7)`, and its
-                // numbers live on in PlaceSceneJohnny - they were tuned by hand
-                // against real geometry and are not to be re-derived.
-                //
-                // What is lost with it: the facial preset (arg 7, "disgust"),
-                // which SetJohnnyFace applied to the script's puppet. Nothing
-                // sets a face on the scene's actor yet. Worth restoring if his
-                // expression reads blank, and it is the same helper - it just
-                // needs the found GameObject rather than m_johnnyId.
-                this.ArmLipPlacement(1, 1.8, 1.1);   // beat 1: arasaka
-            }
-            // THE SCRIPT-OWNED JOHNNY'S LIVENESS CHECK WAS HERE - "marked
-            // spawned but does not resolve -> respawn", plus a per-tick
-            // re-assertion of his workspot. Deleted 2026-08-14 with the body it
-            // watched; the scene owns and removes its own actor now.
-            //
-            // Its two lessons are in docs/gotchas.md #15: treat absence as
-            // meaningful only after the entity has resolved once, and "still
-            // there" is not "still
-            // visible" - `phantomVisibleStates` is ["RootMotion","Workspot"], so
-            // he renders only while workspotted.
-
-            // THE WINDOWS ARE BOUNDED BY cc_g01_johnny_done, NOT BY THE SCENE
-            // THAT OPENED THEM. Playtest, twice: "Johnny must stay present until
-            // the last dialogue, not disappear after the first one", and then
-            // "I didn't see Johnny staying there to wait for the shard".
-            //
-            // The first fix was in the quest phase - stop setting johnny_done
-            // between beats - and it was necessary but not sufficient. These
-            // conditions ALSO closed early: the office one ended at
-            // cc_g01_terminal_done, which the graph sets the moment the p22
-            // conversation is over, so from p25 onward nothing was re-staging
-            // him. Anything that removed him after that - a scene taking over
-            // the actor, a streaming hiccup - was permanent.
-            //
-            // Bounding both windows by johnny_done instead makes the tick
-            // SELF-HEALING: SpawnJohnny returns immediately when he is already
-            // there, and if he ever goes missing inside a window he is back
-            // within one tick. The quest phase owns exactly one signal for "he
-            // is finished here", which is what it was always meant to be.
-            //
-            // The two windows must not overlap, hence ledger_sent on the first:
-            // both call SpawnJohnny with different offsets and whichever ran
-            // first would win, putting the street Johnny at the office's
-            // nose-to-the-wall offset.
-            // ONE WINDOW PER SCENE NOW, NOT ONE PER STAGING.
-            //
-            // That distinction did not exist while the SCRIPT owned the body:
-            // one spawn covered the desk conversation, the walk to the shard and
-            // the "Figures." beat, and he simply stayed. A scene-owned body is
-            // different - each scene spawns and removes its own, so each scene
-            // needs its own staging.
-            //
-            // playtest, 2026-08-14: *"Johnny doesn't re-appear after we read the
-            // shard."* The window below used to run from cc_g01_terminal_left
-            // all the way to johnny_done, covering BOTH scenes - and
-            // ArmLipPlacement's one-staging-per-beat guard is what made that
-            // fatal: the terminal scene set m_lipDone for beat 2, and every
-            // later call in the same window was refused. He was never staged
-            // for the shard beat at all.
-            //
-            // shard_found closes the first window, so it ends when V walks off
-            // to the desk - which is also exactly where he should stop being
-            // there ("look for the shard, Johnny no longer there").
-            if qs.GetFactStr("cc_g01_terminal_left") > 0
-                && qs.GetFactStr("cc_g01_shard_found") <= 0
-                && qs.GetFactStr("cc_g01_ledger_sent") <= 0
-                && qs.GetFactStr("cc_g01_johnny_done") <= 0 {
-                // Almost entirely to the SIDE: V is nose to a screen against a
-                // wall, so "ahead" would be inside it.
-                this.ArmLipPlacement(2, 0.5, 1.4);   // beat 2: terminal (p22+p25)
-            }
-            // ...and back for "Figures." the moment the reader closes.
-            // cc_g01_shard_read is set by Gig01_Shard's wrap on the popup
-            // closing, and the quest phase enters gig01_shard_read on it - so
-            // this arms as the scene starts and he is placed ~300 ms in, before
-            // V's first line. He stays until the scene's own exit cue, 250 ms
-            // before it ends, which is 2 s after "Figures."
-            //
-            // V is at the desk here, not against a wall, so he gets the street
-            // offset rather than the nose-to-the-screen one.
-            if qs.GetFactStr("cc_g01_shard_read") > 0
-                && qs.GetFactStr("cc_g01_ledger_sent") <= 0
-                && qs.GetFactStr("cc_g01_johnny_done") <= 0 {
-                this.ArmLipPlacement(6, 1.6, 1.0);   // beat 6: the shard, p24
-            }
-            // Through the crosswalk AND the whole of Nix's callback - he has two
-            // lines at the end of it.
-            if qs.GetFactStr("cc_g01_ledger_sent") > 0
-                && qs.GetFactStr("cc_g01_nixcall_done") <= 0
-                && qs.GetFactStr("cc_g01_johnny_done") <= 0 {
-                this.ArmLipPlacement(3, 1.8, 1.1);   // beat 3: the crosswalk
-            }
-            // ...and back once the phone is DOWN, for p30's two lines.
-            // cc_g01_nixcall_done is the call actually hanging up, and the
-            // quest phase enters gig01_graves on it - so this arms as that
-            // scene starts. Its own window, because one staging per SCENE is
-            // the rule now: the crosswalk used to consume this one and Johnny
-            // never appeared for the call at all (playtest, 2026-08-14).
-            if qs.GetFactStr("cc_g01_nixcall_done") > 0
-                && qs.GetFactStr("cc_g01_johnny_done") <= 0 {
-                this.ArmLipPlacement(7, 1.8, 1.1);   // beat 7: p30, the graves
-            }
-            if qs.GetFactStr("cc_g01_hoshino_dead") > 0
-                && qs.GetFactStr("cc_g01_malware_done") <= 0 {
-                this.ArmLipPlacement(4, 1.6, 1.0);   // beat 4: kill
-            }
-            if qs.GetFactStr("cc_g01_malware_talk") > 0
-                && qs.GetFactStr("cc_g01_escaped") <= 0 {
-                this.ArmLipPlacement(5, 1.6, 1.0);   // beat 5: malware
-            }
-
-            // The script-owned dissolve on cc_g01_johnny_done was here. The
-            // scene times its own exit now - it fires cc_g01_johnny_exit from an
-            // events socket 250 ms before its last section ends, and the
-            // placement poll catches it within 150 ms (LipExitJohnny). That is
-            // the fix from 2026-08-14 for anchoring a fixed thing to a varying
-            // one, so this had nothing left to do.
+            // The seven staging windows and the whole lift that used to
+            // live here are gone. A scene-placed actor arrives already
+            // posed, so there is nothing to find, lift, retry or glitch.
 
             // Johnny gets the last word, and it is the last word that ends the
             // gig. He is not an actor in the epilogue scene - his character
@@ -2414,8 +2169,41 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
             if qs.GetFactStr("cc_g01_done") > 0 && qs.GetFactStr("cc_g01_rewarded") <= 0 {
                 this.GiveReward(player, qs);
             }
+
+            // A FINISHED GIG COSTS THE SAVE NOTHING. Nothing in this file used
+            // to check cc_g01_done, so this tick kept rescheduling itself every
+            // 1.5 s for the rest of the playthrough, running proximity maths
+            // against places V has already left. NegativeBalanceStart's
+            // m_settled latch is the model.
+            //
+            // THE CONDITIONS ARE THE POINT, not the fact on its own. Everything
+            // this system takes from the world is given back higher up the same
+            // tick - Mama's voiceset and `mama_is_talking`, the way-in mappin,
+            // our stand-in - and stopping before those had run would latch each
+            // one on for the rest of the save, which is the exact class of bug
+            // this stop is meant to end. So the receipts are read here rather
+            // than assumed, and the reward is one of them: the tick has to
+            // survive long enough to pay it.
+            //
+            // In practice all of them are clear on the first tick after
+            // cc_g01_done, so this is one extra pass and then silence.
+            //
+            // Not persistent, and it does not need to be: OnAttach schedules
+            // again on the next load, one tick re-checks and stops. Clearing
+            // cc_g01_done from the dev menu does not restart the tick within a
+            // session - reload.
+            if qs.GetFactStr("cc_g01_done") > 0
+                && qs.GetFactStr("cc_g01_rewarded") > 0
+                && !this.m_mamaHeld
+                && !this.m_mamaMuted
+                && !this.m_mamaSpawned
+                && !this.m_wayinMappinUp {
+                stop = true;
+            }
         }
-        this.Schedule(1.5);
+        if !stop {
+            this.Schedule(1.5);
+        }
     }
 }
 
@@ -2426,31 +2214,25 @@ public class CCGig01EncounterTick extends DelayCallback {
     }
 }
 
-// Fast placement poll for the scene's Johnny. The 1.5 s encounter tick is far
-// too coarse for this one job: he materialises at the around_player marker and
-// then visibly hops when the tick gets round to moving him. playtest, 2026-08-14:
-// *"the glitch appeared behind, and then moved... feels a bit weird."*
-// See PlaceSceneJohnnyFast.
-public class CCGig01LipPlace extends DelayCallback {
-    public let system: wref<NegativeBalanceEncounter>;
-    public func Call() -> Void {
-        if IsDefined(this.system) { this.system.PlaceSceneJohnnyFast(); }
-    }
-}
 
-// Fires the scene Johnny's exit glitch 0.25 s before the scene disposes of him.
-// See LipExitJohnny.
-public class CCGig01LipExit extends DelayCallback {
-    public let system: wref<NegativeBalanceEncounter>;
-    public func Call() -> Void {
-        if IsDefined(this.system) { this.system.LipExitJohnny(); }
-    }
-}
 
 // CCGig01JohnnyProbe / CCGig01JohnnyDissolve / CCGig01JohnnyWorkspotProbe /
 // CCGig01JohnnyLeave were here, driving the script-owned Johnny. Deleted
 // 2026-08-14 with the path they served - see the note above SpawnJohnny's
 // former home.
+
+public class CCGig01SpawnStep extends DelayCallback {
+    public let system: wref<NegativeBalanceEncounter>;
+    public let estate: Bool;
+    public let step: Int32;
+    public let tries: Int32;
+    public let placed: Int32;
+    public func Call() -> Void {
+        if IsDefined(this.system) {
+            this.system.SpawnStep(this.estate, this.step, this.tries, this.placed);
+        }
+    }
+}
 
 public class CCGig01MakeNeutral extends DelayCallback {
     public let system: wref<NegativeBalanceEncounter>;

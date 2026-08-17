@@ -194,6 +194,15 @@ public abstract class CCG01Doors {
         if qs.GetFactStr("cc_g01_accepted") <= 0 {
             return;
         }
+        // ...AND ONLY UNTIL IT IS OVER. cc_g01_accepted never returns to 0, so
+        // it was the whole gate: after the gig finished, all five doors were
+        // still pumped up to ON every time the sector streamed in, for the rest
+        // of the save. The doors stay open either way - this file never closes
+        // one, and the base game opens them itself in "Gimme Danger" - so the
+        // only thing lost is the work.
+        if qs.GetFactStr("cc_g01_done") > 0 {
+            return;
+        }
         qs.SetFactStr("cc_g01_dbg_door_state",
                       CCG01Doors.StateCode(ps.GetDeviceState()));
         CCG01Doors.Pump(ps, 0);

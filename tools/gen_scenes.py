@@ -90,13 +90,18 @@ The rule now, and it turns on ONE field:
 
 So positional speakers are placed deliberately:
 
-  Johnny   buried 2.5 m under an `around_player` marker
+  Johnny   beside V and facing him, per beat. See BEAT_STAGING
   Hoshino  buried 2.5 m under the estate marker
   Mama     a fixed anchor 3 m from her mark, then 2.5 m down
 
-Straight down is the offset of choice because it needs no knowledge of the
-marker's rotation - see ANCHOR_PLAYER for why that matters. Only Elena and Nix
-still use the far-away default, and only because their lines are holocall.
+Johnny is the one who is SEEN, so he is aimed rather than buried: an
+`around_player` marker sits at V's exact position and carries V's rotation, so
++Y is forward and +X is right (measured five times, docs/backlog.md 9).
+
+For a speaker who only has to be HEARD, straight down is still the offset of
+choice, because it needs no knowledge of the marker's rotation at all and the
+floor between listener and speaker costs nothing. Only Elena and Nix still use
+the far-away default, and only because their lines are holocall.
 
 Each speaker still needs a TweakXL Character record purely for the displayName
 shown over its subtitles.
@@ -132,13 +137,14 @@ import os
 # that a second gig reuses rather than forks.
 #
 # Several names are imported only to be re-exported. gen_voice, gen_lipsync and
-# gen_workspot_ent reach for them as gen_scenes.<name>, and keeping them
+# gen_shard_ent reaches for them as gen_scenes.<name>, and keeping them
 # resolvable here means the split costs those tools no changes at all.
 from questkit.scene import (                                        # noqa: F401
     Scene, configure, write_subtitles, write_lipmap,
     ANCHOR_PLAYER, JOHNNY_ACTOR, JOHNNY_GHOST, JOHNNY_SOLID,
     WORKSPOT_JOHNNY, WORKSPOT_ENTRY,
     estimate_ms, line_ms, locstring_ruid, resref, cname, fnv1a64,
+    yaw_to_face_player,
 )
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -571,7 +577,10 @@ def build_graves():
     s1 = s.section([
         s.add_line(johnny, "Of course it is.", key='j30a'),
         s.add_line(johnny, "Arasaka owns the hill and the graves.", key='j30b'),
-    ], inner=True, tail_ms=2000, lead_ms=1200)
+    # lead_ms 2200, up from 1200. Playtest: he starts the line while still
+    # materialising. Delaying the first line is the smallest fix there is
+    # and touches only this beat.
+    ], inner=True, tail_ms=2000, lead_ms=2200)
     out = s.end('graves_out')
     s.link(start, s1)
     s.link_section(s1, out)
@@ -750,8 +759,30 @@ def build_hoshino():
     #
     # If that question is settled, COLLAPSE THIS BACK TO ONE ACTOR. A duplicate
     # NPC on screen is a diagnostic, not a design.
-    hoshino = s.add_actor('hoshino', 'Character.cc_g01_hoshino',
-                          offset=(0.0, 0.0, -2.5))
+    #
+    # THE BURIAL IS GONE, 2026-08-17. It was `offset=(0, 0, -2.5)` from
+    # ANCHOR_ESTATE, and a field report against 1.1.3 describes what that
+    # produced: *"he just spawned out of no where on the first floor, though he
+    # was half-way in a pillar. Once I selected one of the dialog options, he
+    # disappeared and is now no where to be found."* Arriving from nowhere,
+    # standing inside geometry and vanishing when the dialogue ends are all
+    # properties of a scene's own actor, which is created when the scene starts
+    # and deleted when it exits. The Hoshino the player fights is not that.
+    #
+    # 2.5 m under the anchor was only ever meant to be close enough to HEAR,
+    # and burial cannot be made safe by measurement here: ANCHOR_ESTATE is a
+    # security camera, so its height is a mounting height rather than a floor,
+    # and its transform is not in any file this repo can read (the cooked
+    # sectors store node refs as hashes; only the always-loaded name registry
+    # spells the name out, and it carries no position). Whatever is 2.5 m below
+    # a camera is unknown, and the road tunnels under the North Oak villa.
+    #
+    # So the body goes back to where every other voice-only actor in this file
+    # stands: a kilometre out and a hundred metres down, which is far enough
+    # that nothing can see it, walk into it or watch it disappear. That costs
+    # the audio, and the sections below buy it back by making his lines 2D.
+    # Elena and Nix have always worked this way.
+    hoshino = s.add_actor('hoshino', 'Character.cc_g01_hoshino')
 
     # NO JOHNNY IN THIS SCENE. He used to stand here through the whole
     # negotiation, with the comic's p43 and p45 lines. the design call, 2026-08-12,
@@ -786,7 +817,25 @@ def build_hoshino():
     # double is the only way his mouth can move; see add_body_double.
     s.add_body_double(hoshino, 'hoshino_body', tag='cc_g01_hoshino')
 
-    s1 = s.section([s.add_line(hoshino, "Mmm? You lost, merc?", key='h01')])
+    # HIS LINES ARE 2D, WHICH IS WHAT LETS THE BODY STAND A KILOMETRE AWAY.
+    #
+    # A speaker that far off is inaudible while his line is positional, and one
+    # thing was known about stopping that: `inner=True` lines were audible from
+    # a marker in the wrong place while `Vo_Expression_Spoken` ones were not
+    # (scene-playbook, the table on line styling). `inner` sets two fields at
+    # once, `voExpression` and `visualStyle`, and which of them carried the 2D
+    # behaviour had never been separated.
+    #
+    # Separated in playtest, 2026-08-17, by routing his two lines differently in
+    # one conversation: h01 with the VO expression alone, h02 with both. Both
+    # were audible and both subtitles read "Hoshino: ..." in ordinary styling,
+    # so `voExpression` carries it and `visualStyle: innerDialog` changed
+    # nothing visible on a line whose speaker is not Johnny.
+    #
+    # Both lines therefore use `inner_vo`: the field that does the work, and
+    # none of the relic register that belongs to Johnny.
+    s1 = s.section([s.add_line(hoshino, "Mmm? You lost, merc?", key='h01')],
+                   inner_vo=True)
     # NOT the comic's wording. p45 reads "You know who I am." - a flat
     # assertion - and playtest, 2026-08-14: "Hoshino's phrasing is weird". It is,
     # and the cause is structural rather than lexical: the comic has a page turn
@@ -805,7 +854,8 @@ def build_hoshino():
     # DO NOT change this string without generating the audio in the same pass.
     # Nothing downstream compares subtitle text to the clip, so a desync here
     # would be silent - this line is why Hoshino was moved to ElevenLabs.
-    s2 = s.section([s.add_line(hoshino, "Do you know who I am?", key='h02')])
+    s2 = s.section([s.add_line(hoshino, "Do you know who I am?", key='h02')],
+                   inner_vo=True)
     c1 = s.choice([s.add_option("Name what he signed.", 'oh1')])
     # ...and then V SAYS it. playtest, 2026-08-13: "V reply to hoshino is silent".
     # It was a hub option and nothing else - the player pressed a line nobody
@@ -839,56 +889,67 @@ def build_hoshino():
 #               because a blendable appearance renders nothing unless the
 #               phantom system is driving it, and these beats are not the place
 #               to test that.
-#   offsets     copied from the SpawnJohnny() calls they replace, which were
-#               tuned by hand against real geometry. The scene marker's rotation
-#               is not ours to know, so treat them as "about 2 m from V" rather
-#               than as forward/right.
+#   offsets     BEAT_STAGING, in V's OWN frame: +Y forward, +X right. The
+#               marker's rotation IS ours to know, measured five times in game
+#               (docs/backlog.md 9), so these are real directions and not
+#               merely a distance. The facing is computed by yaw_to_face_player
+#               and must never be typed by hand.
 #
-# The SCRIPT no longer spawns Johnny for any of these - two Johnnys would be
-# worse than none - but it still owns every quest fact it owned before. Nothing
-# about quest progression moved into a scene.
+# The SCRIPT no longer spawns, places or searches for Johnny anywhere - it does
+# not know he exists - but it still owns every quest fact it owned before.
+# Nothing about quest progression moved into a scene.
+
+
+# WHERE JOHNNY STANDS, PER BEAT, IN V'S OWN FRAME.
+#
+# (aside, ahead) in metres: aside is positive to the RIGHT, ahead is
+# positive FORWARD. Both are measured properties of an `around_player`
+# marker rather than guesses; docs/backlog.md 9 has the five runs.
+#
+# The numbers came from the script placement these replaced, where they were
+# written the other way round as (ahead, aside) and had been hand-tuned
+# against real geometry. Do not re-derive them.
+#
+# The facing is COMPUTED by yaw_to_face_player. Never write a yaw here: a
+# fixed 180 only looks at V from dead ahead and is 32 degrees wide at
+# (1.1, 1.8).
+# LEFT, i.e. a negative aside. There is no vanilla convention to copy: the
+# one shipped Johnny scene on an `around_player` marker anchors him to a
+# world node with a zero offset, so it encodes no side. Left is the design
+# call, taken after seeing both in game.
+BEAT_STAGING = {
+    'gig01_arasaka':    (-0.8, 2.6),   # his answer as Elena's call drops
+    'gig01_terminal':   (-1.2, 0.9),   # V is nose to a screen, so mostly aside
+    'gig01_shard_read': (-0.75, 2.3),   # at the office desk
+    'gig01_legend':     (-0.8, 2.6),   # the crosswalk
+    'gig01_graves':     (-0.8, 2.6),   # p30
+    'gig01_kill':       (-0.75, 2.3),   # over Hoshino's body
+    'gig01_malware':    (-1.6, 0.9),   # estate terminal: FAR left. Further
+                                      # ahead put him behind the screen.
+}
 
 
 def _beat(name, visible_johnny=False):
-    """Common opening for the five converted beats: marker, Johnny, V.
+    """Common opening for the beats that happen wherever V is standing.
 
-    `visible_johnny` gives the actor a SOLID appearance and a workspot, so the
-    mouth doing the talking can be looked at once the script lifts him out of
-    the floor. He still spawns buried - see the branch below for why that is
-    the fix for his entry rather than a compromise. Only `build_arasaka` uses
-    it, and it produces a second Johnny on screen until the duplicate is
-    collapsed. Read its docstring.
+    `offset` is in V's own frame: +Y forward, +X right, metres. `yaw` turns
+    the actor once he is there; pass yaw_to_face_player(offset) to have him
+    look at V. Both are measured facts about an `around_player` marker, not
+    assumptions: see docs/backlog.md 9 for the five runs behind them.
 
-    JOHNNY IS VOICE-ONLY HERE. THE SCRIPT STILL OWNS HIS BODY, and that split is
-    the correction to the first cut of this conversion.
+    A scene actor placed this way arrives already posed, so there is nothing
+    for a script to lift and nothing to hide with an effect.
 
-    The first cut made him a present scene actor and gave him the spawnOffset
-    from the SpawnJohnny() call it replaced - (1.8, 1.1). Playtest, 2026-08-13:
-    "before Johnny appeared right in front of V, now it seems he's behind".
+    `visible_johnny` gives the actor a SOLID appearance and a workspot.
 
-    He was right, and the bug is a unit error. SpawnJohnny computes
-    `pos + forward*ahead + perpendicular*aside`: those two numbers are FORWARD
-    and SIDEWAYS in the player's frame. Writing them into a Transform's X and Y
-    makes them map axes, so where he lands stops tracking which way V is facing.
-
-    There is no way to fix that by picking better numbers, because the rotation
-    of an `around_player` marker is not knowable. Vanilla settles it: the one
-    shipped Johnny scene staged with a Tag marker
-    (`sts_pac_cvi_02_johnny.scene`) does NOT offset him from it at all - his
-    actor carries its own `spawnMarkerNodeRef` and a ZERO offset. There is no
-    vanilla precedent for offsetting off an around_player marker.
-
-    So the body goes back to the route that was already proven three ways over:
-    Gig01_Encounter.SpawnJohnny places him with real player-relative maths, the
-    script workspot renders the see-through apparition (confirmed in game
-    2026-08-12), and DissolveJohnny gives him the calibrated 0.25 s
-    cut-on-the-flash exit. The scene supplies the WORDS - which is all it was
-    ever needed for, since a caption cannot carry audio and a scene line can.
-
-    Buried 2.5 m, straight down, which is the one offset that needs no knowledge
-    of the marker's rotation. Close enough to hear, under the floor so there is
-    no second Johnny. Same shape as Hoshino's h01 and Mama Welles'.
+    JOHNNY IS THE SCENE'S OWN ACTOR AND THE LINE'S SPEAKER, which is what
+    buys lipsync and lets a mod voiceover map key on the line. A caption
+    pushed from script carries no RUID and can never be voiced.
     """
+
+    aside, ahead = BEAT_STAGING[name]
+    offset = (aside, ahead, 0.0)
+    yaw = yaw_to_face_player(offset)
     s = Scene(name, ANCHOR_PLAYER)
     if visible_johnny:
         # BURIED, LIKE EVERY OTHER SPEAKER IN THIS FILE - which is the fix
@@ -918,11 +979,11 @@ def _beat(name, visible_johnny=False):
         # the workspot that satisfies phantomVisibleStates is running either way
         # (the scene's, then the script's device).
         johnny = s.add_actor(JOHNNY_ACTOR, 'Character.Silverhand',
-                             offset=(0.0, 0.0, -2.5),
-                             appearance=JOHNNY_GHOST, validate=0)
+                             offset=offset, yaw=yaw,
+                             appearance=JOHNNY_GHOST, validate=1)
     else:
         johnny = s.add_actor(JOHNNY_ACTOR, 'Character.Silverhand',
-                             offset=(0.0, 0.0, -2.5))
+                             offset=offset, yaw=yaw)
     v = s.add_player()
     # No-op while BRIDGE_SCENES is empty - kept because the machinery is one
     # constant away from being usable again if a route to acquiring the visible
@@ -990,6 +1051,8 @@ def build_arasaka():
                       under the marker to standing on it cannot change how it
                       sounds.
     """
+    # TEMPORARY: horizontal offset so the marker probe has a direction to
+    # measure. Restore the default when the probe comes out.
     s, johnny, v = _beat('gig01_arasaka', visible_johnny=True)
     start = s.start('arasaka_in')
     # V'S LINE MOVED IN FROM gig01_elena_call, WHICH IS THE FIX FOR THE
@@ -1318,11 +1381,11 @@ def build_epilogue_standin():
     quest state, playtesting 2026-08-11), and a fallback that changes nothing is the
     one least likely to break the ending.
 
-    Buried 2.5 m is the offset that needs no knowledge of the marker's rotation -
-    the same trick every voice-only speaker in this file uses. Gig01_Encounter's
-    PlaceSceneMama then lifts her out and stands her on her mark facing V, using
-    the workspot device, which is the only thing that carries a FACING as well as
-    a position (docs/gotchas.md #16).
+    Buried 2.5 m is the offset that needs no knowledge of the marker's rotation,
+    the same trick every voice-only speaker in this file uses. She is heard and
+    not seen: the visible Mama Welles in this variant is the stand-in
+    Gig01_Encounter spawns on her own captured mark, and the scene supplies only
+    the voice and the name over the subtitle.
     """
     return _epilogue('gig01_epilogue_standin', real_mama=False)
 
@@ -1452,10 +1515,10 @@ def _epilogue(name, real_mama):
     # NO WORKSPOT ON EITHER VARIANT, and the reason is worth writing down
     # because the first cut of this change added one.
     #
-    # Johnny needs the split-ownership recipe - script body, scene words, a
-    # workspot device to carry his facing - because `phantomVisibleStates` is
+    # Johnny needs one because `phantomVisibleStates` is
     # ["RootMotion","Workspot"]: he does not RENDER outside a workspot. That is
-    # a property of his apparition, not of scene actors.
+    # a property of his apparition, not of scene actors, which is why
+    # stage_johnny fires one and nothing else in this file does.
     #
     # Mama Welles is an ordinary NPC and neither variant has the problem:
     #   real     - she is standing on her own community mark, correctly placed
@@ -1523,7 +1586,9 @@ def build_bar():
     # walks to, at floor level, with an identity orientation - see ANCHOR_BAR.
     # validateSpawnPostion stays on (add_johnny's default, and vanilla's): he is
     # being placed in real geometry, which is the case validation is for.
-    johnny = s.add_johnny(appearance=JOHNNY_SOLID)
+    # 45 degrees anticlockwise so he faces Mama Welles rather than straight
+    # out from the counter. Yaw is counter-clockwise seen from above.
+    johnny = s.add_johnny(appearance=JOHNNY_SOLID, yaw=45.0)
     v = s.add_player()
 
     start = s.start('bar_in')
