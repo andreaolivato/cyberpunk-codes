@@ -50,11 +50,26 @@ player-facing. Keep the internal account of the same work in a development log
 kept separately. A changelog that explains itself to developers
 stops being readable by players.
 
-Tag the release in git once the zip is uploaded: `gig-01/v<version>` on the
+Tag the release in git once the zip is uploaded: `<gig>/v<version>` on the
 commit the zip was built from, in every repo that carries the source. The tag
 is what a GitHub release attaches to, and it marks the exact source of the
 shipped bytes, which matters because the packing is non-deterministic and a
 rebuild can never prove it matches.
+
+**THE PREFIX IS NOT OPTIONAL AND IT IS NOT ONLY FOR THIS REPO.** Both repos hold
+four gigs, so a bare `v1.2.1` claims a version the repo does not have, and the
+second gig to ship has no unambiguous name for its own `v1.0.0`. Every tag in
+both repos is `gig-01/v...` and every future one is `gig-02/v...` and so on.
+
+This drifted for three releases: the public repo carried `v1.1.3`, `v1.2.0` and
+`v1.2.1` unprefixed while the private one was scoped correctly, because "in
+every repo" was read as "remember to tag the public repo too" and not as "with
+the same name". They were renamed on 2026-08-18, before anything pinned them.
+So after tagging, check both:
+
+```powershell
+git -C $repo tag --list "v*"        # must print NOTHING, in either repo
+```
 
 ### It does not rebuild by default
 
