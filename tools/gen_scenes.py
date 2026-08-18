@@ -1,6 +1,6 @@
 r"""Generates the gig's .scene resources - real scene-system conversations.
 
-FIFTEEN scenes, all built by the same builder. ALL_BUILDERS at the bottom is
+FOURTEEN scenes, all built by the same builder. ALL_BUILDERS at the bottom is
 the list; gen_voice reads it too, so it is the one place scenes are enumerated.
 
   gig01_elena_call  Elena's opening holocall (was an SMS thread)
@@ -221,17 +221,24 @@ ANCHOR_BAR = '#hey_rey_food_01_mp'
 #   inner dialog   position does not matter. around_player is fine.
 #   spoken         position is everything. Use a real anchor near the speaker.
 #
-# Mama's own spot is known - captured off the live NPC, and it is also where the
-# stand-in spawns if the base-game one is absent - so she gets a fixed anchor and
-# an exact offset onto it.
+# ...and the third line of that table, which was not known when it was written:
+# `inner_vo` sets the VO expression WITHOUT the inner-dialog subtitle styling,
+# so an ordinary NPC can be 2D and still read as an ordinary NPC. That was
+# separated in playtest on Hoshino (backlog 10k) and it is what the stand-in
+# below now uses, which removes the need to place her speaker near her at all.
 #
-# `#sq018_pepevodka` is (-1260.510, -1001.310, 13.141), 3.0 m from her mark, and
-# crucially its orientation is IDENTITY - so the offset below is not silently
-# rotated. Two nearer candidates (`#sq018_03d_infinite_drink` at 2.9 m,
+# `#sq018_pepevodka` is (-1260.510, -1001.310, 13.141), 3.0 m from Mama's own
+# captured mark, and its orientation is IDENTITY, so an offset onto it is not
+# silently rotated. Two nearer candidates (`#sq018_03d_infinite_drink` at 2.9 m,
 # `#q000_kid_01b_vodka_shot` at 3.9 m) were rejected for having real rotations.
+# It stays as the scene's origin now that nothing is measured from it: a real
+# node in her own streaming sector is a better marker than one across the city.
 ANCHOR_MAMA = '#sq018_pepevodka'
-# (her mark) - (the anchor), then 2.5 m down: under the floor at her feet.
-OFFSET_MAMA = (-1.668, 2.505, -3.584)
+# OFFSET_MAMA WAS HERE: (-1.668, 2.505, -3.584), her mark relative to the anchor
+# and then 2.5 m down, to bury the speaker under the floor at her feet. Removed
+# 2026-08-18. The measurement was sound and the burial was still wrong, for the
+# reason 10k found on Hoshino: 2.5 m below a marker is not reliably below the
+# floor, and the room underneath is somewhere a player can be standing.
 
 # ...but a voiced line must be paced by its clip, not by a guess about it, or it
 # cuts off or drags. tools/gen_voice.py measures every WAV it processes and
@@ -274,17 +281,18 @@ try:
 except (OSError, ValueError):
     LIPSYNC_SETS, LIPSYNC_LINES = {}, {}
 
-# Scenes that reuse another scene's recordings. `gig01_epilogue_standin` is the
-# same four lines as `gig01_epilogue` - the variant played when Mama Welles is
-# not in the bar - so it must NOT be voiced separately: gen_voice points its
-# RUIDs at the clips that already exist, and gen_lipsync copies its picks.
+# Scenes that reuse another scene's recordings: gen_voice points the alias's
+# RUIDs at clips that already exist, and gen_lipsync copies its picks.
 #
-# Regenerating them was never an option. The voiceover map keys stringId -> wem
-# path, so two RUIDs may share one file; and a re-run of the TTS is a re-roll of
-# the voice itself (BUILDING.md), which would leave one Mama Welles
-# sounding like a different woman depending on whether she happened to be in the
-# bar that night.
-SCENE_ALIASES = {'gig01_epilogue_standin': 'gig01_epilogue'}
+# EMPTY SINCE 2026-08-18, and the mechanism is kept because the reasoning that
+# built it is still right. It held `gig01_epilogue_standin -> gig01_epilogue`,
+# four lines the stand-in shared with the real epilogue. Regenerating them was
+# never an option: a re-run of the TTS re-rolls the voice itself (BUILDING.md),
+# which would have left one Mama Welles sounding like a different woman
+# depending on which variant played. Both the stand-in and the need for it are
+# gone; see build_epilogue. A future scene that replays another's audio wants
+# this, and wants it for the same reason.
+SCENE_ALIASES = {}
 
 # Hand the builder this gig's paths and sidecars. Must run before any Scene is
 # constructed; everything below only builds scenes when called from main.
@@ -1346,12 +1354,16 @@ def build_malware():
 
 # ======================================================== scene 3: epilogue
 def build_epilogue():
-    """SHE IS IN THE BAR: the real Mama Welles speaks, which is the fix.
+    """THE EPILOGUE, and the real Mama Welles speaks it.
 
     Taking her as the scene's actor is what stops her ordinary bar conversation
-    - a quest scene owns the actor it acquires. The old design never claimed her
-    at all (see build_epilogue_standin), which is why her chit-chat could win the
-    approach and the player had to walk away and come back.
+    - a quest scene owns the actor it acquires. The 1.0.0 design never claimed
+    her at all, which is why her chit-chat could win the approach and the player
+    had to walk away and come back (backlog 7d).
+
+    THE ONLY VARIANT SINCE 2026-08-18. A second one played when she was not in
+    the bar; the gig now waits for the quest that puts her there, so the quest
+    phase skips this scene outright in the case that variant covered.
 
     Acquisition is `sq018_01_mama_welles.scene`'s, verbatim: spawn-set entry
     `mama_welles`, reference `#mama_welles`. Her voicetag and lipsync set come
@@ -1369,28 +1381,40 @@ def build_epilogue():
     cc_g01_mama_present, which Gig01_Encounter publishes from the same probe that
     already decides whether to spawn one.
     """
-    return _epilogue('gig01_epilogue', real_mama=True)
+    return _epilogue('gig01_epilogue')
 
 
-def build_epilogue_standin():
-    """SHE IS NOT IN THE BAR: our own Mama, exactly as the gig shipped.
+# build_epilogue_standin WAS HERE, and it was deleted on 2026-08-18 along with
+# `SpawnMamaWelles` and the `cc_g01_mama_present == 2` scene branch.
+#
+# It existed because Mama Welles was believed not to be dependably in El Coyote
+# Cojo, "time of day and quest state" (playtesting, 2026-08-11). Half of that
+# was wrong and the other half is now a start condition:
+#
+#   TIME OF DAY: no. Every community entry within 80 m of the bar counter uses
+#   the `Day` time period, all 151 of them. That is a real finding rather than
+#   an artefact of the format, because Night, Morning, Evening and explicit
+#   clock times all exist in the same data and 12 of the 785 community areas in
+#   `always_loaded_0` use Night. El Coyote uses none of them.
+#
+#   QUEST STATE: yes, and it is the same quest that owns the door. Mama has no
+#   community entry at all; every node carrying her name is sq018 quest design
+#   under the bar's own prefab. Gig01_Start now waits for sq018 to succeed
+#   before the gig starts, so by the time V reaches the bar she is there.
+#   Confirmed in play across times of day, 2026-08-18.
+#
+# So the fallback covered a case that the start gate has since made unreachable.
+# What survives is the PROBE, not the fallback: `cc_g01_mama_present` still says
+# 1 or 2, because entering the real epilogue with no Mama to acquire leaves the
+# scene holding an unresolved actor, and that crashed the game at teardown in
+# August. On 2, the quest phase now skips the epilogue and goes straight to the
+# bar. Nobody should ever see it, and if anyone does, an ending without her
+# beats a crash.
+#
+# Full account: docs/backlog.md 19.
 
-    Same words, same keys, same buried voice-only actor this beat has always
-    used - the only difference from the 1.0.0 epilogue is the scene's name. It
-    is kept because she is not dependably in El Coyote Cojo (time of day and
-    quest state, playtesting 2026-08-11), and a fallback that changes nothing is the
-    one least likely to break the ending.
 
-    Buried 2.5 m is the offset that needs no knowledge of the marker's rotation,
-    the same trick every voice-only speaker in this file uses. She is heard and
-    not seen: the visible Mama Welles in this variant is the stand-in
-    Gig01_Encounter spawns on her own captured mark, and the scene supplies only
-    the voice and the name over the subtitle.
-    """
-    return _epilogue('gig01_epilogue_standin', real_mama=False)
-
-
-def _epilogue(name, real_mama):
+def _epilogue(name):
     """El Coyote Cojo - Mama Welles only. The scene ends on V saying he is
     getting a drink; the gig then walks him to the bar, where Johnny is waiting
     for the comic's last two lines. See the note by the exit point."""
@@ -1423,16 +1447,16 @@ def _epilogue(name, real_mama):
     # the encounter script prefers the real Mama Welles and only spawns a
     # stand-in if she is absent, so her exact spot is not ours to predict.
     #
-    # Buried 2.5 m: close enough to hear, under the floor so there is no second
-    # Mama Welles standing in the room. Same offset as Hoshino's h01.
+    # The anchor is now only the scene's origin: the real variant acquires her
+    # from her spawn set and the stand-in's speaker is off the map entirely, so
+    # nothing is measured from it. Kept because a real node in her own streaming
+    # sector is the right kind of marker, and changing it buys nothing.
     s = Scene(name, ANCHOR_MAMA)
-    if real_mama:
-        # The one in the bar. Taking her is the whole point - see
-        # build_epilogue().
-        mama = s.add_spawnset_actor('mama_welles', 'mama_welles', '#mama_welles')
-    else:
-        mama = s.add_actor('mama_welles', 'Character.Mama_Welles',
-                           offset=OFFSET_MAMA)
+    # THE ONE IN THE BAR, and taking her is the whole point - see
+    # build_epilogue(). There is no longer any other kind: the stand-in variant
+    # was deleted on 2026-08-18, so this scene is only ever entered when
+    # Gig01_Encounter has found her.
+    mama = s.add_spawnset_actor('mama_welles', 'mama_welles', '#mama_welles')
     v = s.add_player()
     # THE REAL MAMA WELLES, so her mouth moves while the buried one speaks.
     #
@@ -1443,17 +1467,11 @@ def _epilogue(name, real_mama):
     # `#mama_welles`. Her voicetag (1704188817181679616) is read off the same
     # file and is what gen_lipsync keyed our lipmap entry with.
     #
-    # If the encounter script spawned its STAND-IN instead (it only does that
-    # when the base-game Mama is absent), the spawn set has nobody in it, the
-    # acquisition finds nothing, and her lines play exactly as they do now.
-    # ...and ONLY for the stand-in. When the real Mama is the actor there is no
-    # second body to lipsync - she is the body - and a double pointing at the
-    # same spawn set would be a second acquisition of one NPC. (Moot while
-    # BRIDGE_SCENES is empty, which is why it is spelled out rather than left to
-    # be discovered if the bridge is ever switched back on).
-    if not real_mama:
-        s.add_body_double(mama, 'mama_welles_body',
-                          spawnset='mama_welles', spawnset_ref='#mama_welles')
+    # NO BODY DOUBLE, and it is not an omission. One was added here for the
+    # stand-in variant, whose speaker was somewhere else entirely and needed a
+    # mouth in the room. The real Mama IS the speaker and IS the body, so a
+    # double pointing at the same spawn set would be a second acquisition of one
+    # NPC. The stand-in went on 2026-08-18 and the double went with it.
 
     start = s.start('epilogue_in')
     # COMIC pp. 59-63, in order. She has exactly two lines; the rest is V, and
@@ -1479,6 +1497,11 @@ def _epilogue(name, real_mama):
     # If the mute ever does start working, this reads as a beat of silence while
     # she looks at him, which is also fine. That asymmetry is why the number is
     # deliberately modest rather than long enough to be sure.
+    #
+    # POSITIONAL, not `inner_vo`. She is standing two metres from V on her own
+    # mark, which is where vanilla plays these lines from. The stand-in's copy
+    # of these lines was 2D because its speaker was a kilometre away; that
+    # variant is gone, and with it the reason to route hers any other way.
     s1 = s.section([s.add_line(mama, "You look tired, mija.",
                                male="You look tired, mijo.", key='m01')],
                    lead_ms=2600)
@@ -1649,7 +1672,7 @@ def build_bar():
 ALL_BUILDERS = (build_elena, build_arasaka, build_terminal, build_shard_find,
                 build_shard_read, build_nix_brief,
                 build_legend, build_nix, build_graves, build_hoshino, build_kill,
-                build_malware, build_epilogue, build_epilogue_standin,
+                build_malware, build_epilogue,
                 build_bar)
 
 

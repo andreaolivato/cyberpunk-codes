@@ -32,9 +32,11 @@ being given it.
 |---|---|
 | 4 | Housekeeping: the toolkit split left three loose ends (`gen_localization` unsplit, the gig-01 anchors stated twice, and the attitude and Johnny-placement redscript still inline) |
 | 6 | The `[F]` interaction prompt on a mod-placed object. UNSOLVED and deliberately parked; seven approaches ruled out, each with its outcome |
-| 10h | The questphase is registered under two quest roots. Deliberate, and nobody has confirmed what a save with both live does |
-| 10i | Reload crashes on a 400-mod install. No mechanism found; waiting on logs and an A/B test |
-| 12 | Mama Welles's stand-in is buried the way Hoshino's speaker was. Left alone until a playtest can reach it |
+| 10h | The questphase is registered under two quest roots. Deliberate. Measured against a player's log in 14: only one root is ever patched, so it is not a fault |
+| 10i | Reload crashes on heavily modded installs. Two reporters, same symptom. No mechanism found; the A/B test is now deterministic, see 14 |
+| 15 | Holocall lines play flat. Vanilla filters a voice arriving through the phone; ours is the same studio clip as a line spoken in the room. Not started |
+| 16 | Johnny appears while V is driving, staged for a V standing still. Gate the three free-roaming beats on movement state, with a bound so the gig cannot stall |
+| 17 | The spawned guards huddle where the navmesh dropped them and do not react to V. A hostile attitude is not perception; 11 is the structural fix and is unsolved |
 
 Everything else is closed. Two entries look open and are not: 2f (re-time
 scenes from real clip length) shipped as `durations.json`, and 0b is the
@@ -54,6 +56,10 @@ release checklist, all of it struck through.
 | 7, 8 | Post-release bug reports and their fixes, including the office doors |
 | 9 | Placing a scene actor relative to the player. Corrects two claims this register had wrong, and deletes the burial-and-lift workaround built on them |
 | 11 | A node this mod ships CAN be addressed by name, in the long form only. Corrects the map-pin playbook, and opens communities as the route to a mod-placed NPC |
+| 13 | Three properties the game silently rejects, and the field that was credited with fixing Hoshino for months without ever running |
+| 14 | The world grid, derived: cell size, the rldGridCell packing, and why a whole-map streaming box was wrong |
+| 18 | El Coyote Cojo is shut until Heroes is finished, measured across three saves. The gig waits for it and says so |
+| 19 | The Mama Welles stand-in, and the whole fallback path behind it, deleted |
 | 10 | The 1.2.0 bug pass: a fast-travel lock bound to the wrong state, a gig that never switched itself off, the guard spawn, a decline that answered, and (10k) a voice-only actor buried into the room below. 10h and 10i are the two still open |
 
 `architecture.md` holds the same findings organised by subsystem rather than by
@@ -1068,6 +1074,15 @@ much more visible failure.
     a shipped file, since `.reds` ship as source. `conventions.md` already
     settles the mechanism: vendor per mod at build time under the mod's own
     namespace, so it never becomes a runtime dependency.
+
+- **`gen_lipsync.py` cannot be re-run: it exits 1 on its own guard. CLOSED
+  2026-08-18, and it was already fixed.** The guard was repaired on 2026-08-16,
+  when it stopped reading `dynamicEntityUniqueName` and started reading
+  `actorName`, which every actor carries. What was missing was the proof this
+  entry asks for, and it has now been produced: `python tools/gen_lipsync.py`
+  runs clean and rewrites `lipsync_picks.json` byte-identically, 16 lines across
+  10 scene/actor pairs. The account of the fault below is kept because the shape
+  of it generalises. Original entry:
 
 - **`gen_lipsync.py` cannot be re-run: it exits 1 on its own guard.** Pre-existing,
   confirmed on pristine `HEAD`. `_check_actor_names` reads
@@ -2233,7 +2248,15 @@ looking at something cannot tell absence from occlusion.
 
 ## 12. The Mama Welles stand-in is buried the same way Hoshino was
 
-Open, and deliberately not fixed in 1.2.0.
+
+**CLOSED 2026-08-18, and then made moot the same day. The stand-in itself is
+deleted; see 19.** The fix below was correct and shipped for a few hours before
+the thing it fixed was removed. It is kept because the reasoning is reusable and
+because 19 rests on it: what it established about burial is 10k's finding, and
+that outlives this scene.
+
+**FIXED 2026-08-18, and the fix is not confirmed in game yet.** What follows
+is the case as it stood; the change and how to test it are at the end.
 
 `gig01_epilogue_standin` is the variant that plays when the base-game Mama
 Welles is not in El Coyote, and its speaker is a body buried 2.5 m below
@@ -2254,3 +2277,653 @@ Two things make it a weaker case than Hoshino's, and they are why it waited:
 
 The design call, 2026-08-17: leave it until it can be tested, or until a report
 says a second Mama Welles appears in the bar. Nobody has reported one.
+
+### What changed, 2026-08-18
+
+The second objection went away: a save with no Mama Welles in El Coyote Cojo now
+exists, so the variant can be played. With the path testable, the argument for
+leaving a known burial in place was only the first objection, and 10k answers
+that one. A better-founded burial is still a burial. The room below her is a
+room a player can be standing in, and the failure is a body appearing in it.
+
+The change is 10k's, applied to her:
+
+- Her speaker moves from `(-1.668, 2.505, -3.584)` off `ANCHOR_MAMA` to the
+  voice-only default, `(1000, 1000, -100)`, where every other unseen speaker in
+  `gen_scenes.py` stands.
+- Both her lines get `inner_vo`, so they play 2D and stay audible from there.
+- The real-Mama variant is untouched and deliberately so. She stands two metres
+  from V on her own community mark, which is where vanilla plays these lines
+  from, so hers stay positional. `_epilogue` now routes on `real_mama`, and the
+  only file that changed is `gig01_epilogue_standin.scene.json`.
+
+`OFFSET_MAMA` is gone. Its measurement is kept in the comment where it stood,
+because the number was right and the technique was what was wrong.
+
+### How to test it
+
+Load the save where she is absent from the bar, play to the epilogue, and watch
+for three things:
+
+- both her lines audible, at ordinary volume rather than distant;
+- her name over each subtitle, in ordinary styling and not Johnny's relic
+  register. `visualStyle` is untouched, so this is a check that `inner_vo` does
+  what 10k measured on a second speaker;
+- no second Mama Welles anywhere, including the floor below.
+
+Silence is the failure this was weighed against, and it means the 2D routing did
+not carry to her. The stand-in `Gig01_Encounter` spawns is unaffected either
+way, so the visible Mama in the room is not evidence about any of this.
+
+## 13. `securityAreaType` on Hoshino has never applied. FIXED 2026-08-18
+
+**CONFIRMED IN GAME 2026-08-18.** The TweakXL log for the 1.2.1 build is clean:
+all three yaml files read, import completed, no `Unknown property` line and no
+error of any kind in 21 lines. The records did apply rather than being skipped,
+which is the thing to check when a TweakXL log goes quiet: TweakDB went from
+193,354 records to 193,358 and from 3,306,462 flats to 3,306,730. The four
+pre-fix runs on 2026-08-17 each logged all three errors.
+
+TweakXL rejects three properties across our two Character records, and has done
+so on every run since they were written:
+
+```
+Character.cc_g01_elena:   Unknown property isPlayerCompanion.
+Character.cc_g01_hoshino: Unknown property securityAreaType.
+Character.cc_g01_hoshino: Unknown property isPlayerCompanion.
+```
+
+Found while reading a player's log bundle, then confirmed against this machine's
+own TweakXL log on the shipped build. Not a player-side fault and not a game
+version difference: the reporter and this machine both run 2.31.
+
+Two of the three are harmless. `isPlayerCompanion: false` sets the field to the
+value it already holds by default, so both lines are no-ops and can go.
+
+The third matters for what the record's own comment claims. `hoshino.yaml`
+documents `securityAreaType: Safe` as the fix that stopped him raising a
+trespass alarm. The game has been discarding that line the whole time, which
+means the behaviour every playtest confirmed came from the other three fields
+alone: `reactionPreset: ReactionPresets.NoReaction`, `baseAttitudeGroup:
+neutral` and `enableSensesOnStart: false`. The comment credits a line that never
+ran.
+
+Two things to settle:
+
+- What 2.31 actually calls the field, if it still exists. `securityAreaType` was
+  read off a 2.31 script dump, so the name is either wrong for the record type
+  or the property lives somewhere other than Character.
+- Whether it is worth having at all, given the observed behaviour is already
+  correct without it.
+
+### What was done, 2026-08-18
+
+All three lines are gone: `isPlayerCompanion` from both records and
+`securityAreaType` from Hoshino. Removing a line the game was already
+discarding cannot change behaviour, and removing a line that set a field to its
+own default cannot either, so this is a correction to the record and to what the
+record claims rather than a behaviour change.
+
+`hoshino.yaml`'s comment now credits the three fields that actually run,
+`reactionPreset`, `baseAttitudeGroup` and `enableSensesOnStart`, and says that
+the fourth never did.
+
+The first question stays open and is now the only one: what 2.31 calls that
+field, if it exists on Character at all. Do not put the line back on a guess.
+The second question answers itself, because the behaviour every playtest
+confirmed was produced without it.
+
+**How to confirm:** the TweakXL log after a load should carry no `Unknown
+property` line for `Character.cc_g01_elena` or `Character.cc_g01_hoshino`, and
+Hoshino should still stand there without raising an alarm or opening fire until
+he is shot. See 17 for the guards around him, which is a different item.
+
+A wider lesson for records generally: TweakXL logs a rejected property as an
+error and then applies the rest of the record, so a record can look like it
+worked while quietly dropping a line. A property is only known to have applied
+if the TweakXL log is clean for that record.
+
+## 14. Narrow the shard sector's streaming box. DONE 2026-08-18, and the grid cell with it
+
+**CONFIRMED IN GAME 2026-08-18:** the shard renders on the office desk and can
+be interacted with, on the narrowed sector. The local test in this section is
+therefore passed. What it does not settle is 10i, which needs the A/B.
+
+The mod ships one sector, `cc_g01_world.streamingsector`, holding one
+`worldEntityNode`: the data shard on the office desk. Its descriptor in
+`cc_g01_world.streamingblock` currently reads:
+
+```
+streamingBox  Min (-5000, -5000, -5000)  Max (5000, 5000, 5000)
+rldGridCell   129182
+level         1
+```
+
+Both of those values were copied wholesale from GeneralShadowsFix, an installed
+world-edit mod that works, and `gen_sector.py` says so in its comments. Neither
+was derived from where our content actually is.
+
+For GeneralShadowsFix a whole-map box is correct, because it edits the whole
+map. For one shard on one desk in Heywood it means the sector is in range from
+every position in the game and stays resident for the entire session.
+`rldGridCell` is the same problem in a different field: a spatial bucket
+belonging to another mod's sectors, attached to ours.
+
+### Why this is worth changing without a proof
+
+Two crash dumps from a heavily modded install were decoded on 2026-08-17. Both
+are access violations inside the game executable, on engine job-worker threads,
+with no mod DLL anywhere on the crashing thread's stack. One fired while the
+world was mounting, the other seconds after it finished. Both are therefore in
+the world streamer.
+
+The sector above is the only thing this mod puts into the world streamer. That
+is a coincidence of subsystem, not a mechanism, and no mechanism has been found.
+What makes it worth acting on regardless is that the change is cheap, it is
+locally testable, and the two values being wrong is not in doubt even if their
+consequence is.
+
+One measurement that raises rather than settles the question: at the first
+crash the player's last recorded position was 92 m from `SHARD_POS`, inside the
+node's own 164.710114 m `MaxStreamingDistance`, so the entity and its six
+components were live. At the second crash the player was 790 m away and the node
+was not live, while the sector still was.
+
+### The change
+
+- Replace the streaming box with one that encloses `SHARD_POS` plus the node's
+  streaming distance, rather than the map.
+- Derive `rldGridCell` from the shard's position instead of hardcoding another
+  mod's constant. If how to derive it cannot be established, that is itself the
+  finding, and it belongs here.
+
+### How to verify
+
+Locally: deploy, walk to the office, confirm the shard still renders and still
+fires the proximity read in `Gig01_Encounter`. A sector that stops loading shows
+up immediately as a missing shard.
+
+For the crash question it cannot be verified here, because it only appears on a
+load order in the hundreds. It needs the A/B in 10i.
+
+### Related
+
+- **10i** is the same symptom from a different reporter, and is the item this
+  would close or eliminate. A second report arrived on 2026-08-17 with the same
+  shape: crashes on save reload, on a 222-mod install. Both reporters describe
+  the same before-and-after. The second report came with two crash dumps and a
+  save that crashes on load reliably rather than intermittently, which turns
+  10i's statistical A/B into a deterministic one. Ask for that A/B on that save.
+- **10h** already records the questphase registered under two quest roots. That
+  was re-checked against a player's log on 2026-08-17 and is not a fault: across
+  38 phase-patch events only `base\quest\cyberpunk2077.quest` is ever patched,
+  `ep1\quest\ep1_standalone.quest` never appears, and the phase merges exactly
+  once per load.
+
+### One stale comment to fix while in the file
+
+`gen_sector.py`'s docstring said the gig had a second, hand-authored sector
+holding two quest markers. That sector was deleted on 2026-08-14 and only one
+ships now, which the `.archive.xl` states correctly. Removed 2026-08-18.
+
+## THE ANSWER, 2026-08-18. Both values are derived now
+
+Neither value needed a guess in the end. `all.streamingblock` from
+`basegame_3_nightcity.archive` holds 23,689 shipped sector descriptors, each
+carrying a grid cell, a streaming box and a sector path, and 21,332 of those
+paths state their own grid coordinates in the filename. That is enough to read
+the scheme off directly rather than infer it.
+
+### The grid
+
+```
+a cell is 64 m across at level 0, doubling per level:  W = 64 * 2^level
+a sector's cell index is (floor(x/W), floor(y/W), floor(z/W))
+rldGridCell = (i + S/2) + S*(j + S/2) + S^2*(k + S/2)
+```
+
+`S` is how many cells the per-axis field holds: `2^(8 - level)` for an Exterior
+sector, `2^(9 - level)` for Interior and Navigation ones, which sit one level
+finer. So each axis is a fixed-width field with its origin in the middle, and
+the cell id is those three fields packed into one integer.
+
+**No exceptions.** Every one of the 21,332 named descriptors matches, across
+seven exterior levels, five interior levels and one navigation level. The cell
+size was fitted separately, by checking that a sector's own content box falls
+inside the cell its name claims: 64 m at level 0 matches 6,514 of 6,517
+descriptors, and 128 m at level 1 matches all 6,414.
+
+The check that matters is a prediction rather than a fit. Feeding `SHARD_POS`
+into the formula returns the cell that the vanilla sector covering that same
+position actually carries, and it does so at all three levels tried:
+`exterior_-4_-23_0_0`, `exterior_-2_-12_0_1` and `exterior_-1_-6_0_2`. Ours is
+Exterior at level 1, which gives cell index `(-2, -12, 0)` and
+**`rldGridCell = 1055294`**, replacing the borrowed 129182.
+
+One more fact, free from the same read and worth having for a future sector:
+**`rldGridCell` 0 is legal.** 2,354 shipped Quest sectors carry it, together
+with a float-max streaming box. That is the game's own shape for a sector that
+is not on the exterior grid. It is not the shape for this one.
+
+### The box
+
+Derived from the node instead of from the map: a cube centred on `SHARD_POS`,
+reaching the node's own `MaxStreamingDistance` (164.710114 m) plus 50 m of
+headroom, so the sector is resident before the shard comes into range rather
+than in the same moment. That is about 430 m a side, against 10,000 before.
+
+For scale, the vanilla level-1 sector sharing our cell carries a
+613 x 583 x 514 m box, so this is an ordinary size for a neighbourhood.
+
+### What is not answered
+
+Whether any of this touches 10i. The two values were wrong and are now right,
+which was true before the crash question was asked and is why it was worth doing
+without a proof. The A/B on the reliable save is still what would settle it.
+
+### How to verify locally
+
+Deploy, walk to the office, confirm the shard renders and still fires the
+proximity read. A sector that stopped loading shows up immediately as a missing
+shard, and that failure is the whole local test.
+
+## 15. Holocall lines are missing the phone filter. Open, not started
+
+Vanilla holocall audio is not the same recording played flat. A voice arriving
+through V's phone is band-limited and processed: thinner, with the low end
+rolled off and a compressed, slightly distorted quality that reads as a radio
+link rather than a person in the room. The effect is consistent enough that a
+player identifies a call as a call with their eyes shut.
+
+This mod's holocall lines have none of it. Every clip `gen_voice.py` produces is
+a flat studio recording, and the same file is used whether the line is spoken by
+an actor standing in a room or by a caller on the phone. The result is a caller
+who sounds like they are in the room.
+
+### What is already in place
+
+The generator knows which lines are which. `gen_scenes.py` marks a section
+`holocall=True`, which sets `scnDialogLineVoParams.isHolocallSpeaker` and makes
+the line play 2D through the phone. Roughly a dozen sections carry it. Nothing
+downstream reads that flag: `gen_voice.py` renders and converts every line
+identically.
+
+Each line also has its own RUID, and a RUID belongs to one line in one scene, so
+a line that is a holocall is never also a world line. Whatever is done to a
+holocall clip cannot affect a world clip by accident.
+
+### Two routes, and the first one to check
+
+**Find out how vanilla does it before building anything.** The game ships
+`voiceovermap_holocall.json` alongside `voiceovermap.json` in
+`base\localization\en-us\`, and the existence of a separate map for the same
+lines suggests the filter is baked into separate pre-rendered assets rather than
+applied at runtime. That is a suggestion and not a measurement. Settle it by
+pulling one vanilla line that appears in both maps and comparing the two `.wem`
+files: if the holocall one is audibly filtered, the answer is baked assets, and
+the question becomes whether ArchiveXL's `localization:` section can register a
+holocall map at all. Our `.archive.xl` declares `vomaps:` and nothing else, and
+whether a sibling key exists is unknown.
+
+**Bake the filter into our own WAVs.** This works regardless of how vanilla does
+it, because our holocall lines resolve through our own vomap either way. Process
+the clip after ElevenLabs returns it and before the `.wem` conversion, gated on
+the same flag the scene generator already sets. A first approximation of the
+effect is a band-pass around roughly 300 Hz to 3.5 kHz with light compression
+and a small amount of saturation. The values are a starting point, not a
+measurement: derive them by analysing a vanilla holocall clip rather than by
+taste.
+
+The second route is the one to build. The first is worth an hour first, because
+if vanilla's filter is a runtime effect keyed off `isHolocallSpeaker`, then the
+mod is missing a flag somewhere and baking would double the processing.
+
+### Constraints
+
+- Whatever does the processing has to run on the default Python 3.13 with no new
+  dependency, which is the rule the rest of the voice tooling already follows. A
+  band-pass and a compressor on a 16-bit mono WAV are writable against the
+  standard library.
+- Filtered clips change the audio the scene is timed against, so regenerate
+  `durations.json` and re-run `gen_scenes.py` in that order after any change.
+- Approval before deploy applies as it does to any voice work: judge the
+  filtered WAVs first.
+
+### Related
+
+- `scene-playbook.md` covers holocalls and the voiceover map, including the
+  `_holocall` sibling maps.
+- **2a** is why a mod voiceover map is the audio route at all.
+- **2f** is the clip-length re-timing that `durations.json` closed.
+
+## 16. Johnny appears while V is driving. Reported 2026-08-18, open
+
+Field report against 1.2.0, from a player who finished the gig: *"Even though I
+know he's an engram and how all that works, but the game got me used to seeing
+Johnny when he talks. It was weird him talking to me while riding a bike."*
+
+The beat is `gig01_arasaka`, his answer as Elena's call drops. That call can be
+answered anywhere, including on a bike at speed.
+
+### Why it looks wrong
+
+Every Johnny beat is a scene actor on an `around_player` marker, placed once at
+a fixed offset in V's own frame at the moment the scene starts. `gig01_arasaka`
+is `(-0.8, 2.6)`: 0.8 m to V's left and 2.6 m ahead, facing computed by
+`yaw_to_face_player`. That staging was measured for a V standing still, and it
+holds for a V walking.
+
+On a bike it does not. The apparition is placed in world space and then stays
+there while V rides away, so he arrives at one specific spot, is passed within a
+second, and keeps talking from nowhere. The design call, 2026-08-18, is that
+sprinting has the same problem in a smaller size.
+
+### What to build
+
+Hold the appearance until V is neither driving nor sprinting, then play it.
+
+Three things to settle before writing it:
+
+- **Where the gate goes.** The scenes are entered from the quest phase, which
+  waits on a fact. A gate belongs on the script side that sets the fact, not
+  inside the scene, because a scene cannot look at the player's movement state.
+  `Gig01_Holocall.reds` already defers an action this way with `m_ftDefer`,
+  which counts ticks and gives up at 150, so the shape exists to copy.
+- **Which beats need it.** Of the seven in `BEAT_STAGING`, four fire where V is
+  necessarily stationary and indoors (`gig01_terminal`, `gig01_shard_read`,
+  `gig01_malware`, `gig01_kill`). The three that fire wherever V happens to be
+  are `gig01_arasaka`, `gig01_legend` and `gig01_graves`. Gate those three.
+- **The bound, which matters more than the gate.** A beat that never fires
+  stalls the gig, because the quest phase is waiting on its fact. A player who
+  drives from the call straight to the compound without dismounting must still
+  reach the next objective. So the hold needs a cap and a decision about what
+  happens when the cap runs out: fire it anyway, or drop that beat's staging
+  and let the line play as inner dialogue with no body.
+
+### Unverified
+
+Which query answers "V is driving" has not been checked in this project.
+Mounted state and the vehicle-related player states are both candidates and
+neither has been compiled here. Establish it the way the redscript facts in 10c
+were established, by compiling a throwaway file, rather than by assuming a name.
+
+### Related
+
+- **9** is where the player-relative placement came from, including the five
+  runs that measured the marker's frame. The offsets themselves are correct and
+  should not be re-derived; this is about when to use them.
+- **3** is the apparition itself.
+
+## 17. The spawned guards do not react to V. Reported 2026-08-18, open
+
+Two observations from the same field report, one underlying question:
+
+*"When I first approached the North Oak compound most of the outside security
+was just standing together in a group. I did optical camo, so don't know if they
+would have tried to shoot on sight."*
+
+*"Upstairs to take out the bad guy (can't remember his name). His security /
+bodyguard just let me stand there right in his face (the bodyguard and bad guy).
+Was sort of expecting combat when the bodyguard saw me."*
+
+The design call, 2026-08-18: these are the same item. The guards need to behave
+like guards.
+
+### What is actually shipped
+
+Both squads are placed by `SpawnSquad` in `Gig01_Encounter.reds`, which asks
+`FindPointInSphereOnlyHumanNavmesh` for a point near an anchor and creates the
+entity through `GetDynamicEntitySystem`. Each one then gets
+`SetAttitudeTowards(player, AIA_Hostile)`, retried for up to 60 s (10e).
+
+That produces both symptoms directly.
+
+**The huddle** is the placement. One sphere per anchor, and a navmesh query that
+answers with whatever walkable point it finds first, gives a squad standing
+where they were dropped. Nothing gives them a post to hold, a patrol to walk or
+an idle to play, so a group is what a group of them looks like.
+
+**The lack of reaction** is the deeper half. An attitude says how an NPC feels
+about V once he notices V. It is not perception, it is not an AI role, and it is
+not a reason to initiate anything. A community-placed vanilla guard arrives with
+all of that from the encounter that owns him; an entity created through
+`DynamicEntitySystem` arrives with none of it and holds his record's defaults.
+
+Hoshino standing there is separate and is correct: he is deliberately
+`SetNeutral` until provoked, because he is an administrator rather than a
+soldier, and that is documented where it is done. The bodyguard next to him is
+an ordinary member of the estate squad and was set hostile, so his standing
+still is the fault.
+
+### The confound, and what it does not excuse
+
+The first observation was made under optical camo, so it is no evidence about
+whether they would have opened fire. The second has no confound at all: V was
+face to face with a hostile guard and nothing happened.
+
+### Where to start
+
+- **Measure before building.** Establish whether a spawned guard reacts to V at
+  all, or only once shot. That is one playtest with the dev menu, walking into
+  an ungated compound without camo, and it decides whether this is a perception
+  problem or a behaviour problem.
+- **Check what a spawned entity is missing.** Senses, an AI role and a security
+  area are the three candidates. 13 is the neighbouring finding: three
+  properties on our own Character records are silently rejected by TweakXL,
+  `securityAreaType` among them, so the vocabulary in this area is not yet
+  established for 2.31. The guards use vanilla `sts_*` records rather than ours,
+  so their defaults are vanilla's, which makes it worth reading what an `sts_*`
+  security record actually carries.
+- **11 is the structural answer and is unsolved.** Communities are how the game
+  places an NPC with behaviour attached, and the finding there is that a mod's
+  own NodeRefs can be addressed, while binding a `.community` resource to the
+  world was not established. If it can be, both symptoms are fixed at once,
+  because a community entry brings the spots and the phase with it.
+- **The cheap version, if that stays unsolved.** Place each guard at a captured
+  position instead of a navmesh point, the way Hoshino already is, so a squad
+  stands on posts rather than in a heap. Then add a scripted proximity check
+  that forces combat when V is close and visible, which is a workaround and
+  should be written up as one.
+
+### Related
+
+- **10c** and **10d** are the spawn faults already fixed here: the trigger
+  geometry, the burst, the silently binned squad and the per-anchor latch.
+- **10e** widened the attitude retry budget for the symptom "the guards ignore
+  me", which is worth re-reading because it is the same sentence as this report
+  arriving from a different cause. The budget is not the problem this time: the
+  bodyguard was standing next to V long after any retry would have finished.
+
+## 18. El Coyote Cojo is shut until "Heroes" is done. Measured and FIXED 2026-08-18
+
+**CONFIRMED IN GAME 2026-08-18:** on a pre-Heroes save the on-screen message
+appears and nothing starts, and a full run on a post-Heroes save plays end to
+end. Both halves of the gate are therefore exercised.
+
+The gig ends in El Coyote Cojo. A player reported the bar's entrance would not
+open on an old save, so the ending was unreachable: the same shape as 8a, where
+the office doors ship disabled and a main quest switches them on.
+
+It is not the same cause, and it is not a lock, a seal or a time of day.
+
+### What the door actually is
+
+`double_door_simple_1` at (-1260.358, -984.223, 12.034), in
+`exterior_-20_-16_0_0`, with a `worldStaticGpsLocationEntranceMarkerNode` 0.27 m
+away, which is what a mapped entrance looks like in a sector. The sector ships it
+`deviceState: ON`, `initialDoorState: CLOSED`, `isLocked: 0`.
+
+In game it reported `DISABLED`. So unlike the office doors, this one ships on and
+something in the base game's progression switches it off and persists that into
+the save. Reading the world files could never have found this; it took the dev
+menu's device dump.
+
+### The measurement
+
+Three saves, 2026-08-18, each dumped with the dev menu's quest-state button
+against the journal, and the door observed at the same time:
+
+| sq018 (Heroes) | q112_01 old friend | q112_02 industrial park | the door |
+|---|---|---|---|
+| Active | Active | Inactive | shut |
+| Active | Succeeded | Active | shut |
+| **Succeeded** | Succeeded | Active | **open** |
+
+sq018 is the only column that moves with the door. The Gimme Danger objectives
+rule themselves out on the same three rows: `q112_01` changes between the first
+two while the door stays shut, and `q112_02` is Active in both the second and the
+third, one shut and one open.
+
+**Succeeded, not Active.** Two of the three saves are mid-Heroes with the bar
+still closed, which fits the quest's own shape: Heroes sends V to the bar, and
+the door opens once the ofrenda is done.
+
+The prior agreed with the result before the test, which is worth stating because
+it means this is not a pattern found by trawling. sq018 owns the place:
+`#sq018_mp_el_coyote_entrance`, `#sq018_mp_el_coyote_back_entrance` and the
+`03_el_coyote_funeral` objective are all its.
+
+Two limits on the evidence, neither of which changes the conclusion. The door
+readings for the three saves are by eye rather than by probe, and the 224-path
+bulk dump was run on the third save only, so another quest moving in lockstep is
+not formally excluded.
+
+### How to ask the question again
+
+`quests/side_quest/sq018_jackie`, class `gameJournalQuest`. That path is
+extracted rather than guessed: it is in the string table of
+`cooked_journal.journal`, next to the objective ids `01_go_to_el_coyote`,
+`01_visit_el_coyote` and `03_el_coyote_funeral`.
+
+The dev menu has two buttons for this now, added the same day:
+
+- **LOG: which gating quests has this save done** prints five labelled entries,
+  Heroes plus the three Gimme Danger objectives that gate the office doors.
+- **LOG: every quest path the journal spells out (224)** is the bulk version.
+  209 of the 224 resolved to an entry on the save it was run against.
+
+The 224 are every quest path the base game holds as plain text. That is not
+every quest in the game: only 6 side quests and 5 main-quest entries survive as
+strings, the rest being hashes. A path that is absent proves nothing.
+
+### The fix, and the one that was rejected
+
+**The gig now waits for Heroes.** `Gig01_Start` gained a fifth gate,
+`CCGig01StartRules.HeroesDone`, and Elena does not ring until sq018 reads
+Succeeded.
+
+It fails OPEN, deliberately. A null journal manager, a missing entry or a journal
+that has not resolved yet all answer "carry on". The cost of being wrong that way
+is a player meeting a shut door on an old save, which is visible and reportable.
+The cost of being wrong the other way is a gig that never starts, which is
+indistinguishable from a broken install and is the failure the whole of
+`Gig01_Start`'s header is written against.
+
+**The player is told, once.** The design call, 2026-08-18: a silent hold is the
+same experience as the 8a bug. So when every other gate has passed and only
+Heroes is missing, the gig says so on screen, latched on the fact
+`cc_g01_heroes_notified` so it cannot repeat every session. The check is last in
+the list precisely so the message can be specific: it can never fire at the main
+menu, in the prologue, or over a loading screen.
+
+**Forcing the door was rejected.** The machinery already exists in
+`Gig01_OfficeDoors` and the dev menu confirmed it works on this door:
+`ForceEnabled` took it out of DISABLED and it read ON afterwards. It was rejected
+anyway, because the bar's people belong to sq018 as much as its door does. A
+forced door opens onto an empty room and the closing scene of the gig plays to
+nobody. Gating on the quest makes the door question disappear rather than
+answering it, which is one mechanism instead of two.
+
+### Still to do
+
+- The requirement belongs on the mod page and in the changelog.
+- A playtest on a pre-Heroes save: the message appears once, Elena never rings,
+  and the gig arms on the next check after Heroes completes.
+- **12 is downstream of this.** The stand-in Mama Welles exists for a bar with no
+  Mama in it, and part of why she is absent may simply be that the bar was shut.
+  The stand-in stays: this gate makes her rarer, not unnecessary, because she can
+  still be absent by time of day.
+
+## 19. The Mama Welles stand-in is deleted. 2026-08-18
+
+**CONFIRMED IN GAME 2026-08-18:** the epilogue plays correctly with the real
+Mama Welles on a full run. The skip branch is by construction unreachable on
+such a save, so it is untested and expected to stay that way.
+
+The gig carried a whole second path for an El Coyote Cojo with no Mama Welles in
+it: a second scene (`gig01_epilogue_standin`), a script that spawned our own copy
+of her on her captured mark, a despawner, a body double, an alias so the two
+variants shared four recordings, and a branch in the quest graph. All of it is
+gone. 12 and 7d are the history; this is the removal.
+
+### Why it existed, and how much of that was true
+
+*"She is not dependably in El Coyote Cojo, time of day and quest state"*
+(playtesting, 2026-08-11). Half right.
+
+**Time of day: no.** Every community entry within 80 m of the bar counter uses
+the `Day` time period, all 151 of them. That is a real finding rather than a
+quirk of the format, because the control says otherwise: across the 785 community
+areas in `always_loaded_0` the periods are Day (5227), 6:00 PM (94), Morning
+(51), Evening (38), Night (38), 6:00 AM (37) and 10:00 PM (8), and 12 of those
+areas use Night. El Coyote uses none of them.
+
+**Quest state: yes, and it is the same quest as the door.** Mama has no community
+entry at all. Every node in the world data carrying her name is sq018 quest
+design under the bar's own prefab: `#sq018_pr_mama_welles...`,
+`#sq018_01_drink_mama_welles`, `#sq018_mama_welles_signet`,
+`sq018_01_sm_mama_welles`, `mama_sm_welles_default`. The bar's community phases
+say the same: `funeral`, `ofrenda`, `paying_respect`, `q000_kid_bar`, all quest
+names with no ambient variant.
+
+Confirmed in play, 2026-08-18, across times of day on a post-Heroes save: she is
+there every time.
+
+So 18's start gate does not merely make the fallback rarer. It removes the
+condition the fallback was written for, because the gig cannot begin until the
+quest that puts her in the bar has finished.
+
+### What went, and what deliberately stayed
+
+Gone: `build_epilogue_standin`, the `SCENE_ALIASES` entry, the body double,
+`SpawnMamaWelles`, `DespawnMamaWelles`, the `m_mamaSpawned` and `m_mamaId`
+fields, the four-tick spawn attempt, and the second scene node in the quest
+graph. The subtitle count drops from 70 to 64 and the voiceover map from 63
+entries to 59, which is the four aliased lines and their gendered pairs.
+
+**The probe stayed, and the tri-state fact with it.** `cc_g01_mama_present` still
+answers 1 or 2. `gig01_epilogue` acquires the real Mama and spawns nobody, so
+entering it when she is absent leaves the scene holding an actor that never
+resolved, and that crashed the game at teardown in August. The fork is the guard
+against that crash, and the guard is worth keeping even when the branch behind it
+should be unreachable.
+
+**On 2 the quest phase now skips the epilogue** and goes straight to the fan-in,
+so V walks to the counter for Johnny's closing lines without the Mama
+conversation. The design call, 2026-08-18: an ending missing one conversation
+beats a crash, and beats carrying a second scene and a duplicate NPC for a case
+nobody should reach.
+
+The skip lands on the same node the scene's exit lands on, and that matters:
+`cc_g01_epilogue_scene_done` is what `Gig01_Encounter` reads before setting
+`cc_g01_mama_talked`, which is the fact the next objective waits on. Routed
+anywhere else, the skip would strand the gig on `obj_mama`.
+
+The absent branch also got slower. It used to spawn our stand-in at four misses
+and fall back at thirty; with nothing to spawn, thirty is the only threshold
+left, about 45 s of standing in the bar with no Mama in range.
+
+### What this costs if the reasoning is wrong
+
+One conversation, on a save where she is absent despite Heroes being complete.
+The gig still finishes. That is the trade taken deliberately, against a
+fallback that cost a scene, a spawner, a despawner, a body double, an alias and
+a graph branch to maintain.
+
+### Related
+
+- **18** is the gate that makes this safe, and this entry depends on it entirely.
+- **12** was fixing the stand-in's burial on the same day it was deleted. The fix
+  was correct and is now moot. What survives from it is the finding it rested on,
+  which is 10k's: a marker's height is not a floor.
+- **7d** is why the real Mama must be ACQUIRED rather than stood next to.

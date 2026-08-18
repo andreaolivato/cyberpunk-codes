@@ -510,3 +510,50 @@ Never renumber. Append.
     Vo_Expression_InnerDialog` plays 2D, so its speaker can stand a kilometre
     away where nothing can see it, and no burial has to be justified. See
     `backlog.md` 10k.
+
+37. **A base-game device can ship enabled and still be disabled on a save, so
+    the sector files cannot answer "is this door open".**
+
+    The office doors in `backlog.md` 8a ship `deviceState: DISABLED` and a main
+    quest turns them on, which is readable from the streaming sector. El Coyote
+    Cojo's entrance is the opposite and looks identical in game: the sector
+    ships it `deviceState: ON`, `initialDoorState: CLOSED`, `isLocked: 0`, and
+    on a save where the owning quest has not finished it reports DISABLED with
+    no interaction prompt at all.
+
+    So a shut door is not evidence about the shipped data, and shipped data is
+    not evidence about a save. Only a runtime probe answers it. Read the door's
+    `DoorControllerPS` and print `GetDeviceState`, `IsDisabled`, `IsLocked`,
+    `IsSealed`, `IsOpen`: locked, sealed and disabled are three different
+    states with three different causes, and a static prop door has no PS at all.
+
+    If a gig ends somewhere the base game gates, gate the gig on the same quest
+    rather than forcing the door. The NPCs in a gated location are gated with
+    it, so a forced door opens onto an empty room. `backlog.md` 18 and 19.
+
+38. **`rldGridCell` and a sector's streaming box are derivable, and copying
+    another mod's values makes your sector resident for the whole session.**
+
+    Measured across the 23,689 sector descriptors in the base game's
+    `all.streamingblock`, of which 21,332 state their own grid coordinates in
+    the filename. No exceptions:
+
+    ```
+    W    = 64 * 2^level                     cell size in metres
+    i,j,k = floor(x/W), floor(y/W), floor(z/W)
+    S    = 2^(8 - level)   Exterior
+           2^(9 - level)   Interior, Navigation      (one level finer)
+    rldGridCell = (i + S/2) + S*(j + S/2) + S^2*(k + S/2)
+    ```
+
+    Check it by prediction rather than by pattern: feed a known position in and
+    the answer should equal the `rldGridCell` of the vanilla sector covering
+    that position.
+
+    `rldGridCell` 0 is legal. 2,354 shipped Quest sectors carry it together
+    with a float-max streaming box, which is the game's shape for a sector that
+    is not on the exterior grid.
+
+    Size the streaming box from the content, not the map: the node's own
+    `MaxStreamingDistance` plus a margin. A whole-map box is correct only for a
+    mod that edits the whole map. `backlog.md` 14.

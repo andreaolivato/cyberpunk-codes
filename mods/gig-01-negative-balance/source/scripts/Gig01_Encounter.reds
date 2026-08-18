@@ -318,8 +318,6 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
     private let m_sendBusy: Bool;
     private let m_talkBusy: Bool;
     private let m_barWaited: Int32;
-    private let m_mamaId: EntityID;
-    private let m_mamaSpawned: Bool;
     private let m_mamaMissingTicks: Int32;
     // TRUE while WE are holding `mama_is_talking` up to keep her small talk out
     // of the epilogue. It is the receipt that lets us clear a base-game fact we
@@ -1363,23 +1361,21 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
         return null;
     }
 
-    private func SpawnMamaWelles() -> Void {
-        if !IsDefined(TweakDBInterface.GetCharacterRecord(this.MamaRecord())) {
-            return;
-        }
-        this.m_mamaId = CCSharedWorld.Spawn(this.MamaRecord(), CCGig01Places.MamaWelles(),
-            CCGig01Places.MamaWellesYaw(), n"cc_g01_mama");
-        this.m_mamaSpawned = true;
-    }
-
-    // Only ever removes OUR stand-in. m_mamaSpawned is false when the real Mama
-    // Welles was found, so the base-game NPC is never deleted.
-    public func DespawnMamaWelles() -> Void {
-        if this.m_mamaSpawned {
-            GameInstance.GetDynamicEntitySystem().DeleteEntity(this.m_mamaId);
-            this.m_mamaSpawned = false;
-        }
-    }
+    // SpawnMamaWelles AND DespawnMamaWelles WERE HERE, deleted 2026-08-18.
+    //
+    // They put our own Character.Mama_Welles on her captured mark when the
+    // base-game one was not in the bar, and removed it again afterwards. The
+    // case they covered is now prevented rather than handled: Gig01_Start waits
+    // for sq018 (Heroes), which is the quest that both unlocks the bar's door
+    // and puts Mama in it, so V cannot reach the epilogue on a save where she
+    // is missing. Confirmed in play across times of day, 2026-08-18, and the
+    // world data agrees: she has no community entry, so nothing about her is
+    // hour-driven. docs/backlog.md 19.
+    //
+    // The PROBE stayed. `cc_g01_mama_present` still answers 1 or 2, because
+    // entering gig01_epilogue with nobody to acquire leaves the scene holding
+    // an unresolved actor and that crashed the game at teardown in August. On 2
+    // the quest phase now skips the epilogue instead of playing a stand-in.
 
     // ----------------------------------------------------------------- payout
     // Elena never pays V. She never learns it was V, and the design note in
@@ -1434,19 +1430,9 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
             // not be.
             if !accepted || qs.GetFactStr("cc_g01_done") > 0 {
                 this.ReleaseMama(qs, player);
-                // AND TAKE THE STAND-IN WITH HER, for the same reason and by
-                // the same rule. The only other DespawnMamaWelles call is on
-                // the epilogue's own path (cc_g01_epilogue_scene_done), so an
-                // epilogue that finishes by any other route - the anti-stall
-                // below, a dev-menu fact, a gig closed out of order - left our
-                // duplicate standing in El Coyote for the rest of the session,
-                // beside the real Mama Welles if she was there.
-                //
-                // Nobody reported this. It was found by reading, looking for
-                // anything that could outlive the gig, and it costs one Bool
-                // read: DespawnMamaWelles returns immediately unless we really
-                // did spawn her.
-                this.DespawnMamaWelles();
+                // A DespawnMamaWelles call sat here until 2026-08-18, to take
+                // our stand-in down on any route that closed the gig without
+                // finishing the epilogue. There is no stand-in to take down now.
             }
 
             // ...and the same discipline for the way-in marker, for the same
@@ -2032,10 +2018,11 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
                         // she wandered off her mark.
                         if Vector4.Distance(pos, mama.GetWorldPosition()) < 3.5 {
                             this.m_epilogueBusy = true;
-                            // WHICH MAMA DID WE JUST FIND? The query matches on
-                            // the record, and OUR stand-in carries the same one,
-                            // so "found" alone does not answer it - m_mamaSpawned
-                            // does. This is the whole point of the fact:
+                            // FOUND HER, AND SHE CAN ONLY BE THE REAL ONE NOW.
+                            // The query matches on the record, and until
+                            // 2026-08-18 our own stand-in carried the same one,
+                            // so "found" did not settle which. Nothing of ours
+                            // wears that record any more.
                             //
                             //   1  the base-game Mama is in the bar. The quest
                             //      phase plays gig01_epilogue, which ACQUIRES
@@ -2044,48 +2031,49 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
                             //      1.0.0 bug: our scene spawned a copy under the
                             //      floor and never claimed her, so her chit-chat
                             //      could win the approach (backlog 7d).
-                            //   2  she is not, and this is our own stand-in. The
-                            //      phase plays gig01_epilogue_standin instead.
+                            //   2  she is not, and the phase skips the epilogue.
+                            //      Written below, not here.
                             //
                             // GETTING THIS WRONG IS NOT COSMETIC. gig01_epilogue
                             // spawns nobody; entering it with no base-game Mama
                             // to acquire leaves the scene holding an actor that
                             // never resolved, which is what crashed the
-                            // game at scene teardown in August.
+                            // game at scene teardown in August. That is why the
+                            // fact survived the simplification that deleted the
+                            // stand-in it used to choose.
                             //
                             // Set BEFORE cc_g01_mama_reached: that fact releases
                             // the phase into the fork, and the fork reads this
                             // one.
-                            if this.m_mamaSpawned {
-                                qs.SetFactStr("cc_g01_mama_present", 2);
-                            } else {
-                                qs.SetFactStr("cc_g01_mama_present", 1);
-                            }
+                            qs.SetFactStr("cc_g01_mama_present", 1);
                             qs.SetFactStr("cc_g01_mama_reached", 1);
                         }
                     } else {
-                        // Only conclude she is absent after a few misses: right
-                        // after stepping inside, the interior NPCs may not have
-                        // streamed in yet, and spawning on the first miss would
-                        // double her up. Measured against her own spot, not the
-                        // bar marker, which sits ~10 m away from it.
+                        // Only conclude she is absent after a good many misses.
+                        // Right after stepping inside the interior NPCs may not
+                        // have streamed in yet, and this branch now costs the
+                        // player a conversation rather than swapping in a
+                        // stand-in, so it is worth being slow about. Measured
+                        // against her own spot, not the bar marker, which sits
+                        // ~10 m away from it.
+                        //
+                        // 30 ticks at 1.5 s is about 45 s of standing in the bar
+                        // with no Mama Welles in range. The count used to spawn
+                        // our own copy of her at tick 4 and fall back here at
+                        // 30; there is nothing to spawn now, so 30 is the only
+                        // threshold left.
                         if Vector4.Distance(pos, CCGig01Places.MamaWelles()) < 15.0 {
                             this.m_mamaMissingTicks += 1;
-                            if !this.m_mamaSpawned && this.m_mamaMissingTicks >= 4 {
-                                this.SpawnMamaWelles();
-                            }
-                            // Last resort. If she is neither found nor spawnable
-                            // after a good while, play the epilogue anyway rather
-                            // than strand the final objective, an ending that
-                            // cannot be finished is worse than one without her.
+                            // LAST RESORT, AND IT SHOULD BE UNREACHABLE. The gig
+                            // does not start until sq018 has succeeded, and that
+                            // is the quest that puts her in the bar. If it fires
+                            // anyway, 2 tells the quest phase to skip the
+                            // epilogue and send V to the counter: an ending
+                            // missing one conversation, rather than a scene
+                            // waiting forever for an actor that cannot arrive
+                            // and taking the ending with it.
                             if this.m_mamaMissingTicks >= 30 {
                                 this.m_epilogueBusy = true;
-                                // Neither found nor spawnable. 2 = play the
-                                // stand-in variant, which spawns its own speaker
-                                // and therefore still runs with nobody in the
-                                // room; the real-Mama variant would sit waiting
-                                // for an actor that cannot arrive and take the
-                                // ending with it.
                                 qs.SetFactStr("cc_g01_mama_present", 2);
                                 qs.SetFactStr("cc_g01_mama_reached", 1);
                             }
@@ -2111,12 +2099,15 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
             // subtitle route and fires when the scene has finished.
             // Johnny's closing line moved INTO gig01_epilogue.scene, where he is
             // a present actor rather than an ownerless subtitle, so there is
-            // nothing to play here any more - only the fact that closes the gig
-            // and the stand-in cleanup.
+            // nothing to play here any more - only the fact that closes the gig.
+            //
+            // THIS ALSO CARRIES THE SKIP. `cc_g01_epilogue_scene_done` is set by
+            // the quest graph on both branches of the Mama fork, the played one
+            // and the skipped one, so an epilogue that never ran still reaches
+            // the bar. See gen_questphase.py at the fan-in.
             if qs.GetFactStr("cc_g01_epilogue_scene_done") > 0
                 && qs.GetFactStr("cc_g01_mama_talked") == 0 {
                 qs.SetFactStr("cc_g01_mama_talked", 1);
-                this.DespawnMamaWelles();
             }
 
             // THE ENDING. V's last line to Mama is "Nova. I'll get a drink." - so
@@ -2196,7 +2187,6 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
                 && qs.GetFactStr("cc_g01_rewarded") > 0
                 && !this.m_mamaHeld
                 && !this.m_mamaMuted
-                && !this.m_mamaSpawned
                 && !this.m_wayinMappinUp {
                 stop = true;
             }

@@ -13,7 +13,7 @@
       "$type": "questQuestPhaseResource",
       "cookingPlatform": "PLATFORM_PC",
       "graph": {
-        "HandleId": "1000",
+        "HandleId": "992",
         "Data": {
           "$type": "questGraphDefinition",
           "nodes": [
@@ -10918,7 +10918,7 @@
               }
             },
             {
-              "HandleId": "878",
+              "HandleId": "880",
               "Data": {
                 "$type": "questPauseConditionNodeDefinition",
                 "id": 107,
@@ -10969,13 +10969,39 @@
                                 "$type": "questSocketDefinition",
                                 "connections": [
                                   {
+                                    "HandleId": "878",
+                                    "Data": {
+                                      "$type": "graphGraphConnectionDefinition",
+                                      "destination": {
+                                        "HandleRefId": "877"
+                                      },
+                                      "source": {
+                                        "HandleId": "879",
+                                        "Data": {
+                                          "$type": "questSocketDefinition",
+                                          "connections": [
+                                            {
+                                              "HandleRefId": "878"
+                                            }
+                                          ],
+                                          "name": {
+                                            "$type": "CName",
+                                            "$storage": "string",
+                                            "$value": "epilogue_out"
+                                          },
+                                          "type": "Output"
+                                        }
+                                      }
+                                    }
+                                  },
+                                  {
                                     "HandleRefId": "876"
                                   }
                                 ],
                                 "name": {
                                   "$type": "CName",
                                   "$storage": "string",
-                                  "$value": "epilogue_in"
+                                  "$value": "In"
                                 },
                                 "type": "Input"
                               }
@@ -10998,7 +11024,7 @@
               }
             },
             {
-              "HandleId": "888",
+              "HandleId": "885",
               "Data": {
                 "$type": "questSceneNodeDefinition",
                 "id": 108,
@@ -11030,7 +11056,7 @@
                 "syncToMusic": 0,
                 "sockets": [
                   {
-                    "HandleId": "879",
+                    "HandleId": "881",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [],
@@ -11046,73 +11072,10 @@
                     "HandleRefId": "870"
                   },
                   {
-                    "HandleId": "880",
-                    "Data": {
-                      "$type": "questSocketDefinition",
-                      "connections": [
-                        {
-                          "HandleId": "881",
-                          "Data": {
-                            "$type": "graphGraphConnectionDefinition",
-                            "destination": {
-                              "HandleId": "882",
-                              "Data": {
-                                "$type": "questSocketDefinition",
-                                "connections": [
-                                  {
-                                    "HandleRefId": "881"
-                                  },
-                                  {
-                                    "HandleId": "883",
-                                    "Data": {
-                                      "$type": "graphGraphConnectionDefinition",
-                                      "destination": {
-                                        "HandleRefId": "882"
-                                      },
-                                      "source": {
-                                        "HandleId": "884",
-                                        "Data": {
-                                          "$type": "questSocketDefinition",
-                                          "connections": [
-                                            {
-                                              "HandleRefId": "883"
-                                            }
-                                          ],
-                                          "name": {
-                                            "$type": "CName",
-                                            "$storage": "string",
-                                            "$value": "epilogue_out"
-                                          },
-                                          "type": "Output"
-                                        }
-                                      }
-                                    }
-                                  }
-                                ],
-                                "name": {
-                                  "$type": "CName",
-                                  "$storage": "string",
-                                  "$value": "In"
-                                },
-                                "type": "Input"
-                              }
-                            },
-                            "source": {
-                              "HandleRefId": "880"
-                            }
-                          }
-                        }
-                      ],
-                      "name": {
-                        "$type": "CName",
-                        "$storage": "string",
-                        "$value": "epilogue_out"
-                      },
-                      "type": "Output"
-                    }
+                    "HandleRefId": "879"
                   },
                   {
-                    "HandleId": "885",
+                    "HandleId": "882",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [],
@@ -11125,7 +11088,7 @@
                     }
                   },
                   {
-                    "HandleId": "886",
+                    "HandleId": "883",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [],
@@ -11138,7 +11101,7 @@
                     }
                   },
                   {
-                    "HandleId": "887",
+                    "HandleId": "884",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [],
@@ -11154,39 +11117,22 @@
               }
             },
             {
-              "HandleId": "893",
+              "HandleId": "891",
               "Data": {
-                "$type": "questSceneNodeDefinition",
+                "$type": "questFactsDBManagerNodeDefinition",
                 "id": 109,
-                "interruptionOperations": [],
-                "notAllowedToBeFrozen": 0,
-                "reapplyInterruptionOperationsAfterGameLoad": 0,
-                "sceneFile": {
-                  "DepotPath": {
-                    "$type": "ResourcePath",
-                    "$storage": "string",
-                    "$value": "mod\\negative_balance\\scenes\\gig01_epilogue_standin.scene"
-                  },
-                  "Flags": "Soft"
+                "type": {
+                  "HandleId": "886",
+                  "Data": {
+                    "$type": "questSetVar_NodeType",
+                    "factName": "cc_g01_epilogue_scene_done",
+                    "setExactValue": 1,
+                    "value": 1
+                  }
                 },
-                "sceneLocation": {
-                  "$type": "scnWorldMarker",
-                  "nodeRef": {
-                    "$type": "NodeRef",
-                    "$storage": "string",
-                    "$value": "#sq018_pepevodka"
-                  },
-                  "tag": {
-                    "$type": "CName",
-                    "$storage": "string",
-                    "$value": "None"
-                  },
-                  "type": "NodeRef"
-                },
-                "syncToMusic": 0,
                 "sockets": [
                   {
-                    "HandleId": "889",
+                    "HandleId": "887",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [],
@@ -11202,97 +11148,21 @@
                     "HandleRefId": "877"
                   },
                   {
-                    "HandleRefId": "884"
-                  },
-                  {
-                    "HandleId": "890",
-                    "Data": {
-                      "$type": "questSocketDefinition",
-                      "connections": [],
-                      "name": {
-                        "$type": "CName",
-                        "$storage": "string",
-                        "$value": "Default INT"
-                      },
-                      "type": "Output"
-                    }
-                  },
-                  {
-                    "HandleId": "891",
-                    "Data": {
-                      "$type": "questSocketDefinition",
-                      "connections": [],
-                      "name": {
-                        "$type": "CName",
-                        "$storage": "string",
-                        "$value": "Default RET"
-                      },
-                      "type": "Output"
-                    }
-                  },
-                  {
-                    "HandleId": "892",
-                    "Data": {
-                      "$type": "questSocketDefinition",
-                      "connections": [],
-                      "name": {
-                        "$type": "CName",
-                        "$storage": "string",
-                        "$value": "Prefetch"
-                      },
-                      "type": "Input"
-                    }
-                  }
-                ]
-              }
-            },
-            {
-              "HandleId": "899",
-              "Data": {
-                "$type": "questFactsDBManagerNodeDefinition",
-                "id": 110,
-                "type": {
-                  "HandleId": "894",
-                  "Data": {
-                    "$type": "questSetVar_NodeType",
-                    "factName": "cc_g01_epilogue_scene_done",
-                    "setExactValue": 1,
-                    "value": 1
-                  }
-                },
-                "sockets": [
-                  {
-                    "HandleId": "895",
-                    "Data": {
-                      "$type": "questSocketDefinition",
-                      "connections": [],
-                      "name": {
-                        "$type": "CName",
-                        "$storage": "string",
-                        "$value": "CutDestination"
-                      },
-                      "type": "CutDestination"
-                    }
-                  },
-                  {
-                    "HandleRefId": "882"
-                  },
-                  {
-                    "HandleId": "896",
+                    "HandleId": "888",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [
                         {
-                          "HandleId": "897",
+                          "HandleId": "889",
                           "Data": {
                             "$type": "graphGraphConnectionDefinition",
                             "destination": {
-                              "HandleId": "898",
+                              "HandleId": "890",
                               "Data": {
                                 "$type": "questSocketDefinition",
                                 "connections": [
                                   {
-                                    "HandleRefId": "897"
+                                    "HandleRefId": "889"
                                   }
                                 ],
                                 "name": {
@@ -11304,7 +11174,7 @@
                               }
                             },
                             "source": {
-                              "HandleRefId": "896"
+                              "HandleRefId": "888"
                             }
                           }
                         }
@@ -11321,16 +11191,16 @@
               }
             },
             {
-              "HandleId": "906",
+              "HandleId": "898",
               "Data": {
                 "$type": "questPauseConditionNodeDefinition",
-                "id": 111,
+                "id": 110,
                 "condition": {
-                  "HandleId": "900",
+                  "HandleId": "892",
                   "Data": {
                     "$type": "questFactsDBCondition",
                     "type": {
-                      "HandleId": "901",
+                      "HandleId": "893",
                       "Data": {
                         "$type": "questVarComparison_ConditionType",
                         "comparisonType": "Greater",
@@ -11342,7 +11212,7 @@
                 },
                 "sockets": [
                   {
-                    "HandleId": "902",
+                    "HandleId": "894",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [],
@@ -11355,24 +11225,24 @@
                     }
                   },
                   {
-                    "HandleRefId": "898"
+                    "HandleRefId": "890"
                   },
                   {
-                    "HandleId": "903",
+                    "HandleId": "895",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [
                         {
-                          "HandleId": "904",
+                          "HandleId": "896",
                           "Data": {
                             "$type": "graphGraphConnectionDefinition",
                             "destination": {
-                              "HandleId": "905",
+                              "HandleId": "897",
                               "Data": {
                                 "$type": "questSocketDefinition",
                                 "connections": [
                                   {
-                                    "HandleRefId": "904"
+                                    "HandleRefId": "896"
                                   }
                                 ],
                                 "name": {
@@ -11384,7 +11254,7 @@
                               }
                             },
                             "source": {
-                              "HandleRefId": "903"
+                              "HandleRefId": "895"
                             }
                           }
                         }
@@ -11401,16 +11271,16 @@
               }
             },
             {
-              "HandleId": "916",
+              "HandleId": "908",
               "Data": {
                 "$type": "questJournalNodeDefinition",
-                "id": 112,
+                "id": 111,
                 "type": {
-                  "HandleId": "907",
+                  "HandleId": "899",
                   "Data": {
                     "$type": "questJournalEntry_NodeType",
                     "path": {
-                      "HandleId": "908",
+                      "HandleId": "900",
                       "Data": {
                         "$type": "gameJournalPath",
                         "className": {
@@ -11428,7 +11298,7 @@
                 },
                 "sockets": [
                   {
-                    "HandleId": "909",
+                    "HandleId": "901",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [],
@@ -11441,7 +11311,7 @@
                     }
                   },
                   {
-                    "HandleId": "910",
+                    "HandleId": "902",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [],
@@ -11454,7 +11324,7 @@
                     }
                   },
                   {
-                    "HandleId": "911",
+                    "HandleId": "903",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [],
@@ -11467,10 +11337,10 @@
                     }
                   },
                   {
-                    "HandleRefId": "905"
+                    "HandleRefId": "897"
                   },
                   {
-                    "HandleId": "912",
+                    "HandleId": "904",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [],
@@ -11483,21 +11353,21 @@
                     }
                   },
                   {
-                    "HandleId": "913",
+                    "HandleId": "905",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [
                         {
-                          "HandleId": "914",
+                          "HandleId": "906",
                           "Data": {
                             "$type": "graphGraphConnectionDefinition",
                             "destination": {
-                              "HandleId": "915",
+                              "HandleId": "907",
                               "Data": {
                                 "$type": "questSocketDefinition",
                                 "connections": [
                                   {
-                                    "HandleRefId": "914"
+                                    "HandleRefId": "906"
                                   }
                                 ],
                                 "name": {
@@ -11509,7 +11379,7 @@
                               }
                             },
                             "source": {
-                              "HandleRefId": "913"
+                              "HandleRefId": "905"
                             }
                           }
                         }
@@ -11526,16 +11396,16 @@
               }
             },
             {
-              "HandleId": "926",
+              "HandleId": "918",
               "Data": {
                 "$type": "questJournalNodeDefinition",
-                "id": 113,
+                "id": 112,
                 "type": {
-                  "HandleId": "917",
+                  "HandleId": "909",
                   "Data": {
                     "$type": "questJournalEntry_NodeType",
                     "path": {
-                      "HandleId": "918",
+                      "HandleId": "910",
                       "Data": {
                         "$type": "gameJournalPath",
                         "className": {
@@ -11553,7 +11423,7 @@
                 },
                 "sockets": [
                   {
-                    "HandleId": "919",
+                    "HandleId": "911",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [],
@@ -11566,10 +11436,10 @@
                     }
                   },
                   {
-                    "HandleRefId": "915"
+                    "HandleRefId": "907"
                   },
                   {
-                    "HandleId": "920",
+                    "HandleId": "912",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [],
@@ -11582,7 +11452,7 @@
                     }
                   },
                   {
-                    "HandleId": "921",
+                    "HandleId": "913",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [],
@@ -11595,7 +11465,7 @@
                     }
                   },
                   {
-                    "HandleId": "922",
+                    "HandleId": "914",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [],
@@ -11608,21 +11478,21 @@
                     }
                   },
                   {
-                    "HandleId": "923",
+                    "HandleId": "915",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [
                         {
-                          "HandleId": "924",
+                          "HandleId": "916",
                           "Data": {
                             "$type": "graphGraphConnectionDefinition",
                             "destination": {
-                              "HandleId": "925",
+                              "HandleId": "917",
                               "Data": {
                                 "$type": "questSocketDefinition",
                                 "connections": [
                                   {
-                                    "HandleRefId": "924"
+                                    "HandleRefId": "916"
                                   }
                                 ],
                                 "name": {
@@ -11634,7 +11504,7 @@
                               }
                             },
                             "source": {
-                              "HandleRefId": "923"
+                              "HandleRefId": "915"
                             }
                           }
                         }
@@ -11651,16 +11521,16 @@
               }
             },
             {
-              "HandleId": "936",
+              "HandleId": "928",
               "Data": {
                 "$type": "questJournalNodeDefinition",
-                "id": 114,
+                "id": 113,
                 "type": {
-                  "HandleId": "927",
+                  "HandleId": "919",
                   "Data": {
                     "$type": "questJournalEntry_NodeType",
                     "path": {
-                      "HandleId": "928",
+                      "HandleId": "920",
                       "Data": {
                         "$type": "gameJournalPath",
                         "className": {
@@ -11678,7 +11548,7 @@
                 },
                 "sockets": [
                   {
-                    "HandleId": "929",
+                    "HandleId": "921",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [],
@@ -11691,10 +11561,10 @@
                     }
                   },
                   {
-                    "HandleRefId": "925"
+                    "HandleRefId": "917"
                   },
                   {
-                    "HandleId": "930",
+                    "HandleId": "922",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [],
@@ -11707,7 +11577,7 @@
                     }
                   },
                   {
-                    "HandleId": "931",
+                    "HandleId": "923",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [],
@@ -11720,7 +11590,7 @@
                     }
                   },
                   {
-                    "HandleId": "932",
+                    "HandleId": "924",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [],
@@ -11733,21 +11603,21 @@
                     }
                   },
                   {
-                    "HandleId": "933",
+                    "HandleId": "925",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [
                         {
-                          "HandleId": "934",
+                          "HandleId": "926",
                           "Data": {
                             "$type": "graphGraphConnectionDefinition",
                             "destination": {
-                              "HandleId": "935",
+                              "HandleId": "927",
                               "Data": {
                                 "$type": "questSocketDefinition",
                                 "connections": [
                                   {
-                                    "HandleRefId": "934"
+                                    "HandleRefId": "926"
                                   }
                                 ],
                                 "name": {
@@ -11759,7 +11629,87 @@
                               }
                             },
                             "source": {
-                              "HandleRefId": "933"
+                              "HandleRefId": "925"
+                            }
+                          }
+                        }
+                      ],
+                      "name": {
+                        "$type": "CName",
+                        "$storage": "string",
+                        "$value": "Out"
+                      },
+                      "type": "Output"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "HandleId": "935",
+              "Data": {
+                "$type": "questPauseConditionNodeDefinition",
+                "id": 114,
+                "condition": {
+                  "HandleId": "929",
+                  "Data": {
+                    "$type": "questFactsDBCondition",
+                    "type": {
+                      "HandleId": "930",
+                      "Data": {
+                        "$type": "questVarComparison_ConditionType",
+                        "comparisonType": "Greater",
+                        "factName": "cc_g01_bar_reached",
+                        "value": 0
+                      }
+                    }
+                  }
+                },
+                "sockets": [
+                  {
+                    "HandleId": "931",
+                    "Data": {
+                      "$type": "questSocketDefinition",
+                      "connections": [],
+                      "name": {
+                        "$type": "CName",
+                        "$storage": "string",
+                        "$value": "CutDestination"
+                      },
+                      "type": "CutDestination"
+                    }
+                  },
+                  {
+                    "HandleRefId": "927"
+                  },
+                  {
+                    "HandleId": "932",
+                    "Data": {
+                      "$type": "questSocketDefinition",
+                      "connections": [
+                        {
+                          "HandleId": "933",
+                          "Data": {
+                            "$type": "graphGraphConnectionDefinition",
+                            "destination": {
+                              "HandleId": "934",
+                              "Data": {
+                                "$type": "questSocketDefinition",
+                                "connections": [
+                                  {
+                                    "HandleRefId": "933"
+                                  }
+                                ],
+                                "name": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "bar_in"
+                                },
+                                "type": "Input"
+                              }
+                            },
+                            "source": {
+                              "HandleRefId": "932"
                             }
                           }
                         }
@@ -11778,88 +11728,8 @@
             {
               "HandleId": "943",
               "Data": {
-                "$type": "questPauseConditionNodeDefinition",
-                "id": 115,
-                "condition": {
-                  "HandleId": "937",
-                  "Data": {
-                    "$type": "questFactsDBCondition",
-                    "type": {
-                      "HandleId": "938",
-                      "Data": {
-                        "$type": "questVarComparison_ConditionType",
-                        "comparisonType": "Greater",
-                        "factName": "cc_g01_bar_reached",
-                        "value": 0
-                      }
-                    }
-                  }
-                },
-                "sockets": [
-                  {
-                    "HandleId": "939",
-                    "Data": {
-                      "$type": "questSocketDefinition",
-                      "connections": [],
-                      "name": {
-                        "$type": "CName",
-                        "$storage": "string",
-                        "$value": "CutDestination"
-                      },
-                      "type": "CutDestination"
-                    }
-                  },
-                  {
-                    "HandleRefId": "935"
-                  },
-                  {
-                    "HandleId": "940",
-                    "Data": {
-                      "$type": "questSocketDefinition",
-                      "connections": [
-                        {
-                          "HandleId": "941",
-                          "Data": {
-                            "$type": "graphGraphConnectionDefinition",
-                            "destination": {
-                              "HandleId": "942",
-                              "Data": {
-                                "$type": "questSocketDefinition",
-                                "connections": [
-                                  {
-                                    "HandleRefId": "941"
-                                  }
-                                ],
-                                "name": {
-                                  "$type": "CName",
-                                  "$storage": "string",
-                                  "$value": "bar_in"
-                                },
-                                "type": "Input"
-                              }
-                            },
-                            "source": {
-                              "HandleRefId": "940"
-                            }
-                          }
-                        }
-                      ],
-                      "name": {
-                        "$type": "CName",
-                        "$storage": "string",
-                        "$value": "Out"
-                      },
-                      "type": "Output"
-                    }
-                  }
-                ]
-              }
-            },
-            {
-              "HandleId": "951",
-              "Data": {
                 "$type": "questSceneNodeDefinition",
-                "id": 116,
+                "id": 115,
                 "interruptionOperations": [],
                 "notAllowedToBeFrozen": 0,
                 "reapplyInterruptionOperationsAfterGameLoad": 0,
@@ -11888,7 +11758,7 @@
                 "syncToMusic": 0,
                 "sockets": [
                   {
-                    "HandleId": "944",
+                    "HandleId": "936",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [],
@@ -11901,24 +11771,24 @@
                     }
                   },
                   {
-                    "HandleRefId": "942"
+                    "HandleRefId": "934"
                   },
                   {
-                    "HandleId": "945",
+                    "HandleId": "937",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [
                         {
-                          "HandleId": "946",
+                          "HandleId": "938",
                           "Data": {
                             "$type": "graphGraphConnectionDefinition",
                             "destination": {
-                              "HandleId": "947",
+                              "HandleId": "939",
                               "Data": {
                                 "$type": "questSocketDefinition",
                                 "connections": [
                                   {
-                                    "HandleRefId": "946"
+                                    "HandleRefId": "938"
                                   }
                                 ],
                                 "name": {
@@ -11930,7 +11800,7 @@
                               }
                             },
                             "source": {
-                              "HandleRefId": "945"
+                              "HandleRefId": "937"
                             }
                           }
                         }
@@ -11944,7 +11814,7 @@
                     }
                   },
                   {
-                    "HandleId": "948",
+                    "HandleId": "940",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [],
@@ -11957,7 +11827,7 @@
                     }
                   },
                   {
-                    "HandleId": "949",
+                    "HandleId": "941",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [],
@@ -11970,7 +11840,7 @@
                     }
                   },
                   {
-                    "HandleId": "950",
+                    "HandleId": "942",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [],
@@ -11986,16 +11856,16 @@
               }
             },
             {
-              "HandleId": "958",
+              "HandleId": "950",
               "Data": {
                 "$type": "questPauseConditionNodeDefinition",
-                "id": 117,
+                "id": 116,
                 "condition": {
-                  "HandleId": "952",
+                  "HandleId": "944",
                   "Data": {
                     "$type": "questTimeCondition",
                     "type": {
-                      "HandleId": "953",
+                      "HandleId": "945",
                       "Data": {
                         "$type": "questRealtimeDelay_ConditionType",
                         "hours": 0,
@@ -12008,7 +11878,7 @@
                 },
                 "sockets": [
                   {
-                    "HandleId": "954",
+                    "HandleId": "946",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [],
@@ -12021,24 +11891,24 @@
                     }
                   },
                   {
-                    "HandleRefId": "947"
+                    "HandleRefId": "939"
                   },
                   {
-                    "HandleId": "955",
+                    "HandleId": "947",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [
                         {
-                          "HandleId": "956",
+                          "HandleId": "948",
                           "Data": {
                             "$type": "graphGraphConnectionDefinition",
                             "destination": {
-                              "HandleId": "957",
+                              "HandleId": "949",
                               "Data": {
                                 "$type": "questSocketDefinition",
                                 "connections": [
                                   {
-                                    "HandleRefId": "956"
+                                    "HandleRefId": "948"
                                   }
                                 ],
                                 "name": {
@@ -12050,7 +11920,7 @@
                               }
                             },
                             "source": {
-                              "HandleRefId": "955"
+                              "HandleRefId": "947"
                             }
                           }
                         }
@@ -12067,12 +11937,12 @@
               }
             },
             {
-              "HandleId": "964",
+              "HandleId": "956",
               "Data": {
                 "$type": "questFactsDBManagerNodeDefinition",
-                "id": 118,
+                "id": 117,
                 "type": {
-                  "HandleId": "959",
+                  "HandleId": "951",
                   "Data": {
                     "$type": "questSetVar_NodeType",
                     "factName": "cc_g01_bar_done",
@@ -12082,7 +11952,7 @@
                 },
                 "sockets": [
                   {
-                    "HandleId": "960",
+                    "HandleId": "952",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [],
@@ -12095,24 +11965,24 @@
                     }
                   },
                   {
-                    "HandleRefId": "957"
+                    "HandleRefId": "949"
                   },
                   {
-                    "HandleId": "961",
+                    "HandleId": "953",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [
                         {
-                          "HandleId": "962",
+                          "HandleId": "954",
                           "Data": {
                             "$type": "graphGraphConnectionDefinition",
                             "destination": {
-                              "HandleId": "963",
+                              "HandleId": "955",
                               "Data": {
                                 "$type": "questSocketDefinition",
                                 "connections": [
                                   {
-                                    "HandleRefId": "962"
+                                    "HandleRefId": "954"
                                   }
                                 ],
                                 "name": {
@@ -12124,7 +11994,7 @@
                               }
                             },
                             "source": {
-                              "HandleRefId": "961"
+                              "HandleRefId": "953"
                             }
                           }
                         }
@@ -12141,16 +12011,16 @@
               }
             },
             {
-              "HandleId": "971",
+              "HandleId": "963",
               "Data": {
                 "$type": "questPauseConditionNodeDefinition",
-                "id": 119,
+                "id": 118,
                 "condition": {
-                  "HandleId": "965",
+                  "HandleId": "957",
                   "Data": {
                     "$type": "questFactsDBCondition",
                     "type": {
-                      "HandleId": "966",
+                      "HandleId": "958",
                       "Data": {
                         "$type": "questVarComparison_ConditionType",
                         "comparisonType": "Greater",
@@ -12162,7 +12032,7 @@
                 },
                 "sockets": [
                   {
-                    "HandleId": "967",
+                    "HandleId": "959",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [],
@@ -12175,24 +12045,24 @@
                     }
                   },
                   {
-                    "HandleRefId": "963"
+                    "HandleRefId": "955"
                   },
                   {
-                    "HandleId": "968",
+                    "HandleId": "960",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [
                         {
-                          "HandleId": "969",
+                          "HandleId": "961",
                           "Data": {
                             "$type": "graphGraphConnectionDefinition",
                             "destination": {
-                              "HandleId": "970",
+                              "HandleId": "962",
                               "Data": {
                                 "$type": "questSocketDefinition",
                                 "connections": [
                                   {
-                                    "HandleRefId": "969"
+                                    "HandleRefId": "961"
                                   }
                                 ],
                                 "name": {
@@ -12204,7 +12074,7 @@
                               }
                             },
                             "source": {
-                              "HandleRefId": "968"
+                              "HandleRefId": "960"
                             }
                           }
                         }
@@ -12221,16 +12091,16 @@
               }
             },
             {
-              "HandleId": "981",
+              "HandleId": "973",
               "Data": {
                 "$type": "questJournalNodeDefinition",
-                "id": 120,
+                "id": 119,
                 "type": {
-                  "HandleId": "972",
+                  "HandleId": "964",
                   "Data": {
                     "$type": "questJournalEntry_NodeType",
                     "path": {
-                      "HandleId": "973",
+                      "HandleId": "965",
                       "Data": {
                         "$type": "gameJournalPath",
                         "className": {
@@ -12248,7 +12118,7 @@
                 },
                 "sockets": [
                   {
-                    "HandleId": "974",
+                    "HandleId": "966",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [],
@@ -12261,7 +12131,7 @@
                     }
                   },
                   {
-                    "HandleId": "975",
+                    "HandleId": "967",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [],
@@ -12274,7 +12144,7 @@
                     }
                   },
                   {
-                    "HandleId": "976",
+                    "HandleId": "968",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [],
@@ -12287,10 +12157,10 @@
                     }
                   },
                   {
-                    "HandleRefId": "970"
+                    "HandleRefId": "962"
                   },
                   {
-                    "HandleId": "977",
+                    "HandleId": "969",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [],
@@ -12303,21 +12173,21 @@
                     }
                   },
                   {
-                    "HandleId": "978",
+                    "HandleId": "970",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [
                         {
-                          "HandleId": "979",
+                          "HandleId": "971",
                           "Data": {
                             "$type": "graphGraphConnectionDefinition",
                             "destination": {
-                              "HandleId": "980",
+                              "HandleId": "972",
                               "Data": {
                                 "$type": "questSocketDefinition",
                                 "connections": [
                                   {
-                                    "HandleRefId": "979"
+                                    "HandleRefId": "971"
                                   }
                                 ],
                                 "name": {
@@ -12329,7 +12199,7 @@
                               }
                             },
                             "source": {
-                              "HandleRefId": "978"
+                              "HandleRefId": "970"
                             }
                           }
                         }
@@ -12346,17 +12216,17 @@
               }
             },
             {
-              "HandleId": "991",
+              "HandleId": "983",
               "Data": {
                 "$type": "questJournalNodeDefinition",
-                "id": 121,
+                "id": 120,
                 "type": {
-                  "HandleId": "982",
+                  "HandleId": "974",
                   "Data": {
                     "$type": "questJournalQuestEntry_NodeType",
                     "optional": 0,
                     "path": {
-                      "HandleId": "983",
+                      "HandleId": "975",
                       "Data": {
                         "$type": "gameJournalPath",
                         "className": {
@@ -12376,7 +12246,7 @@
                 },
                 "sockets": [
                   {
-                    "HandleId": "984",
+                    "HandleId": "976",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [],
@@ -12389,7 +12259,7 @@
                     }
                   },
                   {
-                    "HandleId": "985",
+                    "HandleId": "977",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [],
@@ -12402,7 +12272,7 @@
                     }
                   },
                   {
-                    "HandleId": "986",
+                    "HandleId": "978",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [],
@@ -12415,10 +12285,10 @@
                     }
                   },
                   {
-                    "HandleRefId": "980"
+                    "HandleRefId": "972"
                   },
                   {
-                    "HandleId": "987",
+                    "HandleId": "979",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [],
@@ -12431,21 +12301,21 @@
                     }
                   },
                   {
-                    "HandleId": "988",
+                    "HandleId": "980",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [
                         {
-                          "HandleId": "989",
+                          "HandleId": "981",
                           "Data": {
                             "$type": "graphGraphConnectionDefinition",
                             "destination": {
-                              "HandleId": "990",
+                              "HandleId": "982",
                               "Data": {
                                 "$type": "questSocketDefinition",
                                 "connections": [
                                   {
-                                    "HandleRefId": "989"
+                                    "HandleRefId": "981"
                                   }
                                 ],
                                 "name": {
@@ -12457,7 +12327,7 @@
                               }
                             },
                             "source": {
-                              "HandleRefId": "988"
+                              "HandleRefId": "980"
                             }
                           }
                         }
@@ -12474,12 +12344,12 @@
               }
             },
             {
-              "HandleId": "997",
+              "HandleId": "989",
               "Data": {
                 "$type": "questFactsDBManagerNodeDefinition",
-                "id": 122,
+                "id": 121,
                 "type": {
-                  "HandleId": "992",
+                  "HandleId": "984",
                   "Data": {
                     "$type": "questSetVar_NodeType",
                     "factName": "cc_g01_done",
@@ -12489,7 +12359,7 @@
                 },
                 "sockets": [
                   {
-                    "HandleId": "993",
+                    "HandleId": "985",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [],
@@ -12502,24 +12372,24 @@
                     }
                   },
                   {
-                    "HandleRefId": "990"
+                    "HandleRefId": "982"
                   },
                   {
-                    "HandleId": "994",
+                    "HandleId": "986",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [
                         {
-                          "HandleId": "995",
+                          "HandleId": "987",
                           "Data": {
                             "$type": "graphGraphConnectionDefinition",
                             "destination": {
-                              "HandleId": "996",
+                              "HandleId": "988",
                               "Data": {
                                 "$type": "questSocketDefinition",
                                 "connections": [
                                   {
-                                    "HandleRefId": "995"
+                                    "HandleRefId": "987"
                                   }
                                 ],
                                 "name": {
@@ -12531,7 +12401,7 @@
                               }
                             },
                             "source": {
-                              "HandleRefId": "994"
+                              "HandleRefId": "986"
                             }
                           }
                         }
@@ -12548,10 +12418,10 @@
               }
             },
             {
-              "HandleId": "999",
+              "HandleId": "991",
               "Data": {
                 "$type": "questOutputNodeDefinition",
-                "id": 123,
+                "id": 122,
                 "socketName": {
                   "$type": "CName",
                   "$storage": "string",
@@ -12560,7 +12430,7 @@
                 "type": "Terminating",
                 "sockets": [
                   {
-                    "HandleId": "998",
+                    "HandleId": "990",
                     "Data": {
                       "$type": "questSocketDefinition",
                       "connections": [],
@@ -12573,7 +12443,7 @@
                     }
                   },
                   {
-                    "HandleRefId": "996"
+                    "HandleRefId": "988"
                   }
                 ]
               }

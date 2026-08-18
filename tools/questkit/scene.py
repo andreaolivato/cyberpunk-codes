@@ -1133,10 +1133,13 @@ class Scene:
         for a speaker who is standing in front of V and must be heard rather
         than located - see build_hoshino in gen_scenes.py.
 
-        Which of the two fields carries the 2D behaviour has never been
-        separated: `inner` sets both, and the evidence for 2D (Johnny audible
-        from a misplaced marker while Mama Welles was not) came from a line
-        with both set. So `inner_vo` is a candidate, not a known-good.
+        CONFIRMED IN GAME, 2026-08-17, and it was a candidate until then. The
+        two fields were separated by routing Hoshino's two lines differently in
+        one conversation: h01 with the VO expression alone, h02 with both. Both
+        were audible from a speaker a kilometre away, and both subtitles read
+        "Hoshino: ..." in ordinary styling. So `voExpression` carries the 2D
+        behaviour on its own and `visualStyle` changes nothing visible for a
+        speaker who is not Johnny. See docs/backlog.md 10k.
 
         Lines are laid end to end: each event's startTime is the running total,
         and sectionDuration is the sum. With no audio, these numbers are the

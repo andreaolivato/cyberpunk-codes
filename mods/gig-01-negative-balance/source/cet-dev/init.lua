@@ -44,6 +44,12 @@ local FACTS = {
     -- otherwise collects her call every few minutes. It does not settle the
     -- trigger, so it is releasable without a reload.
     "cc_g01_dev_hold",
+    -- THE "HEROES IS NOT DONE" MESSAGE, already shown. Gig01_Start sets it the
+    -- one time it tells a player the gig is waiting on sq018, so the message
+    -- cannot repeat every session. Clear it to see the message again without
+    -- starting a new save; it has no other effect, and in particular clearing
+    -- it does NOT unblock the gig.
+    "cc_g01_heroes_notified",
     -- Nix's call, same handshake with a different prefix.
     "cc_g01_nixcall_request",
     "cc_g01_nixcall_answered",
@@ -342,6 +348,267 @@ local ELENA_PATHS = {
     { "contacts/elena_ortega/cc_g01_intro/cc_g01_ch_03", "gameJournalPhoneChoiceGroup" },
     { "contacts/elena_ortega/cc_g01_intro/cc_g01_ch_03/cc_g01_ch_03a", "gameJournalPhoneChoiceEntry" },
     { "contacts/elena_ortega/cc_g01_intro/cc_g01_msg_08", "gameJournalPhoneMessage" },
+}
+
+-- WHICH BASE-GAME QUESTS HAS THIS SAVE DONE?
+--
+-- Added 2026-08-18, for a question the world files cannot answer: a player
+-- reported El Coyote Cojo's entrance shut, and the device dump says the door
+-- is DISABLED on his save while the sector ships it ON. So something in the
+-- base game's own progression switched it off, and the next question is
+-- which quest turns it back on.
+--
+-- Journal state is the cheapest way to ask. `GetEntryByString(path, class)`
+-- plus `GetEntryState(entry)` is the same pair the Elena dump above uses.
+--
+-- THE PATHS ARE READ OUT OF THE GAME, NOT GUESSED. They come from the
+-- string table of `base\journal\cooked_journal.journal`, which carries 224
+-- plain-text quest paths. That is NOT every quest in the game: only 6 side
+-- quests and 5 main-quest entries survive as plain strings, so treat a
+-- missing entry as "this path is not in the table", never as "not done".
+local GATING_QUESTS = {
+    -- El Coyote Cojo. sq018 is the Jackie quest line, and the objective ids
+    -- around it in the journal are `01_go_to_el_coyote`, `01_visit_el_coyote`
+    -- and `03_el_coyote_funeral`, i.e. the ofrenda, which is "Heroes". This
+    -- is the prime suspect for what enables the bar's entrance.
+    { "quests/side_quest/sq018_jackie", "Heroes / the Jackie line (EL COYOTE)" },
+    -- The office doors, already known: they ship DISABLED and "Gimme Danger"
+    -- switches them on. See Gig01_OfficeDoors.reds and backlog 8a.
+    { "quests/main_quest/act_01/q112_01_old_friend",     "Gimme Danger: old friend" },
+    { "quests/main_quest/act_01/q112_02_industrial_park", "Gimme Danger: INDUSTRIAL PARK (office doors)" },
+    { "quests/main_quest/act_01/q112_04_hideout",        "Gimme Danger: hideout" },
+    { "quests/main_quest/prologue/q003_stout",           "prologue: Stout" },
+}
+
+-- Every quest path the base game spells out in plain text, read out of
+-- `base\journal\cooked_journal.journal` on 2026-08-18. Extracted
+-- rather than typed, and NOT the full quest list: paths that live only as
+-- hashes do not appear here. Grouped as the journal groups them.
+local ALL_QUEST_PATHS = {
+    "quests/gyms/gym_ui/quests",
+    "quests/main_quest/act_01/q112_01_old_friend",
+    "quests/main_quest/act_01/q112_02_industrial_park",
+    "quests/main_quest/act_01/q112_04_hideout",
+    "quests/main_quest/prologue/q000_corpo/office/07_go_to_hangar/q000_corpo_mp_hangar",
+    "quests/main_quest/prologue/q003_stout",
+    "quests/minor_activities/badlands/se1/ma_bls_ina_se1_02",
+    "quests/minor_activities/badlands/se1/ma_bls_ina_se1_03",
+    "quests/minor_activities/badlands/se1/ma_bls_ina_se1_06",
+    "quests/minor_activities/badlands/se1/ma_bls_ina_se1_17",
+    "quests/minor_activities/badlands/se1/ma_bls_ina_se1_18",
+    "quests/minor_activities/badlands/se1/ma_bls_ina_se1_22",
+    "quests/minor_activities/badlands/se5/ma_bls_ina_se5_07",
+    "quests/minor_activities/city_center/downtown/ma_cct_dtn_03",
+    "quests/minor_activities/city_center/downtown/ma_cct_dtn_12",
+    "quests/minor_activities/heywood/glen/ma_hey_gle_02",
+    "quests/minor_activities/heywood/glen/ma_hey_gle_07",
+    "quests/minor_activities/heywood/wellsprings/ma_hey_spr_04",
+    "quests/minor_activities/heywood/wellsprings/ma_hey_spr_11",
+    "quests/minor_activities/hidden_stash/ma_wat_lch_03",
+    "quests/minor_activities/hidden_stash/ma_wat_lch_05",
+    "quests/minor_activities/hidden_stash/ma_wbr_nok_01",
+    "quests/minor_activities/pacifica/coastview/ma_pac_cvi_08",
+    "quests/minor_activities/pacifica/coastview/ma_pac_cvi_10",
+    "quests/minor_activities/pacifica/coastview/ma_pac_cvi_12",
+    "quests/minor_activities/pacifica/coastview/ma_pac_cvi_13",
+    "quests/minor_activities/pacifica/west_wind_estate/ma_pac_wwd_02",
+    "quests/minor_activities/santo_domingo/arroyo/ma_std_arr_03",
+    "quests/minor_activities/santo_domingo/arroyo/ma_std_arr_06",
+    "quests/minor_activities/santo_domingo/arroyo/ma_std_arr_07",
+    "quests/minor_activities/santo_domingo/arroyo/ma_std_arr_10",
+    "quests/minor_activities/santo_domingo/arroyo/ma_std_arr_14",
+    "quests/minor_activities/santo_domingo/rancho_coronado/ma_std_rcr_10",
+    "quests/minor_activities/santo_domingo/rancho_coronado/ma_std_rcr_11",
+    "quests/minor_activities/santo_domingo/rancho_coronado/ma_std_rcr_12",
+    "quests/minor_activities/santo_domingo/rancho_coronado/ma_std_rcr_13",
+    "quests/minor_activities/watson/kabuki/ma_wat_kab_02/ma_wat_kab_02/investigate_bridge",
+    "quests/minor_activities/watson/kabuki/ma_wat_kab_05",
+    "quests/minor_activities/watson/little_china/ma_wat_lch_01",
+    "quests/minor_activities/watson/little_china/ma_wat_lch_08",
+    "quests/minor_activities/watson/little_china/ma_wat_lch_15",
+    "quests/minor_activities/watson/northside_industrial_district/ma_wat_nid_01",
+    "quests/minor_activities/watson/northside_industrial_district/ma_wat_nid_02",
+    "quests/minor_activities/watson/northside_industrial_district/ma_wat_nid_03",
+    "quests/minor_activities/watson/northside_industrial_district/ma_wat_nid_06",
+    "quests/minor_activities/watson/northside_industrial_district/ma_wat_nid_10",
+    "quests/minor_activities/watson/northside_industrial_district/ma_wat_nid_12",
+    "quests/minor_activities/watson/northside_industrial_district/ma_wat_nid_26",
+    "quests/minor_activities/watson/northside_industrial_district/ma_wat_nid_27",
+    "quests/minor_activities/westbrook/charter_hill/ma_wbr_hil_05",
+    "quests/minor_activities/westbrook/japantown/ma_wbr_jpn_07",
+    "quests/minor_activities/westbrook/japantown/ma_wbr_jpn_09",
+    "quests/minor_activities/westbrook/japantown/ma_wbr_jpn_20",
+    "quests/minor_activities/westbrook/north_oak/ma_wbr_nok_03",
+    "quests/minor_activities/westbrook/north_oak/ma_wbr_nok_05",
+    "quests/minor_quest/ma_bls_ina_se1_07",
+    "quests/minor_quest/ma_bls_ina_se1_08",
+    "quests/minor_quest/ma_bls_ina_se1_22",
+    "quests/minor_quest/ma_cct_dtn_03",
+    "quests/minor_quest/ma_cct_dtn_07",
+    "quests/minor_quest/ma_hey_spr_04",
+    "quests/minor_quest/ma_hey_spr_06",
+    "quests/minor_quest/ma_pac_cvi_08",
+    "quests/minor_quest/ma_pac_cvi_15",
+    "quests/minor_quest/ma_std_arr_06",
+    "quests/minor_quest/ma_std_rcr_11",
+    "quests/minor_quest/ma_wat_kab_02",
+    "quests/minor_quest/ma_wat_kab_08",
+    "quests/minor_quest/ma_wat_lch_06",
+    "quests/minor_quest/ma_wat_nid_03",
+    "quests/minor_quest/ma_wat_nid_15",
+    "quests/minor_quest/ma_wat_nid_22",
+    "quests/minor_quest/mq001_scorpion",
+    "quests/minor_quest/mq002_veterans",
+    "quests/minor_quest/mq003_orbitals",
+    "quests/minor_quest/mq005_alley",
+    "quests/minor_quest/mq006_rollercoaster",
+    "quests/minor_quest/mq007_smartgun",
+    "quests/minor_quest/mq008_party",
+    "quests/minor_quest/mq010_barry",
+    "quests/minor_quest/mq012_stud",
+    "quests/minor_quest/mq013_punks",
+    "quests/minor_quest/mq014_02_second",
+    "quests/minor_quest/mq014_03_third",
+    "quests/minor_quest/mq014_04_fourth",
+    "quests/minor_quest/mq014_zen",
+    "quests/minor_quest/mq015_wizardbook",
+    "quests/minor_quest/mq016_bartmoss",
+    "quests/minor_quest/mq018_writer",
+    "quests/minor_quest/mq019_paparazzi",
+    "quests/minor_quest/mq021_guide",
+    "quests/minor_quest/mq022_ezekiel",
+    "quests/minor_quest/mq023_bootleg",
+    "quests/minor_quest/mq024_sandra",
+    "quests/minor_quest/mq025_psycho_brawl",
+    "quests/minor_quest/mq026_conspiracy",
+    "quests/minor_quest/mq027_stunts",
+    "quests/minor_quest/mq030_melisa",
+    "quests/minor_quest/mq032_sacrum",
+    "quests/minor_quest/mq035_ozob",
+    "quests/minor_quest/mq036_overload",
+    "quests/minor_quest/mq037_brendan",
+    "quests/minor_quest/mq038_neweridentity",
+    "quests/minor_quest/mq040_biosculpt",
+    "quests/minor_quest/mq042_nomad",
+    "quests/minor_quest/mq044_jakes_vehicle",
+    "quests/minor_quest/mq046_cave_vehicle",
+    "quests/minor_quest/mq047_ad_vehicle",
+    "quests/minor_quest/mq049_edgerunners",
+    "quests/side_quest/sq018_jackie",
+    "quests/side_quest/sq021_sick_dreams",
+    "quests/side_quest/sq025_0_pickup",
+    "quests/side_quest/sq025_compensation",
+    "quests/side_quest/sq025_delamain",
+    "quests/side_quest/sq_q001_wilson",
+    "quests/street_stories/badlands/badlands_reward",
+    "quests/street_stories/badlands/inland_avenue/sts_bls_ina_02",
+    "quests/street_stories/badlands/inland_avenue/sts_bls_ina_03",
+    "quests/street_stories/badlands/inland_avenue/sts_bls_ina_04",
+    "quests/street_stories/badlands/inland_avenue/sts_bls_ina_05",
+    "quests/street_stories/badlands/inland_avenue/sts_bls_ina_06",
+    "quests/street_stories/badlands/inland_avenue/sts_bls_ina_07",
+    "quests/street_stories/badlands/inland_avenue/sts_bls_ina_08",
+    "quests/street_stories/badlands/inland_avenue/sts_bls_ina_08/ina_08_briefing",
+    "quests/street_stories/badlands/inland_avenue/sts_bls_ina_09",
+    "quests/street_stories/badlands/inland_avenue/sts_bls_ina_11",
+    "quests/street_stories/city_center/corpo_plaza/sts_cct_cpz_01",
+    "quests/street_stories/city_center/downtown/sts_cct_dtn_02",
+    "quests/street_stories/city_center/downtown/sts_cct_dtn_03",
+    "quests/street_stories/city_center/downtown/sts_cct_dtn_04",
+    "quests/street_stories/city_center/downtown/sts_cct_dtn_05",
+    "quests/street_stories/heywood/glen/sts_hey_gle_01",
+    "quests/street_stories/heywood/glen/sts_hey_gle_03",
+    "quests/street_stories/heywood/glen/sts_hey_gle_04",
+    "quests/street_stories/heywood/glen/sts_hey_gle_05",
+    "quests/street_stories/heywood/glen/sts_hey_gle_06",
+    "quests/street_stories/heywood/heywood_reward",
+    "quests/street_stories/heywood/vista_del_rey/sts_hey_rey_01",
+    "quests/street_stories/heywood/vista_del_rey/sts_hey_rey_02",
+    "quests/street_stories/heywood/vista_del_rey/sts_hey_rey_06",
+    "quests/street_stories/heywood/vista_del_rey/sts_hey_rey_08",
+    "quests/street_stories/heywood/vista_del_rey/sts_hey_rey_09",
+    "quests/street_stories/heywood/wellsprings/sts_hey_spr_01",
+    "quests/street_stories/heywood/wellsprings/sts_hey_spr_03",
+    "quests/street_stories/heywood/wellsprings/sts_hey_spr_06",
+    "quests/street_stories/pacifica/coastview/sts_pac_cvi_02",
+    "quests/street_stories/pacifica/west_wind_estates/sts_pac_wwd_05",
+    "quests/street_stories/santo_domingo/arroyo/sts_std_arr_01",
+    "quests/street_stories/santo_domingo/arroyo/sts_std_arr_03",
+    "quests/street_stories/santo_domingo/arroyo/sts_std_arr_05",
+    "quests/street_stories/santo_domingo/arroyo/sts_std_arr_06",
+    "quests/street_stories/santo_domingo/arroyo/sts_std_arr_10",
+    "quests/street_stories/santo_domingo/arroyo/sts_std_arr_11",
+    "quests/street_stories/santo_domingo/arroyo/sts_std_arr_12",
+    "quests/street_stories/santo_domingo/rancho_coronado/sts_std_rcr_01",
+    "quests/street_stories/santo_domingo/rancho_coronado/sts_std_rcr_02",
+    "quests/street_stories/santo_domingo/rancho_coronado/sts_std_rcr_02/brief",
+    "quests/street_stories/santo_domingo/rancho_coronado/sts_std_rcr_03",
+    "quests/street_stories/santo_domingo/rancho_coronado/sts_std_rcr_04",
+    "quests/street_stories/santo_domingo/rancho_coronado/sts_std_rcr_05",
+    "quests/street_stories/santo_domingo/santo_domingo_reward",
+    "quests/street_stories/watson/kabuki/sts_wat_kab_01",
+    "quests/street_stories/watson/kabuki/sts_wat_kab_02",
+    "quests/street_stories/watson/kabuki/sts_wat_kab_03",
+    "quests/street_stories/watson/kabuki/sts_wat_kab_04",
+    "quests/street_stories/watson/kabuki/sts_wat_kab_05",
+    "quests/street_stories/watson/kabuki/sts_wat_kab_06",
+    "quests/street_stories/watson/kabuki/sts_wat_kab_07",
+    "quests/street_stories/watson/kabuki/sts_wat_kab_08",
+    "quests/street_stories/watson/kabuki/sts_wat_kab_101",
+    "quests/street_stories/watson/kabuki/sts_wat_kab_102",
+    "quests/street_stories/watson/kabuki/sts_wat_kab_107",
+    "quests/street_stories/watson/little_china/sts_wat_lch_01",
+    "quests/street_stories/watson/little_china/sts_wat_lch_03",
+    "quests/street_stories/watson/little_china/sts_wat_lch_05",
+    "quests/street_stories/watson/little_china/sts_wat_lch_06",
+    "quests/street_stories/watson/northside_industrial_district/sts_wat_nid_01",
+    "quests/street_stories/watson/northside_industrial_district/sts_wat_nid_02",
+    "quests/street_stories/watson/northside_industrial_district/sts_wat_nid_03",
+    "quests/street_stories/watson/northside_industrial_district/sts_wat_nid_04",
+    "quests/street_stories/watson/northside_industrial_district/sts_wat_nid_05",
+    "quests/street_stories/watson/northside_industrial_district/sts_wat_nid_06",
+    "quests/street_stories/watson/northside_industrial_district/sts_wat_nid_07",
+    "quests/street_stories/watson/northside_industrial_district/sts_wat_nid_12",
+    "quests/street_stories/watson/watson_reward",
+    "quests/street_stories/wesbrook/charter_hill/sts_wbr_hil_01",
+    "quests/street_stories/wesbrook/charter_hill/sts_wbr_hil_06",
+    "quests/street_stories/wesbrook/charter_hill/sts_wbr_hil_07",
+    "quests/street_stories/wesbrook/japan_town/sts_wbr_jpn_01",
+    "quests/street_stories/wesbrook/japan_town/sts_wbr_jpn_02",
+    "quests/street_stories/wesbrook/japan_town/sts_wbr_jpn_03",
+    "quests/street_stories/wesbrook/japan_town/sts_wbr_jpn_05",
+    "quests/street_stories/wesbrook/japan_town/sts_wbr_jpn_09",
+    "quests/street_stories/wesbrook/japan_town/sts_wbr_jpn_12",
+    "quests/street_stories/wesbrook/westbrook_reward",
+    "quests/users/przemek_gladkiewicz/ma_wat_kab_06",
+    "quests/vehicle_metaquest/arch",
+    "quests/vehicle_metaquest/archer_bandit",
+    "quests/vehicle_metaquest/archer_quartz",
+    "quests/vehicle_metaquest/brennan_apollo",
+    "quests/vehicle_metaquest/chevalier_emperor",
+    "quests/vehicle_metaquest/chevalier_thrax",
+    "quests/vehicle_metaquest/herrera_outlaw",
+    "quests/vehicle_metaquest/mahir_supron",
+    "quests/vehicle_metaquest/makigai_maimai",
+    "quests/vehicle_metaquest/mizutani_shion",
+    "quests/vehicle_metaquest/mizutani_shion_nomad",
+    "quests/vehicle_metaquest/quadra_turbo",
+    "quests/vehicle_metaquest/quadra_type66",
+    "quests/vehicle_metaquest/quadra_type66_avenger",
+    "quests/vehicle_metaquest/quadra_type66_nomad",
+    "quests/vehicle_metaquest/quadra_type66_nomad_ncu",
+    "quests/vehicle_metaquest/rayfield_aerondight",
+    "quests/vehicle_metaquest/rayfield_caliburn",
+    "quests/vehicle_metaquest/thorton_colby",
+    "quests/vehicle_metaquest/thorton_colby_nomad",
+    "quests/vehicle_metaquest/thorton_colby_pickup",
+    "quests/vehicle_metaquest/thorton_galena",
+    "quests/vehicle_metaquest/thorton_galena_nomad",
+    "quests/vehicle_metaquest/thorton_mackinaw",
+    "quests/vehicle_metaquest/villefort_alvarado",
+    "quests/vehicle_metaquest/villefort_columbus",
+    "quests/vehicle_metaquest/villefort_cortes",
+    "quests/vehicle_metaquest/yaiba_kusanagi",
 }
 
 local function loadPresets()
@@ -967,6 +1234,50 @@ registerForEvent("onDraw", function()
             end
         end)
         if not ok then log("door-trace failed: " .. tostring(err)) end
+    end
+
+    if ImGui.Button("*** LOG: which gating quests has this save done ***") then
+        local ok, err = pcall(function()
+            local jm = Game.GetJournalManager()
+            log("quest-state: ==== gating quests, this save ====")
+            for _, item in ipairs(GATING_QUESTS) do
+                local path, label = item[1], item[2]
+                local ok2, res = pcall(function()
+                    local e = jm:GetEntryByString(path, "gameJournalQuest")
+                    if e == nil then return "NOT FOUND (path absent, not proof of anything)" end
+                    return tostring(jm:GetEntryState(e))
+                end)
+                log(string.format("quest-state: %-46s %-44s %s",
+                                  label, path, ok2 and res or ("ERROR " .. tostring(res))))
+            end
+            log("quest-state: ==== end ====")
+        end)
+        if not ok then log("quest-state failed: " .. tostring(err)) end
+    end
+
+    -- ...and the bulk version, for when the curated list above does not contain
+    -- the quest that turns out to matter. 224 lines, so it is deliberately a
+    -- separate button rather than something that runs every time.
+    if ImGui.Button("LOG: every quest path the journal spells out (224)") then
+        local ok, err = pcall(function()
+            local jm = Game.GetJournalManager()
+            local n, seen = 0, 0
+            log("quest-dump: ==== every plain-text quest path, and its state ====")
+            for _, path in ipairs(ALL_QUEST_PATHS) do
+                local ok2, res = pcall(function()
+                    local e = jm:GetEntryByString(path, "gameJournalQuest")
+                    if e == nil then return nil end
+                    return tostring(jm:GetEntryState(e))
+                end)
+                n = n + 1
+                if ok2 and res ~= nil then
+                    seen = seen + 1
+                    log(string.format("quest-dump: %-64s %s", path, res))
+                end
+            end
+            log(string.format("quest-dump: ==== %d of %d paths resolved to an entry ====", seen, n))
+        end)
+        if not ok then log("quest-dump failed: " .. tostring(err)) end
     end
 
     -- ESCALATING FORCE, and the escalation is the point.

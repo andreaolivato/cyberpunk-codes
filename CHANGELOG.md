@@ -5,6 +5,24 @@ Negative Balance releases, newest first. The same changelog is on the mod's
 
 ---
 
+## 1.2.1 (2026-08-18)
+
+Safe to install mid-save. If the gig is already running, finish it before
+updating: the epilogue changed shape.
+
+- **Fixed: the gig could dead-end at El Coyote Cojo.** The base game keeps that
+  bar locked until *Heroes* is finished. Elena's call now waits for it and says
+  so once on screen, instead of starting a gig that cannot be completed.
+- **Removed: the stand-in Mama Welles**, and the second epilogue built around
+  her. Once the gig waits for *Heroes* she is always in the bar, so neither was
+  reachable.
+- **Changed: the mod's world sector no longer covers the map.** Its streaming
+  box was 10,000 m a side and its grid cell was another mod's, so the sector
+  stayed resident for the whole session. Both are now derived from the shard's
+  position.
+
+---
+
 ## 1.2.0 (2026-08-17)
 
 Safe to install mid-save. Nothing to restart.

@@ -57,7 +57,38 @@
 //    and is already the ring gate in Gig01_Holocall - so this is not a new
 //    dependency, it is the same signal read one step earlier.
 //
-// 4. Nothing of this gig has run yet. See the latch below.
+// 4. Heroes is FINISHED.   - EL COYOTE COJO IS OPEN.
+//
+//    The gig ends in that bar, so a save where the bar is shut is a save where
+//    the gig cannot finish. Measured across three saves on 2026-08-18, with the
+//    dev menu's device dump on the entrance and its quest-state dump on the
+//    journal:
+//
+//      sq018 Active,    q112_01 Active     -> door DISABLED
+//      sq018 Active,    q112_01 Succeeded  -> door DISABLED
+//      sq018 SUCCEEDED, q112_01 Succeeded  -> door open
+//
+//    sq018 is the only column that moves with the door. The Gimme Danger
+//    objectives rule themselves out: q112_01 changes between the first two
+//    saves while the door stays shut, and q112_02 is Active in both the second
+//    and the third, one shut and one open.
+//
+//    It has to be Succeeded rather than Active, which fits the quest's own
+//    shape: Heroes sends V to the bar and the door opens once the ofrenda is
+//    done. sq018 owns the place - `#sq018_mp_el_coyote_entrance`,
+//    `#sq018_mp_el_coyote_back_entrance` and the `03_el_coyote_funeral`
+//    objective are all its.
+//
+//    THIS ONE IS ALLOWED TO BE VISIBLE, unlike the three above. See
+//    NotifyBlocked below: it is the one gate a player can act on, and a silent
+//    hold here is the exact shape of the bug report that produced backlog 8a.
+//
+//    Not the door. Forcing it the way Gig01_OfficeDoors forces the office was
+//    on the table and was rejected on the design call, 2026-08-18: the bar's
+//    people belong to sq018 as much as its door does, so a forced door opens
+//    onto an empty room and the gig's closing scene plays to nobody.
+//
+// 5. Nothing of this gig has run yet. See the latch below.
 //
 // That is the full list. There is no time-of-day condition: the comic
 // opens at night, and a "prefer night, start anyway after 5 minutes" version
@@ -86,6 +117,39 @@ public abstract class CCGig01StartRules {
     // 2026-08-14 - see the header. Do not "tidy" these into guessed names.
     public static func SideContentFact() -> String { return "q101_enable_side_content"; }
     public static func PointOfNoReturnFact() -> String { return "q115_point_of_no_return"; }
+
+    // HEROES, as a journal path rather than a fact.
+    //
+    // EXTRACTED, NOT GUESSED: this string is in the base game's own
+    // `cooked_journal.journal`, alongside the objective ids `01_go_to_el_coyote`,
+    // `01_visit_el_coyote` and `03_el_coyote_funeral`. A fact would have been
+    // preferable, since facts are cheap to read and cheap to fake from the dev
+    // menu, but no fact for "Heroes is done" was found in the shipped data and
+    // a guessed name reads as 0 forever, which here would mean the gig never
+    // starts for anybody.
+    public static func HeroesPath() -> String { return "quests/side_quest/sq018_jackie"; }
+
+    // FAIL OPEN. A null journal manager, a null entry or a journal that has not
+    // resolved yet all answer "true, carry on" rather than "block".
+    //
+    // That direction is deliberate and it is the opposite of what a strict gate
+    // would do. The cost of a false positive is a player who reaches a shut door
+    // on an old save, which is recoverable and which they can report. The cost
+    // of a false negative is a gig that never starts and looks like a broken
+    // install, which is the failure this whole file is written against. When in
+    // doubt, let them play.
+    public static func HeroesDone(game: GameInstance) -> Bool {
+        let jm: ref<JournalManager> = GameInstance.GetJournalManager(game);
+        if !IsDefined(jm) {
+            return true;
+        }
+        let entry: wref<JournalEntry> =
+            jm.GetEntryByString(CCGig01StartRules.HeroesPath(), "gameJournalQuest");
+        if !IsDefined(entry) {
+            return true;
+        }
+        return Equals(jm.GetEntryState(entry), gameJournalEntryState.Succeeded);
+    }
 
     // THE POLL BACKS OFF: 24s -> 30 -> 30 -> 60 -> 5min -> 5min -> ...
     // (the agreed schedule, 2026-08-14. It replaced a flat 5 s poll).
@@ -206,6 +270,31 @@ public class NegativeBalanceStart extends ScriptableSystem {
             || qs.GetFactStr("cc_g01_done") > 0;
     }
 
+    // TELL THE PLAYER ONCE, AND ONLY ONCE PER SAVE.
+    //
+    // The design call, 2026-08-18: hold the call, and say so. An early-save
+    // player who installs this and gets silence forever has no way to tell a
+    // requirement from a broken install, and that is not a hypothetical - it is
+    // what backlog 8a was, a shut door and no explanation.
+    //
+    // The latch is a FACT rather than a field, because a field on a
+    // ScriptableSystem is gone on the next load and the player would collect
+    // this message every session for as long as Heroes sits unfinished.
+    // `cc_g01_heroes_notified` is in the dev menu's fact list, so a tester can
+    // clear it and see the message again without a new save.
+    //
+    // Only reachable when every other gate has passed, so it cannot fire at the
+    // main menu, during the prologue, or over a loading screen.
+    private func NotifyBlocked(qs: ref<QuestsSystem>) -> Void {
+        if qs.GetFactStr("cc_g01_heroes_notified") > 0 {
+            return;
+        }
+        qs.SetFactStr("cc_g01_heroes_notified", 1);
+        CCSharedHud.NotifyTyped(this.GetGameInstance(),
+            "Negative Balance is waiting: finish \"Heroes\" for Jackie first.",
+            SimpleMessageType.Neutral, 6.0);
+    }
+
     public func Tick() -> Void {
         if this.m_settled {
             return;
@@ -295,6 +384,16 @@ public class NegativeBalanceStart extends ScriptableSystem {
             }
             if CCSharedWorld.IsUsingDevice(this.GetGameInstance(), player) {
                 ready = false;
+            }
+            // LAST, AND ON PURPOSE. Everything above is either slow-moving
+            // world state or a "not this second" condition, and none of it is
+            // the player's business. This one is, so it is checked only once
+            // the gig would otherwise have started, which is what lets the
+            // message below be specific instead of a guess about why nothing
+            // is happening.
+            if ready && !CCGig01StartRules.HeroesDone(game) {
+                ready = false;
+                this.NotifyBlocked(qs);
             }
         }
 

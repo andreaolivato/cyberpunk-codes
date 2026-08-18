@@ -3,9 +3,6 @@ r"""Generates the world files that put the data shard on the office desk.
   mod\worlds\03_night_city\_compiled\default\cc_g01_world.streamingsector
   mod\worlds\03_night_city\_compiled\default\cc_g01_world.streamingblock
 
-The gig's other sector (`mod\negative_balance\world\gig01.*`) holds two quest
-markers, is hand-authored, inert, and is not touched here.
-
 WHAT THIS SHIPS, AND WHY IT IS THE SHAPE IT IS.
 
 A `worldEntityNode` pointing at our own `cc_g01_shard.ent`. It RENDERS - that
@@ -45,6 +42,7 @@ right one - "let's put back the duplicate shard, and start reading it on
 proximity rather than action" beats a tooltip nobody can fix.
 """
 import json
+import math
 import os
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -61,9 +59,60 @@ SHARD_ENT = r'mod\negative_balance\entity\cc_g01_shard.ent'
 # itself; nothing needs keeping in step with it any more).
 SHARD_POS = (-245.654, -1454.667, 15.400)
 
-# Copied from GeneralShadowsFix, an installed world-edit mod that works.
-# Identical on all sixteen of its descriptors, so it is a constant.
-GRID_CELL = 129182
+# HOW FAR THE SHARD RENDERS FROM, and therefore how big the sector's streaming
+# box has to be. Written here rather than inline because the box below is
+# derived from it: the sector must be resident before the node can come into
+# range, or the shard pops in.
+MAX_STREAMING_DISTANCE = 164.710114
+# 50 m of headroom on top of that, so the sector is loaded by the time the node
+# is in reach rather than in the same moment.
+STREAM_MARGIN = 50.0
+
+# The world grid, and the two values that place this sector in it.
+#
+# WHAT THESE USED TO BE: a +-5000 box and rldGridCell 129182, both copied
+# wholesale from GeneralShadowsFix, an installed world-edit mod that works.
+# For a mod that edits the whole map a whole-map box is right. For one shard on
+# one desk in Heywood it meant the sector was in range from everywhere in the
+# game and stayed resident for the whole session, and the grid cell was a
+# spatial bucket belonging to another mod's sectors with ours attached to it.
+#
+# BOTH ARE DERIVED NOW, from the 23,689 vanilla sector descriptors in
+# `all.streamingblock` (2026-08-18). The grid is regular and the packing is
+# exact, with no exceptions across the 21,332 descriptors whose sector name
+# states their own cell:
+#
+#   a cell is 64 m across at level 0 and doubles per level, so W = 64 * 2^level
+#   a sector's cell index is (floor(x/W), floor(y/W), floor(z/W))
+#   rldGridCell = (i + S/2) + S*(j + S/2) + S^2*(k + S/2)
+#
+# S is how many cells the axis field holds: 2^(8 - level) for an Exterior
+# sector, 2^(9 - level) for Interior and Navigation ones, which sit a level
+# finer. Ours is Exterior at level 1, so S is 128.
+#
+# Checked by prediction rather than by pattern-matching: the formula returns the
+# rldGridCell that the vanilla sector covering the shard's own position actually
+# carries, and does so at all three levels tested (`exterior_-4_-23_0_0`,
+# `exterior_-2_-12_0_1`, `exterior_-1_-6_0_2`).
+#
+# Also established there, and worth having if a future sector needs it:
+# rldGridCell 0 is legal. 2,354 shipped Quest sectors carry it, together with a
+# float-max streaming box, which is the game's own shape for a sector that is
+# not on the exterior grid. It is not ours: this one is Exterior and on the grid.
+LEVEL = 1
+CELL_METRES = 64.0 * (2 ** LEVEL)
+AXIS_CELLS = 2 ** (8 - LEVEL)
+
+
+def grid_cell(pos, cell_metres=CELL_METRES, axis_cells=AXIS_CELLS):
+    """The rldGridCell for a world position, by the packing described above."""
+    half = axis_cells // 2
+    i, j, k = (int(math.floor(c / cell_metres)) for c in pos)
+    return ((i + half) + axis_cells * (j + half)
+            + axis_cells * axis_cells * (k + half))
+
+
+GRID_CELL = grid_cell(SHARD_POS)
 
 
 def cname(v):
@@ -76,6 +125,13 @@ def vec3(p):
 
 def vec4(p, w=0):
     return {'$type': 'Vector4', 'W': w, 'X': p[0], 'Y': p[1], 'Z': p[2]}
+
+
+def box_corner(sign):
+    """A corner of the sector's streaming box: the shard, reach in every
+    direction. `sign` is +1 for Max and -1 for Min."""
+    reach = MAX_STREAMING_DISTANCE + STREAM_MARGIN
+    return tuple(c + sign * reach for c in SHARD_POS)
 
 
 def header(name):
@@ -122,7 +178,7 @@ def sector():
         # A real entity node's flags and a FINITE streaming distance. The first
         # attempt used a trigger area's (Uk10 288 / Uk11 65280, float-max) and
         # that is one of the two reasons nothing appeared.
-        'MaxStreamingDistance': 164.710114,
+        'MaxStreamingDistance': MAX_STREAMING_DISTANCE,
         'UkFloat1': 50,
         'Uk10': 1056,
         'Uk11': 10762,
@@ -188,12 +244,18 @@ def block():
                     'numNodeRanges': 1,
                     'questPrefabNodeRef': {'$type': 'NodeRef',
                                            '$storage': 'uint64', '$value': '0'},
-                    # +-5000 with W=1, exactly as the working mod writes it.
-                    # Night City runs to about +-3000, so this covers it - and
-                    # unlike float-max it is a box the engine can reason about.
+                    # THE SHARD'S OWN REACH, not the map. A cube centred on the
+                    # node and half a metre wider than the distance it renders
+                    # from, so the sector is in range while the shard could be
+                    # visible and out of range everywhere else.
+                    #
+                    # For scale, the vanilla level-1 sector covering this same
+                    # cell carries a 613 x 583 x 514 m box, so ~430 m a side is
+                    # an ordinary size for a neighbourhood rather than a tight
+                    # one. W=1 on both corners, as every shipped descriptor has.
                     'streamingBox': {'$type': 'Box',
-                                     'Max': vec4((5000, 5000, 5000), w=1),
-                                     'Min': vec4((-5000, -5000, -5000), w=1)},
+                                     'Max': vec4(box_corner(+1), w=1),
+                                     'Min': vec4(box_corner(-1), w=1)},
                     'variants': [],
                 }],
                 'index': {'$type': 'worldStreamingBlockIndex',

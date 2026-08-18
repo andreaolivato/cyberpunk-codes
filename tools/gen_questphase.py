@@ -472,26 +472,32 @@ step(add_pause_fact('cc_g01_mama_reached'))
 # The epilogue conversation with Mama Welles. It ends on V saying he is getting
 # a drink; the encounter script sets cc_g01_mama_talked when the scene exits.
 #
-# TWO VARIANTS, AND THE FACT DECIDES WHICH. See docs/backlog.md 7d.
+# PLAY IT, OR SKIP IT. See docs/backlog.md 7d and 19.
 #
 # `gig01_epilogue` TAKES the real Mama Welles as its actor, which is what stops
 # her ordinary bar conversation - a quest scene owns the actor it acquires. Yet
-# nothing in it spawns anybody, so entering it on a night she is not in the bar
-# would leave the scene holding an actor that never acquired, which is what
-# crashed the game at scene teardown in August. `gig01_epilogue_standin` is the
-# gig exactly as it shipped, for that case.
+# nothing in it spawns anybody, so entering it when she is not in the bar would
+# leave the scene holding an actor that never acquired, which is what crashed
+# the game at scene teardown in August. That is the whole reason this fork
+# exists, and it is why the fork stays even though the branch it protects
+# should now be unreachable.
+#
+# THE SECOND BRANCH USED TO PLAY A STAND-IN and now plays nothing: it goes
+# straight to the fan-in, so the gig moves on to the bar without the epilogue.
+# The stand-in, and the script that spawned our own Mama Welles for it, were
+# deleted on 2026-08-18. Gig01_Start now waits for sq018 (Heroes) before the gig
+# begins, and that is the quest that puts Mama in the bar as well as unlocking
+# its door, so the absent case should not arise. An ending missing one
+# conversation beats a crash, and it beats carrying a whole second scene, a
+# spawner and a duplicate NPC for a case nobody should reach.
 #
 # THE FACT IS TRI-STATE, and deliberately: 0 unknown, 1 she is here, 2 she is
 # not. Two pause nodes hang off the same socket, one per answer, and neither can
 # fire until Gig01_Encounter has actually looked. A plain 0/1 fact would have the
 # "absent" branch waiting on `== 0`, which is true for every player from the
-# moment the save loads - the branch would fire before the probe ran and the
-# stand-in would play with the real Mama standing next to her.
+# moment the save loads, so the skip would fire before the probe ever ran.
 #
-# Fan-out here, fan-in below. Both are shapes vanilla uses; what it never does -
-# and what crashed the game on load in August - is TWO NODES POINTING AT ONE
-# SCENE. These are two different scenes with one node each, and the assertion
-# that counts scene nodes still holds.
+# Fan-out here, fan-in below. Both are shapes vanilla uses.
 MAMA_FORK = chain[-1]
 MAMA_HERE = add_pause_fact('cc_g01_mama_present', 1, 'Equal')
 MAMA_GONE = add_pause_fact('cc_g01_mama_present', 2, 'Equal')
@@ -500,15 +506,17 @@ b.connect(MAMA_FORK, (MAMA_GONE, 'In'))
 
 EPILOGUE_NID = add_scene(SCENES + 'gig01_epilogue.scene', ANCHOR_MAMA,
                          ['epilogue_in'], ['epilogue_out'])
-EPILOGUE_STANDIN_NID = add_scene(SCENES + 'gig01_epilogue_standin.scene',
-                                 ANCHOR_MAMA, ['epilogue_in'], ['epilogue_out'])
 b.connect((MAMA_HERE, 'Out'), (EPILOGUE_NID, 'epilogue_in'))
-b.connect((MAMA_GONE, 'Out'), (EPILOGUE_STANDIN_NID, 'epilogue_in'))
 
 # ...and back to one chain. Everything after this is identical either way.
+#
+# THE SKIP BRANCH LANDS HERE, on the same node the scene's exit lands on, so it
+# is not a dead end: `cc_g01_epilogue_scene_done` is what Gig01_Encounter reads
+# before it sets `cc_g01_mama_talked`, and that is the fact the next objective
+# waits on. Route the skip anywhere else and the gig strands on obj_mama.
 EPILOGUE_DONE = add_setvar('cc_g01_epilogue_scene_done', 1)
 b.connect((EPILOGUE_NID, 'epilogue_out'), (EPILOGUE_DONE, 'In'))
-b.connect((EPILOGUE_STANDIN_NID, 'epilogue_out'), (EPILOGUE_DONE, 'In'))
+b.connect((MAMA_GONE, 'Out'), (EPILOGUE_DONE, 'In'))
 chain.append((EPILOGUE_DONE, 'Out'))
 # ...and then he actually goes and gets it. Johnny is waiting at the counter for
 # the last two lines of the comic, which is where the gig ends.
