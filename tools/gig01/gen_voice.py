@@ -23,8 +23,8 @@ players install nothing extra.
 
 WHAT THIS SCRIPT DOES
 
-    python tools\gen_voice.py --placeholder    # tones at the estimated length
-    python tools\gen_voice.py                  # real WAVs from source\audio\
+    python tools\gig01\gen_voice.py --placeholder    # tones at the estimated length
+    python tools\gig01\gen_voice.py                  # real WAVs from source\audio\
 
 1. For every voiced line, finds `source\audio\<scene>__<key>.wav`. With
    `--placeholder`, synthesises one first: a tone at the length gen_scenes would
@@ -65,6 +65,10 @@ import tempfile
 import wave      # writing placeholder tones only; see wav_ms() for why not reading
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+# questkit is in tools/, one level up from this gig's generators. See
+# backlog.md 21.
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import argparse
 import json
 import os
@@ -78,7 +82,8 @@ from questkit.voice import (                                        # noqa: F401
 )
 from questkit import phone
 
-REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_TOOLS = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+REPO = os.path.dirname(_TOOLS)
 MOD = os.path.join(REPO, 'mods', 'gig-01-negative-balance')
 AUDIO_SRC = os.path.join(MOD, 'source', 'audio')
 # Placeholders live in their own folder and are NOT tracked. They are throwaway

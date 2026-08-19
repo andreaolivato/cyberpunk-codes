@@ -31,7 +31,7 @@ Activating quest, phase and objective is not enough. Pin entries are journal
 entries with their own state, and an Inactive pin is invisible: the engine never
 queries the mappin system for it.
 
-In `tools/gen_questphase.py`, call `add_journal('gameJournalQuestMapPin', ...)`
+In `tools/gig01/gen_questphase.py`, call `add_journal('gameJournalQuestMapPin', ...)`
 alongside the objective, and `add_journal('gameJournalPointOfInterestMappin',
 POI, ...)` when the gig starts.
 
@@ -46,7 +46,7 @@ for the second, which is newer and removes most of the work in this ingredient.
 The `offset` is the exact vector from that node to the target.
 
 - `reference.reference` on a quest pin, `staticNodeRef` on the POI
-- two tables in `tools/gen_journal.py`: `ANCHOR_POS` (each anchor's world
+- two tables in `tools/gig01/gen_journal.py`: `ANCHOR_POS` (each anchor's world
   position) and `PIN_POS` (where the pin must end up)
 - the generator subtracts them, so the anchor's distance from the target does
   not matter. Only its recorded position has to be right
@@ -343,7 +343,7 @@ serializes to about 71 MB of JSON. That is the whole game's journal, and the
 answer to most "what does vanilla actually do here?" questions about journal
 data.
 
-In this repo: `NO_GPS` in `tools/gen_journal.py`, currently `{'pin_wayin'}`.
+In this repo: `NO_GPS` in `tools/gig01/gen_journal.py`, currently `{'pin_wayin'}`.
 
 ## Your own anchors, and an always-loaded sector to hold them
 

@@ -39,7 +39,7 @@ if (Test-Path $audioSrc) {
         }
     }
     if ($stale.Count -gt 0) {
-        throw ("Audio is stale - run tools\gen_voice.py first:`n  " + ($stale -join "`n  "))
+        throw ("Audio is stale - run tools\gig01\gen_voice.py first:`n  " + ($stale -join "`n  "))
     }
 }
 
@@ -65,7 +65,7 @@ foreach ($src in $jsonSources) {
 }
 
 # 1b) Copy through resources that are ALREADY compiled binaries and have no JSON
-#     form. Only .wem so far (Wwise audio, written by tools\gen_voice.py) - a
+#     form. Only .wem so far (Wwise audio, written by tools\gig01\gen_voice.py) - a
 #     whitelist rather than "everything that is not .json", so a stray file in
 #     raw\ can never end up shipped by accident.
 $binaryExts = @(".wem")

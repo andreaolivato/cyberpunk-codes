@@ -7,7 +7,8 @@ hand-authored source that happens to live in the same directory.
 
 ## How the generators are laid out
 
-`tools/questkit/` is the reusable half and `tools/gen_*.py` is one gig's half.
+`tools/questkit/` is the reusable half and `tools/gig01/gen_*.py` is one gig's
+half.
 
 | module | holds |
 |---|---|
@@ -93,82 +94,82 @@ Get-ChildItem -Recurse | Unblock-File
 ## Dev loop
 
 ```powershell
-python .\tools\gen_journal.py         # contacts, quest, objectives, pins, POI
-python .\tools\gen_localization.py    # all LocKey strings
-python .\tools\gen_voice.py           # WAV -> WEM (Wwise) + voiceover map
-                                      #  + durations.json. Run BEFORE gen_scenes:
-                                      #  it writes the sidecar gen_scenes paces
-                                      #  voiced lines from. `--placeholder`
-                                      #  substitutes tones for missing takes
-python .\tools\gen_lipsync.py         # casts a VANILLA lipsync animation of
-                                      #  about the right length for every line
-                                      #  Johnny, Hoshino and Mama Welles say,
-                                      #  into source\lipsync_picks.json. Ships
-                                      #  NO animation data - the animation name
-                                      #  a line carries is free-form, so it just
-                                      #  points at one the game already has.
-                                      #  Between gen_voice (durations) and
-                                      #  gen_scenes (which reads the picks).
-                                      #  `--rebuild` re-extracts its catalogue
-python .\tools\gen_scenes.py          # FIFTEEN .scene conversations - EVERY line
-                                      #  in the gig is a scene line, because a
-                                      #  scene line is the only kind that can
-                                      #  carry audio. Their text lives INSIDE
-                                      #  the scene, not in the localization
-                                      #  resource. Run AFTER gen_voice.py: it
-                                      #  paces sections from durations.json
-python .\tools\gen_shard_ent.py       # the physical data shard on the office
-                                      #  desk: a HealthConsumable-class .ent
-                                      #  with an interaction + mesh. A mod
-                                      #  .ent can only name a class the GAME
-                                      #  ships - see the file's header
-python .\tools\gen_sector.py          # the world sector + streaming block that
-                                      #  put the shard entity on the office
-                                      #  desk. Rarely re-run - only when the
-                                      #  shard moves - but it is the authority
-                                      #  on that position, not the JSON
-python .\tools\gen_questphase.py      # quest graph (objective + PIN activation
-                                      #  + scene nodes)
-.\tools\build-archive.ps1 gig-01      # JSON sources -> resources -> packed archive
-.\tools\deploy-dev.ps1 gig-01         # copy scripts+lua+archive into game dir
-.\tools\deploy-dev.ps1 gig-01 -NoDevMenu   # ...as a PLAYER gets it: no CET dev
-                                      #  menu, and it DELETES an already-
-                                      #  deployed one. Without this a plain
-                                      #  re-deploy silently reinstalls the menu
-.\tools\build-release.ps1 gig-01 -Version 1.1.1   # the release .zip, into dist\
-                                      #  Refuses a wrapper folder, the dev menu,
-                                      #  or any base\ override. Does NOT rebuild
-                                      #  by default: WolvenKit packing is NON-
-                                      #  DETERMINISTIC (same inputs, same size,
-                                      #  new hash), so it ships the bytes that
-                                      #  were TESTED and diffs every file against
-                                      #  the deployed build. -Rebuild to force
-.\tools\check-scripts.ps1             # offline redscript compile check. Compiles
-                                      #  the DEPLOYED tree and REFUSES to run if
-                                      #  the repo differs from it, so the order
-                                      #  is always deploy, THEN check
-.\tools\check-scripts.ps1 -SelfTest   # prove the check can still detect breakage
-.\tools\check-scripts-repo.ps1 gig-01 # compile the REPO instead, vendoring on
-                                      #  the way in, writing nothing to the game
-                                      #  folder. This is the one to use while
-                                      #  refactoring: the checker above would
-                                      #  make you deploy over a working install
-                                      #  just to find out whether it compiles
-.\tools\vendor-shared.ps1 -Dst <dir> -Gig Gig01   # copy shared\scripts under a
-                                      #  per-gig module. Called by deploy-dev
-                                      #  and build-release; rarely run by hand
-python .\tools\dump_dialogue.py       # every spoken line as plain text, read out
-                                      #  of the generators rather than their
-                                      #  output, so it cannot drift from what
-                                      #  ships. `--screens` adds the SMS threads,
-                                      #  terminal, shard and HUD text
+python .\tools\gig01\gen_journal.py              # contacts, quest, objectives, pins, POI
+python .\tools\gig01\gen_localization.py         # all LocKey strings
+python .\tools\gig01\gen_voice.py                # WAV -> WEM (Wwise) + voiceover map
+                                                 #  + durations.json. Run BEFORE gen_scenes:
+                                                 #  it writes the sidecar gen_scenes paces
+                                                 #  voiced lines from. `--placeholder`
+                                                 #  substitutes tones for missing takes
+python .\tools\gig01\gen_lipsync.py              # casts a VANILLA lipsync animation of
+                                                 #  about the right length for every line
+                                                 #  Johnny, Hoshino and Mama Welles say,
+                                                 #  into source\lipsync_picks.json. Ships
+                                                 #  NO animation data - the animation name
+                                                 #  a line carries is free-form, so it just
+                                                 #  points at one the game already has.
+                                                 #  Between gen_voice (durations) and
+                                                 #  gen_scenes (which reads the picks).
+                                                 #  `--rebuild` re-extracts its catalogue
+python .\tools\gig01\gen_scenes.py               # FOURTEEN .scene conversations - EVERY line
+                                                 #  in the gig is a scene line, because a
+                                                 #  scene line is the only kind that can
+                                                 #  carry audio. Their text lives INSIDE
+                                                 #  the scene, not in the localization
+                                                 #  resource. Run AFTER gen_voice.py: it
+                                                 #  paces sections from durations.json
+python .\tools\gig01\gen_shard_ent.py            # the physical data shard on the office
+                                                 #  desk: a HealthConsumable-class .ent
+                                                 #  with an interaction + mesh. A mod
+                                                 #  .ent can only name a class the GAME
+                                                 #  ships - see the file's header
+python .\tools\gig01\gen_sector.py               # the world sector + streaming block that
+                                                 #  put the shard entity on the office
+                                                 #  desk. Rarely re-run - only when the
+                                                 #  shard moves - but it is the authority
+                                                 #  on that position, not the JSON
+python .\tools\gig01\gen_questphase.py           # quest graph (objective + PIN activation
+                                                 #  + scene nodes)
+.\tools\build-archive.ps1 gig-01                 # JSON sources -> resources -> packed archive
+.\tools\deploy-dev.ps1 gig-01                    # copy scripts+lua+archive into game dir
+.\tools\deploy-dev.ps1 gig-01 -NoDevMenu         # ...as a PLAYER gets it: no CET dev
+                                                 #  menu, and it DELETES an already-
+                                                 #  deployed one. Without this a plain
+                                                 #  re-deploy silently reinstalls the menu
+.\tools\build-release.ps1 gig-01 -Version 1.1.1  # the release .zip, into dist\
+                                                 #  Refuses a wrapper folder, the dev menu,
+                                                 #  or any base\ override. Does NOT rebuild
+                                                 #  by default: WolvenKit packing is NON-
+                                                 #  DETERMINISTIC (same inputs, same size,
+                                                 #  new hash), so it ships the bytes that
+                                                 #  were TESTED and diffs every file against
+                                                 #  the deployed build. -Rebuild to force
+.\tools\check-scripts.ps1                        # offline redscript compile check. Compiles
+                                                 #  the DEPLOYED tree and REFUSES to run if
+                                                 #  the repo differs from it, so the order
+                                                 #  is always deploy, THEN check
+.\tools\check-scripts.ps1 -SelfTest              # prove the check can still detect breakage
+.\tools\check-scripts-repo.ps1 gig-01            # compile the REPO instead, vendoring on
+                                                 #  the way in, writing nothing to the game
+                                                 #  folder. This is the one to use while
+                                                 #  refactoring: the checker above would
+                                                 #  make you deploy over a working install
+                                                 #  just to find out whether it compiles
+.\tools\vendor-shared.ps1 -Dst <dir> -Gig Gig01  # copy shared\scripts under a
+                                                 #  per-gig module. Called by deploy-dev
+                                                 #  and build-release; rarely run by hand
+python .\tools\gig01\dump_dialogue.py            # every spoken line as plain text, read out
+                                                 #  of the generators rather than their
+                                                 #  output, so it cannot drift from what
+                                                 #  ships. `--screens` adds the SMS threads,
+                                                 #  terminal, shard and HUD text
 python .\tools\find_pin_anchors.py <x> <y> <z>   # find a pin anchor. Scans the
-                                      #  game's ALWAYS-LOADED sectors and prints
-                                      #  each node's position for ANCHOR_POS. An
-                                      #  anchor in any OTHER sector is not
-                                      #  streamed in when the quest needs it and
-                                      #  the pin never appears. See
-                                      #  docs/map-pins-playbook.md
+                                                 #  game's ALWAYS-LOADED sectors and prints
+                                                 #  each node's position for ANCHOR_POS. An
+                                                 #  anchor in any OTHER sector is not
+                                                 #  streamed in when the quest needs it and
+                                                 #  the pin never appears. See
+                                                 #  docs/map-pins-playbook.md
 ```
 
 **There is no cooked-mappin step.** Pins anchor to base-game nodes in the game's

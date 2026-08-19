@@ -32,12 +32,9 @@ being given it.
 |---|---|
 | 4 | Housekeeping: the toolkit split left three loose ends (`gen_localization` unsplit, the gig-01 anchors stated twice, and the attitude and Johnny-placement redscript still inline) |
 | 6 | The `[F]` interaction prompt on a mod-placed object. UNSOLVED and deliberately parked; seven approaches ruled out, each with its outcome |
-| 10h | The questphase is registered under two quest roots. Deliberate. Measured against a player's log in 14: only one root is ever patched, so it is not a fault |
 | 10i | Reload crashes on heavily modded installs. Two reporters, same symptom. No mechanism found; the A/B test is now deterministic, see 14 |
-| 15 | Holocall lines play flat. ANSWERED AND BUILT 2026-08-19. Vanilla keeps the line's magnitude spectrum and discards its phase, which is why no EQ ever sounded right; `tools/questkit/phone.py` does the same. Built and deployed, awaiting a playtest |
 | 16 | Johnny appears while V is driving, staged for a V standing still. Gate the three free-roaming beats on movement state, with a bound so the gig cannot stall |
 | 17 | The spawned guards huddle where the navmesh dropped them and do not react to V. A hostile attitude is not perception; 11 is the structural fix and is unsolved |
-| 21 | A second gig needs its generators in a subdirectory. Agreed; what is left is the export allowlist line, the `sys.path` hop and the docs that list the loop |
 
 Everything else is closed. Two entries look open and are not: 2f (re-time
 scenes from real clip length) shipped as `durations.json`, and 0b is the
@@ -60,10 +57,11 @@ release checklist, all of it struck through.
 | 13 | Three properties the game silently rejects, and the field that was credited with fixing Hoshino for months without ever running |
 | 14 | The world grid, derived: cell size, the rldGridCell packing, and why a whole-map streaming box was wrong |
 | 15 | The holocall treatment: baked into separate assets, and a phase effect rather than a filter. Includes the two wrong answers |
+| 21 | One gig per subdirectory under `tools/`, and the two export patterns that had to follow |
 | 20 | A pin CAN anchor to a node this mod ships, and a mod CAN ship an always-loaded sector to keep it resolvable. Also why the drawn route built on it was reverted |
 | 18 | El Coyote Cojo is shut until Heroes is finished, measured across three saves. The gig waits for it and says so |
 | 19 | The Mama Welles stand-in, and the whole fallback path behind it, deleted |
-| 10 | The 1.2.0 bug pass: a fast-travel lock bound to the wrong state, a gig that never switched itself off, the guard spawn, a decline that answered, and (10k) a voice-only actor buried into the room below. 10h and 10i are the two still open |
+| 10 | The 1.2.0 bug pass: a fast-travel lock bound to the wrong state, a gig that never switched itself off, the guard spawn, a decline that answered, and (10k) a voice-only actor buried into the room below. 10i is the one still open |
 
 `architecture.md` holds the same findings organised by subsystem rather than by
 the question that produced them, and is the better read if you are looking for
@@ -392,7 +390,7 @@ previous run's audio.
 
 ### 2f. Re-time scenes from real clip length
 
-`tools/gen_scenes.py` paces every line with a character-count estimate
+`tools/gig01/gen_scenes.py` paces every line with a character-count estimate
 (`MS_BASE 1200 + 55ms/char`) because nothing is voiced. With audio,
 `scnDialogLineEvent.duration` / `startTime` / `sectionDuration` must come from
 the real clip or lines will cut off or drag. Feed measured durations in as a JSON
@@ -401,7 +399,7 @@ sidecar (line key → ms) produced when the audio is generated.
 ### 2g. Generate the voices: DONE
 
 Every line is voiced. The voices are generated with ElevenLabs, disclosed on
-the mod page, and subtitles are always on. `tools/gen_voice.py` turns a wav
+the mod page, and subtitles are always on. `tools/gig01/gen_voice.py` turns a wav
 into a `.wem` and a voiceover-map entry, and that half of the pipeline is the
 same for any custom audio, whatever produced the wav.
 
@@ -459,7 +457,7 @@ TO TEST" for a day after the thing was tested; corrected 2026-08-14.
   archive, so the lipmap must be the live channel.
 - A `.anims` round-trips byte-identically through WolvenKit, but we ship none:
   the animation NAME is free-form, so a line just names an animation inside a
-  vanilla set. `tools/gen_lipsync.py` casts by clip length; worst error in the
+  vanilla set. `tools/gig01/gen_lipsync.py` casts by clip length; worst error in the
   gig is 270 ms over two lines.
 - Rig mismatch does not matter - `generic_facial_lipsync_gestures.anims` is
   rigged to the player's head and played on arbitrary NPCs, and every lipsync
@@ -805,7 +803,7 @@ The `cc_g01_dbg_johnny` / `_ws` facts that measured this were deleted on
 gig needs the measurement again, the shape was 1 = never resolved, 2 = the call
 was made, 3 = called but not in a workspot, 4 = in a workspot.
 
-Swapping ghost→solid is one constant per scene in `tools/gen_scenes.py`
+Swapping ghost→solid is one constant per scene in `tools/gig01/gen_scenes.py`
 (`JOHNNY_GHOST` / `JOHNNY_SOLID`); the machinery does not change.
 
 ### Knobs that exist but are deliberately untouched
@@ -1082,7 +1080,7 @@ much more visible failure.
   2026-08-18, and it was already fixed.** The guard was repaired on 2026-08-16,
   when it stopped reading `dynamicEntityUniqueName` and started reading
   `actorName`, which every actor carries. What was missing was the proof this
-  entry asks for, and it has now been produced: `python tools/gen_lipsync.py`
+  entry asks for, and it has now been produced: `python tools/gig01/gen_lipsync.py`
   runs clean and rewrites `lipsync_picks.json` byte-identically, 16 lines across
   10 scene/actor pairs. The account of the fault below is kept because the shape
   of it generalises. Original entry:
@@ -2067,13 +2065,37 @@ Verified in the same run by counting rather than by looking: a targeting query
 with `TargetingSet.Complete` reaches through walls, and it never saw more than
 one body carrying his record at any point in the approach or the conversation.
 
-### 10h. The double quest-phase registration: OPEN, not a known bug
+### 10h. The double quest-phase registration: CLOSED 2026-08-19, both parents verified
 
 The mod's `.archive.xl` registers the questphase under the base game's quest
 root AND under Phantom Liberty's standalone one. That is deliberate, so a
-Phantom Liberty standalone start gets the gig. Nobody has confirmed what happens
-on a save where both roots are live, if that is even possible. Written down so
-it is not re-derived.
+Phantom Liberty standalone start gets the gig.
+
+Nothing is duplicated. One questphase file, `mod\negative_balance\quest\gig01.questphase`,
+is named twice because there are two possible parents and a save loads one of
+them. This is not the kind of duplication item 4 lists, where the gig-01 anchors
+are two copies of the same values that can drift apart.
+
+**Both parents are shipped resources, checked here 2026-08-19.** An FNV1a64
+lookup of each path against the archive file tables finds
+`base\quest\cyberpunk2077.quest` in `basegame_4_gamedata.archive` and
+`ep1\quest\ep1_standalone.quest` in `ep1_2_gamedata.archive`. The standalone
+start is a base-game feature rather than a separate product: Phantom Liberty
+requires Cyberpunk 2077, and the standalone start is a new-game option that
+begins in Dogtown with a pre-made V. Vanilla's compiled scripts carry
+`IsExpansionStandalone`, `m_standaloneButton`, `m_ep1StandaloneTutorial` and six
+`EP1_Standalone_*_StartingBuild` records, one per lifepath and body variant.
+
+The runtime behaviour was measured against a player's log on 2026-08-17: across
+38 phase-patch events only `base\quest\cyberpunk2077.quest` is ever patched,
+`ep1\quest\ep1_standalone.quest` never appears, and the phase merges exactly
+once per load. Dropping the ep1 line would remove the gig for standalone-start
+players and would gain nothing.
+
+The reusable part is the check, not the answer: any depot path can be confirmed
+to exist by hashing it FNV1a64 (lowercase, backslash separators, and forward
+slashes do not match) and searching the `RDAR` index at the offset in the
+archive header. `new-gig.md` states the two-parent rule for a new gig.
 
 ### 10j. Long-pressing T declined the call, then answered it. FIXED
 
@@ -2537,7 +2559,7 @@ Deploy, walk to the office, confirm the shard renders and still fires the
 proximity read. A sector that stopped loading shows up immediately as a missing
 shard, and that failure is the whole local test.
 
-## 15. Holocall lines are missing the phone filter. MEASURED AND BUILT 2026-08-18
+## 15. Holocall lines are missing the phone filter. DONE, RELEASED IN 1.2.2 ON 2026-08-19
 
 **The answer is the section after this one.** What follows first is the entry
 as it was written, kept because one of its two guesses was wrong in a way worth
@@ -3216,7 +3238,7 @@ who may enter from any direction. The pin stays without a route.
   the form to reach for when building rather than when reading history.
 
 
-## 21. Generators for a second gig need a subdirectory, and the export allowlist has to follow. AGREED 2026-08-19, not built
+## 21. Generators for a second gig need a subdirectory, and the export allowlist has to follow. DONE 2026-08-19
 
 `tools/gen_*.py` are one gig's generators rather than a library. Each hardcodes
 its mod folder, its LocKey prefix and its resource names, and gig 01 has taken
@@ -3265,3 +3287,39 @@ anything new being written, and it is the same check that caught the
   gig 01 rather than moving into `questkit`.
 - `docs/new-gig.md` states the copy-and-re-point rule for a reader starting from
   a clone, which holds whatever this decides.
+
+### DONE 2026-08-19. Gig 01 moved first, so the layout could be tested
+
+Waiting for gig 02 would have meant writing an allowlist line for a directory
+that did not exist. Gig 01's generators moved to `tools/gig01/` instead, ten
+files: the seven that write a resource, plus `gen_lipsync`, `gen_voice` and
+`dump_dialogue`. `find_pin_anchors.py` and `vo_corpus.py` stayed flat: they read
+the game rather than one gig, so they belong beside `questkit/`.
+
+**The path hop.** Each generator that imports `questkit` now puts its parent
+directory on `sys.path` explicitly, rather than relying on its own directory
+being `tools\`. Sibling imports (`gen_lipsync` reading `gen_voice`) keep working
+untouched, because a script's own directory is on the path already. `REPO` is
+one `dirname` deeper in all ten, and every output path is derived from it, so
+that line is the one to check first if a generator ever writes to the wrong
+tree.
+
+**Two export patterns, not one.** The allowlist needed `^tools/gig[0-9]{2}/.*\.py$`
+for the same reason `questkit` needed its own line. The denylist needed a change
+nobody had predicted: this repo keeps one generator out of the public tree, and
+its deny pattern was anchored to a flat path, so the move alone would have
+published it. Deny patterns match on the filename now, wherever in `tools/` a
+gig keeps the file. A per-gig subdirectory has to be read against BOTH lists,
+not just the allowlist.
+
+**What verified it.** `check-clone.ps1` exports a clean tree, deletes the
+caches, runs every generator and compares the output byte for byte. It passes,
+which is the same check that would have caught a missing allowlist line. Its
+generator directory is now a variable at the top.
+
+**One thing it turned up.** `docs/dialogue.txt` was stale: it still carried
+`gig01_epilogue_standin`, the scene deleted with the stand-in in 19, and it
+ships in the public tree. Regenerating it as part of this dropped that scene and
+four lines, and the file now reads 60 spoken lines across 14 scenes. Nothing
+shipped in the archive was affected; the .scene resources have been regenerated
+many times since, and all of them came out byte-identical here.

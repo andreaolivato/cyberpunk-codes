@@ -11,7 +11,7 @@ so name the target in the PR title:
 | Prefix | Target | Files |
 |---|---|---|
 | `questkit:` | the framework, reusable by every gig | `tools/questkit/`, the build and deploy scripts, `shared/scripts/` |
-| `gig-01:` | one mod | `tools/gen_*.py`, `mods/gig-01-negative-balance/` |
+| `gig-01:` | one mod | `tools/gig01/`, `mods/gig-01-negative-balance/` |
 | `docs:` | documentation only | `docs/`, the root markdown files |
 
 A change that touches both the framework and a gig is two PRs. The framework
@@ -34,8 +34,8 @@ means the generator change did something you did not mean.
 ## Before submitting
 
 ```powershell
-python .\tools\gen_journal.py; python .\tools\gen_localization.py
-python .\tools\gen_scenes.py; python .\tools\gen_questphase.py
+python .\tools\gig01\gen_journal.py; python .\tools\gig01\gen_localization.py
+python .\tools\gig01\gen_scenes.py; python .\tools\gig01\gen_questphase.py
 .\tools\check-scripts-repo.ps1 gig-01   # redscript compiles, nothing deployed
 ```
 

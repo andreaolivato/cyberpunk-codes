@@ -716,7 +716,7 @@ registerForEvent("onDraw", function()
     -- enters, and across all 358 shipped street-story questphases a scene
     -- node input socket NEVER has more than one source. The epilogue one
     -- had been in since 2026-08-12 and nobody had needed it badly enough
-    -- to notice. Full reasoning in tools/gen_questphase.py.
+    -- to notice. Full reasoning in tools/gig01/gen_questphase.py.
     ImGui.TextDisabled("The questphase waits on this fact, then runs the full intro flow")
     ImGui.TextDisabled("This button BYPASSES the in-game gate (Gig01_Start.reds) entirely")
 

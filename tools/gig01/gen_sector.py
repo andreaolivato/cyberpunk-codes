@@ -45,7 +45,8 @@ import json
 import math
 import os
 
-REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_TOOLS = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+REPO = os.path.dirname(_TOOLS)
 RAW = os.path.join(REPO, 'mods', 'gig-01-negative-balance', 'source', 'wkit',
                    'raw', 'mod', 'worlds', '03_night_city', '_compiled', 'default')
 

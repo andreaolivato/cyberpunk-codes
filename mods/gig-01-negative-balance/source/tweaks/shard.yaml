@@ -13,12 +13,12 @@
 #
 # `$base` copies everything - icon, quality, the readable behaviour - and we
 # override only what the player reads. The TweakDBID came out of the sector's
-# own instanceData (see tools/gen_sector.py); it is not guessable and was twice
+# own instanceData (see tools/gig01/gen_sector.py); it is not guessable and was twice
 # called undiscoverable in this project before anyone looked in the world data.
 #
 # displayName / localizedDescription take a BARE ArchiveXL key, with no
 # `LocKey#` prefix - the same convention the journal uses (docs/gotchas.md #1).
-# The strings live in tools/gen_localization.py.
+# The strings live in tools/gig01/gen_localization.py.
 Items.cc_g01_shard:
   $base: Items.generic_hanako_flowers_shard
   displayName: cc-g01-shard-item

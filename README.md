@@ -19,7 +19,7 @@ Everything the game loads is generated from Python. Nothing is hand-edited JSON.
 ## How a build works
 
 ```
-tools/gen_*.py   ->  JSON        one file per resource, in WolvenKit's
+tools/gig01/*.py ->  JSON        one file per resource, in WolvenKit's
                                  text form of the game's binary format
 WolvenKit        ->  binaries    .journal, .questphase, .scene, .ent
 WolvenKit        ->  one .archive
@@ -72,7 +72,8 @@ docs/           playbooks, decisions, gotchas, research register
 tools/
   questkit/     reusable builders: scenes, quest graphs, journal, pins,
                 voice, lipsync
-  gen_*.py      one gig's tables and dialogue, on top of those
+  gig01/        one gig's tables and dialogue, on top of those. One
+                subdirectory per gig, so filenames are free to repeat
 shared/scripts/ redscript shared between gigs, vendored per mod at build time
 mods/gig-01-negative-balance/
   docs/         story, quest design, full dialogue as text
@@ -122,7 +123,7 @@ stops you re-voicing lines; it doesn't stop you building.
 
 Generated with ElevenLabs. Every line subtitled.
 
-The pipeline does not care where a WAV came from: `tools/gen_voice.py` turns any
+The pipeline does not care where a WAV came from: `tools/gig01/gen_voice.py` turns any
 WAV into a `.wem` through Wwise and builds the `locVoiceoverMap` the game
 resolves audio through, so recording real voice actors uses the same steps.
 Audioware isn't required; players install nothing extra.

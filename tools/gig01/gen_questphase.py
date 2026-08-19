@@ -7,6 +7,12 @@ occurrence, HandleRefId afterwards), matching the layout of shipped questphases.
 import json
 import os
 
+import sys
+
+# This gig's generators sit in tools/gig01/, and questkit is in tools/, one
+# level up. Nothing else puts it on the path. See backlog.md 21.
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 # The graph builder lives in tools/questkit/questgraph.py. This file is the GIG:
 # its journal paths, its scene anchors and its flow. ANCHOR_PLAYER comes from
 # the scene builder, which is where the evidence for it is written up.
@@ -19,7 +25,8 @@ from questkit.questgraph import (                                   # noqa: F401
 
 configure(phase_name='gig01.questphase')
 
-REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_TOOLS = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+REPO = os.path.dirname(_TOOLS)
 OUT = os.path.join(REPO, 'mods', 'gig-01-negative-balance', 'source', 'wkit', 'raw',
                    'mod', 'negative_balance', 'quest', 'gig01.questphase.json')
 
@@ -30,7 +37,7 @@ POI = 'points_of_interest/street_stories/cc_g01_negative_balance'
 SCENES = 'mod\\negative_balance\\scenes\\'
 
 # Scene markers. Same resolvable base-game NodeRefs the map pins anchor to
-# (tools/gen_journal.py) - a scene location must resolve for the same reason a
+# (tools/gig01/gen_journal.py) - a scene location must resolve for the same reason a
 # pin anchor must.
 ANCHOR_OFFICE = '#std_arr_parking_spwn_179'
 ANCHOR_ESTATE = '#q113_dvc_arasaka_estate_camera_010'

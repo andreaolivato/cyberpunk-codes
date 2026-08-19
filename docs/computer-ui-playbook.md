@@ -311,7 +311,7 @@ redscript, it does not exist.
 **3. A `worldEntityNode` in your own streaming sector, what the game does.**
 `worldEntityNode` (template resref + `appearanceName`) plus a matching
 `nodeData` entry carrying the position. Copy both shapes field-for-field from a
-shipped sector; `tools/gen_sector.py` is a worked generator.
+shipped sector; `tools/gig01/gen_sector.py` is a worked generator.
 
 Two things to check before blaming the node:
 
@@ -330,5 +330,5 @@ a fact instead.
 
 `mods/gig-01-negative-balance/source/scripts/Gig01_Shard.reds` (one wrap for the
 journal takeover, one for the object's press) plus `onscreens()` in
-`tools/gen_journal.py`, the entity in `tools/gen_shard_ent.py`, its placement in
-`tools/gen_sector.py`, and the three-fact handshake in `tools/gen_questphase.py`.
+`tools/gig01/gen_journal.py`, the entity in `tools/gig01/gen_shard_ent.py`, its placement in
+`tools/gig01/gen_sector.py`, and the three-fact handshake in `tools/gig01/gen_questphase.py`.

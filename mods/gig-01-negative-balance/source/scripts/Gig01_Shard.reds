@@ -42,15 +42,15 @@ module CyberpunkCodes.Gig01
 // ShardCaseContainer item swap with its CCG01ShardItemSwap callback. Every one
 // of them was live code that did nothing, and keeping dead hooks around invites
 // the next person to debug them. What they established is written up in
-// tools/gen_sector.py's header - read that before trying again.
+// tools/gig01/gen_sector.py's header - read that before trying again.
 public abstract class CCG01Shard {
-    // Authored by tools/gen_journal.py - keep the two in step. A wrong path
+    // Authored by tools/gig01/gen_journal.py - keep the two in step. A wrong path
     // fails silently: GetEntryByString returns null and no popup appears.
     public static func Path() -> String {
         return "onscreens/emails/quests/street_stories/cc_g01_negative_balance/onscreens/cc_g01_shard_note";
     }
 
-    // Where tools/gen_sector.py places the shard, and what the proximity check
+    // Where tools/gig01/gen_sector.py places the shard, and what the proximity check
     // in Gig01_Encounter measures against. Captured in game standing ON that
     // desk, so z is the surface.
     public static func ObjectSpot() -> Vector4 {

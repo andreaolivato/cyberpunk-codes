@@ -40,7 +40,8 @@ The authoring rules below are not optional:
 import json
 import os
 
-REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_TOOLS = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+REPO = os.path.dirname(_TOOLS)
 OUT = os.path.join(REPO, 'mods', 'gig-01-negative-balance', 'source', 'wkit',
                    'raw', 'mod', 'negative_balance', 'entity',
                    'cc_g01_shard.ent.json')

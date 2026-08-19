@@ -896,7 +896,7 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
     // NO SCRIPT PLACES JOHNNY ANY MORE, and nothing here should start.
     //
     // Every beat is a scene actor, staged by its own scene in front of V and
-    // facing V. The offsets live in tools/gen_scenes.py BEAT_STAGING and the
+    // facing V. The offsets live in tools/gig01/gen_scenes.py BEAT_STAGING and the
     // facing is computed, never written by hand.
     //
     // The two things a script route would have to solve, and why it no
@@ -1465,7 +1465,7 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
             // 2026-08-17. Each beat's scene now offsets him from an
             // `around_player` marker, turns him to face V with a computed yaw,
             // and glitches him out 250 ms before it ends. The offsets are
-            // tools/gen_scenes.py BEAT_STAGING; the mechanism is
+            // tools/gig01/gen_scenes.py BEAT_STAGING; the mechanism is
             // docs/backlog.md 9.
 
             if accepted && qs.GetFactStr("cc_g01_done") == 0 {
@@ -1564,7 +1564,7 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
                 // So: no spawn. The pin marks that shard, the player reads it,
                 // and the wrap swaps our note in for its own.
                 //
-                // (tools/gen_shard_ent.py and cc_g01_shard.ent stay in the tree.
+                // (tools/gig01/gen_shard_ent.py and cc_g01_shard.ent stay in the tree.
                 // They are a WORKING recipe for a custom interactable - the
                 // prompt half is proven - and gigs 02-04 may want one somewhere
                 // that has no convenient shard. Nothing spawns it today).
@@ -1573,7 +1573,7 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
                 // seven attempts at an [F] prompt: "let's put back the duplicate
                 // shard, and start reading it on proximity rather than action."
                 //
-                // The object is real, visible and pinned - tools/gen_sector.py
+                // The object is real, visible and pinned - tools/gig01/gen_sector.py
                 // places it, and that file records everything that was ruled out
                 // on the way to giving up on the prompt. What could never be
                 // raised was the INTERACTION; being there and being findable
@@ -2086,7 +2086,7 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
             // scene stages him in front of V and facing V, using the
             // measured properties of an `around_player` marker: it sits on
             // the player and carries the player's rotation. See
-            // tools/gen_scenes.py BEAT_STAGING and docs/backlog.md 9.
+            // tools/gig01/gen_scenes.py BEAT_STAGING and docs/backlog.md 9.
             //
             // The seven staging windows and the whole lift that used to
             // live here are gone. A scene-placed actor arrives already

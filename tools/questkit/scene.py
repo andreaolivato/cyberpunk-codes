@@ -459,7 +459,7 @@ def ruid(key):
 def locstring_ruid(scene_name, key):
     """The id a line's text AND its audio both resolve through.
 
-    Exposed as a module function because `tools/gen_voice.py` has to key its
+    Exposed as a module function because `tools/gig01/gen_voice.py` has to key its
     voiceover map on exactly these numbers. Deriving it in one place is what
     stops the scene and the audio drifting apart silently - a mismatch would not
     error, it would just play nothing.
@@ -521,7 +521,7 @@ class Scene:
         self.next_node = 1
         self.lines = []          # scnscreenplayDialogLine
         self.options = []        # scnscreenplayChoiceOption
-        # key -> text, for OUR lines only. tools/gen_voice.py reads this to know
+        # key -> text, for OUR lines only. tools/gig01/gen_voice.py reads this to know
         # what to generate; line index -> key lets section() look a measured
         # duration up.
         self.line_text = {}

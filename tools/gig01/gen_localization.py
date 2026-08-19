@@ -6,7 +6,8 @@ hashes them and matches the two sides.
 import json
 import os
 
-REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_TOOLS = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+REPO = os.path.dirname(_TOOLS)
 OUT = os.path.join(REPO, 'mods', 'gig-01-negative-balance', 'source', 'wkit', 'raw',
                    'mod', 'negative_balance', 'localization', 'en-us.json.json')
 
@@ -25,7 +26,7 @@ STRINGS = {
     # Elena's and Nix's opening SMS threads used to live here: 15 strings behind
     # 26 journal entries. Both conversations became holocalls in v0.2.0 and the
     # strings shipped unreferenced until they were removed on 2026-08-15. The
-    # words survive as spoken lines in tools/gen_scenes.py, which is where every
+    # words survive as spoken lines in tools/gig01/gen_scenes.py, which is where every
     # line in the gig lives now, because only a scene line can carry audio.
 
     # --- gig + objectives ---------------------------------------------------

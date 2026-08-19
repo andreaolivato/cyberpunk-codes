@@ -24,10 +24,16 @@ this repo.
 | `*.reds` | you, if you need gameplay logic |
 | `<name>.archive.xl` | you, by hand. The only one |
 
-The generators named there are gig 01's own. Each hardcodes its paths and its
-prefix, so you copy the ones you need and re-point their constants, or edit
-them in place if you are not keeping gig 01. The half that no gig owns is
-`tools/questkit/`, which they import.
+The generators named there are gig 01's own and live in `tools/gig01/`. Each
+hardcodes its paths and its prefix, so you copy the ones you need into
+`tools/gig02/` and re-point their constants, or edit them in place if you are
+not keeping gig 01. One gig per subdirectory is what lets a second gig keep the
+same filenames.
+
+The half that no gig owns is `tools/questkit/`, which they import. A generator
+reaches it by putting its own parent directory on `sys.path`, which is the line
+near the top of each one; that hop is relative, so the subdirectory can be
+called anything.
 
 ## 0. Build gig 01 first
 
@@ -148,15 +154,15 @@ Every generator writes into your raw tree, and two of them read what another
 wrote. Run them in this order.
 
 ```powershell
-python .\tools\gen_journal.py         # quest, objectives, pins, POI
-python .\tools\gen_localization.py    # every LocKey string
-python .\tools\gen_voice.py           # WAVs to .wem, voiceover map, durations
-python .\tools\gen_lipsync.py         # a vanilla mouth animation per line
-python .\tools\gen_scenes.py          # the .scene conversations
-python .\tools\gen_questphase.py      # the quest graph
-.\tools\build-archive.ps1 gig-02      # JSON to resources to one packed archive
-.\tools\deploy-dev.ps1 gig-02         # copy it all into the game folder
-.\tools\check-scripts.ps1             # offline redscript compile, if you ship .reds
+python .\tools\gig02\gen_journal.py       # quest, objectives, pins, POI
+python .\tools\gig02\gen_localization.py  # every LocKey string
+python .\tools\gig02\gen_voice.py         # WAVs to .wem, voiceover map, durations
+python .\tools\gig02\gen_lipsync.py       # a vanilla mouth animation per line
+python .\tools\gig02\gen_scenes.py        # the .scene conversations
+python .\tools\gig02\gen_questphase.py    # the quest graph
+.\tools\build-archive.ps1 gig-02          # JSON to resources to one packed archive
+.\tools\deploy-dev.ps1 gig-02             # copy it all into the game folder
+.\tools\check-scripts.ps1                 # offline redscript compile, if you ship .reds
 ```
 
 Only two of those orderings carry weight, and both are about `gen_scenes`:
@@ -221,8 +227,8 @@ variable if it is set, and otherwise looks in the default install location.
 2. **Prove the route with tones, before a single recording exists.**
 
    ```powershell
-   python .\tools\gen_voice.py --placeholder
-   python .\tools\gen_scenes.py
+   python .\tools\gig02\gen_voice.py --placeholder
+   python .\tools\gig02\gen_scenes.py
    .\tools\build-archive.ps1 gig-02
    .\tools\deploy-dev.ps1 gig-02
    ```
@@ -239,7 +245,7 @@ variable if it is set, and otherwise looks in the default install location.
    few at a time. Placeholders live in a subfolder of their own and are not
    tracked, so a directory listing shows which lines have a real recording.
 
-4. **Convert.** `python .\tools\gen_voice.py` runs every WAV through Wwise
+4. **Convert.** `python .\tools\gig02\gen_voice.py` runs every WAV through Wwise
    headlessly, checks that each `.wem` it wrote really is Wwise Vorbis, then
    writes `durations.json` and the voiceover map. It stops and names the files if
    a line has no audio at all.

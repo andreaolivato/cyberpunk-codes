@@ -4,7 +4,7 @@ Usage:
     python tools/find_pin_anchors.py <x> <y> <z> [count]
 
 Prints the nearest globally-named nodes AND their world positions, which is
-what `ANCHOR_POS` in tools/gen_journal.py needs. The pin then sits at
+what `ANCHOR_POS` in tools/gig01/gen_journal.py needs. The pin then sits at
 `anchor position + offset`, and the generator computes that offset, so the
 anchor's distance from the target does not matter - only that its position is
 recorded correctly here.
@@ -126,7 +126,7 @@ def main():
         shown += 1
         if shown >= count:
             break
-    print('\nPut the name + position in ANCHOR_POS in tools/gen_journal.py and the')
+    print('\nPut the name + position in ANCHOR_POS in tools/gig01/gen_journal.py and the')
     print('target in PIN_POS; the generator computes the offset between them.')
 
 

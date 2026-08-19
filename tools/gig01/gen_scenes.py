@@ -132,6 +132,12 @@ generator picked the one it did.
 import json
 import os
 
+import sys
+
+# This gig's generators sit in tools/gig01/, and questkit is in tools/, one
+# level up. Nothing else puts it on the path. See backlog.md 21.
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 # The builder itself lives in tools/questkit/scene.py. This file is the GIG: its
 # paths, its anchors and its dialogue. Everything imported here is engine shape
 # that a second gig reuses rather than forks.
@@ -147,7 +153,8 @@ from questkit.scene import (                                        # noqa: F401
     yaw_to_face_player,
 )
 
-REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_TOOLS = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+REPO = os.path.dirname(_TOOLS)
 OUT_DIR = os.path.join(REPO, 'mods', 'gig-01-negative-balance', 'source', 'wkit',
                        'raw', 'mod', 'negative_balance', 'scenes')
 # Subtitles take TWO resources, and getting this wrong is silent in game and
@@ -241,7 +248,7 @@ ANCHOR_MAMA = '#sq018_pepevodka'
 # floor, and the room underneath is somewhere a player can be standing.
 
 # ...but a voiced line must be paced by its clip, not by a guess about it, or it
-# cuts off or drags. tools/gen_voice.py measures every WAV it processes and
+# cuts off or drags. tools/gig01/gen_voice.py measures every WAV it processes and
 # writes this sidecar; anything in it wins over the estimate. Missing file, or a
 # line absent from it, simply falls back - so the two halves of the gig (voiced
 # scenes, unvoiced ones) coexist without a flag.
@@ -255,7 +262,7 @@ except (OSError, ValueError):
 
 # ------------------------------------------------------------------- LIPSYNC
 #
-# tools/gen_lipsync.py casts a vanilla lipsync animation of about the right
+# tools/gig01/gen_lipsync.py casts a vanilla lipsync animation of about the right
 # LENGTH for every line Johnny, Hoshino and Mama Welles say, and writes the
 # result here. The whole mechanism is in that file's docstring; what this file
 # needs from it is three things:

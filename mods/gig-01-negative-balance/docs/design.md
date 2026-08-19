@@ -58,7 +58,7 @@ loot only, on the grounds that the point of the ending is the silence.
 ## Dialogue script (draft 1: from the comic)
 
 > **THIS IS THE DRAFT, NOT WHAT SHIPS.** The lines that ship are in
-> `tools/gen_scenes.py`, one `build_*()` per scene, each carrying the comic page
+> `tools/gig01/gen_scenes.py`, one `build_*()` per scene, each carrying the comic page
 > it came from and the reason for any departure from it. Fourteen scenes, 59
 > voiced lines. Read the generator when you want the current script; read this
 > section for how the story was first laid out against the comic.
@@ -97,7 +97,7 @@ loot only, on the grounds that the point of the ending is the silence.
 
 This is the draft taken off the comic. Two of its lines are not what shipped:
 Johnny is not in this scene at all, and Hoshino's second line became "Do you
-know who I am?". Both changes and their reasons are in `tools/gen_scenes.py`,
+know who I am?". Both changes and their reasons are in `tools/gig01/gen_scenes.py`,
 `build_hoshino`.
 
 - Johnny: "That's what blood money buys. Soft chairs." [REWRITE. Stage as Johnny spawn-in by the couch]
@@ -312,7 +312,7 @@ decisions and their reasoning are in `docs/architecture.md`. What changed here:
   spawns her a kilometre away and a hundred metres down. Same for the Hoshino
   and Mama Welles scene actors. The bodies the player sees are still the ones
   `Gig01_Encounter.reds` spawns or finds.
-- The SMS thread is intact behind `USE_SMS_THREAD` in `tools/gen_questphase.py`.
+- The SMS thread is intact behind `USE_SMS_THREAD` in `tools/gig01/gen_questphase.py`.
   Flip it, regenerate, rebuild: that is exactly v0.2.0's opening.
 
 The section below is what led here, kept because the reasoning still holds.
@@ -409,7 +409,7 @@ ArchiveXL 1.27.1, TweakXL 1.11.4, Codeware 1.20.3, CET 1.37.1.
 **ALL THREE OF THOSE ARE DONE.** The line that stood here, "NEXT: Batch C - 
 build the epilogue as a real `.scene`; Elena and Hoshino AI voices via
 Audioware; V/Johnny existing-line audit", is closed on every clause:
-the epilogue is `gig01_epilogue`, one of fifteen scenes; the voices are
+the epilogue is `gig01_epilogue`, one of fourteen scenes; the voices are
 ElevenLabs for all six speakers, not Audioware for two; and the existing-line
 audit was run against the whole 62,992-line corpus and killed the reuse premise
 (3 matches out of 59).

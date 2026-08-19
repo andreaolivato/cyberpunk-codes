@@ -12,6 +12,12 @@ Map-pin rules (see docs/map-pins-playbook.md):
 import json
 import os
 
+import sys
+
+# This gig's generators sit in tools/gig01/, and questkit is in tools/, one
+# level up. Nothing else puts it on the path. See backlog.md 21.
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 # The builder lives in tools/questkit/journal.py. This file is the GIG: its pin
 # anchors, its objectives, its contacts and its shard text.
 from questkit.journal import (                                      # noqa: F401
@@ -19,7 +25,8 @@ from questkit.journal import (                                      # noqa: F401
     contact, pin_offset, map_pin, objective, folder,
 )
 
-REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_TOOLS = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+REPO = os.path.dirname(_TOOLS)
 OUT = os.path.join(REPO, 'mods', 'gig-01-negative-balance', 'source', 'wkit', 'raw',
                    'mod', 'negative_balance', 'journal', 'gig01.journal.json')
 
@@ -86,7 +93,7 @@ ANCHOR_POS = {
 PIN_POS = {
     'pin_office': (-189.371, -1464.500, 7.596),     # compound entry
     'pin_terminal': (-251.915, -1456.364, 14.600),  # office terminal (ledger)
-    # The shard on the office desk (comic p23), placed by tools/gen_sector.py.
+    # The shard on the office desk (comic p23), placed by tools/gig01/gen_sector.py.
     # NOTE a pre-existing 0.9 m disagreement with gen_sector's SHARD_POS
     # (-245.654, -1454.667, 15.400); this is the value that has been shipping.
     'pin_shard': (-244.931, -1454.178, 15.400),
