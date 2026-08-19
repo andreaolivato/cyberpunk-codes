@@ -24,6 +24,11 @@ this repo.
 | `*.reds` | you, if you need gameplay logic |
 | `<name>.archive.xl` | you, by hand. The only one |
 
+The generators named there are gig 01's own. Each hardcodes its paths and its
+prefix, so you copy the ones you need and re-point their constants, or edit
+them in place if you are not keeping gig 01. The half that no gig owns is
+`tools/questkit/`, which they import.
+
 ## 0. Build gig 01 first
 
 Before writing anything of your own, install the toolchain from `BUILDING.md`
@@ -47,6 +52,7 @@ mods/gig-02-your-gig/
   source/
     scripts/          your .reds
     tweaks/           your TweakXL yaml, if any
+    audio/            your WAV masters, if the gig is voiced
     wkit/raw/
       your_gig.archive.xl
       mod/your_gig/   the generators write here
@@ -136,7 +142,144 @@ sounds: see gotcha 21.
 Add the map pin only after that works, and follow `docs/map-pins-playbook.md`
 exactly. The most commonly missed step is activating the pin entry.
 
-## 5. Then
+## 5. The run order
+
+Every generator writes into your raw tree, and two of them read what another
+wrote. Run them in this order.
+
+```powershell
+python .\tools\gen_journal.py         # quest, objectives, pins, POI
+python .\tools\gen_localization.py    # every LocKey string
+python .\tools\gen_voice.py           # WAVs to .wem, voiceover map, durations
+python .\tools\gen_lipsync.py         # a vanilla mouth animation per line
+python .\tools\gen_scenes.py          # the .scene conversations
+python .\tools\gen_questphase.py      # the quest graph
+.\tools\build-archive.ps1 gig-02      # JSON to resources to one packed archive
+.\tools\deploy-dev.ps1 gig-02         # copy it all into the game folder
+.\tools\check-scripts.ps1             # offline redscript compile, if you ship .reds
+```
+
+Only two of those orderings carry weight, and both are about `gen_scenes`:
+
+- `gen_voice` writes `durations.json`, which `gen_scenes` reads to pace each
+  section from the real clip. Without it a line is timed by a character-count
+  estimate instead, so a section can move on before the audio finishes.
+- `gen_lipsync` writes `lipsync_picks.json`, which `gen_scenes` reads to put an
+  animation name on each line.
+
+Both sidecars are optional. A gig with no audio runs `gen_scenes` on its own and
+everything works except that nobody speaks.
+
+Skip what your gig does not have. An unvoiced gig with no conversations needs
+only `gen_journal`, `gen_localization` and `gen_questphase`. This repo's
+`gen_shard_ent.py` and `gen_sector.py` exist for one physical object gig 01
+puts on a desk, so they are examples rather than steps.
+
+Two rules about the loop itself:
+
+- `check-scripts.ps1` compiles the DEPLOYED scripts, not your repo, so deploy
+  first or it will faithfully compile the previous version and report success on
+  untested code. `check-scripts-repo.ps1 gig-02` compiles the repo instead and
+  writes nothing to the game folder.
+- An `.archive` change needs the game quit before you deploy, because the game
+  holds the file open. A `.reds` change needs a restart. A CET `.lua` change
+  needs neither. `BUILDING.md`, "Reload rules".
+
+## 6. Adding voices
+
+One constraint decides the shape of everything below, so read it before
+recording anything: a line can only be voiced if it lives in a scene. A scene
+line carries a `scnlocLocstringId` RUID, and the game resolves both its subtitle
+and its audio from that one number. Text pushed from redscript is a caption with
+no RUID, so no voiceover map can ever key on it. A beat that needs a voice has
+to be built as a scene rather than as a script that prints text.
+
+Nothing in the pipeline cares what produced the WAV. A microphone, a hired actor
+and a text-to-speech model all enter at step 3.
+
+Players install nothing extra for any of it. Audio resolves natively through a
+`locVoiceoverMap` your mod supplies, so Audioware is not a dependency.
+
+### What you need first
+
+Wwise 2019.2.15, Authoring plus the Windows platform. Nothing else can write a
+`.wem`: WolvenKit answers "Use WolvenKit to import opus" and imports nothing,
+and REDmod's `resource-import` lists no audio format at all. The version
+matters, because newer Wwise is reported to emit `.wem` the game will not play.
+No plug-ins are needed, since Vorbis is core Wwise rather than an add-on, and no
+SDK. `gen_voice.py` reads the console path from the `WWISE_CONSOLE` environment
+variable if it is set, and otherwise looks in the default install location.
+
+### The steps
+
+1. **Say which lines are voiced.** The `CAST` table in your copy of
+   `gen_voice.py` maps each character to the scenes and line keys they speak.
+   Those keys are `gen_scenes`' own line keys, so a typo stops the run instead of
+   producing a line that is silently never voiced. Add a `(scene, key)` pair to
+   `GENDERED` for any line that needs its own male take.
+
+2. **Prove the route with tones, before a single recording exists.**
+
+   ```powershell
+   python .\tools\gen_voice.py --placeholder
+   python .\tools\gen_scenes.py
+   .\tools\build-archive.ps1 gig-02
+   .\tools\deploy-dev.ps1 gig-02
+   ```
+
+   That synthesises a tone for every line at the length the estimate would have
+   given it, pitched by a hash of the line key so lines are distinguishable by
+   ear. In game you hear a beep where each line goes. Every failure after this
+   point is about one recording rather than about the pipeline.
+
+3. **Put the real takes in your mod's `source\audio\`,** named
+   `<scene>__<key>.wav`. A gendered line takes a second file,
+   `<scene>__<key>__m.wav`, for the male variant. A real take always wins over a
+   placeholder of the same name, so the two can coexist while you replace them a
+   few at a time. Placeholders live in a subfolder of their own and are not
+   tracked, so a directory listing shows which lines have a real recording.
+
+4. **Convert.** `python .\tools\gen_voice.py` runs every WAV through Wwise
+   headlessly, checks that each `.wem` it wrote really is Wwise Vorbis, then
+   writes `durations.json` and the voiceover map. It stops and names the files if
+   a line has no audio at all.
+
+   The conversion, the `.wem` check and the voiceover map itself live in
+   `tools/questkit/voice.py`, which every gig imports rather than forks.
+
+5. **Re-run `gen_scenes.py`.** Until you do, the scenes still hold the estimated
+   timings rather than the measured ones. `gen_voice` prints this reminder when
+   it finishes.
+
+6. **Register the map.** `localization: vomaps:` in your `.archive.xl` points at
+   the generated voiceover map, and `lipmaps:` at the lipsync map. Both take a
+   scalar per locale. Section 3 has the rest of the manifest.
+
+7. **Build and deploy.** `build-archive.ps1` refuses to pack when any WAV is
+   newer than its `.wem`, and names the offenders. That guard is there because a
+   conversion failed silently once and the build carried on and packed the
+   previous run's audio, which nothing downstream can detect.
+
+### WAV masters are not committed here, and yours need not be
+
+Only the `.wem` are, so a fresh clone of this repo builds a working mod with no
+WAV present at all. `gen_voice.py` says exactly that when it finds none, rather
+than failing as though something were broken. Re-run it only when the dialogue
+changes.
+
+### Two things that arrive with audio
+
+- **Mouths.** `gen_lipsync.py` casts a vanilla animation of roughly the right
+  length onto each line. The mod ships no animation data, because the animation
+  name a line carries is free-form and can simply point at one the game already
+  owns. `docs/scene-playbook.md` covers it.
+- **Phone calls.** A holocall is not the clean take played through a filter at
+  runtime. Vanilla ships a separately processed recording for every line that
+  arrives on V's phone, so the treatment is baked into the asset.
+  `tools/questkit/phone.py` bakes an equivalent into a copy and leaves your
+  master alone.
+
+## 7. Then
 
 Dialogue is plain strings in your generators; write it however you like. Gig 01
 adapted an existing comic, which is why its files cite one - your gig needs
@@ -146,7 +289,7 @@ diffing the generators against it is the part worth copying.
 | Want | Read |
 |---|---|
 | conversations, choices, phone calls | `docs/scene-playbook.md` |
-| voices | `BUILDING.md` audio section, `questkit/voice.py` |
+| voices | section 6 above, then `BUILDING.md` audio toolchain |
 | mouths moving | `questkit/lipsync.py` |
 | computer screens and shards | `docs/computer-ui-playbook.md` |
 | contacts and message threads | `docs/journal-research.md` |
@@ -176,4 +319,4 @@ Two honest caveats:
 | nothing appears, no error | a manifest path that doesn't match where the file landed. Read `red4ext\plugins\ArchiveXL\*.log` |
 | it appears, but shows LocKeys | keys don't match, or that locale wasn't registered |
 
-`docs/gotchas.md` has 28 of these. Best hour you can spend before starting.
+`docs/gotchas.md` has 41 of these. Best hour you can spend before starting.
