@@ -3,13 +3,18 @@
 Keys are bare (no 'LocKey#' prefix) in both the journal and here; ArchiveXL
 hashes them and matches the two sides.
 """
-import json
 import os
+import sys
 
-_TOOLS = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-REPO = os.path.dirname(_TOOLS)
-OUT = os.path.join(REPO, 'mods', 'gig-01-negative-balance', 'source', 'wkit', 'raw',
-                   'mod', 'negative_balance', 'localization', 'en-us.json.json')
+# questkit is in tools/, one level up from this gig's generators. See
+# backlog.md 21.
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from gig01_config import RAW_MOD, LOCKEY_PREFIX                     # noqa: E402
+from questkit.localization import configure, write_onscreens        # noqa: E402
+
+configure(lockey_prefix=LOCKEY_PREFIX)
+OUT = os.path.join(RAW_MOD, 'localization', 'en-us.json.json')
 
 STRINGS = {
     # --- contacts -----------------------------------------------------------
@@ -326,35 +331,5 @@ STRINGS = {
 }
 
 
-def entry(key, value):
-    return {
-        '$type': 'localizationPersistenceOnScreenEntry',
-        'femaleVariant': value,
-        'maleVariant': '',
-        'primaryKey': '0',
-        'secondaryKey': 'cc-g01-' + key,
-    }
-
-
-doc = {
-    'Header': {
-        'WolvenKitVersion': '8.20.0', 'WKitJsonVersion': '0.0.9',
-        'GameVersion': 2310, 'DataType': 'CR2W', 'ArchiveFileName': 'en-us.json',
-    },
-    'Data': {
-        'Version': 195, 'BuildVersion': 0,
-        'RootChunk': {
-            '$type': 'JsonResource',
-            'cookingPlatform': 'PLATFORM_PC',
-            'root': {'HandleId': '0', 'Data': {
-                '$type': 'localizationPersistenceOnScreenEntries',
-                'entries': [entry(k, v) for k, v in STRINGS.items()],
-            }},
-        },
-        'EmbeddedFiles': [],
-    },
-}
-
-with open(OUT, 'w', encoding='utf-8') as fh:
-    json.dump(doc, fh, indent=2)
-print(f'wrote {OUT} ({len(STRINGS)} strings)')
+OUT_COUNT = write_onscreens(OUT, STRINGS)
+print(f'wrote {OUT} ({OUT_COUNT} strings)')

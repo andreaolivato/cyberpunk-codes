@@ -7,8 +7,11 @@ hand-authored source that happens to live in the same directory.
 
 ## How the generators are laid out
 
-`tools/questkit/` is the reusable half and `tools/gig01/gen_*.py` is one gig's
-half.
+`tools/questkit/` is the reusable half and `tools/gig01/` is one gig's half,
+with `gig01_config.py` holding the paths, prefixes and anchors that gig's
+generators share. The same split exists in redscript: `shared/scripts/` is
+vendored into each mod at build time, and a gig's own `.reds` hold only its
+places, records and flow.
 
 | module | holds |
 |---|---|

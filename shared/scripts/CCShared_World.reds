@@ -94,4 +94,67 @@ public abstract class CCSharedWorld {
         }
         obj.QueueEvent(ev);
     }
+
+    // Scatter a squad around a point, and drop anyone who cannot stand there.
+    //
+    // EVERY SPAWN POINT IS SNAPPED TO WALKABLE GROUND, and that is the whole
+    // reason this exists. Playtest, on a version that scattered by pure
+    // trigonometry: "there are 2 guards inside a wall and one outside on a ledge
+    // that is impossible to reach." Both are one bug - a guard landed wherever
+    // the circle happened to fall, geometry or no geometry. A guard inside a
+    // wall cannot be fought and a guard on an unreachable ledge cannot be
+    // finished, so both stall a room the player is supposed to clear.
+    //
+    // NavigationSystem.FindPointInSphereOnlyHumanNavmesh answers exactly the
+    // right question, "give me a point near here that a human can stand on", and
+    // it is what vanilla's own GetNearestNavmeshPointBelow is built from
+    // (navigationSystem.swift:29). If it says OK we use ITS point; anything else
+    // and that one is dropped rather than placed in a wall.
+    //
+    // A squad is allowed to come out one or two short. Five guards in a room
+    // that can all be fought is a better encounter than seven where two are
+    // furniture.
+    //
+    // The ring is passed in rather than fixed here: how tight it should be is a
+    // property of the room, and the caller is the only thing that knows the
+    // room. `radius` is the innermost ring and `step` the gap between three
+    // concentric ones.
+    //
+    // Returns the ids actually placed, so the caller can set an attitude on
+    // them (CCSharedAttitude) or hold them for later.
+    public static func Scatter(game: GameInstance, records: array<TweakDBID>,
+                               center: Vector4, count: Int32, tag: CName,
+                               radius: Float, step: Float) -> array<EntityID> {
+        let nav: ref<NavigationSystem> = GameInstance.GetNavigationSystem(game);
+        let placed: array<EntityID>;
+        let i: Int32 = 0;
+        while i < count {
+            let angle: Float = Cast<Float>(i) * 2.4;
+            let r: Float = radius + Cast<Float>(i % 3) * step;
+            let pos: Vector4 = new Vector4(
+                center.X + CosF(angle) * r,
+                center.Y + SinF(angle) * r,
+                center.Z,
+                1.0);
+            // `walkable` rather than an early `continue`: REDSCRIPT HAS NO
+            // `continue`. It compiles as far as "unresolved reference", which
+            // reads like a missing function rather than a missing keyword.
+            let walkable: Bool = true;
+            if IsDefined(nav) {
+                let found: NavigationFindPointResult =
+                    nav.FindPointInSphereOnlyHumanNavmesh(pos, 2.0, NavGenAgentSize.Human, true);
+                if Equals(found.status, worldNavigationRequestStatus.OK) {
+                    pos = found.point;
+                } else {
+                    walkable = false;
+                }
+            }
+            if walkable {
+                ArrayPush(placed, CCSharedWorld.Spawn(
+                    records[i % ArraySize(records)], pos, angle * 57.3, tag));
+            }
+            i += 1;
+        }
+        return placed;
+    }
 }

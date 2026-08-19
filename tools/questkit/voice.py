@@ -29,6 +29,7 @@ import tempfile  # noqa: F401
 import wave  # noqa: F401
 
 # The CR2W primitives are defined once, in the scene builder.
+from questkit import cr2w
 from questkit.scene import resref
 
 # --------------------------------------------------------------- per-mod config
@@ -219,9 +220,7 @@ def write_vomap(entries):
     the split exists for V, who is recorded twice. Mama Welles is the exception
     that makes it earn its keep (see GENDERED)."""
     doc = {
-        'Header': {'WolvenKitVersion': '8.20.0', 'WKitJsonVersion': '0.0.9',
-                   'GameVersion': 2310, 'DataType': 'CR2W',
-                   'ArchiveFileName': 'vomap.json'},
+        'Header': cr2w.header('vomap.json'),
         'Data': {
             'Version': 195, 'BuildVersion': 0,
             'RootChunk': {

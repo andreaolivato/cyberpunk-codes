@@ -77,7 +77,9 @@ gen_*.py  ->  .json  ->  [WolvenKit]  ->  binaries  ->  [WolvenKit]  ->  .archiv
 
 **redscript sits outside all of it.** `.reds` files are copied as source and
 compiled by redscript inside the player's game when it starts. They are never
-packed into the archive.
+packed into the archive. Anything in them with no gig data in it lives in
+`shared/scripts/` and is copied into each mod at build time under a per-gig
+module name, so two gigs never collide on a class name.
 
 So the game receives three things: one binary `.archive`, one small YAML telling
 ArchiveXL how to merge it, and redscript source.

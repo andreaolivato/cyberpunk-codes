@@ -102,7 +102,6 @@ this paragraph.
 import argparse
 import json
 import os
-import re
 import sys
 
 # questkit is in tools/, one level up from this gig's generators. See
@@ -115,7 +114,7 @@ import gen_scenes as gs                                  # noqa: E402
 # tools/questkit/lipsync.py. This file is the GIG: its cast, and which of its lines
 # get a mouth.
 from questkit.lipsync import (                                      # noqa: F401
-    configure, rebuild_cache, load_catalogue, _score, _check_actor_names,
+    configure, rebuild_cache, load_catalogue, pick, _check_actor_names,
     LIPMAP_DEPOT,
 )
 
@@ -229,48 +228,10 @@ def _line_texts():
 
 
 
-def pick(catalogue, verbose=False):
-    sets, lines, report = {}, {}, []
-    for char, scene, wanted in _wanted():
-        actor = CHARACTERS[char]['actor']
-        rx = re.compile(CHARACTERS[char]['regex'])
-        best = None
-        for depot, entry in catalogue.items():
-            if not rx.search(depot):
-                continue
-            scored = _score(entry['anims'], wanted)
-            if scored is None:
-                continue
-            err, names = scored
-            if best is None or err < best[0]:
-                best = (err, depot, names, entry)
-        if best is None:
-            raise SystemExit(
-                'no lipsync set found for %s in %s - is the catalogue built? '
-                '(%d candidates matched %r)'
-                % (char, scene, sum(1 for d in catalogue if rx.search(d)),
-                   CHARACTERS[char]['regex']))
-        err, depot, names, entry = best
-        if entry['voicetag'] in (None, '0'):
-            raise SystemExit('%s: chosen set %s has no voicetag in the vanilla '
-                             'lipmap - our lipmap entry would be unkeyed'
-                             % (char, depot))
-        sets.setdefault(scene, {})[actor] = {
-            'anims': depot, 'voicetag': entry['voicetag']}
-        for key, name in names.items():
-            lines['%s/%s' % (scene, key)] = name
-        report.append((scene, actor, depot, err, names, wanted))
-        if verbose:
-            print('%-20s %-12s err %6.0f ms  %s'
-                  % (scene, actor, err, depot.rsplit('\\', 2)[-2]))
-            by_key = dict(wanted)
-            for key, name in sorted(names.items()):
-                seconds = next(s for n, s in entry['anims'] if n == name)
-                print('    %-6s want %5d ms  got %5d ms  %s'
-                      % (key, by_key[key], int(seconds * 1000), name))
-    return sets, lines, report
-
-
+# `pick` used to live here. It is questkit.lipsync.pick now: the search, the
+# scoring and the two failures worth stopping on are the same for any gig, and
+# what this file supplies is the cast (CHARACTERS, through configure) and the
+# lines that want a mouth (_wanted).
 
 
 def main():
@@ -284,7 +245,7 @@ def main():
     if args.rebuild:
         rebuild_cache()
     catalogue = load_catalogue()
-    sets, lines, report = pick(catalogue, verbose=args.report)
+    sets, lines, report = pick(catalogue, _wanted(), verbose=args.report)
     _check_actor_names(sets, gs.ALL_BUILDERS)
 
     doc = {

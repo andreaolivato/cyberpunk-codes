@@ -30,7 +30,6 @@ being given it.
 
 | § | Item |
 |---|---|
-| 4 | Housekeeping: the toolkit split left three loose ends (`gen_localization` unsplit, the gig-01 anchors stated twice, and the attitude and Johnny-placement redscript still inline) |
 | 6 | The `[F]` interaction prompt on a mod-placed object. UNSOLVED and deliberately parked; seven approaches ruled out, each with its outcome |
 | 10i | Reload crashes on heavily modded installs. Two reporters, same symptom. No mechanism found; the A/B test is now deterministic, see 14 |
 | 16 | Johnny appears while V is driving, staged for a V standing still. Gate the three free-roaming beats on movement state, with a bound so the gig cannot stall |
@@ -57,6 +56,7 @@ release checklist, all of it struck through.
 | 13 | Three properties the game silently rejects, and the field that was credited with fixing Hoshino for months without ever running |
 | 14 | The world grid, derived: cell size, the rldGridCell packing, and why a whole-map streaming box was wrong |
 | 15 | The holocall treatment: baked into separate assets, and a phase effect rather than a filter. Includes the two wrong answers |
+| 4 | The toolkit split, finished: a config module per gig, and the generic redscript out of gig 01 |
 | 21 | One gig per subdirectory under `tools/`, and the two export patterns that had to follow |
 | 20 | A pin CAN anchor to a node this mod ships, and a mod CAN ship an always-loaded sector to keep it resolvable. Also why the drawn route built on it was reverted |
 | 18 | El Coyote Cojo is shut until Heroes is finished, measured across three saves. The gig waits for it and says so |
@@ -1042,7 +1042,12 @@ If it is ever revisited, the one untried idea is swapping the epilogue to our ow
 it risks two Mama Welles in the bar during the final beat of the gig, which is a
 much more visible failure.
 
-## 4. Housekeeping
+## 4. Housekeeping. DONE 2026-08-19
+
+**The account of what each item became is the last subsection here.** What
+follows first is the entry as it stood, so the bullets below still describe the
+tree before 2026-08-19: `shared/scripts` is no longer empty and the anchors are
+no longer stated twice.
 
 - **The source `.archive.xl` needs committing.** `.gitignore` had a bare
   `*.archive.xl` that swallowed the hand-authored file in `source/wkit/raw/` - 
@@ -1095,6 +1100,72 @@ much more visible failure.
   lipsynced properly in game. The fix is to teach the guard about spawnSet
   actors, and the proof is that re-running then rewrites `lipsync_picks.json`
   byte-identically.
+
+### DONE 2026-08-19. What each loose end turned into
+
+Every item above is closed. Taken in order:
+
+**The `.archive.xl` and the `gen_lipsync` guard** closed earlier, and their
+accounts are above.
+
+**`design.md`'s dialogue draft is gone.** It held a rival copy of the script
+with `[VDB: check]` and `[REWRITE]` annotations, and three of the four
+conversations had already drifted from it. What replaced it says where the two
+authoritative texts are: `docs/dialogue.txt`, generated from the scenes so it
+cannot disagree with them, and `gen_scenes.py` for the reasoning behind each
+line. Both annotations are explained there rather than deleted, because what
+they were asking is worth keeping: reuse-only was measured (3 of 59 lines) and
+the rewrites happened in the generator.
+
+**The anchors are stated once**, in `tools/gig01/gig01_config.py`, along with
+the paths, the LocKey prefix and the quest id. That file is the whole of what a
+second gig re-points: `gen_journal`, `gen_localization`, `gen_questphase` and
+`gen_scenes` now import it rather than each spelling out
+`mods/gig-01-negative-balance/source/wkit/raw/mod/negative_balance`.
+
+**`gen_localization` is split.** The onscreens envelope is
+`questkit/localization.py`; what stays in the gig is 87 strings. The CR2W header
+went the same way into `questkit/cr2w.py`, which removed the tenth copy of the
+WolvenKit and game version numbers: they move together every time either is
+updated, and ten places is ten chances to miss one.
+
+**`gen_lipsync.pick` moved too.** The search, the scoring and the two failures
+worth stopping on are the same for any gig; the cast and the list of lines that
+want a mouth are not. `gen_voice` was left alone deliberately: what is inline in
+it is the cast tables, and its machinery is already `questkit/voice.py`.
+
+**The generic redscript is out.** `Gig01_Encounter.reds` went from 2,276 lines
+to 2,010, and `shared/scripts/` from two modules to five:
+
+| Module | What moved into it |
+|---|---|
+| `CCShared_World` | `Scatter`, the navmesh-snapped squad placement, next to `Spawn` which was already there |
+| `CCShared_Attitude` | hostile and neutral, and the retry that waits 60 s for a spawned body to stream in |
+| `CCShared_Hud` | the upload progress bar, next to the warning banner |
+| `CCShared_Mappins` | markers registered at runtime, and the rule about always pairing one with a Hide |
+| `CCShared_Rewards` | eddies and Street Cred |
+
+Three DelayCallback classes went with them, so a gig no longer declares its own.
+The playtest evidence attached to each piece moved with the code rather than
+being summarised: the guards in walls that produced the navmesh snap, the
+attitude budget that produced the 60 s, and the progress bar that closed on
+FAILED are all in the shared files now.
+
+What deliberately stayed in the gig: the ring the squad scatters on (how tight
+it should be is a property of the room), the record lists, `CCGig01Places`, the
+latches, and the fact guard on the payout.
+
+**How it was verified.** `check-scripts-repo.ps1` compiles the repo through the
+vendoring; `check-clone.ps1` runs every generator on a clean export and compares
+byte for byte, and it caught the one real mistake in this pass: three new modules
+were untracked, so the export left them out and a clone got an ImportError. Same
+trap as `questkit/phone.py`, and the same check found it. The archive rebuilds to
+the same 2,256 KB.
+
+**What this does not prove.** Nothing here was playtested. Every generated file
+is byte-identical, so the archive is the one that was played; the redscript is
+not, and the two behaviours to watch on the next play are the compound guards
+turning hostile and the way-in marker appearing and clearing.
 
 ## 5. Refinements from playing the finished gig: BUILT AND PLAYED
 

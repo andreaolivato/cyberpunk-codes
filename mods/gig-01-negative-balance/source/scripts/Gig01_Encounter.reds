@@ -424,78 +424,38 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
             ];
         }
 
-        // EVERY SPAWN POINT IS SNAPPED TO WALKABLE GROUND.
+        // The scatter, the navmesh snap and the "drop anyone who cannot stand
+        // there" rule are CCSharedWorld.Scatter, along with the playtest that
+        // produced them. What stays here is the ring, because how tight it
+        // should be is a property of the room: 1.8 m out in 1.4 m steps is
+        // tighter than the 2.5-6.5 m this shipped with first, and most of the
+        // guards-inside-a-wall cases were the outer ring reaching through one.
+        let placed: array<EntityID> = CCSharedWorld.Scatter(
+            this.GetGameInstance(), records, center, count, tag, 1.8, 1.4);
+
+        // COMPOUND GUARDS ONLY. playtest, 2026-08-13: inside the Arasaka
+        // compound he could walk among the guards and they never challenged
+        // him, while the estate detail behaves correctly.
         //
-        // playtest, 2026-08-13: "there are 2 guards inside a wall and one outside
-        // on a ledge that is impossible to reach." Both are the same bug - the
-        // scatter was pure trigonometry around a captured point, so a guard
-        // landed wherever the circle happened to fall, geometry or no geometry.
-        // A guard inside a wall cannot be fought and a guard on an unreachable
-        // ledge cannot be finished, so both stall a room the player is supposed
-        // to clear.
+        // Both squads take the identical spawn path and nothing here ever set an
+        // attitude, so each guard inherited whatever his record defaults to - and
+        // the two record lists are the only difference. The compound list is
+        // mostly `sts_*`, i.e. street-story security guards staged by their own
+        // quests, which default to an affiliation that does not treat V as an
+        // enemy. The estate list is Arasaka combat archetypes, which do.
         //
-        // NavigationSystem.FindPointInSphereOnlyHumanNavmesh answers exactly the
-        // right question - "give me a point near here that a human can stand on"
-        // - and it is what vanilla's own GetNearestNavmeshPointBelow is built
-        // from (navigationSystem.swift:29). Ask it for a point within 2 m of the
-        // scattered spot: if it says OK we use ITS point, and if it says
-        // anything else we DROP that guard rather than place him in a wall.
-        //
-        // A squad is allowed to come out one or two short. Five guards in a room
-        // that can all be fought is a better encounter than seven where two are
-        // furniture.
-        let nav: ref<NavigationSystem> = GameInstance.GetNavigationSystem(this.GetGameInstance());
-        let placed: Int32 = 0;
-        let i: Int32 = 0;
-        while i < count {
-            let angle: Float = Cast<Float>(i) * 2.4;
-            // Tighter than the old 2.5-6.5 m: the office rooms are small, and
-            // most of the wall cases were the outer ring reaching through one.
-            let radius: Float = 1.8 + Cast<Float>(i % 3) * 1.4;
-            let pos: Vector4 = new Vector4(
-                center.X + CosF(angle) * radius,
-                center.Y + SinF(angle) * radius,
-                center.Z,
-                1.0);
-            // `walkable` rather than an early `continue`: REDSCRIPT HAS NO
-            // `continue`. It compiles as far as "unresolved reference", which
-            // reads like a missing function rather than a missing keyword.
-            let walkable: Bool = true;
-            if IsDefined(nav) {
-                let found: NavigationFindPointResult =
-                    nav.FindPointInSphereOnlyHumanNavmesh(pos, 2.0, NavGenAgentSize.Human, true);
-                if Equals(found.status, worldNavigationRequestStatus.OK) {
-                    pos = found.point;
-                } else {
-                    walkable = false;
-                }
+        // Fixed by asserting the attitude rather than by swapping records:
+        // ordinary compound security and an elite estate detail are meant to look
+        // different, and trading that away to fix an attitude bug would flatten
+        // the two tiers into one.
+        if !estate {
+            let i: Int32 = 0;
+            while i < ArraySize(placed) {
+                CCSharedAttitude.Hostile(this.GetGameInstance(), placed[i]);
+                i += 1;
             }
-            if walkable {
-                let id: EntityID = CCSharedWorld.Spawn(records[i % ArraySize(records)], pos, angle * 57.3, tag);
-                // COMPOUND GUARDS ONLY. playtest, 2026-08-13: inside the Arasaka
-                // compound he could walk among the guards and they never challenged
-                // him, while the estate detail behaves correctly.
-                //
-                // Both squads take the identical spawn path and nothing here ever
-                // set an attitude, so each guard inherited whatever his record
-                // defaults to - and the two record lists are the only difference.
-                // The compound list is mostly `sts_*`, i.e. street-story security
-                // guards staged by their own quests, which default to an
-                // affiliation that does not treat V as an enemy. The estate list is
-                // Arasaka combat archetypes, which do.
-                //
-                // Fixed by asserting the attitude rather than by swapping records:
-                // ordinary compound security and an elite estate detail are meant to
-                // look different, and trading that away to fix an attitude bug would
-                // flatten the two tiers into one.
-                if !estate {
-                    this.SetHostile(id);
-                }
-                placed += 1;
-            }
-            i += 1;
         }
-        return placed;
+        return ArraySize(placed);
     }
 
     // ------------------------------------------------- ONE SQUAD PER CALLBACK
@@ -774,123 +734,25 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
             this.m_hoshinoId = CCSharedWorld.Spawn(t"Character.cc_g01_hoshino",
                 CCGig01Places.Hoshino(), 140.8, n"cc_g01_hoshino");
             this.m_hoshinoSpawned = true;
-            this.SetNeutral(this.m_hoshinoId);
+            CCSharedAttitude.Neutral(this.GetGameInstance(), this.m_hoshinoId);
         }
         this.SpawnStep(true, 0, 0, 0);
     }
 
-    // WHY HOSHINO IS SPAWNED NEUTRAL, which is the SetNeutral call above.
+    // WHY HOSHINO IS SPAWNED NEUTRAL, which is the CCSharedAttitude.Neutral
+    // call above.
     //
     // He spawned hostile like the guards, so he opened fire during his own
     // conversation (playtest, 2026-08-12). That is wrong for the scene and
     // wrong for the character: the whole point of him is that he is an
     // administrator, not a soldier. He signs, he does not fight.
     //
-    // Neutral until provoked. AttitudeAgent.SetAttitudeGroup is how vanilla
-    // moves an NPC between sides (aiRole.swift:232, dynamicSpawnSystem
-    // .swift:72 sets n"hostile" the same way). Shooting him flips him back
-    // by the game's own reaction rules, so "until we attack" comes for free:
-    // we do not have to watch for it.
+    // Neutral until provoked. Shooting him flips him back by the game's own
+    // reaction rules, so "until we attack" comes for free: we do not have to
+    // watch for it. The retry budget behind that call, and why an attitude
+    // cannot be set in the tick the spawn was asked for, are in
+    // CCShared_Attitude.reds.
 
-    // HOW LONG AN ATTITUDE MAY TAKE TO STICK. 1.5 s a try, so this is 60 s.
-    //
-    // It was 6 tries, 10.5 s, and that budget was sized on this machine against
-    // the old all-at-once burst. On a slower one, or a heavily modded load
-    // order, a guard that takes longer than that to stream in keeps his
-    // record's default attitude, and the compound list is mostly `sts_*`
-    // street-story security which does not treat V as an enemy. The symptom is
-    // "the guards ignore me" - the 2026-08-13 bug arriving by a new route, from
-    // a budget rather than from a missing call.
-    //
-    // The cost of the higher cap is only paid by a guard who never resolves at
-    // all: everyone else returns on the try that finds him. With the burst now
-    // staggered, that should be the first or second.
-    private func MaxAttitudeTries() -> Int32 { return 40; }
-
-    // Move a spawned NPC out of the hostile group so he will not open fire.
-    //
-    // The entity streams in asynchronously, so this cannot run in the same tick
-    // as the spawn - hence the delayed retry. Same lesson as Johnny: a dynamic
-    // entity is not resolvable in the tick you asked for it.
-    private func SetNeutral(id: EntityID) -> Void {
-        let cb: ref<CCGig01MakeNeutral> = new CCGig01MakeNeutral();
-        cb.system = this;
-        cb.target = id;
-        cb.tries = 0;
-        GameInstance.GetDelaySystem(this.GetGameInstance()).DelayCallback(cb, 1.5, false);
-    }
-
-    public func MakeNeutral(id: EntityID, tries: Int32) -> Void {
-        let obj: ref<GameObject> = GameInstance.GetDynamicEntitySystem().GetEntity(id) as GameObject;
-        if IsDefined(obj) {
-            let agent: ref<AttitudeAgent> = obj.GetAttitudeAgent();
-            if IsDefined(agent) {
-                agent.SetAttitudeGroup(n"neutral");
-                return;
-            }
-        }
-        // Not streamed in yet. Try a few more times rather than silently give up
-        // and leave him shooting through his own dialogue.
-        if tries < this.MaxAttitudeTries() {
-            let cb: ref<CCGig01MakeNeutral> = new CCGig01MakeNeutral();
-            cb.system = this;
-            cb.target = id;
-            cb.tries = tries + 1;
-            GameInstance.GetDelaySystem(this.GetGameInstance()).DelayCallback(cb, 1.5, false);
-        }
-    }
-
-    // The mirror of SetNeutral, and it needs the same delayed retry for the same
-    // reason: the entity streams in asynchronously, so nothing is resolvable in
-    // the tick it was requested in.
-    private func SetHostile(id: EntityID) -> Void {
-        let cb: ref<CCGig01MakeHostile> = new CCGig01MakeHostile();
-        cb.system = this;
-        cb.target = id;
-        cb.tries = 0;
-        GameInstance.GetDelaySystem(this.GetGameInstance()).DelayCallback(cb, 1.5, false);
-    }
-
-    // Both halves, deliberately. SetAttitudeGroup is how vanilla moves an NPC
-    // between sides (dynamicSpawnSystem.swift:72 sets n"hostile" exactly like
-    // this), and SetAttitudeTowards forces the pairing with V regardless of what
-    // the group would have resolved to - which is the half that covers a record
-    // whose own affiliation is the problem. It is the same pair already used on
-    // Hoshino in Tick, and that one is confirmed working in game.
-    public func MakeHostile(id: EntityID, tries: Int32) -> Void {
-        let obj: ref<GameObject> = GameInstance.GetDynamicEntitySystem().GetEntity(id) as GameObject;
-        if IsDefined(obj) {
-            let agent: ref<AttitudeAgent> = obj.GetAttitudeAgent();
-            let player: ref<PlayerPuppet> = GetPlayer(this.GetGameInstance()) as PlayerPuppet;
-            if IsDefined(agent) && IsDefined(player) {
-                // HOSTILE TO V, NOT HOSTILE TO EVERYONE.
-                //
-                // This used to also call SetAttitudeGroup(n"hostile") and playtesting
-                // caught what that means: "those guards start killing existing
-                // NPCs... this happens only after they see me and start shooting
-                // at me." Of course they do - n"hostile" is not "hostile to the
-                // player", it is a GROUP, and a member of it is at war with
-                // every other group in the room, Arasaka colleagues included.
-                // The moment combat woke them up they picked targets by group
-                // and their own side qualified.
-                //
-                // SetAttitudeTowards is the pairwise version and it is the one
-                // that was wanted all along: it makes this guard an enemy of
-                // THIS player and changes nothing else, so the guards stay
-                // Arasaka to each other. Their record's own affiliation is left
-                // exactly as it was.
-                agent.SetAttitudeTowards(player.GetAttitudeAgent(), EAIAttitude.AIA_Hostile);
-                return;
-            }
-        }
-        if tries < this.MaxAttitudeTries() {
-            let cb: ref<CCGig01MakeHostile> = new CCGig01MakeHostile();
-            cb.system = this;
-            cb.target = id;
-            cb.tries = tries + 1;
-            GameInstance.GetDelaySystem(this.GetGameInstance()).DelayCallback(cb, 1.5, false);
-        }
-    }
 
 
     // NO SCRIPT PLACES JOHNNY ANY MORE, and nothing here should start.
@@ -922,11 +784,11 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
                 // 3.2 s is not arbitrary - it is exactly how long the two 1.6 s
                 // steps below take, and the bar reports FAILED if it closes
                 // under 96%.
-                this.RunUploadBar("COPYING LEDGER", 3.2);
+                CCSharedHud.RunBar(this.GetGameInstance(), "COPYING LEDGER", 3.2);
                 break;
             case 1: break;
             case 2:
-                this.ShowUploadBar(false, "");
+                CCSharedHud.ShowBar(this.GetGameInstance(), false, "");
                 // Having the data is not the end of the beat - but Johnny does
                 // NOT appear yet.
                 //
@@ -1003,87 +865,6 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
     // 2026-08-13: it is gig01_legend.scene now, entered by the quest phase on
     // cc_g01_ledger_sent, which SendStep still sets exactly as before.
     //
-    // THE BIG BOTTOM-OF-SCREEN PROGRESS BAR - the one the game shows while an
-    // enemy netrunner is uploading a quickhack onto V.
-    //
-    // THIS IS THE THIRD ATTEMPT AT THIS WIDGET AND THE FIRST CORRECT ONE. Worth
-    // recording what the wrong two were, because they are both plausible:
-    //
-    //   1. I first called it another mod's UI. Wrong - it had been seen it in
-    //      many vanilla missions.
-    //   2. Then I drove UploadProgramProgressEvent, which really is a vanilla
-    //      upload bar - but it is the quickhack indicator that hangs on a TARGET
-    //      ENTITY via GameplayRoleComponent, i.e. a small bar over the thing you
-    //      are hacking. It showed nothing here and would have been the wrong
-    //      shape anyway.
-    //
-    // a follow-up clarification named it exactly: "the same UI used when a
-    // netrunner is tracking you". That one is NOT entity-attached at all - it is
-    // a HUD widget driven straight off a blackboard, the same way our subtitles
-    // are. `UploadFromNPCToPlayerListener` (rpgManager.swift:3699) writes to
-    // GetAllBlackboardDefs().UI_HUDProgressBar, read by
-    // cyberpunk/UI/widgets/hud_progress_bar/HUD_progress_bar.swift.
-    //
-    // No entity needed, so this also no longer depends on V being plugged in.
-    private func ShowUploadBar(started: Bool, header: String) -> Void {
-        let bb: ref<IBlackboard> = GameInstance.GetBlackboardSystem(this.GetGameInstance())
-            .Get(GetAllBlackboardDefs().UI_HUDProgressBar);
-        if !IsDefined(bb) {
-            return;
-        }
-        let d: ref<UI_HUDProgressBarDef> = GetAllBlackboardDefs().UI_HUDProgressBar;
-        if !started {
-            // FORCE IT FULL BEFORE CLOSING. HUDProgressBarController.Outro
-            // (HUD_progress_bar.swift:379) picks the failure animation whenever
-            // the last Progress it saw was < 0.96:
-            //
-            //   if valueSaved < 0.96 && GetFact("holofixer_on") == 0
-            //       -> "Quickhack_Outro_Failed"
-            //
-            // the playtest copy bar ended on FAILED because the beat finished at
-            // 3.2 s while the fill had been told 5.2 s, so it closed at ~60%.
-            // Matching the two durations fixes that case; writing 1.0 here
-            // makes it structurally impossible, whatever the timings drift to.
-            bb.SetFloat(d.Progress, 1.0, true);
-            bb.SetBool(d.Active, false, true);
-            return;
-        }
-        bb.SetString(d.Header, header, true);
-        bb.SetString(d.BottomText, "", true);
-        bb.SetString(d.CompletedText, "COMPLETE", true);
-        bb.SetFloat(d.Progress, 0.0, true);
-        bb.SetBool(d.Active, true, true);
-    }
-
-    // Smooth fill. The widget does not animate itself - it draws whatever
-    // Progress currently holds - so the bar only moves if something keeps
-    // writing to it. 0.1 s steps are well under a frame budget and read as
-    // continuous.
-    public func UploadBarStep(elapsed: Float, total: Float) -> Void {
-        let bb: ref<IBlackboard> = GameInstance.GetBlackboardSystem(this.GetGameInstance())
-            .Get(GetAllBlackboardDefs().UI_HUDProgressBar);
-        if !IsDefined(bb) || total <= 0.0 {
-            return;
-        }
-        let p: Float = elapsed / total;
-        if p > 1.0 {
-            p = 1.0;
-        }
-        bb.SetFloat(GetAllBlackboardDefs().UI_HUDProgressBar.Progress, p, true);
-        if elapsed < total {
-            let cb: ref<CCGig01UploadBarStep> = new CCGig01UploadBarStep();
-            cb.system = this;
-            cb.elapsed = elapsed + 0.1;
-            cb.total = total;
-            GameInstance.GetDelaySystem(this.GetGameInstance()).DelayCallback(cb, 0.1, false);
-        }
-    }
-
-    private func RunUploadBar(header: String, seconds: Float) -> Void {
-        this.ShowUploadBar(true, header);
-        this.UploadBarStep(0.0, seconds);
-    }
-
     // Stage Johnny at the office desk, then run the comic's p22 exchange.
     //
     // Placement is deliberately different from the street beat. V is at a
@@ -1172,13 +953,14 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
             case 0:
                 // The real vanilla upload bar, on the terminal V is plugged
                 // into. 12.5 s covers the five beats below at 2.5 s each.
-                this.RunUploadBar("SABOTAGE: UPLOADING MALWARE TO THE NETWORK", 10.0);
+                CCSharedHud.RunBar(this.GetGameInstance(),
+                    "SABOTAGE: UPLOADING MALWARE TO THE NETWORK", 10.0);
                 break;
             case 1: break;
             case 2: break;
             case 3: break;
             case 4:
-                this.ShowUploadBar(false, "");
+                CCSharedHud.ShowBar(this.GetGameInstance(), false, "");
                 // V and Johnny, comic p51, are gig01_malware.scene now. It
                 // is NOT entered on the fact below: the upload finishes while V
                 // is still in the device zoom, and staging an actor on a player
@@ -1236,32 +1018,12 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
     // readout, because it no longer owns a pin. The marker draws its own
     // distance, which is what the player actually reads.
     private func ShowWayInMarker(leg: Int32) -> Void {
-        let ms: ref<MappinSystem> = GameInstance.GetMappinSystem(this.GetGameInstance());
-        if !IsDefined(ms) {
-            return;
-        }
         let spot: Vector4 = CCGig01Places.WayInMarker(leg);
         if this.m_wayinMappinUp {
-            // MOVE the one we already have. Registering a second and dropping
-            // the first would leave the old one on screen for a frame and, if
-            // the unregister ever missed, forever.
-            ms.SetMappinPosition(this.m_wayinMappin, spot);
+            CCSharedMappins.Move(this.GetGameInstance(), this.m_wayinMappin, spot);
             return;
         }
-        // `MappinData`, NOT `gamemappinsMappinData`. The journal resource spells
-        // it the long way and redscript does not know that name at all
-        // (`unresolved type`); the script-visible struct is the short one, and
-        // it carries exactly five fields - mappinType, variant, debugCaption,
-        // visibleThroughWalls, scriptData. There is no `active`: a registered
-        // mappin is live by definition, and the journal's `active` flag belongs
-        // to the authored pin, not to this.
-        let data: MappinData;
-        // The same two ids our journal pins carry, so it reads as the gig's own
-        // objective marker rather than something a mod bolted on.
-        data.mappinType = t"Mappins.QuestStaticMappinDefinition";
-        data.variant = gamedataMappinVariant.QuestGiverVariant;
-        data.visibleThroughWalls = true;
-        this.m_wayinMappin = ms.RegisterMappin(data, spot);
+        this.m_wayinMappin = CCSharedMappins.Show(this.GetGameInstance(), spot);
         this.m_wayinMappinUp = true;
     }
 
@@ -1273,10 +1035,7 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
         if !this.m_wayinMappinUp {
             return;
         }
-        let ms: ref<MappinSystem> = GameInstance.GetMappinSystem(this.GetGameInstance());
-        if IsDefined(ms) {
-            ms.UnregisterMappin(this.m_wayinMappin);
-        }
+        CCSharedMappins.Hide(this.GetGameInstance(), this.m_wayinMappin);
         this.m_wayinMappinUp = false;
         this.m_wayinShown = 0;
     }
@@ -1389,9 +1148,7 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
     private func GiveReward(player: ref<PlayerPuppet>, qs: ref<QuestsSystem>) -> Void {
         qs.SetFactStr("cc_g01_rewarded", 1);
 
-        GameInstance.GetTransactionSystem(this.GetGameInstance())
-            .GiveItemByTDBID(player, t"Items.money", 2500);
-        RPGManager.AwardExperienceInstantly(player, 300, gamedataProficiencyType.StreetCred);
+        CCSharedRewards.Pay(this.GetGameInstance(), player, 2500, 300);
 
         CCSharedHud.NotifyTyped(this.GetGameInstance(), GetLocalizedTextByKey(n"cc-g01-reward"), SimpleMessageType.Money, 4.0);
     }
@@ -2211,6 +1968,10 @@ public class CCGig01EncounterTick extends DelayCallback {
 // 2026-08-14 with the path they served - see the note above SpawnJohnny's
 // former home.
 
+// CCGig01MakeNeutral, CCGig01MakeHostile and CCGig01UploadBarStep were here.
+// Their work moved into shared/scripts (CCShared_Attitude, CCShared_Hud), and
+// those modules carry their own callbacks, so a gig never sees them.
+
 public class CCGig01SpawnStep extends DelayCallback {
     public let system: wref<NegativeBalanceEncounter>;
     public let estate: Bool;
@@ -2221,33 +1982,6 @@ public class CCGig01SpawnStep extends DelayCallback {
         if IsDefined(this.system) {
             this.system.SpawnStep(this.estate, this.step, this.tries, this.placed);
         }
-    }
-}
-
-public class CCGig01MakeNeutral extends DelayCallback {
-    public let system: wref<NegativeBalanceEncounter>;
-    public let target: EntityID;
-    public let tries: Int32;
-    public func Call() -> Void {
-        if IsDefined(this.system) { this.system.MakeNeutral(this.target, this.tries); }
-    }
-}
-
-public class CCGig01MakeHostile extends DelayCallback {
-    public let system: wref<NegativeBalanceEncounter>;
-    public let target: EntityID;
-    public let tries: Int32;
-    public func Call() -> Void {
-        if IsDefined(this.system) { this.system.MakeHostile(this.target, this.tries); }
-    }
-}
-
-public class CCGig01UploadBarStep extends DelayCallback {
-    public let system: wref<NegativeBalanceEncounter>;
-    public let elapsed: Float;
-    public let total: Float;
-    public func Call() -> Void {
-        if IsDefined(this.system) { this.system.UploadBarStep(this.elapsed, this.total); }
     }
 }
 

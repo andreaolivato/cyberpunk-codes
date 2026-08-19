@@ -8,11 +8,30 @@ Last full update: 2026-08-14 (docs-vs-code audit, after gig 01 played through cl
 - **Monorepo** (`Cyberpunk.Codes`), one folder per gig under `mods/`, shared code
   in `shared/`, tooling in `tools/`. Release tags planned per mod:
   `gig-01/v1.0.0`. Releases = zips mirroring the game folder, built by script.
-- **`tools/questkit/` is the toolkit, `tools/gig01/gen_*.py` is the gig** (split
-  2026-08-16). The builders (`scene.py`, `questgraph.py`, `journal.py`) hold
-  engine shape and take a `configure(...)` call for one mod's paths and naming;
-  the generators hold that gig's anchors, tables and dialogue. Gig 02 imports
-  the first set and writes only the second.
+- **`tools/questkit/` is the toolkit, `tools/gig01/` is the gig** (split
+  2026-08-16, finished 2026-08-19). The builders (`scene.py`, `questgraph.py`,
+  `journal.py`, `localization.py`, `voice.py`, `lipsync.py`, `phone.py`,
+  `cr2w.py`) hold engine shape and take a `configure(...)` call for one mod's
+  paths and naming; the generators hold that gig's anchors, tables and dialogue.
+  Gig 02 imports the first set and writes only the second.
+
+  **One gig per subdirectory, and one config module per gig.** Paths, the LocKey
+  prefix, the quest id and the scene anchors are `tools/gig01/gig01_config.py`,
+  so re-pointing a copied generator is one file rather than eight. The anchors
+  in particular were stated in two generators with three comments warning that
+  the copies had to be kept in step, and a disagreement between them would have
+  been silent: a scene plays at the wrong end of the city rather than failing.
+
+- **`shared/scripts/` is the redscript half of the same split**, and it is
+  COPIED into each mod at build time rather than imported at runtime.
+  `vendor-shared.ps1` rewrites `module CyberpunkCodes.Shared` to
+  `CyberpunkCodes.Shared.<Gig>` on the way in, which is what stops two gigs from
+  colliding on a class name and taking the player's whole redscript bundle down
+  with them (`conventions.md` has the tested evidence). Five modules as of
+  2026-08-19: spawning and proximity (`World`), attitude with its streaming
+  retry (`Attitude`), banners and the progress bar (`Hud`), runtime markers
+  (`Mappins`), and the payout (`Rewards`). What stays in a gig's own scripts is
+  its places, its records, its facts and its flow.
 
   **This is a BUILD-TIME toolkit and it is deliberately not a "core mod".**
 

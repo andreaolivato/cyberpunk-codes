@@ -226,3 +226,54 @@ def _check_actor_names(sets, builders):
                                  'does not have (it has: %s)'
                                  % (actor, scene, sorted(have[scene])))
 
+
+def pick(catalogue, wanted_lines, verbose=False):
+    """Cast a vanilla lipsync set for every line that wants a mouth.
+
+    `wanted_lines` is the gig's own list of (character, scene, [(key, ms), ...]).
+    The character names index CHARACTERS, so configure() has to have run.
+
+    Two conditions stop the run rather than shipping something subtly wrong: no
+    set matching a character's regex at all (usually a cold catalogue), and a
+    chosen set whose voicetag the vanilla lipmap does not carry, which would
+    make our own lipmap entry unkeyed and silently do nothing.
+    """
+    sets, lines, report = {}, {}, []
+    for char, scene, wanted in wanted_lines:
+        actor = CHARACTERS[char]['actor']
+        rx = re.compile(CHARACTERS[char]['regex'])
+        best = None
+        for depot, entry in catalogue.items():
+            if not rx.search(depot):
+                continue
+            scored = _score(entry['anims'], wanted)
+            if scored is None:
+                continue
+            err, names = scored
+            if best is None or err < best[0]:
+                best = (err, depot, names, entry)
+        if best is None:
+            raise SystemExit(
+                'no lipsync set found for %s in %s - is the catalogue built? '
+                '(%d candidates matched %r)'
+                % (char, scene, sum(1 for d in catalogue if rx.search(d)),
+                   CHARACTERS[char]['regex']))
+        err, depot, names, entry = best
+        if entry['voicetag'] in (None, '0'):
+            raise SystemExit('%s: chosen set %s has no voicetag in the vanilla '
+                             'lipmap - our lipmap entry would be unkeyed'
+                             % (char, depot))
+        sets.setdefault(scene, {})[actor] = {
+            'anims': depot, 'voicetag': entry['voicetag']}
+        for key, name in names.items():
+            lines['%s/%s' % (scene, key)] = name
+        report.append((scene, actor, depot, err, names, wanted))
+        if verbose:
+            print('%-20s %-12s err %6.0f ms  %s'
+                  % (scene, actor, err, depot.rsplit('\\', 2)[-2]))
+            by_key = dict(wanted)
+            for key, name in sorted(names.items()):
+                seconds = next(s for n, s in entry['anims'] if n == name)
+                print('    %-6s want %5d ms  got %5d ms  %s'
+                      % (key, by_key[key], int(seconds * 1000), name))
+    return sets, lines, report

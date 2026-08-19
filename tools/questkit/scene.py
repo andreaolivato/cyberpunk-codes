@@ -31,6 +31,8 @@ import json
 import math
 import os
 
+from questkit import cr2w
+
 # --------------------------------------------------------------- per-mod config
 # Set by configure(). They are module globals rather than constructor arguments
 # because every function below reads them at call time, which is how this code
@@ -1783,9 +1785,7 @@ class Scene:
         }}
 
         return {
-            'Header': {'WolvenKitVersion': '8.20.0', 'WKitJsonVersion': '0.0.9',
-                       'GameVersion': 2310, 'DataType': 'CR2W',
-                       'ArchiveFileName': self.name + '.scene'},
+            'Header': cr2w.header(self.name + '.scene'),
             'Data': {
                 'Version': 195, 'BuildVersion': 0,
                 'RootChunk': {
@@ -1987,9 +1987,7 @@ def write_subtitles(scenes):
             })
 
     doc = {
-        'Header': {'WolvenKitVersion': '8.20.0', 'WKitJsonVersion': '0.0.9',
-                   'GameVersion': 2310, 'DataType': 'CR2W',
-                   'ArchiveFileName': 'subtitles.json'},
+        'Header': cr2w.header('subtitles.json'),
         'Data': {
             'Version': 195, 'BuildVersion': 0,
             'RootChunk': {
@@ -2010,9 +2008,7 @@ def write_subtitles(scenes):
 
     # ...and the map that points at it, which is what ArchiveXL registers.
     doc = {
-        'Header': {'WolvenKitVersion': '8.20.0', 'WKitJsonVersion': '0.0.9',
-                   'GameVersion': 2310, 'DataType': 'CR2W',
-                   'ArchiveFileName': 'subtitles.json'},
+        'Header': cr2w.header('subtitles.json'),
         'Data': {
             'Version': 195, 'BuildVersion': 0,
             'RootChunk': {
@@ -2088,9 +2084,7 @@ def write_lipmap(scenes):
         })
 
     doc = {
-        'Header': {'WolvenKitVersion': '8.20.0', 'WKitJsonVersion': '0.0.9',
-                   'GameVersion': 2310, 'DataType': 'CR2W',
-                   'ArchiveFileName': LIPMAP_NAME},
+        'Header': cr2w.header(LIPMAP_NAME),
         'Data': {
             'Version': 195, 'BuildVersion': 0,
             'RootChunk': {

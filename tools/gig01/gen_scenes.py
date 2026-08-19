@@ -153,10 +153,15 @@ from questkit.scene import (                                        # noqa: F401
     yaw_to_face_player,
 )
 
-_TOOLS = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-REPO = os.path.dirname(_TOOLS)
-OUT_DIR = os.path.join(REPO, 'mods', 'gig-01-negative-balance', 'source', 'wkit',
-                       'raw', 'mod', 'negative_balance', 'scenes')
+# Paths, prefixes and scene anchors are gig01_config.py, which is the one file
+# a second gig re-points. Imported by name rather than with a star so that what
+# this generator uses is visible here.
+from gig01_config import (                                          # noqa: E402
+    REPO, SOURCE, RAW_MOD, DEPOT,
+    ANCHOR_OFFICE, ANCHOR_ESTATE, ANCHOR_COYOTE, ANCHOR_BAR, ANCHOR_MAMA,
+)
+
+OUT_DIR = os.path.join(RAW_MOD, 'scenes')
 # Subtitles take TWO resources, and getting this wrong is silent in game and
 # only one line deep in the ArchiveXL log ("Resource ... failed to load").
 #
@@ -171,76 +176,23 @@ OUT_DIR = os.path.join(REPO, 'mods', 'gig-01-negative-balance', 'source', 'wkit'
 #
 # (Deceptious never hit this: OneMoreLight ships its entries file at a base-game
 # path the base map ALREADY references, overriding it, so it needed no map).
-SUBTITLE_MAP_OUT = os.path.join(REPO, 'mods', 'gig-01-negative-balance', 'source', 'wkit',
-                                'raw', 'mod', 'negative_balance', 'localization',
-                                'subtitles.json.json')
-SUBTITLE_OUT = os.path.join(REPO, 'mods', 'gig-01-negative-balance', 'source', 'wkit',
-                            'raw', 'mod', 'negative_balance', 'localization',
-                            'gig01_lines.json.json')
+SUBTITLE_MAP_OUT = os.path.join(RAW_MOD, 'localization', 'subtitles.json.json')
+SUBTITLE_OUT = os.path.join(RAW_MOD, 'localization', 'gig01_lines.json.json')
 # Depot path of the entries file, as the map has to name it.
-SUBTITLE_DEPOT = 'mod\\negative_balance\\localization\\gig01_lines.json'
+SUBTITLE_DEPOT = DEPOT + chr(92) + 'localization' + chr(92) + 'gig01_lines.json'
 
 # Where the scenes live once packed. gen_questphase.SCENES is the same string
 # and has to stay so; the lipmap is keyed by FNV1a64 of exactly this path plus
 # the scene name, so a mismatch here is a lipmap nobody ever looks up.
-SCENE_DEPOT = 'mod\\negative_balance\\scenes\\'
+SCENE_DEPOT = DEPOT + chr(92) + 'scenes' + chr(92)
 # The animLipsyncMapping ArchiveXL merges into base\localization\en-us.lipmap.
-LIPMAP_OUT = os.path.join(REPO, 'mods', 'gig-01-negative-balance', 'source', 'wkit',
-                          'raw', 'mod', 'negative_balance', 'localization',
-                          'gig01.lipmap.json')
+LIPMAP_OUT = os.path.join(RAW_MOD, 'localization', 'gig01.lipmap.json')
 
-# Scene markers. These are the same base-game NodeRefs the map pins anchor to,
-# and they are known to resolve (the pins work in-game). A scene location is
-# only a placement origin - the player does not have to be anywhere near it,
-# which is what makes it usable for a holocall.
-ANCHOR_OFFICE = '#std_arr_parking_spwn_179'
-ANCHOR_ESTATE = '#q113_dvc_arasaka_estate_camera_010'
-ANCHOR_COYOTE = '#loc_sq022_el_coyote_cojo_bar_marker'
-# The bar beat needs its OWN anchor, and not the one above.
-#
-# ANCHOR_COYOTE is at (-1260.280, -983.960, 12.040) - the base game's bar marker,
-# which sits at the pub's ENTRANCE, 10.4 m from the stools V walks to. That is
-# fine for a holocall (a scene marker is only a placement origin) and fine for
-# the epilogue, whose only actor is a kilometre away by design. It is wrong the
-# moment an actor has to stand next to the player: a 10 m offset would put
-# Johnny in the doorway.
-#
-# `#hey_rey_food_01_mp` is (-1256.635, -998.972, 12.158) - 1.65 m from
-# CCGig01Places.BarStools(), at floor level, in the same streaming sector, with
-# an IDENTITY orientation (so a spawn offset is not silently rotated). Found with
-# find_pin_anchors.py on the stool coordinates; it was the nearest globally-named
-# node of 63 candidates within 25 m.
-ANCHOR_BAR = '#hey_rey_food_01_mp'
+# THE SCENE ANCHORS ARE gig01_config.py, imported above. They were stated here
+# and in gen_questphase.py, with three comments warning that the two copies had
+# to be kept in step; the evidence for each one, and the two rejected
+# candidates for Mama's, moved there with them.
 
-# ...AND ITS LIMIT, learned 2026-08-13 from Mama Welles.
-#
-# `around_player` does NOT put the marker on the player. playtesting, hearing her from
-# a buried actor at offset (0, 0, -2.5) from an around_player marker: "still
-# feels very far, like on the right of where I am." Far and directional - so the
-# marker lands a few metres off to one side, and an offset measured from it
-# inherits that error.
-#
-# Johnny is unaffected from an identical setup, and the difference is the only
-# thing that differs between them: HIS LINES ARE `inner=True`
-# (Vo_Expression_InnerDialog) and evidently play 2D, in V's head. Hers are
-# Vo_Expression_Spoken and are positional. So:
-#
-#   inner dialog   position does not matter. around_player is fine.
-#   spoken         position is everything. Use a real anchor near the speaker.
-#
-# ...and the third line of that table, which was not known when it was written:
-# `inner_vo` sets the VO expression WITHOUT the inner-dialog subtitle styling,
-# so an ordinary NPC can be 2D and still read as an ordinary NPC. That was
-# separated in playtest on Hoshino (backlog 10k) and it is what the stand-in
-# below now uses, which removes the need to place her speaker near her at all.
-#
-# `#sq018_pepevodka` is (-1260.510, -1001.310, 13.141), 3.0 m from Mama's own
-# captured mark, and its orientation is IDENTITY, so an offset onto it is not
-# silently rotated. Two nearer candidates (`#sq018_03d_infinite_drink` at 2.9 m,
-# `#q000_kid_01b_vodka_shot` at 3.9 m) were rejected for having real rotations.
-# It stays as the scene's origin now that nothing is measured from it: a real
-# node in her own streaming sector is a better marker than one across the city.
-ANCHOR_MAMA = '#sq018_pepevodka'
 # OFFSET_MAMA WAS HERE: (-1.668, 2.505, -3.584), her mark relative to the anchor
 # and then 2.5 m down, to bury the speaker under the floor at her feet. Removed
 # 2026-08-18. The measurement was sound and the burial was still wrong, for the
@@ -252,8 +204,7 @@ ANCHOR_MAMA = '#sq018_pepevodka'
 # writes this sidecar; anything in it wins over the estimate. Missing file, or a
 # line absent from it, simply falls back - so the two halves of the gig (voiced
 # scenes, unvoiced ones) coexist without a flag.
-DURATIONS_FILE = os.path.join(REPO, 'mods', 'gig-01-negative-balance', 'source',
-                              'audio', 'durations.json')
+DURATIONS_FILE = os.path.join(SOURCE, 'audio', 'durations.json')
 try:
     with open(DURATIONS_FILE, encoding='utf-8') as _fh:
         MEASURED = json.load(_fh)
@@ -278,8 +229,7 @@ except (OSError, ValueError):
 # generator emitted before lipsync existed - no anim set, voicetag 0, empty
 # animation names - so a clone without the picks file still builds a working
 # gig, silently minus the mouths.
-LIPSYNC_PICKS = os.path.join(REPO, 'mods', 'gig-01-negative-balance', 'source',
-                             'lipsync_picks.json')
+LIPSYNC_PICKS = os.path.join(SOURCE, 'lipsync_picks.json')
 try:
     with open(LIPSYNC_PICKS, encoding='utf-8') as _fh:
         _picks = json.load(_fh)

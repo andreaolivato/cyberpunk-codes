@@ -44,6 +44,13 @@ proximity rather than action" beats a tooltip nobody can fix.
 import json
 import math
 import os
+import sys
+
+# questkit is in tools/, one level up from this gig's generators. See
+# backlog.md 21.
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from questkit import cr2w                                            # noqa: E402
 
 _TOOLS = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REPO = os.path.dirname(_TOOLS)
@@ -136,8 +143,7 @@ def box_corner(sign):
 
 
 def header(name):
-    return {'WolvenKitVersion': '8.20.0', 'WKitJsonVersion': '0.0.9',
-            'GameVersion': 2310, 'DataType': 'CR2W', 'ArchiveFileName': name}
+    return cr2w.header(name)
 
 
 def sector():

@@ -24,16 +24,40 @@ this repo.
 | `*.reds` | you, if you need gameplay logic |
 | `<name>.archive.xl` | you, by hand. The only one |
 
+and one file that makes no resource at all:
+
+| File | Holds |
+|---|---|
+| `gig02_config.py` | your paths, your LocKey prefix and your scene anchors |
+
 The generators named there are gig 01's own and live in `tools/gig01/`. Each
 hardcodes its paths and its prefix, so you copy the ones you need into
 `tools/gig02/` and re-point their constants, or edit them in place if you are
 not keeping gig 01. One gig per subdirectory is what lets a second gig keep the
 same filenames.
 
+**Re-pointing is one file.** Every path, prefix and anchor a generator needs
+comes from the gig's config module, so copying `tools/gig01/gig01_config.py` to
+`tools/gig02/gig02_config.py` and editing what is in it is the whole job: four
+names (the mod folder, the depot folder, the LocKey prefix, the quest id) and
+your scene anchors. Name it after your gig rather than reusing one name across gigs,
+so nothing depends on which directory is on `sys.path` first.
+
 The half that no gig owns is `tools/questkit/`, which they import. A generator
 reaches it by putting its own parent directory on `sys.path`, which is the line
 near the top of each one; that hop is relative, so the subdirectory can be
 called anything.
+
+| In `questkit/` | Builds |
+|---|---|
+| `scene.py` | `.scene` conversations, actors, staging, subtitles, the lipmap |
+| `questgraph.py` | the quest phase: nodes, sockets, facts, journal steps |
+| `journal.py` | journal entries, objectives, contacts and map pins |
+| `localization.py` | the onscreens resource, every LocKey string a gig ships |
+| `voice.py` | WAV to WEM through Wwise, and the voiceover map |
+| `lipsync.py` | casting a vanilla lipsync animation per line |
+| `phone.py` | the holocall treatment, baked into a copy of the take |
+| `cr2w.py` | the header every generated resource carries |
 
 ## 0. Build gig 01 first
 
@@ -62,10 +86,16 @@ mods/gig-02-your-gig/
     wkit/raw/
       your_gig.archive.xl
       mod/your_gig/   the generators write here
+tools/gig02/
+  gig02_config.py     your paths, prefixes and scene anchors
+  gen_*.py            copied from tools/gig01/ and re-pointed
 ```
 
 The build scripts take the mod folder name and derive the rest, so
-`tools\build-archive.ps1 gig-02` works once the folder exists.
+`tools\build-archive.ps1 gig-02` works once the folder exists. The generators
+are found by path, so `tools/gig02/` only has to sit directly under `tools/`,
+which is the level `questkit` is imported from. Keep the `gigNN` shape anyway if
+you are adding a gig to this repo: the tooling here matches on it.
 
 Name it `gig-NN-something`. The deploy reads the redscript module name from that
 number.
@@ -83,6 +113,36 @@ own prefix so both mods can be installed together.
 The redscript rule bites hardest. Two mods declaring the same class name in the
 same module fail the player's *entire* redscript bundle, breaking every other
 redscript mod they have. `docs/conventions.md` has the tested evidence.
+
+### The shared redscript, and why it is copied rather than imported
+
+`shared/scripts/` holds the redscript that is not about any one gig. It is
+COPIED INTO EACH MOD at build time by `tools/vendor-shared.ps1`, which rewrites
+its `module CyberpunkCodes.Shared` line to `CyberpunkCodes.Shared.<Gig>` and the
+matching `import` in your own scripts. That is what stops two gigs from
+colliding on a class name, and it is also why none of it is a runtime dependency:
+each mod ships its own copy, and a player can install one gig or all four.
+
+| File | Holds |
+|---|---|
+| `CCShared_World.reds` | spawning a puppet from a record, scattering a squad onto navmesh, proximity tests, muting an NPC's barks |
+| `CCShared_Attitude.reds` | making a spawned NPC hostile or neutral, with the retry that waits for him to stream in |
+| `CCShared_Hud.reds` | warning banners, and the big progress bar the game uses for uploads |
+| `CCShared_Mappins.reds` | markers registered at runtime, as opposed to journal pins |
+| `CCShared_Rewards.reds` | paying eddies and Street Cred |
+
+Use it by importing the module and calling the statics:
+
+```swift
+import CyberpunkCodes.Shared.*
+
+let id: EntityID = CCSharedWorld.Spawn(t"Character.your_npc", pos, yaw, n"your_tag");
+CCSharedAttitude.Hostile(this.GetGameInstance(), id);
+```
+
+`tools/check-scripts-repo.ps1 <mod>` compiles the repo through that vendoring
+without deploying anything, which is what to use while you are moving code
+around.
 
 ## 3. Write the manifest
 

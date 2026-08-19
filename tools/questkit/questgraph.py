@@ -30,6 +30,7 @@ import os    # noqa: F401
 # NodeRef. Importing it rather than restating it removes a constant that three
 # separate comments used to warn had to be "kept in step" by hand.
 from questkit.scene import ANCHOR_PLAYER
+from questkit import cr2w
 
 # --------------------------------------------------------------- per-mod config
 PHASE_NAME = None
@@ -134,11 +135,7 @@ class Builder:
             # move type-specific payload after sockets when convention expects it
             out_nodes.append({'HandleId': self.handle(), 'Data': data})
         return {
-            'Header': {
-                'WolvenKitVersion': '8.20.0', 'WKitJsonVersion': '0.0.9',
-                'GameVersion': 2310, 'DataType': 'CR2W',
-                'ArchiveFileName': PHASE_NAME,
-            },
+            'Header': cr2w.header(PHASE_NAME),
             'Data': {
                 'Version': 195, 'BuildVersion': 0,
                 'RootChunk': {

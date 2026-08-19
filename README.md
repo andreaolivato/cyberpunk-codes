@@ -71,9 +71,9 @@ BUILDING.md     toolchain, dev loop, audio pipeline
 docs/           playbooks, decisions, gotchas, research register
 tools/
   questkit/     reusable builders: scenes, quest graphs, journal, pins,
-                voice, lipsync
-  gig01/        one gig's tables and dialogue, on top of those. One
-                subdirectory per gig, so filenames are free to repeat
+                localization, voice, lipsync
+  gig01/        one gig's tables, dialogue and config, on top of those.
+                One subdirectory per gig, so filenames are free to repeat
 shared/scripts/ redscript shared between gigs, vendored per mod at build time
 mods/gig-01-negative-balance/
   docs/         story, quest design, full dialogue as text

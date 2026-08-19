@@ -55,76 +55,27 @@ would reset on load and re-pay every time the save is loaded.
 Previous decision, kept for context: no eddies at all, quest XP and in-building
 loot only, on the grounds that the point of the ending is the silence.
 
-## Dialogue script (draft 1: from the comic)
+## Dialogue script
 
-> **THIS IS THE DRAFT, NOT WHAT SHIPS.** The lines that ship are in
-> `tools/gig01/gen_scenes.py`, one `build_*()` per scene, each carrying the comic page
-> it came from and the reason for any departure from it. Fourteen scenes, 59
-> voiced lines. Read the generator when you want the current script; read this
-> section for how the story was first laid out against the comic.
->
-> The `[VDB: check]` annotations below are dead. Reuse-only was measured against
-> all 62,992 vanilla lines and **3 of 59 have a verbatim match from the right
-> speaker**, so the premise did not survive. Exactly one vanilla take ships
-> (Nix's "How's things, V?"). Everything else is ElevenLabs, **all six
-> speakers, V and Johnny included**, not just Elena and Hoshino. Audioware is
-> not used; a scene line resolves its own audio from its RUID.
+**The lines that ship are `docs/dialogue.txt`.** It is generated from the scenes
+themselves by `tools/gig01/dump_dialogue.py`, so it cannot disagree with what
+plays. Fourteen scenes, 60 spoken lines. The reasoning behind each one, the comic
+page it came from and any departure from it are in `tools/gig01/gen_scenes.py`,
+one `build_*()` per scene.
 
-### Opening holocall (from the comic, pp. 2-11)
-- V: "Wrong hour for a friendly call." [VDB: check]
-- Elena: "V? Sorry. I didn't know if you'd answer. My name's Elena Ortega." (AI voice)
-- Elena: "I'm from Heywood. Jackie Welles used to help my family."
-- V: "Ortega... yeah. Mama Welles mentioned you." [REWRITE]
-- Elena: "I didn't know who else to call. Jackie said you don't turn your back on people."
-- V: "Alright. Start from the top." [VDB: likely]
-- Elena: "I work with community accounts. People's debts are just zeroing out. No disputes. No appeals."
-- Elena: "When a debtor dies, their account should freeze. Instead, it clears. Immediately. I thought it was a glitch. It's not. Too many times."
-- Elena: "I wasn't authorized to see this. I only noticed because I handle reconciliations. My access was revoked afterward."
-- V: "Hold on. Are you safe right now?" [VDB: check]
-- Elena: "I... don't know."
-- V: "Okay. Listen to me. Go to El Coyote. Stay with Mama Welles. I'll check what I can. Where do you work?" [REWRITE, key protective beat]
-- Elena: "Sending you the location." → map pin
-- V: "Got it. Wait. That's - " / Johnny: "Fucking Arasaka..." [VDB: Johnny line likely exists]
+A first draft of the script sat here until 2026-08-19, annotated for two
+questions that are both settled now. It was removed because a second copy of the
+dialogue is a copy that eventually disagrees with the first, and three of the
+four conversations had already drifted from it. What its annotations were
+asking:
 
-### Infiltration barks
-- V: "Tapping the cams." [VDB: likely, netrunning barks]
-- V: "Upstairs." [VDB: likely]
-- V: "Clear." [VDB: certain]
-- V: "Too big to sweep." [REWRITE if missing]
-- V: "End of the line." [VDB: likely, combat/finisher lines]
-
-### Hoshino scene
-
-This is the draft taken off the comic. Two of its lines are not what shipped:
-Johnny is not in this scene at all, and Hoshino's second line became "Do you
-know who I am?". Both changes and their reasons are in `tools/gig01/gen_scenes.py`,
-`build_hoshino`.
-
-- Johnny: "That's what blood money buys. Soft chairs." [REWRITE. Stage as Johnny spawn-in by the couch]
-- Hoshino: "Mmm? You lost, merc?" (AI voice)
-- Hoshino: "You know who I am." (AI voice)
-- Johnny: "They always think names beat bullets." [REWRITE]
-- V: "I know what you signed. I know who paid for it." [REWRITE. Hardest line; fallback: let Johnny carry specifics, V stays terse]
-- V (after kill): "Ledger's closed." [REWRITE]
-- Johnny: "One signature gone. Machine keeps breathing." [REWRITE]
-
-### Terminal
-- V: "Tell me he kept his toys close." / Johnny: "Of course he did." [REWRITE both]
-- UI: SABOTAGE: UPLOADING MALWARE TO THE NETWORK, 51% … 100%
-- V: "No more payouts." [REWRITE] / Johnny: "No money, no bodies." [REWRITE]
-
-### Escape
-- V: "We gotta delta. Fast." [VDB: likely, "delta" is common V slang]
-- V: "Exit's blocked." / Johnny: "Then clear it." [VDB: check]
-- V: "Don't blink." / Johnny: "About time." [VDB: check]
-- V: "Fresh air. Still alive." / Johnny: "Smells like consequences." [REWRITE Johnny]
-
-### El Coyote Cojo epilogue
-- Mama Welles: "You look tired, mija." (existing character. Check her recorded lines; else minimal staging)
-- V: "Long night." [VDB: likely]
-- V: "She okay?" / Mama Welles: "She's in the back." / V: "Nova. I'll get a drink." [VDB: check each]
-- V: "Could use a drink." [VDB: likely]
-- Final, over the bottle, V: "She'll never know." / Johnny: "Good. Let her sleep." [REWRITE both - the money shot; if no viable V line exists, consider staging it as text-free: V looks toward the back room, Johnny gets the only line]
+- `[VDB: check]` asked whether a vanilla take could be reused for the line.
+  Measured against all 62,992 vanilla lines: 3 of 59 had a verbatim match from
+  the right speaker, which is too few to build a gig on.
+  Exactly one vanilla take ships, Nix's "How's things, V?", and every other line
+  is generated.
+- `[REWRITE]` marked a placeholder waiting for a better line. Those rewrites
+  happened in the generator, which is where the dialogue has lived since.
 
 ## Open design questions
 - ~~Which existing interior plays the office~~, DECIDED: Arasaka location at

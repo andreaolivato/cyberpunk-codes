@@ -25,12 +25,11 @@ from questkit.journal import (                                      # noqa: F401
     contact, pin_offset, map_pin, objective, folder,
 )
 
-_TOOLS = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-REPO = os.path.dirname(_TOOLS)
-OUT = os.path.join(REPO, 'mods', 'gig-01-negative-balance', 'source', 'wkit', 'raw',
-                   'mod', 'negative_balance', 'journal', 'gig01.journal.json')
+# Paths and prefixes are gig01_config.py, the file a second gig re-points.
+from gig01_config import RAW_MOD, LOCKEY_PREFIX, QUEST_ID   # noqa: E402,F401
+from questkit import cr2w                                    # noqa: E402
 
-QUEST_ID = 'cc_g01_negative_balance'
+OUT = os.path.join(RAW_MOD, 'journal', 'gig01.journal.json')
 
 # ---------------------------------------------------------------- PIN ANCHORS
 # EVERY ANCHOR HERE LIVES IN AN **ALWAYS-LOADED** BASE-GAME SECTOR, and that one
@@ -268,7 +267,7 @@ SHARD_PATH = ('onscreens/emails/quests/street_stories/' + QUEST_ID
 # "Phone messages and reply choices"; git history has the working code.
 
 
-configure(lockey_prefix='cc-g01-', anchor_pos=ANCHOR_POS, pin_pos=PIN_POS,
+configure(lockey_prefix=LOCKEY_PREFIX, anchor_pos=ANCHOR_POS, pin_pos=PIN_POS,
           no_gps=NO_GPS)
 
 
@@ -412,11 +411,7 @@ def build():
     })
 
     return {
-        'Header': {
-            'WolvenKitVersion': '8.20.0', 'WKitJsonVersion': '0.0.9',
-            'GameVersion': 2310, 'DataType': 'CR2W',
-            'ArchiveFileName': 'gig01.journal',
-        },
+        'Header': cr2w.header('gig01.journal'),
         'Data': {
             'Version': 195, 'BuildVersion': 0,
             'RootChunk': {

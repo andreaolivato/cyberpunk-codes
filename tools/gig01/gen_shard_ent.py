@@ -39,6 +39,13 @@ The authoring rules below are not optional:
 """
 import json
 import os
+import sys
+
+# questkit is in tools/, one level up from this gig's generators. See
+# backlog.md 21.
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from questkit import cr2w                                            # noqa: E402
 
 _TOOLS = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REPO = os.path.dirname(_TOOLS)
@@ -312,9 +319,7 @@ def build():
     }
 
     return {
-        'Header': {'WolvenKitVersion': '8.20.0', 'WKitJsonVersion': '0.0.9',
-                   'GameVersion': 2310, 'DataType': 'CR2W',
-                   'ArchiveFileName': 'cc_g01_shard.ent'},
+        'Header': cr2w.header('cc_g01_shard.ent'),
         'Data': {
             'Version': 195, 'BuildVersion': 0,
             'RootChunk': {

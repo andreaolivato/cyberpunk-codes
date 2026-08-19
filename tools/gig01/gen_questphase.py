@@ -25,42 +25,25 @@ from questkit.questgraph import (                                   # noqa: F401
 
 configure(phase_name='gig01.questphase')
 
-_TOOLS = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-REPO = os.path.dirname(_TOOLS)
-OUT = os.path.join(REPO, 'mods', 'gig-01-negative-balance', 'source', 'wkit', 'raw',
-                   'mod', 'negative_balance', 'quest', 'gig01.questphase.json')
+# Paths and scene anchors are gig01_config.py, the file a second gig re-points.
+from gig01_config import (                                          # noqa: E402
+    RAW_MOD, DEPOT, QUEST_ID,
+    ANCHOR_OFFICE, ANCHOR_ESTATE, ANCHOR_COYOTE, ANCHOR_BAR, ANCHOR_MAMA,
+)
+
+OUT = os.path.join(RAW_MOD, 'quest', 'gig01.questphase.json')
 
 CONTACT = 'contacts/elena_ortega'
-QUEST = 'quests/street_stories/cc_g01_negative_balance'
-POI = 'points_of_interest/street_stories/cc_g01_negative_balance'
+QUEST = 'quests/street_stories/' + QUEST_ID
+POI = 'points_of_interest/street_stories/' + QUEST_ID
 
-SCENES = 'mod\\negative_balance\\scenes\\'
+# The same string gen_scenes.SCENE_DEPOT builds, and it has to stay so: the
+# lipmap is keyed by FNV1a64 of exactly this path plus the scene name.
+SCENES = DEPOT + chr(92) + 'scenes' + chr(92)
 
-# Scene markers. Same resolvable base-game NodeRefs the map pins anchor to
-# (tools/gig01/gen_journal.py) - a scene location must resolve for the same reason a
-# pin anchor must.
-ANCHOR_OFFICE = '#std_arr_parking_spwn_179'
-ANCHOR_ESTATE = '#q113_dvc_arasaka_estate_camera_010'
-ANCHOR_COYOTE = '#loc_sq022_el_coyote_cojo_bar_marker'
-# The bar beat needs an anchor next to the STOOLS, not the pub entrance where
-# ANCHOR_COYOTE sits - Johnny has to stand beside V for that one. Same node
-# gen_scenes.ANCHOR_BAR uses; the two must stay in step.
-ANCHOR_BAR = '#hey_rey_food_01_mp'
-# Mama Welles speaks a POSITIONAL line (Vo_Expression_Spoken), and an
-# around_player marker is not on the player - it lands a few metres to one side,
-# which is audible. She gets a fixed anchor 3 m from her mark instead. See
-# gen_scenes.ANCHOR_MAMA; the two must stay in step.
-ANCHOR_MAMA = '#sq018_pepevodka'
-# MAMA WELLES HERSELF, not the marker beside her. ANCHOR_MAMA is a bottle on a
-# shelf used to place a scene; this is the NPC, and it is the reference her own
-# vanilla scene uses to acquire her (`spawnSet` entry `mama_welles`, reference
-# `#mama_welles` - confirmed in game by our epilogue acquiring her through it).
-#
-# NOTHING USES IT. Kept because the fact is worth having written down, and with
-# the warning attached: addressing her through it from a QUEST node stalled the
-# graph on 2026-08-15 (see the note where add_voiceset used to be). Resolving for
-# a scene actor and resolving for a quest node are not the same thing.
-ANCHOR_MAMA_NPC = '#mama_welles'
+# The scene anchors are gig01_config.py, imported above, along with the
+# evidence for each one. They were stated here and in gen_scenes.py, and three
+# comments used to warn that the copies had to be kept in step.
 
 # Both opening conversations (Elena's and Nix's) are holocalls, built as real
 # .scene files. They replaced an SMS thread of journal messages and reply
