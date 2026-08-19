@@ -75,6 +75,21 @@ def line_texts(builders):
     return out
 
 
+def holocall_lines(builders):
+    """{(scene, key)} for every line spoken through the phone.
+
+    Same source as line_texts and for the same reason: the scene builder already
+    says which sections are holocalls, so nothing here has to be listed twice.
+    These are the takes that get the phone filter baked in - questkit/phone.py.
+    """
+    out = set()
+    for build in builders:
+        scene = build()
+        for key in scene.holocall_keys:
+            out.add((scene.name, key))
+    return out
+
+
 # ------------------------------------------------------------------ placeholders
 def write_tone(path, ms, key):
     """A tone of the right length, pitched by the key so you can tell lines

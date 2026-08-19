@@ -578,6 +578,19 @@ Two things about the mechanism, which is the part worth copying:
   workable and is not. Exactly one vanilla take ships, Nix's "How's things, V?",
   which points at vanilla's own `stringId` and so costs nothing.
 
+- **A line that arrives on V's phone is a different asset, not the same asset
+  played differently.** The base game ships four processed takes of a voiced
+  line, `vo`, `vo_holocall`, `vo_helmet` and `vo_rewinded`, sharing one
+  stringId, and ArchiveXL can register only the main map. So the treatment has
+  to be baked into the clip a mod ships, which `tools/questkit/phone.py` does
+  for the 17 lines Elena and Nix speak on the phone.
+
+  The treatment is not an EQ. Vanilla keeps the line's short-time magnitude
+  spectrum and discards its phase, and two builds that fitted the magnitude
+  correctly still sounded wrong because of it. `backlog.md` 15 has the
+  measurement and both wrong answers; `gotchas.md` 41 and 42 have the parts
+  that generalise.
+
 The corpus that measurement came from is `tools/vo_corpus.py`, which indexes
 every spoken line in the game and applies well beyond this question.
 

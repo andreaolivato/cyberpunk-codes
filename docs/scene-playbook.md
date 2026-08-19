@@ -982,6 +982,17 @@ Two consequences:
   nothing shipped. Three lines in gig 01 do this (`backlog.md` 2c).
 - **`customVoEvent` is still a dead end.** `scnDialogLineVoParams` has one, but
   resolving it needs a real soundbank. Do not emit them.
+- **The `_holocall` / `_helmet` / `_rewinded` siblings are processed COPIES of
+  the same lines, and a mod cannot register one.** They hold the same stringIds
+  as the main map, pointing at a `vo_holocall\` (or `_helmet`, `_rewinded`)
+  twin of the same `.wem`, with the effect baked into the audio. The engine
+  loads all five chunks from `volanguagedatamap.json`, and ArchiveXL appends
+  only to that one array, so a mod gets one clip per RUID. Bake the treatment
+  into the clip instead: `tools/questkit/phone.py` carries the phone one,
+  measured off the shipped pairs. Note what that treatment IS before imitating
+  it: vanilla keeps the line's magnitude spectrum and discards its phase, so an
+  EQ alone cannot sound like a call however far it is pushed. `backlog.md` 15,
+  `gotchas.md` 41 and 42.
 
 **AUDIOWARE IS NOT USED AND IS NOT A DEPENDENCY** (settled 2026-08-13). This
 paragraph used to reserve it for the scripted-caption beats, since nothing in the

@@ -557,3 +557,99 @@ Never renumber. Append.
     Size the streaming box from the content, not the map: the node's own
     `MaxStreamingDistance` plus a margin. A whole-map box is correct only for a
     mod that edits the whole map. `backlog.md` 14.
+
+39. **A mod CAN ship a node that a map pin anchors to, and CAN ship an
+    always-loaded sector to keep it resolvable.** Both were written down as
+    impossible here for months, and both are wrong.
+
+    A pin resolves against a node of your own if the NodeRef is written in the
+    long form (gotcha 34). Written short it is not a name, and the pin is never
+    even requested: no line appears in `ArchiveXL.log` at all, which is a
+    different failure from the two the log does report.
+
+    Resolution happens once, when the pin's entry is activated, and the result
+    is cached. A quest activates its pins while the player is across the city,
+    so a node in an ordinary Exterior sector of yours is cold at that moment
+    and the pin fails with `Can't resolve ... position`. Walking there
+    afterwards does not fix it, because nothing asks again.
+
+    The answer is a sector of your own declared `category: AlwaysLoaded`,
+    `level: 255`, `rldGridCell` 0 and a float-max streaming box, which is what
+    the game's own three always-loaded sectors carry. Nodes in one resolve from
+    anywhere on the map. Measured 2026-08-18 with an eight-slot bench: the same
+    marker node failed in an Exterior sector and resolved in an always-loaded
+    one, cold, from the far side of Night City.
+
+    That removes the constraint that shaped every pin decision in this project,
+    which was to find a base-game always-loaded node within ~50 m of wherever a
+    pin was wanted. A sector of marker nodes and no geometry costs nothing to
+    keep resident.
+
+    Node type is not a factor: `worldStaticMarkerNode` and `worldEntityNode`
+    behaved identically as anchors. `backlog.md` 11 and 20.
+
+40. **A GPS guidance route is absolute, not relative, so keep the chain
+    short.** `gameJournalQuestGuidanceMarker` works from a mod, on nodes the
+    mod ships, and the game draws a real walking route through them. Two rules
+    come with it and neither is optional.
+
+    The chain always runs from its own first waypoint to its pin, and it does
+    not know where the player has got to. A player standing halfway along a
+    long chain is routed BACK to the start of it and then forward again, which
+    on a twelve-waypoint route up a hillside drew a loop several hundred metres
+    long. Near the first waypoint the two readings are close enough that the
+    line flickers in and out.
+
+    Vanilla never exposes this, and the reason is visible in the shipped data:
+    all 44 guidance markers cover short discontinuities, 1 to 4 per pin, at
+    places like the Dollhouse exit and the Atlantis staircase. Use them for the
+    stretch the ordinary router cannot do, a climb or a staircase, and let it
+    handle the approach.
+
+    The second rule is height. A waypoint must sit above the ground, not on it.
+    Points captured at the player's own position drew no route at all; the same
+    points raised 1.7 m drew one. And a single unusable waypoint silences the
+    WHOLE route rather than breaking one leg, so a chain whose second half
+    drew on its own drew nothing once a bad first half was put in front of it.
+    A route that fails does not degrade, it vanishes, so bisection is the only
+    way to find the point at fault.
+
+    All measured in game 2026-08-18. `backlog.md` 20.
+
+41. **A voiced line can exist in four processed versions, the processing is
+    baked into the asset, and a mod cannot register a variant.** Under
+    `base\localization\<lang>\` the game ships `vo`, `vo_holocall`, `vo_helmet` and
+    `vo_rewinded`, with a voiceover map for each. A twin shares its filename, so
+    its stringId, with the `vo` original: 3,036 of the 78,026 English clips have
+    a holocall twin, and all 2,981 ids in `voiceovermap_holocall.json` are in
+    the main maps too.
+
+    `volanguagedatamap.json` is what the engine loads, and its `en-us` entry
+    lists all five chunks in one array. ArchiveXL appends to that array through
+    `localization: vomaps:` and accepts no other localization key than
+    `onscreens`, `subtitles`, `vomaps`, `lipmaps` and `extend`. So a mod gets
+    one clip per RUID: whatever processing a line needs has to be baked into the
+    clip the mod ships. That is only a constraint if the same RUID must be heard
+    both ways, and it never is, because a RUID belongs to one line in one scene.
+
+    `isHolocallSpeaker` routes a line into the phone UI and makes it play 2D. It
+    applies no filter.
+
+42. **The holocall treatment is a phase effect, not an EQ, and no amount of EQ
+    will imitate it.** Vanilla keeps the source's short-time magnitude spectrum
+    and discards its phase. Measured on a vanilla clip against its own twin,
+    coherence is 0.02 above 500 Hz; a known linear filter measured the same way
+    reads 0.20.
+
+    Four properties of the shipped assets follow from that and are otherwise
+    inexplicable: the stereo channels decorrelate to a sample correlation of
+    0.04 while their envelopes track at 0.96, the file runs about 100 ms long,
+    it starts about 9 ms late, and its crest factor drops 4 to 5 dB without a
+    limiter being involved.
+
+    The practical consequence for any mod imitating a processed vanilla voice:
+    fit the magnitude curve on the stereo MID and energy-weighted, then add the
+    phase treatment. Fitting one channel with a median of frame ratios reads
+    about 10 dB too shallow through the low mids, and even a perfect magnitude
+    match sounds, in a field report, *"just a tad different"*. `backlog.md` 15
+    carries the numbers and `tools/questkit/phone.py` the implementation.

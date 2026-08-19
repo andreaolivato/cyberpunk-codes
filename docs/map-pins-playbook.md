@@ -38,7 +38,10 @@ POI, ...)` when the gig starts.
 Activation is irreversible. Activating registers the pin; setting it back to Inactive
 does not take the marker off the map. See "A pin cannot be un-shown" below.
 
-### 3. The pin references a base-game node in an always-loaded sector
+### 3. The pin references a node in an always-loaded sector
+
+Either a base-game one, or one your own mod ships. See "Your own anchors" below
+for the second, which is newer and removes most of the work in this ingredient.
 
 The `offset` is the exact vector from that node to the target.
 
@@ -62,8 +65,11 @@ walked to.
 
 Night City has exactly three sectors the engine never unloads:
 `always_loaded_0/1/2.streamingsector`, `category: AlwaysLoaded`, float-max
-streaming box. They hold 5211 globally-named nodes between them. Those are the
-only safe anchors. Every pin in gig 01 found one within 53 m.
+streaming box. They hold 5211 globally-named nodes between them, and every pin
+in gig 01 found one within 53 m.
+
+They are not the only safe anchors, and the rest of this file said so until
+2026-08-18. **You can ship an always-loaded sector of your own.** See below.
 
 Confirmed in game 2026-08-14, all nine pins plus the POI:
 
@@ -79,7 +85,8 @@ All tried in game on 2026-08-14. The log line tells the three apart.
 |---|---|---|
 | anchor in an ordinary `exterior_*` sector | `Can't resolve ... position` | name resolved, node not streamed in |
 | no NodeRef, world coords in `offset` | *(no line at all)* | a quest pin with no reference is never spawned as a mappin, so nothing is asked for |
-| a marker node you ship yourself | `Can't resolve ... reference` | the name was written in the SHORT form, which is not a name. See the correction below |
+| a marker node you ship yourself, named SHORT | *no line at all* | a short `#name` is not a name, so the pin carries no usable reference and is never requested |
+| a marker node you ship yourself, named LONG, in an ordinary sector | `Can't resolve ... position` | the name resolved. The sector was cold when the pin was activated |
 
 `position` means the name resolved and the node was not there. `reference` means
 the name meant nothing.
@@ -231,11 +238,14 @@ better, because it does not have to guess which markers are yours.
 Note the shape, which is gotcha 21: the id is a script field and does not survive
 a load, while the marker it refers to might.
 
-## A forced GPS route: the mechanism exists and a mod cannot use it
+## A forced GPS route: a mod CAN draw one, for a short stretch
 
 Asked in playtest on 2026-08-15: *"study if possible to provide a specific path
-for the GPS instead of using the auto GPS"*. The answer is "yes, and not usable here",
-recorded here so it does not get re-researched.
+for the GPS instead of using the auto GPS"*. This section said "yes, and not
+usable here" until 2026-08-18, on the grounds that a guidance marker needs a
+real node and a mod could not ship one. **That is wrong**, and the section below
+is corrected: a mod can ship the nodes, the game does draw the route, and the
+real limits are different ones.
 
 The class is `gameJournalQuestGuidanceMarker`, and it is a child of the map pin.
 Not of the objective, and not of the quest. Found by grepping the shipped
@@ -255,27 +265,59 @@ The whole corpus is 44 markers under 18 pins. `pathfindingType` is `Navmesh`
 order, and CDPR uses them where the router would otherwise embarrass itself: the
 Dollhouse exit, the Lair escape, the Atlantis staircase, Rogue's back rooms.
 
-**Why we cannot use it: the record has no offset.** It is a bare `nodeRef`, so a
-waypoint lands exactly on a node the game already ships. Our pins get their
-position from `ANCHOR_POS + offset`, which is what makes a distant anchor
-harmless. A guidance marker has no such escape.
+**The record has no offset.** It is a bare `nodeRef`, so a waypoint lands
+exactly on the node it names. A quest pin escapes that with `ANCHOR_POS +
+offset`; a guidance marker cannot. So a route needs a node at every waypoint,
+and now that a mod can ship those (see "Your own anchors" above), that is no
+longer the blocker.
 
-So it needs real base-game nodes at the waypoints, and a North Oak hillside has
-none. Measured with `find_pin_anchors.py` for gig 01's six way-in points:
+### The three rules, all measured in game 2026-08-18
+
+**Keep the chain short.** It is ABSOLUTE, not relative: it always runs from its
+first waypoint to its pin and has no idea where the player has got to, so a
+player halfway along one is routed back to its start and then forward again. On
+a twelve-waypoint route up a hillside that drew a loop several hundred metres
+long, and near the first waypoint the line flickers in and out as the router
+switches between two nearly equal answers. Every one of vanilla's 44 markers
+covers a short discontinuity, 1 to 4 per pin. Use them for a staircase or a
+climb and let the ordinary router do the approach.
+
+**Raise the waypoints off the ground.** Points recorded at the player's own
+position, which is his feet, drew no route at all. The same points raised 1.7 m
+drew one.
+
+**Every waypoint has to be usable.** One bad one silences the whole route rather
+than breaking a single leg: a chain whose second half drew on its own drew
+nothing once a bad first half was put in front of it. A failing route gives no
+clue where it failed, so bisecting the chain is the only way to find out.
+
+**`enableGPS` must be 1 on the pin that carries the markers.** The flag reads
+like it only governs the road route to the pin. Set to 0, the guidance markers
+do not draw either.
+
+### Why gig 01 does not use it
+
+Its case is an approach, not a discontinuity: 300 m of hillside that the player
+walks along, which is exactly what the first rule rules out. A drawn route was
+built on this mechanism and reverted the same evening. `backlog.md` 20.
+
+The measurement below is what sent the original attempt down the base-game-node
+route, and it is kept because it is still the right check to run first: if real
+nodes are near your waypoints you need none of your own.
 
 | Waypoint | Nearest always-loaded node |
 |---|---|
 | inside the gate | 20 m |
 | the other five | 52-75 m |
 
-A route drawn through points 50-75 m off is worse than no route, and shipping
-our own marker nodes did not resolve when it was tried. See the correction
-above before repeating that: it was tried with the short-form name, which is
-not a name the engine accepts, and the long form does resolve.
+A route drawn through points 50-75 m off is worse than no route. Shipping our
+own marker nodes is the answer to that and it works, but the chain rules above
+are what decide whether a route is worth drawing at all.
 
-So the chain of pins is the path. One pin active at a time, advanced by script as
-the player reaches each: `Gig01_Encounter.ShowWayInMarker`. It is not a route
-line on the minimap, but it is the nearest thing a mod can build.
+So for gig 01 the chain of pins is still the path. One pin active at a time,
+advanced by script as the player reaches each:
+`Gig01_Encounter.ShowWayInMarker`. It is not a route line on the minimap, and
+for a long approach it is the better of the two.
 
 Two things to re-check before concluding otherwise on a future gig:
 
@@ -302,6 +344,50 @@ answer to most "what does vanilla actually do here?" questions about journal
 data.
 
 In this repo: `NO_GPS` in `tools/gen_journal.py`, currently `{'pin_wayin'}`.
+
+## Your own anchors, and an always-loaded sector to hold them
+
+Measured in game 2026-08-18. This replaces the advice above about hunting for a
+base-game node near your target.
+
+**Write the NodeRef in the long form.** `$/03_night_city/#district/area/#name`
+in the node's `QuestPrefabRefHash`. A short `#name` never registers, and a pin
+that references one produces no log line at all, which is a third failure mode
+on top of the two in the table above.
+
+**Put the node in an always-loaded sector of your own.** A pin resolves ONCE,
+when its entry is activated, and the answer is cached. A quest activates its
+pins while the player is on the far side of the city, so a node in an ordinary
+Exterior sector of yours is not streamed at that moment and the pin fails with
+`position`. Walking there later does not fix it, because nothing asks again.
+
+The sector takes the same shape the game's own three carry:
+
+```
+category      AlwaysLoaded
+level         255
+rldGridCell   0                    in the streaming block descriptor
+streamingBox  float-max both corners
+```
+
+Nodes in one resolve from anywhere on the map. A sector holding marker nodes
+and no geometry costs nothing to keep resident.
+
+**Use `worldStaticMarkerNode`**, which is what the game's own always-loaded
+sectors hold: 4500 of them and no entity nodes at all. An entity node works
+identically as an anchor, so this is convention rather than a requirement.
+
+Two traps in authoring the sector, both of which cost a build:
+
+- `variantIndices` is `[0]` however many nodes there are. It is not a node
+  index, and one entry per node silently drops everything after the first.
+- HandleIds are file-wide. A marker node owns a second handle for its inner
+  `worldSpawnPointMarker`, so they cannot be the node index. Two nodes both
+  writing handle 1 fails inside the CName converter of the NEXT node, three
+  nodes away from the actual fault.
+
+With this, `pin.offset` can be zero and the anchor sits exactly where the pin
+belongs. `find_pin_anchors.py` and the `ANCHOR_POS` table become optional.
 
 ## Adding a pin to a new gig
 

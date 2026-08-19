@@ -526,6 +526,10 @@ class Scene:
         # duration up.
         self.line_text = {}
         self.line_key = {}
+        # Keys whose line is spoken through the phone. section() fills it, and
+        # gen_voice reads it to know which takes get the phone filter baked in.
+        # See questkit/phone.py and docs/backlog.md 15.
+        self.holocall_keys = set()
         # Lines pointed at a vanilla stringId instead of one of ours, reported
         # at write time so a reuse can never happen by accident or unnoticed.
         self.reused = []
@@ -1159,6 +1163,11 @@ class Scene:
         didn't have time to check his mouth."*
         """
         nid = self._nid()
+        if holocall:
+            for idx, _text in spoken:
+                key = self.line_key.get(idx)
+                if key is not None:
+                    self.holocall_keys.add(key)
         events = []
         # LEAD-IN. A dialogue event at startTime 0 fires the instant the section
         # opens, and playtesting reported Elena's first line never appearing while the

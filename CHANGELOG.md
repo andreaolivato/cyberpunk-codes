@@ -5,6 +5,17 @@ Negative Balance releases, newest first. The same changelog is on the mod's
 
 ---
 
+## 1.2.2 (2026-08-19)
+
+Safe to install mid-save. Nothing to restart.
+
+- **Changed: callers now sound like they are on the phone.** Elena's and Nix's
+  holocall lines get the same treatment the base game gives its own calls,
+  instead of playing as the flat studio take used for a line spoken in the room.
+  17 lines.
+
+---
+
 ## 1.2.1 (2026-08-18)
 
 Safe to install mid-save. Nothing to restart.

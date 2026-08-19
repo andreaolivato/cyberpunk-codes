@@ -34,9 +34,10 @@ being given it.
 | 6 | The `[F]` interaction prompt on a mod-placed object. UNSOLVED and deliberately parked; seven approaches ruled out, each with its outcome |
 | 10h | The questphase is registered under two quest roots. Deliberate. Measured against a player's log in 14: only one root is ever patched, so it is not a fault |
 | 10i | Reload crashes on heavily modded installs. Two reporters, same symptom. No mechanism found; the A/B test is now deterministic, see 14 |
-| 15 | Holocall lines play flat. Vanilla filters a voice arriving through the phone; ours is the same studio clip as a line spoken in the room. Not started |
+| 15 | Holocall lines play flat. ANSWERED AND BUILT 2026-08-19. Vanilla keeps the line's magnitude spectrum and discards its phase, which is why no EQ ever sounded right; `tools/questkit/phone.py` does the same. Built and deployed, awaiting a playtest |
 | 16 | Johnny appears while V is driving, staged for a V standing still. Gate the three free-roaming beats on movement state, with a bound so the gig cannot stall |
 | 17 | The spawned guards huddle where the navmesh dropped them and do not react to V. A hostile attitude is not perception; 11 is the structural fix and is unsolved |
+| 21 | A second gig needs its generators in a subdirectory. Agreed; what is left is the export allowlist line, the `sys.path` hop and the docs that list the loop |
 
 Everything else is closed. Two entries look open and are not: 2f (re-time
 scenes from real clip length) shipped as `durations.json`, and 0b is the
@@ -55,9 +56,11 @@ release checklist, all of it struck through.
 | 5 | Three refinements from playing the finished gig |
 | 7, 8 | Post-release bug reports and their fixes, including the office doors |
 | 9 | Placing a scene actor relative to the player. Corrects two claims this register had wrong, and deletes the burial-and-lift workaround built on them |
-| 11 | A node this mod ships CAN be addressed by name, in the long form only. Corrects the map-pin playbook, and opens communities as the route to a mod-placed NPC |
+| 11 | A node this mod ships CAN be addressed by name, in the long form only. Corrects the map-pin playbook, and opens communities as the route to a mod-placed NPC. Its one open half closed in 20 |
 | 13 | Three properties the game silently rejects, and the field that was credited with fixing Hoshino for months without ever running |
 | 14 | The world grid, derived: cell size, the rldGridCell packing, and why a whole-map streaming box was wrong |
+| 15 | The holocall treatment: baked into separate assets, and a phase effect rather than a filter. Includes the two wrong answers |
+| 20 | A pin CAN anchor to a node this mod ships, and a mod CAN ship an always-loaded sector to keep it resolvable. Also why the drawn route built on it was reverted |
 | 18 | El Coyote Cojo is shut until Heroes is finished, measured across three saves. The gig waits for it and says so |
 | 19 | The Mama Welles stand-in, and the whole fallback path behind it, deleted |
 | 10 | The 1.2.0 bug pass: a fast-travel lock bound to the wrong state, a gig that never switched itself off, the guard spawn, a decline that answered, and (10k) a voice-only actor buried into the room below. 10h and 10i are the two still open |
@@ -2128,7 +2131,7 @@ everything, and would explain unrelated mods breaking too.
 
 ---
 
-## 11. Can a node this mod ships be addressed by name? YES, measured 2026-08-17
+## 11. Can a node this mod ships be addressed by name? YES, measured 2026-08-17. Fully closed by 20
 
 The question decides how a mod places a custom NPC who has to speak. A scene
 acquires an actor through a NodeRef, and so does every quest node that could
@@ -2220,7 +2223,14 @@ So the honest statement is not "a mod cannot place an NPC". It is that
 **Placing one is UNSOLVED.** How a `.community` resource gets bound to the world
 was not established, and nothing here should be read as a recipe.
 
-### What it is worth, and what is still open
+### What it is worth, and the half that 20 later closed
+
+**ANSWERED IN 20, 2026-08-18: a pin DOES anchor to a node this mod ships, in
+the long form, and a mod can ship an always-loaded sector so that it resolves
+from anywhere.** The paragraph below is what this section said before that was
+measured, and it is kept because the question it asks is the one 20 answers.
+Note that the drawn route built on the finding was reverted; the anchoring is
+what survives.
 
 A pin cannot currently anchor to a node a mod ships, which is why gig 01 draws
 its route to the North Oak estate as a chain of markers advanced by script.
@@ -2527,7 +2537,11 @@ Deploy, walk to the office, confirm the shard renders and still fires the
 proximity read. A sector that stopped loading shows up immediately as a missing
 shard, and that failure is the whole local test.
 
-## 15. Holocall lines are missing the phone filter. Open, not started
+## 15. Holocall lines are missing the phone filter. MEASURED AND BUILT 2026-08-18
+
+**The answer is the section after this one.** What follows first is the entry
+as it was written, kept because one of its two guesses was wrong in a way worth
+seeing: the effect is not a telephone band-pass.
 
 Vanilla holocall audio is not the same recording played flat. A voice arriving
 through V's phone is band-limited and processed: thinner, with the low end
@@ -2595,6 +2609,168 @@ mod is missing a flag somewhere and baking would double the processing.
   `_holocall` sibling maps.
 - **2a** is why a mod voiceover map is the audio route at all.
 - **2f** is the clip-length re-timing that `durations.json` closed.
+
+## THE ANSWER, 2026-08-19. It is not a filter, and that took three attempts
+
+**Read this rather than the entry above.** The entry proposed a telephone
+band-pass and asked whether vanilla bakes the effect or applies it at runtime.
+Vanilla bakes it. The effect is not a band-pass, and it is not an EQ at all.
+
+Two intermediate answers were wrong on the way here, and both are kept below
+because the way they were wrong is the useful part.
+
+### Vanilla bakes it, and a mod cannot register a variant
+
+The game ships four processed versions of a voiced line, in four sibling
+directories under `base\localization\<lang>\`, with a voiceover map for each: `vo`,
+`vo_holocall`, `vo_helmet`, `vo_rewinded`. A twin carries the SAME filename as
+its `vo` original, so the same stringId. Of the 78,026 English `vo` clips, 3,036
+have a holocall twin, and every one of the 2,981 ids in
+`voiceovermap_holocall.json` is present in the main maps as well.
+
+`vo_corpus.py` has known this since it was written: it drops the three processed
+directories when building a reference set, and says why. Nobody had joined it to
+this question.
+
+`volanguagedatamap.json` is what the engine loads, and its `en-us` entry lists
+all five map chunks in one array:
+
+```
+base\localization\en-us\voiceovermap.json
+base\localization\en-us\voiceovermap_1.json
+base\localization\en-us\voiceovermap_helmet.json
+base\localization\en-us\voiceovermap_holocall.json
+base\localization\en-us\voiceovermap_rewinded.json
+```
+
+ArchiveXL appends to that array and to nothing else. Its localization parser
+accepts exactly `onscreens`, `subtitles`, `vomaps`, `lipmaps` and `extend`
+(`src/App/Extensions/Localization/Config.cpp`). So a mod gets one clip per RUID
+and has to bake in whatever treatment the line needs. That costs nothing here,
+because a RUID belongs to one line in one scene.
+
+`isHolocallSpeaker` routes a line into the phone UI and makes it play 2D. It
+applies no filter, which is why ours had sounded like the room.
+
+### The mechanism: magnitude kept, waveform discarded
+
+The decisive measurement is a same-source comparison. Take a vanilla `vo` clip,
+run our filter over it, and compare BOTH results against the same original.
+
+| | correlation with the source |
+|---|---|
+| vanilla's holocall | 0.22 to 0.38 |
+| our filter, which is a known linear filter | 0.48 to 0.58 |
+
+Per-frequency coherence says it more sharply: **0.02 above 500 Hz for vanilla,
+against 0.20 for a known linear filter measured the same way.** That estimator
+is biased low, which is why the linear filter was run through it as a control,
+and the ratio is what matters. Vanilla is an order of magnitude less linear than
+any filter can be.
+
+So vanilla keeps the source's short-time MAGNITUDE spectrum and throws its phase
+away. Everything else in the assets follows from that one fact, and none of it
+had an explanation before:
+
+- the two stereo channels decorrelated, sample correlation about 0.04, while
+  their envelopes track at 0.96: two independent draws of the phase;
+- the output running about 100 ms long and about 9 ms late: the STFT;
+- crest factor falling from 19-23 dB to 15-17.6 dB: random phase is less peaky
+  than speech, so this was never the limiter it was first read as.
+
+### Wrong answer 1: fitting the magnitude of the wrong channel
+
+The first build measured the LEFT channel, taking a median of per-frame ratios,
+and fitted a biquad cascade to 0.79 dB rms. It measured as correct and sounded,
+in the field report, *"just a tad different"*.
+
+Two errors, both pushing the same way. **A mono clip has to match the stereo
+MID, (L+R)/2, not one channel**, because that is what a mono clip is heard as,
+and vanilla's decorrelated channels cancel by 4 to 9 dB through the low mids
+when summed. And **the estimator has to be energy-weighted**, because a median
+of per-frame ratios under-weights exactly the frames where the processing bites
+hardest.
+
+Together those made the target about 10 dB too shallow in the low mids and 3 dB
+too generous at 1 kHz.
+
+### Wrong answer 2: the corrected magnitude, still only a filter
+
+Refitting to the mid-channel target deepened the scoop by 10 dB and shrank the
+1 kHz lift by 3 dB. Per-clip spread across the seven pairs is 2 to 4 dB from
+200 Hz up, so the shape is a property of the processing rather than of a
+performance, and the fit reproduces it to 1.17 dB rms with both sample rates
+converging on the same filter.
+
+On vanilla's own source the tone was then within 2 to 4 dB. It still sounded
+wrong, because tone was never the thing that was missing.
+
+### What shipped
+
+`tools/questkit/phone.py`, standard library only on the default Python 3.13:
+
+1. the fitted EQ cascade, high-pass at 216 Hz plus four bells and a top shelf;
+2. **the smear**, an STFT that keeps each bin's magnitude and rotates its phase
+   towards noise by `SMEAR`, Hann in and out at a quarter hop so it sums to
+   unity and `SMEAR = 0` is exactly transparent, verified at 7e-10;
+3. a gentle compressor with look-ahead, a soft clip aimed at a crest target, and
+   a gate that zeroes the pauses the way vanilla's do.
+
+`SMEAR = 0.35` is an ear decision, made against vanilla's own Regina take
+filtered and levelled to sit beside it. 0.5 was *"a bit too much"*, 0.25 too
+little, and 0.35 was called *"basically same as the vanilla"*.
+
+The rotation is drawn from a fixed seed, so the same master always produces the
+same file. Verified by md5 across two runs, which is what makes it safe for the
+filtered takes to be gitignored rather than committed.
+
+### Two things tried and dropped, so they are not tried again
+
+- **A drifting delay ("warble")**, a fraction of a millisecond at a few Hz. It
+  destroys waveform coherence while leaving the voice natural, and it explains
+  something the smear does not: that the best single time-alignment between a
+  vanilla pair only correlates at 0.33 to 0.46. It lost the ear test and the
+  code is gone.
+- **Smearing only above a crossover**, tried at 800 Hz on the theory that an
+  even smear costs the voice its body. Flat won. The code is gone.
+
+### The build route
+
+`gen_scenes` records which line keys are holocalls, from the same `holocall=True`
+that sets `isHolocallSpeaker`, so there is one source of truth and it cannot
+drift. `gen_voice` filters those masters into `source/audio/holocall/`, keeping
+the filename, and hands THAT file to Wwise. The master is never touched.
+
+The derived folder is gitignored, on the `placeholder/` precedent: derived by a
+committed tool from a committed input, and reproducible. A filename suffix was
+considered and rejected, because `__m` already means "the male-V take" and a
+second suffix on the same axis would need `__holofilter__m`; a listing of
+`source/audio/` also stops telling you at a glance which lines have real audio.
+
+**Masters are always dry.** A pre-filtered take in `source/audio/` would be
+filtered twice and nothing would catch it.
+
+### Cost and blast radius
+
+`gen_voice` end to end: 31 s, of which the filter is most of it. Of the 114
+`.wem` in the tree, exactly 17 changed, so Wwise is deterministic for unchanged
+inputs and there is no churn. `durations.json` regenerated identical across all
+59 entries and `gen_scenes` regenerates byte-identically, so **the instruction in
+the entry above to re-time the scenes does not apply to this change**: the filter
+is sample-for-sample the same length.
+
+### One thing deliberately not reproduced
+
+Vanilla's holocall assets are stereo. Ours stay mono, because a holocall plays
+2D through the phone UI either way, and the mid is what the measurement targets.
+
+### Related
+
+- **2a** is why a mod voiceover map is the audio route at all.
+- **2f** is the clip-length re-timing that `durations.json` closed.
+- `gotchas.md` 41 states the four-variant asset system and the mechanism, for
+  gigs 02-04.
+- `scene-playbook.md` covers holocalls and the voiceover map.
 
 ## 16. Johnny appears while V is driving. Reported 2026-08-18, open
 
@@ -2927,3 +3103,165 @@ a graph branch to maintain.
   was correct and is now moot. What survives from it is the finding it rested on,
   which is 10k's: a marker's height is not a floor.
 - **7d** is why the real Mama must be ACQUIRED rather than stood next to.
+
+---
+
+## 20. The pin lab: three things that were impossible are not. ANSWERED AND CLOSED 2026-08-18
+
+11 left one question open, and it was the cheapest thing on the register: does
+a quest map pin resolve against a LONG-FORM NodeRef of a node this mod ships?
+It was answered, along with four follow-ups, over five in-game rounds against a
+bench built for the purpose.
+
+**The feature it was aimed at was built and then REVERTED.** Read this section
+for the findings, not for a recipe for a route.
+
+### What is now known, and all of it is measured
+
+| | |
+|---|---|
+| A pin CAN anchor to a node this mod ships | long form only, short form is not a name |
+| A mod CAN ship an `AlwaysLoaded` sector | and its nodes resolve from anywhere on the map |
+| Node type is not a factor | marker node and entity node behaved identically |
+| Guidance markers work from a mod | the game draws a real walking route through them |
+| A guidance chain is absolute | it cannot be used for a long approach |
+| A route waypoint must be off the ground | and one bad waypoint silences the whole route |
+
+The first two are the valuable ones and they are written up in `gotchas.md` 39,
+because they are not about this gig: they remove the rule that a pin's anchor
+must be a base-game node in one of the game's three always-loaded sectors, which
+is the constraint that has shaped every pin decision in this project. The route
+findings are `gotchas.md` 40.
+
+### The readings
+
+Every slot was read from ArchiveXL's own log, which names each pin and says
+which of three outcomes it got. `resolved to NodeRef` is a working anchor,
+`Can't resolve ... position` means the name resolved and the node was not
+streamed, `Can't resolve ... reference` means the name meant nothing, and NO
+LINE AT ALL means the pin carried no usable reference and was never requested.
+
+Round 1, six pins activated in one instant with the player across the city:
+
+| slot | log | reads as |
+|---|---|---|
+| base-game anchor, calibration | `resolved to NodeRef` | the bench is sound |
+| ours, marker node, long form | `position` | **the name resolved** |
+| ours, entity node, long form | `position` | node type is not the variable |
+| ours, marker node, short form | *no line at all* | not even requested |
+| ours, in an Exterior sector | `position` | cold, as expected |
+| ours, in an `AlwaysLoaded` sector | `resolved to NodeRef` | **works from anywhere** |
+
+`position` rather than `reference` is the whole finding. Every earlier attempt
+got `reference` and was written up as "a mod's nodes cannot be named"; they were
+all written short. Re-reading warm, after teleporting onto the cold nodes,
+returned byte-identical numbers: resolution happens once, at activation, and is
+cached.
+
+The route rounds then separated three suspects that had been changed together,
+one at a time, and landed on the waypoints' height: the same twelve points drew
+no route at V's own foot level and drew one raised 1.7 m. A half-chain test in
+the same run showed the second half drawing alone while the full chain drew
+nothing, which is where "one bad waypoint silences the whole route" comes from.
+
+### Why the way-in route was built and then reverted
+
+The gig draws its route to the North Oak estate as a chain of markers advanced
+by script, and the point of all this was to replace it with a route the game
+draws. It was built: an always-loaded sector of marker nodes, two pins on the
+gig's own objective and guidance markers between them.
+
+In play it was worse than what it replaced. From the gate the route drew
+correctly; a few paces along it vanished, returned, and then drew a loop running
+back down the road. Cutting the chain to the five waypoints covering the rocks
+and the wall did not rescue it. Playtest, 2026-08-18: *"Completely broken... it
+looked you were close but now nothing works ever."*
+
+The cause is `gotchas.md` 40 and it is structural rather than a tuning problem:
+the chain is absolute, and a player walking along one is routed back to its
+start. A gig's approach is exactly the case guidance markers are not for.
+
+**Everything was reverted the same evening.** The shipped tree is byte-identical
+to 1.2.1 and the script marker is what runs. What survives is this section,
+gotchas 39 and 40, and the corrections to `map-pins-playbook.md`.
+
+### What this would still be worth using for
+
+Not the way in. Two things where the same findings apply cleanly:
+
+- **A pin anywhere, for gigs 02 to 04.** Ship one always-loaded sector of
+  marker nodes and put pins wherever the design wants them, with no offset
+  arithmetic and no hunting for a base-game anchor nearby. This is the finding
+  worth carrying forward and it costs one sector.
+- **A short discontinuity**, if a future gig has one: a staircase, a ladder, a
+  single climb, covered by two or three markers with the ordinary router doing
+  everything either side. That is what the 44 shipped markers are all doing.
+
+### Closed alongside it
+
+**Hoshino's pin will not take a GPS route.** It is the one pin in the gig with
+`enableGPS` off, and the recorded reason was that the road solver drew to the
+wrong side of the estate wall. Re-checked in play 2026-08-18: the route is bad
+even entering by the gate, so it is not the wall and not the approach direction.
+Guidance markers cannot help either, because a fixed chain cannot serve a player
+who may enter from any direction. The pin stays without a route.
+
+### Related
+
+- **11** is the question this answers, and its "what is still open" paragraph
+  is now closed by the table above.
+- **9** is the player-relative placement work, which is the other half of how
+  this gig positions things.
+- **`gotchas.md` 39 and 40** are the same findings stated as rules, which is
+  the form to reach for when building rather than when reading history.
+
+
+## 21. Generators for a second gig need a subdirectory, and the export allowlist has to follow. AGREED 2026-08-19, not built
+
+`tools/gen_*.py` are one gig's generators rather than a library. Each hardcodes
+its mod folder, its LocKey prefix and its resource names, and gig 01 has taken
+all the flat filenames. The half that no gig owns is `tools/questkit/`, which
+they import.
+
+The decision is a per-gig subdirectory, `tools/gig02/` and so on, rather than a
+per-gig suffix on flat names.
+
+Someone starting from a clone of the public repo is not affected either way, and
+`new-gig.md` tells them to copy the generators they need and re-point their
+constants, or edit them in place. This item is about a repo holding more than
+one gig at once.
+
+### Three things move with it
+
+**The export allowlist.** `tools/export-public.ps1` allows generators with a
+pattern that stops at the first slash, so nothing in a subdirectory ships at
+all. `tools/questkit/` hit exactly this and needed its own line; the comment
+above that line records what it cost, which was an export that shipped
+generators whose imports could not resolve. The break appears only for someone
+who clones the public repo, never here. A subdirectory needs its own allowlist
+line written at the same time as the subdirectory, not after.
+
+**The sys.path hop.** A generator that imports `questkit` puts its own directory
+on `sys.path`, and today that directory is `tools/`. From `tools/gig02/` it
+inserts the subdirectory instead, so `questkit` stops resolving. The insert has
+to go up one level. Sibling imports within the subdirectory keep working, since
+a script's own directory is on the path already.
+
+**The docs that list the loop.** `BUILDING.md` names each generator by path, and
+`new-gig.md` section 5 gives the run order the same way. Both describe gig 01's
+flat layout.
+
+### How it gets verified
+
+`check-clone.ps1` already runs the generators from a fresh export with none of
+this machine's caches, which is precisely the condition a missing allowlist line
+fails under. Pointing it at the second gig's generators covers this without
+anything new being written, and it is the same check that caught the
+`rebuild_cache` split.
+
+### Related
+
+- **4** is the other half of the toolkit split, and lists what stayed inline in
+  gig 01 rather than moving into `questkit`.
+- `docs/new-gig.md` states the copy-and-re-point rule for a reader starting from
+  a clone, which holds whatever this decides.

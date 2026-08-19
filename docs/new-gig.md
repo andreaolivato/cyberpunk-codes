@@ -247,6 +247,24 @@ variable if it is set, and otherwise looks in the default install location.
    The conversion, the `.wem` check and the voiceover map itself live in
    `tools/questkit/voice.py`, which every gig imports rather than forks.
 
+   **Lines that arrive on V's phone are treated automatically, and you tag
+   nothing.** `gen_voice` asks the scene builder which sections were written
+   `holocall=True`, which is the same argument that sets `isHolocallSpeaker` and
+   makes the line play through the phone UI, so the audio and the game can never
+   disagree about which lines are calls. Those masters are run through
+   `tools/questkit/phone.py` into `source\audio\holocall\`, keeping the
+   filename, and Wwise converts that copy. Your master is never touched.
+
+   The treatment is not an EQ, and this matters if you ever reach for one: the
+   base game keeps a line's magnitude spectrum and discards its phase, so a
+   filter alone cannot sound like a call however hard it is pushed. `phone.py`
+   carries the measurement and `gotchas.md` 42 the finding.
+
+   The derived folder is gitignored, because a committed tool over a committed
+   master reproduces it byte for byte. **Keep your masters dry.** A take that
+   has already been processed would be processed twice and nothing would catch
+   it.
+
 5. **Re-run `gen_scenes.py`.** Until you do, the scenes still hold the estimated
    timings rather than the measured ones. `gen_voice` prints this reminder when
    it finishes.
@@ -260,12 +278,20 @@ variable if it is set, and otherwise looks in the default install location.
    conversion failed silently once and the build carried on and packed the
    previous run's audio, which nothing downstream can detect.
 
-### WAV masters are not committed here, and yours need not be
+### The masters are committed here, and yours need not be
 
-Only the `.wem` are, so a fresh clone of this repo builds a working mod with no
-WAV present at all. `gen_voice.py` says exactly that when it finds none, rather
-than failing as though something were broken. Re-run it only when the dialogue
-changes.
+This repo tracks both: 114 WAV masters and the `.wem` built from them. That is a
+choice rather than a requirement, and it costs repo size to make the audio
+rebuildable from source by anyone who clones it.
+
+The alternative is to track only the `.wem`, which are what the mod actually
+ships. A clone then builds a working mod with no WAV present at all, and
+`gen_voice.py` is only needed when the dialogue changes. It says so by name when
+a line has no audio, rather than failing as though something were broken.
+
+Either way, `build-archive.ps1` packs from the `.wem`, so a gig that has not run
+`gen_voice` since its last dialogue change is caught by the staleness guard
+rather than shipping the previous run's audio.
 
 ### Two things that arrive with audio
 

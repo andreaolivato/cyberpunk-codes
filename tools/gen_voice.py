@@ -73,9 +73,10 @@ import gen_scenes as gs
 # The Wwise conversion and the voiceover map live in tools/questkit/voice.py. This
 # file is the GIG: which lines are voiced, by whom, and which have a male take.
 from questkit.voice import (                                        # noqa: F401
-    configure, stem, line_texts, write_tone, wav_ms, convert, check_wem,
-    write_vomap, WWISE, WWISE_PROJ, CONVERSION,
+    configure, stem, line_texts, holocall_lines, write_tone, wav_ms, convert,
+    check_wem, write_vomap, WWISE, WWISE_PROJ, CONVERSION,
 )
+from questkit import phone
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MOD = os.path.join(REPO, 'mods', 'gig-01-negative-balance')
@@ -85,6 +86,10 @@ AUDIO_SRC = os.path.join(MOD, 'source', 'audio')
 # sharing a filename would be a nasty thing to mix up. Which lines have
 # real audio is then visible from a directory listing.
 PLACEHOLDER_SRC = os.path.join(AUDIO_SRC, 'placeholder')
+# Where the phone-filtered copies of the holocall takes are written. Derived
+# from the master next to them and gitignored for that reason; the filter is in
+# tools/questkit/phone.py and the measurement behind it is docs/backlog.md 15.
+HOLOCALL_SRC = os.path.join(AUDIO_SRC, 'holocall')
 DURATIONS = os.path.join(AUDIO_SRC, 'durations.json')
 WEM_OUT = os.path.join(MOD, 'source', 'wkit', 'raw', 'mod', 'negative_balance',
                        'audio', 'vo')
@@ -227,9 +232,11 @@ def main():
     args = ap.parse_args()
 
     texts = line_texts(gs.ALL_BUILDERS)
+    holocall = holocall_lines(gs.ALL_BUILDERS)
     os.makedirs(AUDIO_SRC, exist_ok=True)
 
     wavs, durations, vomap = [], {}, []
+    phoned = 0
     # (scene, key) -> (female wem, male wem), so an aliased scene can point its
     # own RUIDs at clips that have already been converted.
     emitted = {}
@@ -254,6 +261,17 @@ def main():
                         continue
                 elif not args.placeholder:
                     print('  ! %s is still a PLACEHOLDER tone' % name)
+            # THROUGH THE PHONE. A holocall line is not the same recording
+            # played differently. Vanilla ships a separately processed take for
+            # every line that arrives on V's phone, with the treatment baked
+            # into the asset, and the treatment is a phase effect rather than a
+            # filter. Ours is baked here, into a copy, so the master stays the
+            # clean studio take. See tools/questkit/phone.py.
+            if (scene, key) in holocall:
+                filtered = os.path.join(HOLOCALL_SRC, name + '.wav')
+                phone.filter_file(wav, filtered)
+                wav = filtered
+                phoned += 1
             wavs.append((wav, name + '.wem'))
             durations['%s/%s' % (scene, key)] = wav_ms(wav)
 
@@ -262,6 +280,12 @@ def main():
             if (scene, key) in GENDERED:
                 male_wav = os.path.join(AUDIO_SRC, name + '__m.wav')
                 if os.path.exists(male_wav):
+                    if (scene, key) in holocall:
+                        male_filtered = os.path.join(HOLOCALL_SRC,
+                                                     name + '__m.wav')
+                        phone.filter_file(male_wav, male_filtered)
+                        male_wav = male_filtered
+                        phoned += 1
                     male_wem = name + '__m.wem'
                     wavs.append((male_wav, male_wem))
                     # Pace the section from the LONGER of the two: whichever V
@@ -282,12 +306,13 @@ def main():
     if missing:
         raise SystemExit(
             'no audio for %d line(s): %s\n\n'
-            'The WAV masters are not committed, so a fresh clone has none, and '
-            'does not need any: the .wem are shipped and the generated resources '
-            r'are committed. To build the mod just run tools\build-archive.ps1.'
+            'CAST names a line that has no recording. Either the take is missing, '
+            'or a key was added to CAST before it was recorded.\n'
+            'Building the mod does NOT need this script: the .wem and every '
+            r'generated resource are committed, so tools\build-archive.ps1 packs '
+            'what is already there. Re-run this only when the dialogue changes.'
             '\n'
-            'Re-run this only when changing the dialogue. Then put WAVs in %s, '
-            'or pass --placeholder for tones.'
+            'To go on anyway, put WAVs in %s, or pass --placeholder for tones.'
             % (len(missing), ', '.join(missing), AUDIO_SRC))
 
     # ------------------------------------------------------ aliased scenes
@@ -315,6 +340,9 @@ def main():
             raise SystemExit('%s aliases %s, which voiced nothing' % (alias, src))
         print('  %s reuses %d clip(s) from %s' % (alias, n, src))
 
+
+    if phoned:
+        print('  %d holocall take(s) filtered into %s' % (phoned, HOLOCALL_SRC))
 
     convert(wavs)
     for _wav, out in wavs:
