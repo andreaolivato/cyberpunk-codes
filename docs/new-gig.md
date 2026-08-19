@@ -278,20 +278,12 @@ variable if it is set, and otherwise looks in the default install location.
    conversion failed silently once and the build carried on and packed the
    previous run's audio, which nothing downstream can detect.
 
-### The masters are committed here, and yours need not be
+### WAV masters are not committed here, and yours need not be
 
-This repo tracks both: 114 WAV masters and the `.wem` built from them. That is a
-choice rather than a requirement, and it costs repo size to make the audio
-rebuildable from source by anyone who clones it.
-
-The alternative is to track only the `.wem`, which are what the mod actually
-ships. A clone then builds a working mod with no WAV present at all, and
-`gen_voice.py` is only needed when the dialogue changes. It says so by name when
-a line has no audio, rather than failing as though something were broken.
-
-Either way, `build-archive.ps1` packs from the `.wem`, so a gig that has not run
-`gen_voice` since its last dialogue change is caught by the staleness guard
-rather than shipping the previous run's audio.
+Only the `.wem` are, so a fresh clone of this repo builds a working mod with no
+WAV present at all. `gen_voice.py` says exactly that when it finds none, rather
+than failing as though something were broken. Re-run it only when the dialogue
+changes.
 
 ### Two things that arrive with audio
 

@@ -306,13 +306,12 @@ def main():
     if missing:
         raise SystemExit(
             'no audio for %d line(s): %s\n\n'
-            'CAST names a line that has no recording. Either the take is missing, '
-            'or a key was added to CAST before it was recorded.\n'
-            'Building the mod does NOT need this script: the .wem and every '
-            r'generated resource are committed, so tools\build-archive.ps1 packs '
-            'what is already there. Re-run this only when the dialogue changes.'
+            'The WAV masters are not committed, so a fresh clone has none, and '
+            'does not need any: the .wem are shipped and the generated resources '
+            r'are committed. To build the mod just run tools\build-archive.ps1.'
             '\n'
-            'To go on anyway, put WAVs in %s, or pass --placeholder for tones.'
+            'Re-run this only when changing the dialogue. Then put WAVs in %s, '
+            'or pass --placeholder for tones.'
             % (len(missing), ', '.join(missing), AUDIO_SRC))
 
     # ------------------------------------------------------ aliased scenes
