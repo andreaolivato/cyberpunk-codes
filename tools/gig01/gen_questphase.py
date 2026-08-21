@@ -78,6 +78,16 @@ step(add_journal('gameJournalContact', CONTACT, notify=0), in_sock='Active')
 # entered once there is actually a call to put words into.
 step(add_setvar('cc_g01_call_request', 1))
 step(add_pause_fact('cc_g01_call_talking'))
+# KEEP V ON FOOT FOR THE BEAT THAT FOLLOWS THIS CALL (backlog.md 16).
+# cc_g01_vlock is the whole contract with Gig01_VehicleLock.reds: 1 means "a
+# Johnny beat is coming, do not let V get into a vehicle", 0 means done. The
+# script derives everything from it and decides nothing about when a window
+# opens, which is why the pair below always has to be balanced.
+# Opened on PICKUP rather than on the ring: a ring V never answers would
+# otherwise hold the lock through the whole retry back-off, which runs to five
+# minutes. Gig01_Holocall already refuses to ring at all while V is riding, so
+# by the time this lands V is on foot.
+step(add_setvar('cc_g01_vlock', 1))
 step(add_scene(SCENES + 'gig01_elena_call.scene', ANCHOR_OFFICE,
                ['elena_call_in'], ['elena_call_out']),
      in_sock='elena_call_in', out_sock='elena_call_out')
@@ -96,6 +106,8 @@ step(add_scene(SCENES + 'gig01_arasaka.scene', ANCHOR_PLAYER,
                ['arasaka_in'], ['arasaka_out']),
      in_sock='arasaka_in', out_sock='arasaka_out')
 step(add_setvar('cc_g01_johnny_done', 1))
+# Johnny has finished, so V can ride again.
+step(add_setvar('cc_g01_vlock', 0))
 
 step(add_setvar('cc_g01_accepted', 1))
 step(add_journal_quest(QUEST), in_sock='Active')
@@ -266,6 +278,14 @@ objective_step('cc_g01_left_compound', 'obj_nix', 'obj_nixcall')
 # callback from a netrunner V had never spoken to.
 step(add_setvar('cc_g01_nixbrief_request', 1))
 step(add_pause_fact('cc_g01_nixbrief_talking'))
+# THIS CALL LEADS TO A BEAT TOO, which is easy to miss because the beat is not
+# the next node: the send sets cc_g01_ledger_sent from Gig01_Encounter first.
+# That is three scripted beats 1.6 s apart, so the gap is seconds rather than
+# anything a player waits through, and gig01_legend follows it.
+#
+# Playtest 2026-08-21: *"after the call start, I can mount the bike, so the
+# second block is not on."* Correct, because this pair was missing.
+step(add_setvar('cc_g01_vlock', 1))
 step(add_scene(SCENES + 'gig01_nix_brief.scene', ANCHOR_OFFICE,
                ['nix_brief_in'], ['nix_brief_out']),
      in_sock='nix_brief_in', out_sock='nix_brief_out')
@@ -292,6 +312,9 @@ step(add_scene(SCENES + 'gig01_legend.scene', ANCHOR_PLAYER,
 # That is also what the comic draws - pp. 28-30 are one continuous street scene
 # with Johnny in frame throughout, and the phone call happens over the top of it.
 step(add_setvar('cc_g01_johnny_legend', 1))
+# Johnny has said his piece on the crosswalk, so V can ride again. This closes
+# the window opened at the nixbrief pickup above.
+step(add_setvar('cc_g01_vlock', 0))
 
 # NIX NEEDS TIME TO ACTUALLY DIG. Nexus 1.0.0, 2026-08-15: *"I know Nix is a
 # slick operator but he'd replied almost before I'd pressed 'send'."*
@@ -322,6 +345,8 @@ step(add_game_delay(hours=2))
 # addressee is the existing contact id "nix"; nothing new is merged for him.
 step(add_setvar('cc_g01_nixcall_request', 1))
 step(add_pause_fact('cc_g01_nixcall_talking'))
+# Same window as Elena's, for gig01_graves. See the note by the first one.
+step(add_setvar('cc_g01_vlock', 1))
 step(add_scene(SCENES + 'gig01_nix_call.scene', ANCHOR_OFFICE,
                ['nix_call_in'], ['nix_call_out']),
      in_sock='nix_call_in', out_sock='nix_call_out')
@@ -344,6 +369,7 @@ step(add_scene(SCENES + 'gig01_graves.scene', ANCHOR_PLAYER,
 # AND NOW Johnny goes - the beat above is the last thing he has to say before
 # North Oak.
 step(add_setvar('cc_g01_johnny_done', 1))
+step(add_setvar('cc_g01_vlock', 0))
 
 step(add_setvar('cc_g01_nix_done', 1))
 # Estate: travel, kill Hoshino, upload the malware from his own terminal.

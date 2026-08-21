@@ -365,10 +365,17 @@ ElevenLabs for all six speakers, not Audioware for two; and the existing-line
 audit was run against the whole 62,992-line corpus and killed the reuse premise
 (3 matches out of 59).
 
-**Build status: released at 1.2.0 (2026-08-17).** The gig plays end to end,
+**Build status: released at 1.2.3 (2026-08-21).** The gig plays end to end,
 fully voiced and lipsynced. Playtest, 2026-08-14, on the last three builds:
-*"Everything is perfect"*, *"It all works perfectly"*. 1.1.x and 1.2.0 are field
-bug fixes on top of that, and `CHANGELOG.md` is the release-by-release account.
+*"Everything is perfect"*, *"It all works perfectly"*. Everything from 1.1.x
+onward is field bug fixes on top of that, and `CHANGELOG.md` is the
+release-by-release account.
+
+One of those fixes changed how a beat is allowed to start rather than what it
+contains: Johnny's three free-roaming beats stage him where V is standing, so
+the gig now keeps V on foot for them instead of letting a call be answered at
+speed. `backlog.md` 16 has the reasoning, including why moving him or delaying
+him were both wrong.
 What is still open is in `docs/backlog.md`; it is short, and none of it blocks a
 release.
 

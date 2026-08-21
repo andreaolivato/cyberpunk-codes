@@ -642,6 +642,28 @@ made it possible.
 disk.** `Character.Mama_Welles` and her position were found with the CET dev
 menu's CAPTURE THE NPC I'M LOOKING AT probe; guessing either fails silently.
 
+## Restricting the player: SOLVED. See `gameplay-restrictions.md`.
+
+A gig that needs the player to stand still and listen takes a control away with
+`GameplayRestriction.*`, the base game's own vocabulary for it. Gig 01 uses it to
+keep V out of a vehicle while one of Johnny's beats plays, because those beats
+stage him where V is standing and a moving V leaves him behind.
+
+Three things about it are not obvious and all three are load-bearing:
+
+- **Ship your own record.** The base game's are savable and do not expire, so a
+  player who uninstalls the mod while one is applied has a save that has lost
+  that control permanently. Clone with `savable: false`.
+- **A restriction blocks silently**, which reads as a broken mod. Say why with
+  `UIInGameNotificationEvent`, which is what vanilla sends when a restriction
+  refuses an action.
+- **Enforce it from a tick that already exists.** Gig 01's rides the holocall
+  system's, so nothing new runs in the background and the cost with no window
+  open is one fact read.
+
+The full family, how one is applied, the savable measurement and the three ways
+to put a message on screen are in `docs/gameplay-restrictions.md`.
+
 ## Dev/debug infrastructure
 
 - CET dev menu (`source/cet-dev/init.lua`, deploys to

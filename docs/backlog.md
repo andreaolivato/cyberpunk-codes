@@ -32,8 +32,8 @@ being given it.
 |---|---|
 | 6 | The `[F]` interaction prompt on a mod-placed object. UNSOLVED and deliberately parked; seven approaches ruled out, each with its outcome |
 | 10i | Reload crashes on heavily modded installs. Two reporters, same symptom. No mechanism found; the A/B test is now deterministic, see 14 |
-| 16 | Johnny appears while V is driving, staged for a V standing still. Gate the three free-roaming beats on movement state, with a bound so the gig cannot stall |
 | 17 | The spawned guards huddle where the navmesh dropped them and do not react to V. A hostile attitude is not perception; 11 is the structural fix and is unsolved |
+| 22 | Hoshino's objective marker stays at his captured position after he joins a fight and walks away from it. Either hold him there or make the marker follow him |
 
 Everything else is closed. Two entries look open and are not: 2f (re-time
 scenes from real clip length) shipped as `durations.json`, and 0b is the
@@ -59,6 +59,7 @@ release checklist, all of it struck through.
 | 4 | The toolkit split, finished: a config module per gig, and the generic redscript out of gig 01 |
 | 21 | One gig per subdirectory under `tools/`, and the two export patterns that had to follow |
 | 20 | A pin CAN anchor to a node this mod ships, and a mod CAN ship an always-loaded sector to keep it resolvable. Also why the drawn route built on it was reverted |
+| 16 | Johnny is staged where V is standing, so the fix is to keep V on foot rather than to move or delay him. Also: a base-game restriction that is savable, and the three ways to put a message on screen |
 | 18 | El Coyote Cojo is shut until Heroes is finished, measured across three saves. The gig waits for it and says so |
 | 19 | The Mama Welles stand-in, and the whole fallback path behind it, deleted |
 | 10 | The 1.2.0 bug pass: a fast-travel lock bound to the wrong state, a gig that never switched itself off, the guard spawn, a decline that answered, and (10k) a voice-only actor buried into the room below. 10i is the one still open |
@@ -2865,7 +2866,7 @@ Vanilla's holocall assets are stereo. Ours stay mono, because a holocall plays
   gigs 02-04.
 - `scene-playbook.md` covers holocalls and the voiceover map.
 
-## 16. Johnny appears while V is driving. Reported 2026-08-18, open
+## 16. Johnny appears while V is driving. Reported 2026-08-18, FIXED 2026-08-21
 
 Field report against 1.2.0, from a player who finished the gig: *"Even though I
 know he's an engram and how all that works, but the game got me used to seeing
@@ -2922,6 +2923,91 @@ were established, by compiling a throwaway file, rather than by assuming a name.
   runs that measured the marker's frame. The offsets themselves are correct and
   should not be re-derived; this is about when to use them.
 - **3** is the apparition itself.
+
+## THE ANSWER, 2026-08-21. Keep V on foot, rather than moving Johnny
+
+Three things were wrong with the plan above, and the third one is the useful
+finding.
+
+**Holding a beat is wrong for two of the three.** `gig01_arasaka` and
+`gig01_graves` are replies to a call that has just ended. A wait of minutes
+lands them out of context, which is a worse beat than the one being fixed. Only
+a beat that is not a reply can be held.
+
+**Burying him does not help.** A scene actor is one fixed point in the world
+whether it sits 2.6 m ahead or 2.5 m under, so the audio recedes from a moving V
+either way. Elena and Nix only sound right on the move because they are
+holocalls going through the phone system rather than world speakers. There is no
+version of this that plays the line acceptably to a rider.
+
+**So the answer is not about Johnny at all.** Keep V on foot for the few seconds
+the beat needs, with two gates:
+
+- the phone does not ring while V is riding, and
+- V cannot get into a vehicle between a call starting and its beat ending.
+
+Three windows, declared by the quest graph as `cc_g01_vlock` and enforced from
+the holocall system's existing tick. Elena's call to `gig01_arasaka`, Nix's
+brief to `gig01_legend`, Nix's callback to `gig01_graves`. The ring itself is
+covered by a separate test, because the graph cannot open a window until V picks
+up.
+
+Elena's ring gate is deliberately uncapped: before that call there is no journal
+entry, no objective and no pin, so the player cannot perceive a wait. The two
+Nix gates are capped at 90 s, because an objective on screen is telling the
+player to make or take the call.
+
+### The restriction has to be your own
+
+`GameplayRestriction.VehicleNoInteraction` does the blocking, and it is savable
+with no useful duration: applied, saved, quit to desktop, relaunched and loaded,
+it comes back still blocking. Uninstall the mod while it is applied and the save
+can never enter a vehicle again, with nothing left to lift it.
+
+`savable` is a field on the record, so ship a clone with it off. Four lines of
+yaml, measured three ways: the clone still blocks, nothing reaches the save, and
+the TweakXL log is clean with the counts moving by exactly one record and
+twenty-four flats. See 13 for why the last check is not optional.
+
+### A restriction blocks silently, and that reads as a broken mod
+
+Three ways to put a message on screen, and only the third is right for this:
+`OnscreenMessage` is cyan and left of centre and easy to miss entirely,
+`WarningMessage` is red at the top and reads as an alarm, and
+`UIInGameNotificationEvent` gives the base game's own "ACTION BLOCKED". The
+third is what vanilla sends when a gameplay restriction refuses an action. It
+carries no words of yours and every member of its type enum looks the same.
+
+`docs/gameplay-restrictions.md` has all of it, plus the route to reading TweakDB
+record names off disk that produced the record list without starting the game.
+
+### One dead end worth not repeating
+
+A `@wrapMethod` on `VehicleComponent.DetermineInteractionState`, to suppress the
+prompt from script and store nothing at all. It compiles and crashes the game on
+load, because that method runs as a script task on a job worker thread.
+`gotchas.md` 44 has the tell to grep for before wrapping anything.
+
+### Safeties, and one that was wrong first time
+
+The lock is derived every pass from the window fact and from what is actually
+applied to the player, never from a remembered flag, so there is no latch to
+stick. A three-minute cap covers a window fact that never closes.
+
+Firing the cap sets `cc_g01_vlock_giveup`, without which the seatbelt becomes
+the fault: quest facts are saved, so a window fact stuck at 1 would cost the
+player the first three minutes of every session for the rest of that save.
+
+**That fact was permanent in the first version and that was too blunt.** One
+local failure would have disabled all three windows for the whole playthrough.
+It is cleared the moment nothing wants a lock at all, a state a stuck window
+fact never reaches and a healthy one reaches seconds after every beat.
+
+### Played end to end 2026-08-21, and shipped in 1.2.3
+
+The ring gate on foot and riding, declining and ringing out, all three windows,
+the beats staged beside a stationary V, the message at a vehicle and its absence
+away from one, and the dismount prompt.
 
 ## 17. The spawned guards do not react to V. Reported 2026-08-18, open
 
@@ -3394,3 +3480,54 @@ ships in the public tree. Regenerating it as part of this dropped that scene and
 four lines, and the file now reads 60 spoken lines across 14 scenes. Nothing
 shipped in the archive was affected; the .scene resources have been regenerated
 many times since, and all of them came out byte-identical here.
+
+## 22. Hoshino's marker does not follow him once he moves. Reported 2026-08-21, open
+
+Field report, playing the estate without stealth: V enters the residence, kills a
+guard, and Hoshino joins the fight rather than waiting to be spoken to. V kills
+him during the fight, before the conversation. **The objective marker stays where
+he started while he is somewhere else entirely.**
+
+### Why it happens
+
+Hoshino's marker is anchored to a captured position, not to Hoshino. The whole
+placement layer works this way: `CCGig01Places.Hoshino()` is a fixed point taken
+in game with the dev menu, and `pin_hoshino` is activated alongside `obj_hoshino`
+by the quest phase. Nothing reads where the man is standing at the time.
+
+That is correct for the intended path, where he stands at his desk and waits.
+It is wrong the moment he walks, and combat is not the only thing that moves him.
+
+He is `SetNeutral` until provoked, deliberately, because he is an administrator
+rather than a soldier. That is what lets him join a fight that starts near him
+rather than reacting only to being shot himself.
+
+### Two candidate fixes, and they are not equivalent
+
+**Hold him in place.** Keep him at the captured position through any combat that
+starts around him, so the marker stays right by construction. Cheaper, and it
+keeps a single source of truth for where he is. It also makes him behave less
+like a person in a firefight, which may read badly in exactly the playthrough
+that triggered this.
+
+**Make the marker follow him.** A mappin bound to the entity rather than to a
+position. 20 established that a pin can anchor to a node this mod ships and that
+`ShowWayInPin` takes a world position, so the question is whether a pin can track
+a moving entity rather than a point, which is not established. This is the more
+correct fix and the more unknown one.
+
+### What is not yet known
+
+Whether the marker being wrong actually costs the player anything here. If he is
+already dead when they notice, the objective completes on his death and the stale
+marker is visible for seconds. If they are hunting a live Hoshino who has walked
+off, it is a real navigation fault. The report does not separate those, and which
+one it is decides how much this deserves.
+
+### Related
+
+- **17** is the neighbouring item, and the same playthrough produced both: guards
+  that do not behave like guards, and an exec who behaves more like one than the
+  staging expects.
+- **20** is what is known about pins anchoring to something this mod ships.
+- **9** is the placement layer these captured positions belong to.

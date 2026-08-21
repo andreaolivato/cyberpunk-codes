@@ -1,0 +1,39 @@
+# A restriction that stops V getting into a vehicle, and does NOT go into the
+# save. See docs/backlog.md 16 and docs/gameplay-restrictions.md.
+#
+# WHY NOT JUST USE THE BASE-GAME RECORD. GameplayRestriction.VehicleNoInteraction
+# does exactly the right thing, measured in game 2026-08-21: applied, the "get
+# in" prompt disappears. It is also SAVABLE, measured the same day by applying
+# it, saving, quitting to desktop, relaunching and loading, where it came back
+# still blocking. It has no useful duration either, so it does not expire.
+#
+# A savable restriction is the wrong thing for a story mod to apply. Our own
+# script can always take it off again, but a player who uninstalls the mod while
+# it happens to be applied is left with a save that cannot enter a vehicle and
+# no script of ours to lift it. Reinstalling and loading once clears it, which
+# makes it recoverable rather than fatal, and "reinstall the mod to fix the mod"
+# is not something to ship on purpose.
+#
+# `savable` is a field on the record rather than a property of the system, so
+# the fix is to ship our own record with it turned off.
+#
+# TWO THINGS THIS HAS TO PROVE, and neither is safe to assume:
+#
+# 1. THAT A CLONE STILL BLOCKS. The game's gate is
+#    DoStatusEffectsAllowMounting, which reads the player's status effects. If
+#    it tests a gameplay tag, a clone inherits it and blocks. If it tests for
+#    this exact record id, a clone does nothing at all.
+#
+# 2. THAT `savable` IS ACTUALLY ACCEPTED. docs/backlog.md 13 is the standing
+#    warning: TweakXL applies a record while silently discarding a property it
+#    does not recognise, and `securityAreaType` was credited with fixing Hoshino
+#    for months without ever once running. So this is checked twice, by grepping
+#    the TweakXL log for a rejection AND by the save-quit-reload test. A record
+#    that loads is not evidence that every line in it did.
+#
+# If either check fails, this file is deleted rather than left in place looking
+# like it works.
+
+GameplayRestriction.cc_g01_no_vehicle:
+  $base: GameplayRestriction.VehicleNoInteraction
+  savable: false

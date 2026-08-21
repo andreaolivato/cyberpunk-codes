@@ -125,6 +125,25 @@ public class NegativeBalanceHolocall extends ScriptableSystem {
     // back-off in RetrySeconds(); see it for why this exists.
     private let m_rings: array<Int32>;
 
+    // ---- keeping V on foot for Johnny's beats (docs/backlog.md 16) ----
+    // Seconds the vehicle lock has been held, and the length of the delay that
+    // brought us to this tick, which is how those seconds are counted without
+    // reading a clock. m_vlBanner counts down the quiet owed after a message.
+    //
+    // All three are plain fields, so all three reset on a load. That is correct
+    // rather than a gap: the cap is a per-session seatbelt, and our restriction
+    // record is not savable, so a load always starts with nothing applied.
+    private let m_vlHeld: Float;
+    private let m_vlLast: Float;
+    private let m_vlBanner: Float;
+    // Ticks a ring has been held back because V is riding. See MountedClear().
+    private let m_mountDefer: Int32;
+    // Set by MountedClear when it holds a NIX call back, read and cleared by
+    // UpdateVehicleLock in the same tick. Not persistent and not meant to be:
+    // it is a message within one pass, not a state.
+    private let m_mountBlocked: Bool;
+    private let m_dismountBanner: Float;
+
     private func OnAttach() -> Void {
         // Sizing happens in Tick, which self-heals; see the note there. This
         // only starts the clock.
@@ -297,6 +316,53 @@ public class NegativeBalanceHolocall extends ScriptableSystem {
     // would strand the gig rather than merely delay its start. 150 live ticks is
     // ~30 s, comfortably past any fast travel; after that the flag is treated as
     // stuck and the phone rings regardless.
+    // MAY A CALL RING RIGHT NOW, as far as V's own feet are concerned?
+    //
+    // Every one of Johnny's beats is staged where V is standing when the scene
+    // starts, so a call answered at 30 m/s produces a Johnny who is behind you
+    // before he finishes his first word. Refusing to ring while V is riding is
+    // the cheap half of the fix; the lock below is the other half, and it stops
+    // V mounting up between picking up and the beat ending.
+    //
+    // ELENA'S CALL IS NOT CAPPED, and that is deliberate. Before it there is no
+    // journal entry, no objective and no map pin, so a player cannot tell that
+    // a call is pending and a wait of any length costs them nothing. A wait
+    // nobody can perceive needs no escape hatch.
+    //
+    // NIX'S CALLBACK IS CAPPED, for the opposite reason: an objective on screen
+    // is telling the player to wait for it, and a player who rides around to
+    // pass the time would be watching a quest that looks stuck. After the cap it
+    // rings anyway, and the worst case is the beat that follows being staged
+    // badly, which is the fault this whole thing exists to reduce rather than a
+    // fault it must never allow.
+    private func MountedClear(call: Int32) -> Bool {
+        if !CCG01VehicleLock.IsMounted(this.GetGameInstance()) {
+            this.m_mountDefer = 0;
+            return true;
+        }
+        if call == 0 {
+            return false;
+        }
+        // A NIX call is waiting on V getting off. Worth saying, because an
+        // objective on screen is telling the player to make or take it and
+        // nothing else explains the silence. Elena's is deliberately not
+        // flagged: nothing is on screen at that point and the player does not
+        // know a call exists, so a nudge would be noise.
+        this.m_mountBlocked = true;
+        if this.m_mountDefer >= this.MountedCapTicks() {
+            return true;
+        }
+        this.m_mountDefer += 1;
+        return false;
+    }
+
+    // Derived from the cadence rather than written out, for the same reason
+    // RetryTicks is: a call in flight always reports live, and the two would
+    // drift apart the next time the tick length moves.
+    private func MountedCapTicks() -> Int32 {
+        return Cast<Int32>(90.0 / this.TickLive());
+    }
+
     private func FastTravelClear() -> Bool {
         if CCGig01StartRules.IsFastTravelling(this.GetGameInstance()) {
             // Owe some quiet on the far side too. Ringing on the frame the
@@ -437,6 +503,7 @@ public class NegativeBalanceHolocall extends ScriptableSystem {
             call += 1;
         }
         this.ApplyLock();
+        this.UpdateVehicleLock();
 
         // STOP FOR GOOD ONCE THE GIG IS OVER, but only AFTER ApplyLock has had
         // its one unconditional pass. The order matters: that pass is what lifts
@@ -454,7 +521,11 @@ public class NegativeBalanceHolocall extends ScriptableSystem {
             return;
         }
 
-        this.Schedule(live ? this.TickLive() : this.TickIdle());
+        // Remembered so UpdateVehicleLock can count seconds without reading a
+        // clock. The cadence moves between 0.2 s and 2 s, so a tick counter
+        // would mean something different depending on what else was happening.
+        this.m_vlLast = live ? this.TickLive() : this.TickIdle();
+        this.Schedule(this.m_vlLast);
     }
 
     // ------------------------------------------- BLOCK FAST TRAVEL WHILE RINGING
@@ -544,6 +615,148 @@ public class NegativeBalanceHolocall extends ScriptableSystem {
         this.m_ftLocked = want;
     }
 
+    // KEEP V ON FOOT WHILE A BEAT IS PLAYING, and say why if V goes looking for
+    // a car. Called from Tick, so this system owns no timer of its own.
+    //
+    // DERIVED, NEVER REMEMBERED. Both halves of the decision are read fresh:
+    // what the quest graph says should be true, and what is actually applied to
+    // the player. Nothing is cached, so there is no latch to get stuck and no
+    // second copy of the truth to drift from the first. That is the same
+    // discipline ApplyLock uses, and it is why neither needs to know what it did
+    // last time.
+    // IS A CALL THAT LEADS TO A JOHNNY BEAT ACTUALLY RINGING RIGHT NOW?
+    //
+    // Playtest 2026-08-21: *"Not on bike, phone rings, while it rings I can get
+    // on a bike and answer."* The quest graph cannot open its window until V
+    // picks up, so the nine seconds of ringing were unguarded and answering
+    // from a bike put Johnny behind a moving V, which is the whole fault.
+    //
+    // The test is ApplyLock's, deliberately, rather than a second one written
+    // alongside it. State 1 is ringing and m_waited is bounded by RingTicks, so
+    // this stops when the phone stops, not when the retry back-off does. Reading
+    // it off the state machine keeps two definitions of "ringing" from drifting.
+    //
+    // ALL THREE CALLS, and the third one was missed at first. Call 2 is V
+    // DIALLING Nix rather than being rung, so it is state 4 and not state 1, and
+    // the beat it leads to is gig01_legend, which is not the next node in the
+    // graph: cc_g01_ledger_sent comes between them. That made it look like a
+    // call with nothing staged after it. It is not.
+    private func RingingForBeat() -> Bool {
+        let call: Int32 = 0;
+        while call < this.CallCount() {
+            if this.m_state[call] == 1 && this.m_waited[call] <= this.RingTicks() {
+                return true;
+            }
+            // Dialling out. Unbounded by RingTicks on purpose: a dial tone ends
+            // when the other end picks up, and there is no back-off to run past.
+            if this.m_state[call] == 4 {
+                return true;
+            }
+            call += 1;
+        }
+        return false;
+    }
+
+    private func UpdateVehicleLock() -> Void {
+        let game: GameInstance = this.GetGameInstance();
+        let player: ref<GameObject> = CCG01VehicleLock.Player(game);
+        if !IsDefined(player) {
+            return;
+        }
+        // TWO REASONS TO LOCK, one give-up over both: the graph's window, which
+        // runs from pickup to the end of the beat, and the ring that precedes
+        // it. Neither covers the other.
+        let want: Bool = !CCG01VehicleLock.GaveUp(game)
+            && (CCG01VehicleLock.WindowOpen(game) || this.RingingForBeat());
+
+        // THE SEATBELT. If the graph ever leaves the window fact set, this stops
+        // the lock outstaying its beat by more than a few minutes. It is not the
+        // real protection: a beat that cannot fire is the actual fault and has
+        // to be fixed where it happens. Setting the give-up fact is what stops
+        // the seatbelt itself becoming the bug, because quest facts are saved
+        // and a stuck one would otherwise cost the player the first three
+        // minutes of every session for the rest of that save.
+        if want {
+            this.m_vlHeld += this.m_vlLast;
+            if this.m_vlHeld >= CCG01VehicleLock.CapSeconds() {
+                GameInstance.GetQuestsSystem(game).SetFact(CCG01VehicleLock.GaveUpFact(), 1);
+                want = false;
+            }
+        } else {
+            this.m_vlHeld = 0.0;
+            // RE-ARM ONCE THE STUCK WINDOW HAS ACTUALLY CLOSED.
+            //
+            // The give-up fact stops the cap firing again and again, which
+            // matters because quest facts are saved: a window fact stuck at 1
+            // would otherwise cost the player the first three minutes of every
+            // session for the rest of that save.
+            //
+            // Left permanent it is far too blunt, though. One local failure
+            // would disable all three windows for the whole playthrough. So it
+            // is cleared the moment nothing wants a lock at all, which is a
+            // state a stuck window fact never reaches and a healthy one reaches
+            // seconds after each beat.
+            if GameInstance.GetQuestsSystem(game).GetFact(CCG01VehicleLock.GaveUpFact()) > 0
+                && !CCG01VehicleLock.WindowOpen(game)
+                && !this.RingingForBeat() {
+                GameInstance.GetQuestsSystem(game).SetFact(CCG01VehicleLock.GaveUpFact(), 0);
+            }
+        }
+
+        // Act only on a mismatch, and read the mismatch off the player rather
+        // than off a field. Re-applying a status effect every tick would stack
+        // it; skipping the read and trusting a remembered Bool is the drift this
+        // file has been bitten by before.
+        let applied: Bool = StatusEffectSystem.ObjectHasStatusEffect(
+            player, CCG01VehicleLock.Restriction());
+        // Written out rather than `want != applied`, because REDSCRIPT HAS NO
+        // OperatorEqual OR OperatorNotEqual FOR Bool. The error it gives names
+        // the first overload in the table, `expected 'TweakDBID', given 'Bool'`,
+        // and sends you looking at the TweakDBID on the line above instead of at
+        // the comparison. ApplyLock carries the same note for the same reason.
+        let matches: Bool = (want && applied) || (!want && !applied);
+        if !matches {
+            CCG01VehicleLock.SetLock(game, want);
+        }
+
+        if !want {
+            this.m_vlBanner = 0.0;
+            // NOTHING IS LOCKED, but a call may still be waiting on V getting
+            // off a bike. Same message system, longer gap, and cleared every
+            // pass so it stops the moment the ring goes through.
+            if this.m_dismountBanner > 0.0 {
+                this.m_dismountBanner -= this.m_vlLast;
+            } else {
+                if this.m_mountBlocked {
+                    CCG01VehicleLock.Dismount(game);
+                    this.m_dismountBanner = CCG01VehicleLock.DismountGapSeconds();
+                }
+            }
+            this.m_mountBlocked = false;
+            return;
+        }
+        this.m_mountBlocked = false;
+
+        // SAY WHY. The restriction removes the prompt rather than refusing it,
+        // so there is no key press to answer: this fires on V LOOKING at a
+        // vehicle, which is the moment the prompt should have appeared and did
+        // not. Rate limited, so a street of parked cars says it once.
+        //
+        // Not shown while V is already mounted. That is reachable: V can get on
+        // during the few seconds a phone is ringing, before the lock exists.
+        if this.m_vlBanner > 0.0 {
+            this.m_vlBanner -= this.m_vlLast;
+            return;
+        }
+        if CCG01VehicleLock.IsMounted(game) {
+            return;
+        }
+        if CCG01VehicleLock.LookingAtVehicle(game) {
+            CCG01VehicleLock.Banner(game);
+            this.m_vlBanner = CCG01VehicleLock.BannerGapSeconds();
+        }
+    }
+
     // One call's state machine. Every fact name is derived from Prefix(call), so
     // Elena and Nix run the same code against different facts.
     //
@@ -620,7 +833,8 @@ public class NegativeBalanceHolocall extends ScriptableSystem {
                 // Ring, but only when the phone would actually be usable - in
                 // combat or mid-menu the call is dropped on the floor - and not
                 // over a fast-travel loading screen.
-                if this.Phone().IsCallingEnabled() && this.FastTravelClear() {
+                if this.Phone().IsCallingEnabled() && this.FastTravelClear()
+                    && this.MountedClear(call) {
                     // CLEAR THE GAME'S OWN CALL FACT FIRST. It persists, and it
                     // persists at Talking (2) once a call has been answered.
                     // A call resumed after a mid-call save would otherwise find

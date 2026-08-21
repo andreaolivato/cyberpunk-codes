@@ -5,6 +5,23 @@ Negative Balance releases, newest first. The same changelog is on the mod's
 
 ---
 
+## 1.2.3 (2026-08-21)
+
+Safe to install mid-save. Nothing to restart.
+
+- **Fixed: Johnny no longer talks to you from somewhere you have already
+  driven past.** He is staged beside V at the moment his scene starts, so
+  answering a call at speed left him behind within a second. Calls now wait
+  until V is on foot, and V cannot get into a vehicle between a call starting
+  and the beat after it finishing. Affects the three beats that can happen
+  anywhere: after Elena's call, on the crosswalk, and after Nix gives up the
+  address.
+- **Added: the game says why a vehicle cannot be entered.** "ACTION BLOCKED"
+  while one of those beats is pending, and a prompt to get off your vehicle
+  when a call to Nix is waiting on it.
+
+---
+
 ## 1.2.2 (2026-08-19)
 
 Safe to install mid-save. Nothing to restart.

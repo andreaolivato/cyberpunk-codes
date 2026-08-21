@@ -1329,6 +1329,314 @@ registerForEvent("onDraw", function()
     forceButton("*** FORCE 3: SetDeviceState(ON) only ***", "SetDeviceState(ON)",
         function(ps) ps:SetDeviceState(Enum.new("EDeviceStatus", "ON")) end)
 
+    -- ============ VEHICLE LOCK LAB (docs/backlog.md 16) ============
+    --
+    -- Johnny's three free-roaming beats stage him at a fixed point in the world,
+    -- so a V who is riding leaves him behind and hears the rest of the line from
+    -- a spot that is receding. The design under test: refuse to ring while V is
+    -- mounted, and block mounting from pickup until the beat ends, so a beat
+    -- always plays to a V on foot.
+    --
+    -- Three things have to be measured in game before any of it is written, and
+    -- none of them is answerable from the files on disk.
+    --
+    -- 1. WHICH QUERY ANSWERS "V IS MOUNTED". 2.31's script bundle holds several
+    -- candidate spellings. The readout below evaluates all of them every frame,
+    -- so the one that goes into redscript is measured rather than assumed. Open
+    -- the overlay and get on a bike while watching it: a row that reads the
+    -- same standing and riding is the wrong query, however plausible its name.
+    --
+    -- 2. WHETHER A GAMEPLAY RESTRICTION BLOCKS GETTING IN. TweakDB ships
+    -- GameplayRestriction.NoDriving, VehicleNoSummoning and VehicleNoInteraction
+    -- as status effect records. Their names suggest what they do and nothing
+    -- more, because the flat values are hashed in tweakdb.bin, so the only way
+    -- to learn what one actually stops is to wear it and try to get on a bike.
+    -- The game's own gate is DoStatusEffectsAllowMounting, which reads the
+    -- player's status effects, which is why a restriction is the thing to try
+    -- before anything gets hooked.
+    --
+    -- 3. WHETHER THE EFFECT IS SAVABLE, and this is the dangerous one. It needs
+    -- a save rather than a button: apply one, save, quit to desktop, load, then
+    -- dump. If it comes back applied, a lock this mod forgets it is holding
+    -- leaves a player unable to drive for the rest of that save. gotchas.md 21
+    -- is the same shape, and ApplyLock in Gig01_Holocall.reds is the guard
+    -- written for it.
+
+    ImGui.Spacing()
+    ImGui.Text("Vehicle lock lab (backlog 16)")
+    ImGui.Separator()
+
+    -- THE CANDIDATE SPELLINGS, in one table so the live readout below and the
+    -- log button use exactly the same list.
+    --
+    -- SEVERAL ON PURPOSE, and the reason matters. 2.31 declares
+    -- IsMountedToVehicle;GameInstanceGameObject, which takes a GameInstance
+    -- first, so a one-argument call can be answering from an argument mismatch
+    -- rather than from the game. A row reading false while standing proves
+    -- nothing by itself. The row worth putting into redscript is the one that
+    -- CHANGES when V gets on a bike.
+    --
+    -- The last row is the game's own gate on getting in, a static on
+    -- gamevehicleVehicleMountableComponent. CET reaches a static through
+    -- Game['Class::Method;ArgTypes'], because the bare class name is not a
+    -- global.
+    local MOUNT_PROBES = {
+        { "IsMountedToVehicle(player)", function(player)
+            return VehicleComponent.IsMountedToVehicle(player)
+        end },
+        { "IsMountedToVehicle(game, player)", function(player)
+            return Game["VehicleComponent::IsMountedToVehicle;GameInstanceGameObject"](
+                Game.GetGameInstance(), player)
+        end },
+        { "VehicleComponent.GetMountedVehicle", function(player)
+            local v = VehicleComponent.GetMountedVehicle(player)
+            if v == nil then return "nil" end
+            return tostring(v:GetClassName())
+        end },
+        { "player:GetMountedVehicle()", function(player)
+            local v = player:GetMountedVehicle()
+            if v == nil then return "nil" end
+            return tostring(v:GetClassName())
+        end },
+        { "PSM Vehicle blackboard int", function(player)
+            local defs = Game.GetAllBlackboardDefs().PlayerStateMachine
+            local bb = Game.GetBlackboardSystem():GetLocalInstanced(
+                player:GetEntityID(), defs)
+            return bb:GetInt(defs.Vehicle)
+        end },
+        { "DoStatusEffectsAllowMounting", function(player)
+            return Game[
+                "gamevehicleVehicleMountableComponent::DoStatusEffectsAllowMounting;GameObject"](player)
+        end },
+    }
+
+    -- LIVE READOUT, recomputed every frame the window is open.
+    --
+    -- The question here is a comparison, standing against riding, and a
+    -- comparison read out of a buffered log means quitting the game between its
+    -- two halves. These lines move as V moves, so opening the overlay and
+    -- getting on a bike is the entire test.
+    do
+        local player = Game.GetPlayer()
+        if player == nil then
+            ImGui.TextDisabled("no player")
+        else
+            for _, row in ipairs(MOUNT_PROBES) do
+                local ok, res = pcall(row[2], player)
+                if ok then
+                    ImGui.Text(string.format("%-34s %s", row[1], tostring(res)))
+                else
+                    ImGui.TextDisabled(string.format("%-34s MISS", row[1]))
+                end
+            end
+        end
+    end
+    ImGui.TextDisabled("Watch these while getting on a bike. The row that CHANGES")
+    ImGui.TextDisabled("is the one to use. A row stuck on false answers nothing.")
+
+    -- The same list into the log, for when the answer needs to be kept rather
+    -- than looked at. MISS is a result: that spelling is not the one.
+    if ImGui.Button("*** LOG: the mounted probes, as they read right now ***") then
+        local player = Game.GetPlayer()
+        log("vehicle-probe: ==== mounted state ====")
+        for _, row in ipairs(MOUNT_PROBES) do
+            local ok, res = pcall(row[2], player)
+            if ok then
+                log(string.format("vehicle-probe: %-40s %s", row[1], tostring(res)))
+            else
+                log(string.format("vehicle-probe: %-40s MISS (%s)", row[1], tostring(res)))
+            end
+        end
+        log("vehicle-probe: ==== end ====")
+    end
+
+    -- APPLY AND REMOVE, one pair of buttons per record. Click apply, walk to a
+    -- bike, try to get on.
+    --
+    -- WHAT BEING BLOCKED LOOKS LIKE MATTERS AS MUCH AS WHETHER IT HAPPENS. A
+    -- prompt that is simply absent reads to a player as a broken mod, while
+    -- vanilla's own refusal message reads as the game saying no. Note which of
+    -- the two you get, because it decides whether this design ships at all.
+    local VEHICLE_RESTRICTIONS = {
+        "GameplayRestriction.NoDriving",
+        "GameplayRestriction.VehicleNoSummoning",
+        "GameplayRestriction.VehicleNoInteraction",
+        -- OURS, a clone of VehicleNoInteraction with savable turned off
+        -- (source/tweaks/vehiclelock.yaml). Two questions, both answered by
+        -- applying this one instead of the vanilla one above:
+        --   does it still block?   walk to a car with it on
+        --   is it still savable?   apply, save, quit to DESKTOP, load, and read
+        --                          the live status list below
+        -- A record that loads is not evidence that every line in it applied;
+        -- backlog.md 13 is the case where one line had never run for months.
+        "GameplayRestriction.cc_g01_no_vehicle",
+    }
+
+    -- Two routes to the same thing, because which one CET exposes here has not
+    -- been established. The one that works is named in the log, and that is the
+    -- one the redscript should use.
+    local function setRestriction(rid, on)
+        local player = Game.GetPlayer()
+        local verb = on and "applied " or "removed "
+        local ok = pcall(function()
+            if on then
+                StatusEffectHelper.ApplyStatusEffect(player, rid)
+            else
+                StatusEffectHelper.RemoveStatusEffect(player, rid)
+            end
+        end)
+        if ok then
+            log("vehicle-lock: " .. verb .. rid .. " via StatusEffectHelper")
+            return
+        end
+        local ok2, err = pcall(function()
+            local ses = Game.GetStatusEffectSystem()
+            if on then
+                ses:ApplyStatusEffect(player:GetEntityID(), rid)
+            else
+                ses:RemoveStatusEffect(player:GetEntityID(), rid)
+            end
+        end)
+        if ok2 then
+            log("vehicle-lock: " .. verb .. rid .. " via StatusEffectSystem")
+        else
+            log("vehicle-lock: FAILED on " .. rid .. " -> " .. tostring(err))
+        end
+    end
+
+    for _, rid in ipairs(VEHICLE_RESTRICTIONS) do
+        local short = rid:gsub("^GameplayRestriction%.", "")
+        if ImGui.Button("APPLY " .. short) then setRestriction(rid, true) end
+        ImGui.SameLine(300)
+        if ImGui.SmallButton("REMOVE##" .. short) then setRestriction(rid, false) end
+    end
+
+    -- PANIC BUTTON. Anything this lab can put on, this takes off, whatever
+    -- state the rest of the menu thinks it is in. It exists so a session that
+    -- ends badly does not leave behind a save that cannot drive.
+    if ImGui.Button("*** CLEAR every restriction this lab applies ***") then
+        for _, rid in ipairs(VEHICLE_RESTRICTIONS) do
+            setRestriction(rid, false)
+        end
+    end
+
+    -- THE HOOK PROBE, the other half of backlog 16 (Gig01_VehicleGate.reds).
+    --
+    -- The status effect above works and is savable, which is the thing that
+    -- makes it wrong to ship: a player who uninstalls while it is applied has a
+    -- save that can never drive. A script hook stores nothing, so the question
+    -- is whether a hook can do the same job.
+    --
+    -- TWO READINGS, and the redscript needs a GAME RESTART rather than a mod
+    -- reload, because it is redscript and not Lua.
+    --
+    -- 1. IS IT HEAVY. Switch the hook on and walk down a busy street. The count
+    --    is every time the base game asked a vehicle to work out its
+    --    interaction. Climbing steadily as cars stream past is expected and
+    --    fine. Racing away while standing still in an empty alley is not, and
+    --    would mean this method is not the one to hook.
+    -- 2. CAN IT SUPPRESS THE PROMPT. Switch BLOCK on, walk to a car. If the
+    --    "get in" prompt is gone, the design works with no save footprint at
+    --    all. Watch for anything else about vehicles misbehaving, because this
+    --    skips the original outright and that method may do more than one job.
+    ImGui.Spacing()
+    ImGui.Text("Hook probe (Gig01_VehicleGate.reds)")
+    do
+        local qs = Game.GetQuestsSystem()
+        local on = qs:GetFactStr("cc_g01_dbg_vgate_on") > 0
+        local blocking = qs:GetFactStr("cc_g01_dbg_vgate_block") > 0
+        ImGui.Text(string.format("  calls counted: %d", qs:GetFactStr("cc_g01_dbg_vgate")))
+        if ImGui.Button(on and "HOOK: ON (click to stop counting)"
+                           or "HOOK: off (click to start counting)") then
+            qs:SetFactStr("cc_g01_dbg_vgate_on", on and 0 or 1)
+        end
+        if ImGui.Button(blocking and "BLOCK: ON (prompt should be gone)"
+                                 or "BLOCK: off") then
+            qs:SetFactStr("cc_g01_dbg_vgate_block", blocking and 0 or 1)
+        end
+        if ImGui.Button("reset the count") then
+            qs:SetFactStr("cc_g01_dbg_vgate", 0)
+        end
+        if blocking and not on then
+            ImGui.TextDisabled("  BLOCK does nothing while HOOK is off.")
+        end
+    end
+    ImGui.TextDisabled("Redscript, so this needs a game restart, not a reload.")
+
+
+    -- WHICH COLOUR, and it can only be answered by looking.
+    --
+    -- Playtest 2026-08-21, on SimpleMessageType.Undefined: *"It's red and at the
+    -- top... possible to be grey instead?"* The style is the enum member and
+    -- nothing else: position and colour belong to the widget, so there is no
+    -- knob for either.
+    --
+    -- These push through the SAME path the gig ships, CCSharedHud's slot and
+    -- field, so whatever a button looks like here is exactly what a player
+    -- would get. Lua only, so a mod reload is enough to try them.
+    --
+    -- A member that does not exist in 2.31 reports itself in the log rather
+    -- than taking the overlay down, which also makes this a way to find out
+    -- what the enum really holds.
+
+
+    -- WHAT IS ON V RIGHT NOW, live.
+    --
+    -- This was a button that only wrote to the log, and twice that read as the
+    -- button doing nothing. The reload test is the one place where a reading
+    -- has to be taken the moment a save comes up, so it renders here instead.
+    --
+    -- MEASURED 2026-08-21: GameplayRestriction.VehicleNoInteraction IS SAVABLE.
+    -- Applied, saved, quit to desktop, relaunched, loaded, and it came back
+    -- still blocking. So this list is the only thing that will tell a session
+    -- it inherited a lock, and CLEAR above is the only thing that lifts one.
+    ImGui.Spacing()
+    ImGui.Text("Status effects on V")
+    do
+        local ok, err = pcall(function()
+            local player = Game.GetPlayer()
+            local ses = Game.GetStatusEffectSystem()
+            local effects = ses:GetAppliedEffects(player:GetEntityID())
+            local n = 0
+            for _, e in ipairs(effects or {}) do
+                local rid = "?"
+                pcall(function() rid = tostring(e:GetRecord():GetID()) end)
+                -- The id prints as a TweakDBID struct with the readable name in
+                -- a Lua comment inside it. Pull the name out, because the hash
+                -- is not what anyone is looking for here.
+                local pretty = rid:match("%-%-%[%[%s*(.-)%s*%-%-%]%]") or rid
+                if pretty:find("GameplayRestriction") then
+                    ImGui.Text("  " .. pretty)
+                else
+                    ImGui.TextDisabled("  " .. pretty)
+                end
+                n = n + 1
+            end
+            ImGui.Text(string.format("  %d effect(s)", n))
+        end)
+        if not ok then ImGui.TextDisabled("  unreadable: " .. tostring(err)) end
+    end
+    ImGui.TextDisabled("A GameplayRestriction line here after a fresh load is a")
+    ImGui.TextDisabled("lock inherited from the save. Use CLEAR above.")
+
+    if ImGui.Button("*** LOG: the status effects, as they read right now ***") then
+        local ok, err = pcall(function()
+            local player = Game.GetPlayer()
+            local ses = Game.GetStatusEffectSystem()
+            local effects = ses:GetAppliedEffects(player:GetEntityID())
+            log("status-dump: ==== active on V ====")
+            local n = 0
+            for _, e in ipairs(effects or {}) do
+                local rid = "?"
+                pcall(function() rid = tostring(e:GetRecord():GetID()) end)
+                log("status-dump: " .. rid)
+                n = n + 1
+            end
+            log(string.format("status-dump: ==== %d effect(s) ====", n))
+        end)
+        if not ok then log("status-dump failed: " .. tostring(err)) end
+    end
+
     ImGui.Spacing()
     ImGui.Text("Position capture (for the office encounter)")
     ImGui.Separator()

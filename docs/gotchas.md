@@ -653,3 +653,80 @@ Never renumber. Append.
     about 10 dB too shallow through the low mids, and even a perfect magnitude
     match sounds, in a field report, *"just a tad different"*. `backlog.md` 15
     carries the numbers and `tools/questkit/phone.py` the implementation.
+
+43. **Redscript has no equality operator for `Bool`, and the error names a type
+    you never mentioned.** `if a == b` or `if a != b` on two Bools fails to
+    compile with:
+
+    ```
+    [NO_MATCHING_OVERLOAD] arguments passed to 'OperatorNotEqual' do not match
+    any of the overloads:
+    1st argument: expected 'TweakDBID', given 'Bool'
+    ```
+
+    `TweakDBID` is simply the first overload in the table. If the line above
+    happens to mention a TweakDBID, and in practice it often does, the message
+    sends you to inspect that instead of the comparison. Write it out:
+
+    ```swift
+    let matches: Bool = (a && b) || (!a && !b);
+    ```
+
+    This has cost time twice in `Gig01_Holocall.reds`, in `ApplyLock` and again
+    in `UpdateVehicleLock`, which is why it is here rather than only in a code
+    comment. Both places compare "what should be true" against "what is actually
+    applied", which is a shape any lock or latch reaches for, so expect it again.
+
+44. **A `@wrapMethod` on a base-game method whose name ends in `ByTask`, or that
+    has a matching `...Task` class, runs on a job worker thread. Do not read game
+    state from it.** A hook on
+    `VehicleComponent.DetermineInteractionState(CName)` that called
+    `GetEntity()` and `GameInstance.GetQuestsSystem()` compiled cleanly and
+    crashed the game on load, before the main menu, while the world streamed
+    vehicles in. Its own dev switch was off; the early-out still touched both
+    before deciding to do nothing.
+
+    The tell is in the script bundle next to the method:
+    `DetermineInteractionStateByTask`, `DetermineInteractionStateTask` and
+    `DetermineInteractionStateTask;ScriptTaskData`. `ScriptTaskData` means the
+    engine's script job system, so the method is not on the main thread.
+
+    Grep for those siblings before wrapping anything. A method that only ever
+    runs on the main thread, an `On*Event` handler for instance, is safe to hook
+    the ordinary way. `backlog.md` 10i is a reminder that crashes on job-worker
+    threads in the world streamer are hard to attribute afterwards, so it is
+    much cheaper to avoid causing one.
+
+45. **A `.reds` saved with CRLF line endings silently breaks the shared-module
+    import, and the error names the class rather than the line endings.** Every
+    script in this repo is LF. `tools/vendor-shared.ps1` rewrites each gig's
+    `import CyberpunkCodes.Shared.*` to point at the per-gig module name, and it
+    matches with:
+
+    ```
+    (?m)^import CyberpunkCodes\.Shared\.\*$
+    ```
+
+    In .NET regex, `(?m)$` matches immediately before `\n`. On a CRLF file the
+    line ends `...\*\r\n`, so the `\r` sits between `\*` and `$` and the pattern
+    does not match. The import is left pointing at a module that does not exist
+    under that name, and compilation fails with:
+
+    ```
+    [UNRESOLVED_REF] unresolved reference 'CCSharedHud'
+    ```
+
+    which sends you looking at the class, the vendoring, or the shared file,
+    none of which are wrong.
+
+    It is easy to introduce without noticing. Python's `open(path, "w")` on
+    Windows translates `\n` to `\r\n`, so any script that rewrites a `.reds` in
+    text mode converts the whole file. Write with `newline=""` or in binary, and
+    if a reference that plainly exists will not resolve, check the file with:
+
+    ```bash
+    python -c "d=open('X.reds','rb').read(); print(d.count(b'\r\n'))"
+    ```
+
+    Anything above zero is the fault. The same applies to the `module` rewrite
+    on the shared files themselves, which is anchored the same way.

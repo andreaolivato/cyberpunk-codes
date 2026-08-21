@@ -34,6 +34,16 @@ STRINGS = {
     # words survive as spoken lines in tools/gig01/gen_scenes.py, which is where every
     # line in the gig lives now, because only a scene line can carry audio.
 
+    # --- on-screen messages -------------------------------------------------
+    # There is no string for the blocked-vehicle message. It uses the base
+    # game's own UIInGameNotificationEvent, which reads "ACTION BLOCKED" and
+    # carries no text of ours. See Gig01_VehicleLock.reds for why that is the
+    # right answer rather than a limitation.
+    # Shown when a call to Nix is waiting on V getting off a bike. NOT shown for
+    # Elena's opening call: at that point the player is not waiting for anything
+    # and has no idea a gig exists, so a nudge out of nowhere would be noise.
+    'vehicle-dismount': 'Get off your vehicle to talk to Nix.',
+
     # --- gig + objectives ---------------------------------------------------
     'gig-title': 'Negative Balance',
     'obj-office': 'Get inside the Arasaka compound',
