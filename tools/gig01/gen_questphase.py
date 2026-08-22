@@ -225,13 +225,32 @@ step(add_pause_fact('cc_g01_shard_found'))
 step(add_scene(SCENES + 'gig01_shard_find.scene', ANCHOR_PLAYER,
                ['shard_find_in'], ['shard_find_out']),
      in_sock='shard_find_in', out_sock='shard_find_out')
+
+# FINDING IT AND READING IT ARE TWO OBJECTIVES, split 2026-08-22.
+#
+# The shard is a real container now, with Take and Read on it. [R] reads it
+# where it lies and [F] puts it in the inventory, and a player who presses F
+# was previously left looking at "Search the desks" with nothing on the desk
+# and no idea the beat was still running. So the desk objective closes the
+# moment the shard is found, and reading it becomes its own line.
+#
+# It hangs off cc_g01_shard_found, which is the proximity check in
+# Gig01_Encounter, so it appears when the player is at the shard however they
+# go on to deal with it.
+step(add_journal('gameJournalQuestObjective', QUEST + '/phase_main/obj_shard',
+                 notify=0), in_sock='Succeeded')
+step(add_journal('gameJournalQuestObjective',
+                 QUEST + '/phase_main/obj_shard_read'),
+     in_sock='Active')
+
 step(add_setvar('cc_g01_shard_open', 1))
 step(add_pause_fact('cc_g01_shard_read'))
 step(add_scene(SCENES + 'gig01_shard_read.scene', ANCHOR_PLAYER,
                ['shard_read_in'], ['shard_read_out']),
      in_sock='shard_read_in', out_sock='shard_read_out')
-step(add_journal('gameJournalQuestObjective', QUEST + '/phase_main/obj_shard',
-                 notify=0), in_sock='Succeeded')
+step(add_journal('gameJournalQuestObjective',
+                 QUEST + '/phase_main/obj_shard_read', notify=0),
+     in_sock='Succeeded')
 
 # ...and a beat AFTER the scene has exited, not on the same frame as its last
 # section. playtest, 2026-08-13: "Johnny disappears right before 'Figures', should

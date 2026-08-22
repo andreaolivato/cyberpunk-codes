@@ -1245,7 +1245,44 @@ office desk. Read the world data, do not guess and do not assume it needs a
 live probe.
 
 
-## 6. The shard prompt - UNSOLVED, deliberately parked (2026-08-14)
+## 6. The shard prompt - SOLVED 2026-08-22, and it ships
+
+**The shard on the office desk has a Take and Read prompt.** It is the game's
+own shard case container, in a sector this mod ships, holding this mod's item,
+standing where the desk's original shard stood, and the `.archive.xl` deletes
+that original so the desk carries one. The account below is kept in full,
+because most of it is still true and the parts that are not are marked.
+
+### The recipe, in three lines
+
+- **NAME THE NODE.** `QuestPrefabRefHash` as a full `$/03_night_city/...` path,
+  repeated in the sector's own `nodeRefs`. This is what the whole section was
+  missing. An unnamed node in a mod sector DOES NOT LOAD AT ALL.
+- **BRING THE INSTANCE DATA ACROSS WHOLE**, all 53 fields, lifted
+  mechanically.
+- **POINT `itemSecondaryAction` AT YOUR OWN ACTION RECORD**, whose
+  `journalEntry` names your onscreen entry. That, and not any name field, is
+  where a shard's title and text come from.
+
+**`docs/shard-playbook.md` is the authority now.** It carries the whole recipe
+written for a stranger: the journal entry, the item record, the named node, the
+read detection, a checklist and a symptom table. This section keeps the
+history, including everything that failed on the way. Gotchas 47, 48 and 49
+carry the individual traps.
+
+**PLAYED END TO END, 2026-08-22.** Both routes: read in place with [R], and
+taken with [F] then read out of the inventory. Also read from the Shards list
+in the journal. All three complete the beat, and the gig runs to its end
+afterwards.
+
+### What the 2026-08-14 account got wrong, and what stands
+
+The section used to open with the paragraph below, and its central claim, that
+a verbatim copy of the working container is inert in a mod sector, was FALSE.
+The copy was inert because its node had no name, and naming was never varied.
+Everything else here stands and is worth keeping.
+
+---
 
 The shard on the office desk is read on proximity, not with an [F] prompt,
 because a prompt on a mod-placed object could not be made to work. Every route
@@ -1324,6 +1361,325 @@ These are why the account above is trustworthy, and each was a wasted round.
 end, but its loot-list title is "The Flowers of Silence" and playtesting rejected it
 on sight - "people will not understand it." Renaming that item globally would
 change it everywhere it appears in the game.
+
+### 2026-08-22: the vanilla sector, read off disk
+
+Everything above stands. What follows is new, and it is where the next reading
+comes from.
+
+The office desk is in `exterior_-4_-23_0_0.streamingsector`, in
+`basegame_3_nightcity.archive`. The shard on it is that sector's node 527, a
+`worldEntityNode` on `base\gameplay\loot\shard_cases\shard_case_container.ent`,
+appearance `shard_case_container_kitsch_c`, holding
+`Items.generic_hanako_flowers_shard`. Its nodeData entry differs from the one
+this mod ships in three fields, and no previous round varied any of them:
+
+| field | vanilla | ours |
+|---|---|---|
+| `QuestPrefabRefHash` | a full `$/03_night_city/...` NodeRef, repeated in the sector's own `nodeRefs` | `0` |
+| `sourcePrefabHash` | `17977730056932040999` | `0` |
+| `Pivot` | the origin of the prefab it was instanced from | `(0, 0, 0)` |
+
+**The name is the suspect.** Counted across that whole sector, every node type
+carrying gameplay state is named and every purely visual one is not:
+
+| node type | named / total |
+|---|---|
+| `worldEntityNode` | 118 / 118 |
+| `worldDeviceNode` | 8 / 8 |
+| `worldSmartObjectNode` | 150 / 150 |
+| `worldStaticMeshNode` | 0 / 279 |
+| `worldStaticLightNode` | 0 / 272 |
+| `worldStaticDecalNode` | 0 / 166 |
+
+A container carries a `persistentState` (`ShardCaseContainerPS`, in its own
+instance data), persistent state has to be keyed to something that survives a
+save, and the node's name is the only candidate in the file. Section 11 already
+proved the other half: a node this mod ships DOES register a global name, in
+the long `$/...` form only. That was measured for scene acquisition and has
+never been applied to the shard.
+
+`persistentNodes` is empty and `persistentNodeIndex` is 0 in the vanilla sector
+as well as ours, so those two are not it.
+
+**What ArchiveXL 1.27 can do to a shipped sector**, read out of its own string
+table: `nodeDeletions`, `nodeMutations` (position, orientation, scale, mesh,
+material, effect, entityTemplate, appearance, meshAppearance, recordID),
+`instanceDeletions`, `instanceMutations`, `actorDeletions`, `actorMutations`.
+There is no addition. That closes the third route listed for this section: a
+mod cannot append a node to a vanilla sector, so its own sector is the only
+place one can go. It also means the vanilla container's `itemTDBID` cannot be
+rewritten from an `.archive.xl`, because that field is not on the mutation
+list.
+
+Deleting the vanilla node IS available, and `expectedNodes: 939` with
+`index: 527` is in the `.archive.xl` now. That is how the desk ends up with one
+shard rather than two.
+
+### A second finding, about the text rather than the prompt
+
+`Items.cc_g01_shard` clones the vanilla shard, and a clone inherits
+`objectActions`. **That is the field the reader is driven from**: `ReadAction`
+resolves its journal entry through `GetJournalEntryFromAction(TweakDBID)`, off
+the ACTION record rather than off the item, and the base item's action is an
+inline record whose `journalEntry` flat points at The Flowers of Silence.
+
+So the record as it stood would have shown our title in the loot list and
+opened the vanilla text. `source/tweaks/shard.yaml` now ships
+`ObjectAction.cc_g01_shard_read` and points `objectActions` at it. Named rather
+than inline, because a generated inline name cannot be checked from the dev
+menu or grepped for in the TweakXL log.
+
+The flats were listed by decompressing CET's `tweakdbstr.kark`, which is the
+route in `gameplay-restrictions.md`. It gives names and not values, so what
+`journalEntry` points at is inferred from the title rather than read, and the
+override needs the dev menu's "shard item record" readout to confirm it applied.
+
+### The bench
+
+Twelve objects in one line in the street outside the compound gate, three
+metres apart at chest height, plus a working vanilla container in the office as
+slot 0. `tools/gig01/gen_bench.py` builds them, `Gig01_LootBench.reds` reads
+them, and the dev menu draws the table. The slot numbers are the same in all
+four places.
+
+| slot | what it varies |
+|---|---|
+| 0 | CONTROL: a vanilla container in the office, untouched |
+| 1 | the inert copy, NAMED in the long form |
+| 2 | the inert copy, anonymous |
+| 3 | `sourcePrefabHash` and `Pivot` alone |
+| 4 | NAMED in the short form, which section 11 says does not register |
+| 5 | named, prefab hash, pivot and the vanilla streaming distance |
+| 6 | the same, holding `Items.cc_g01_shard` |
+| 7 | the same, in a sector whose only difference is `level: 0` |
+| 8 | named, with no instance data at all |
+| 9 | named, on the street story's own shard case template |
+| 10 | named, on the gig's bespoke `cc_g01_shard.ent` |
+| 11 | anonymous, on the bespoke entity: the configuration that ships today |
+| 12 | the desk, after the `.archive.xl` deletes the vanilla shard |
+
+Five numbers per slot, and the first three are written on every sample before
+any condition is tested: `seen`, `kind`, `ref`, then `aim` and `hub`. `hub` is
+the answer, and it is the number of interaction choices offered while the
+player was looking at that object.
+
+**Two calibrations, and a run is void without both.** Slot 0 must read a
+prompt, or the detector is broken. Slot 11 must be found at all, or the bench
+sector did not load and nothing else in the table means anything.
+
+### Run one, 2026-08-22. It moved the question
+
+| slot | seen | kind | ref | aim | hub | |
+|---|---|---|---|---|---|---|
+| 0 | 0 | 0 | 3 | 0 | 0 | CONTROL, never reached |
+| 1 | 1 | 3 | 4 | 0 | 0 | named long |
+| 2 | 0 | 0 | 0 | 0 | 0 | anonymous |
+| 3 | 0 | 0 | 0 | 0 | 0 | prefab hash only |
+| 4 | 1 | 3 | 1 | 2 | 0 | named short |
+| 5 | 1 | 3 | 4 | 2 | 0 | all vanilla |
+| 6 | 1 | 3 | 4 | 3 | 0 | all vanilla, our item |
+| 7 | 1 | 3 | 4 | 5 | 0 | level 0 |
+| 8 | 1 | 3 | 4 | 0 | 0 | no instance data |
+| 9 | 1 | 3 | 4 | 1 | 0 | street story case |
+| 10 | 1 | 2 | 4 | 0 | 0 | our bespoke entity, named |
+| 11 | 0 | 0 | 0 | 0 | 0 | our bespoke entity, anonymous |
+| 12 | 2 | 3 | 4 | 0 | 0 | the desk |
+
+**A NAME IS WHAT MAKES A NODE LOAD.** Every named slot was found and every
+anonymous one was absent, 8 out of 8 against 0 out of 3, with the two kinds
+standing four metres apart in the same row. Section 11 said this in passing
+about its own probes; it is now measured against a deliberate control.
+
+Note what the name does NOT have to be. Slot 4 carries a short-form name, which
+reads `ref` 1, meaning nothing registered it, and it loaded anyway. So loading
+follows from the node carrying a name at all, and resolving follows from the
+long form. Two different things.
+
+**The thing that loads is a real container that draws nothing.** `kind` 3 on
+every container slot, so the `ShardCaseContainer` class attaches and the
+targeting system can see it. Playtest, 2026-08-22: *"I don't see anything"*, and
+a screenshot from inside the compound shows an empty street. So the object is
+there, it is the right class, it is targetable, and it has no visible body.
+
+That is worth stating as a symptom rather than a theory, because a shard case
+has NO mesh component: `shard_case_container.ent` carries an
+`entPlaceholderComponent` named "root" and thirteen gameplay components, and
+every visual comes from the appearance. Slots 13 and 14 vary the appearance
+name to test it.
+
+**No prompt on any of the five that were looked at, AND THE RUN IS VOID ON
+THAT POINT.** Slot 0 was never reached, so there is no reading off a working
+container, and "these offer nothing" cannot be told from "the probe cannot see
+a prompt". This is the failure mode the bench design was supposed to prevent
+and it happened anyway, because the calibration needed the player to go
+somewhere. `cc_g01_bench_anyhub` is the fix: the largest prompt seen anywhere
+at any time, whatever it belonged to, so a door on the way past calibrates the
+probe with nobody doing anything.
+
+**The sector patch did not run**, and that is gotcha 47: `expectedNodes` and
+`index` count instances, not nodes. Corrected to 1242 and 591.
+
+Three changes followed: pins on every slot, since there was nothing on screen
+to walk towards and five of eleven were never looked at; every number kept as a
+best-ever within a run rather than a snapshot, so a walk and then a visit to
+the office build one table; and the bench moved into
+`cc_g01_world.streamingsector`, the one sector this project has ever got to
+render, so that "did the sector load" stops being a second unknown.
+
+### Run two, 2026-08-22. THE PROMPT WORKS
+
+**A container this mod places in its own sector renders, and it offers
+"F Take / R Read".** Photographed on four separate slots. The section's opening
+claim, that a copy of the working vanilla container is inert in a mod sector,
+is wrong as of this run, and what made the difference is the node's NAME.
+
+The recipe, stated so it can be built from:
+
+- a `worldEntityNode` in a mod sector, on
+  `base\gameplay\loot\shard_cases\shard_case_container.ent`;
+- **NAMED**, `QuestPrefabRefHash` a full `$/03_night_city/...` path, repeated
+  in the sector's own `nodeRefs`;
+- carrying the vanilla node's `instanceData`, the whole 53-field
+  `ShardCaseContainer` chunk, lifted mechanically.
+
+What turned out NOT to be needed, each measured against a slot that omits it:
+
+| | |
+|---|---|
+| `appearanceName` | not needed. Slot 14 has none and draws the right case and prompts |
+| `sourcePrefabHash`, `Pivot` | not needed for a prompt |
+| the vanilla `MaxStreamingDistance` | not needed |
+| sector `level` | 0 and 1 both work |
+
+What IS needed, and it is the one that bites:
+
+- **The instance data.** Slot 8 is named and has none, and it renders as an
+  oversized flat grey slab with no prompt at all. The template's own defaults
+  are not a container.
+- **The name.** Slots 2, 3 and 11 are anonymous and were absent again, second
+  run running.
+
+**The desk is right.** Slot 12 read `ref` 3, down from 4, so the `.archive.xl`
+deletion of the vanilla shard took once the instance numbers were corrected.
+Slot 15 read `seen` 1 with `aim` 24, so the gig's own shard survived the bench
+moving into its sector. One shard on that desk.
+
+**The prompt readout was wrong, and the run is still readable because of the
+screenshots.** Slot 0, the working vanilla container, read `aim` 81 and `hub` 0
+while the screen showed "F Take / R Read". A container's prompt is the LOOT
+hub, and `UIInteractionsDef` carries several side by side: the probe read
+`InteractionChoiceHub` alone. It now reads that, `LootData` and
+`ActiveChoiceHubID` and takes the largest.
+
+**A name does not have to RESOLVE, only to exist.** Slot 4 carries the short
+form, reads `ref` 1 (nothing registered it), and was photographed with a
+working prompt. So the node-name effect on loading and on loot is separate from
+the NodeRef registry that section 11 measured. The long form is still what to
+ship, being the only spelling the base game uses.
+
+**`Items.cc_g01_shard` applies in full**, read live off TweakDB, 2026-08-22:
+
+| flat | value |
+|---|---|
+| `Items.cc_g01_shard.displayName` | `LocKey(17972147436644121231ull)`, which is `cc-g01-shard-item`, "Data shard" |
+| `Items.cc_g01_shard.objectActions` | `[ObjectAction.cc_g01_shard_read]` |
+| `ObjectAction.cc_g01_shard_read.journalEntry` | our own onscreen path |
+| `Items.generic_hanako_flowers_shard_inline0.journalEntry` | `onscreens/emails/generic/shards/night_city_people/generic_hanako_flowers`, untouched |
+
+That reading also caught a mistake: overriding `objectActions` REPLACES the
+array rather than adding to it, and the base item's array is
+`[ItemAction.Drop, <inline read action>]`. The first cut listed only the read
+action, which would have shipped a shard the player cannot drop.
+`ItemAction.Drop` is back in `shard.yaml`.
+
+**THE LOOT LINE IS THE SHARD'S JOURNAL TITLE. It is not the item's name, and
+it never was.** Read off the game's own files, so it cost no playtest:
+
+- `base\journal\cooked_journal.journal`, entry `generic_hanako_flowers`, has
+  `title: LocKey#7190` and `description: LocKey#7189`.
+- `base\localization\en-us\onscreens\onscreens_final.json` resolves
+  `LocKey#7190` to "The Flowers of Silence. A biography of Hanako Arasaka.",
+  word for word the string on screen. `LocKey#7189` is the shard's BODY text,
+  which is different again.
+- `Items.generic_hanako_flowers_shard`'s own DisplayName accessor returns
+  `None`. The vanilla item has no name at all and still shows that title.
+
+That also settles which item the container holds, which three rounds could not.
+The tooltip's bottom line is "Recovered from a desk in the Arasaka office in
+Arroyo", and the vanilla journal's description is the biography's opening
+sentence, so that line can only be `Items.cc_g01_shard.localizedDescription`.
+Confirmed independently by the look-at probe: `THIS IS SLOT 6 (0.0 m off)`,
+`itemTDBID = Items.cc_g01_shard`.
+
+Every name field on the item was therefore the wrong tree, including the two
+this section previously recorded as suspects. The record applies in full and
+always did:
+
+| flat | value | ours |
+|---|---|---|
+| `Items.cc_g01_shard.displayName` | `LocKey(17972147436644121231ull)` | yes, FNV1a64 of `cc-g01-shard-item` |
+| `Items.cc_g01_shard.localizedDescription` | `LocKey(13831536494401013575ull)` | yes |
+| `Items.cc_g01_shard.objectActions` | `[ObjectAction.cc_g01_shard_read]` | yes |
+| `ObjectAction.cc_g01_shard_read.journalEntry` | our onscreen path | yes |
+
+**The question is now narrow.** The game resolves a shard's journal entry and
+lands on the VANILLA one, although our action names ours. ROADS 1 to 5, five
+live TweakDB rewrites tried in one session, changed nothing on screen.
+
+**FOUND IT: `itemSecondaryAction`.** The item record read back live gave it
+away, once the line was read to the end rather than truncated:
+
+```
+Items.generic_hanako_flowers_shard.objectActions
+  [ItemAction.Drop, ItemAction.Disassemble]
+```
+
+No read action in it. A shard reaches its reader through
+`itemSecondaryAction`, which names an inline ObjectAction record
+(`Items.<shard>_inline0`) whose `journalEntry` flat is the onscreen path. All
+335 shards ship that way. A `$base` clone inherits `itemSecondaryAction` still
+pointing at the BASE item's inline record, so it shows the base item's shard
+whatever is overridden on the clone itself. Gotcha 48.
+
+`shard.yaml` now sets `itemSecondaryAction: ObjectAction.cc_g01_shard_read`,
+and no longer overrides `objectActions`, which was the wrong property and was
+silently costing Disassemble.
+
+**What the same run ruled out, each with its own slot.** Every one still read
+the vanilla title:
+
+| | |
+|---|---|
+| slot 18, our item alone, 20 m from anything | AREA LOOT IS NOT IT |
+| slot 19, our item, area loot off | nor the flag |
+| slot 16, name on the container, our item | container `displayName` is not read |
+| slot 17, name on the container, vanilla item | nor does it override the item |
+| ROADS 1 to 6, six live TweakDB rewrites | no change |
+
+**Three of those roads never ran, and the bench said they had.** CET's Lua
+sandbox has no `_G`, so the helper that built a LocKey threw, and the `pcall`
+around each road turned that into a silent FAILED in the log nobody read.
+ROADS 2, 3 and 5 were reported as tried without executing a line. That is the
+same shape as the method note at the top of this section about gating evidence
+on the thing under test, in a new place.
+
+**A note on `inline0`, because the readout is misleading.** After ROAD 1,
+`Items.cc_g01_shard_inline0.journalEntry` reads as our path. `TweakDB:SetFlat`
+CREATES a flat whether or not the record exists, so that is the button's own
+value echoed back, not a discovery. `inline0 objectActionUI` stayed MISSING,
+which is what says the record still does not exist.
+
+**The Lua blackboard probe did not discriminate**, and is worth recording as a
+dead end rather than repeating. CET returns `InteractionChoiceHub`, `LootData`,
+`ActiveInteractions` and `DialogChoiceHubs` as opaque userdata whose fields do
+not read from Lua, and `ActiveChoiceHubID` sat at -1 with a loot prompt on
+screen, so -1 is its "no hub" sentinel. The redscript now reads the two hubs
+and tests the id for `> 0`.
+
+**Delete the bench once this closes**: `tools/gig01/gen_bench.py`,
+`Gig01_LootBench.reds`, the two bench sectors, the bench block, its line in the
+`.archive.xl` and the dev menu panel. Keep the sector patch.
 
 ## 7. Post-release bug reports - Nexus 1.0.0, filed 2026-08-15
 

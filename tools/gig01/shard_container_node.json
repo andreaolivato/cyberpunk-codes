@@ -1,0 +1,158 @@
+{
+  "sector": "exterior_-4_-23_0_0.streamingsector",
+  "node": 527,
+  "instance": 591,
+  "nodes": 939,
+  "expectedNodes": 1242,
+  "data": {
+    "$type": "worldEntityNode",
+    "appearanceName": {
+      "$type": "CName",
+      "$storage": "string",
+      "$value": "shard_case_container_kitsch_c"
+    },
+    "debugName": {
+      "$type": "CName",
+      "$storage": "string",
+      "$value": "shard_case_container_005"
+    },
+    "entityLod": 0,
+    "entityTemplate": {
+      "DepotPath": {
+        "$type": "ResourcePath",
+        "$storage": "string",
+        "$value": "base\\gameplay\\loot\\shard_cases\\shard_case_container.ent"
+      },
+      "Flags": "Soft"
+    },
+    "instanceData": {
+      "HandleId": "744",
+      "Data": {
+        "$type": "entEntityInstanceData",
+        "buffer": {
+          "BufferId": "21",
+          "Flags": 4063232,
+          "Type": "WolvenKit.RED4.Archive.Buffer.RedPackage, WolvenKit.RED4, Version=8.20.0.0, Culture=neutral, PublicKeyToken=null",
+          "Data": {
+            "Version": 4,
+            "Sections": 6,
+            "CruidIndex": 0,
+            "CruidDict": {
+              "0": "0"
+            },
+            "Chunks": [
+              {
+                "$type": "ShardCaseContainer",
+                "accumulatedTimePasssed": 0,
+                "activeQualityRangeInteraction": {
+                  "$type": "CName",
+                  "$storage": "string",
+                  "$value": "None"
+                },
+                "audioResourceName": {
+                  "$type": "CName",
+                  "$storage": "string",
+                  "$value": "None"
+                },
+                "containerType": "AmmoCase",
+                "contentAssignment": {
+                  "$type": "TweakDBID",
+                  "$storage": "uint64",
+                  "$value": "0"
+                },
+                "customCameraTarget": "ECCTV_All",
+                "displayDescription": {
+                  "unk1": "0",
+                  "value": ""
+                },
+                "displayName": {
+                  "unk1": "0",
+                  "value": ""
+                },
+                "e3ObjectRevealed": 0,
+                "forceDefeatReward": 0,
+                "forceRegisterInHudManager": 0,
+                "giveHandicapAmmo": 0,
+                "hasQuestItems": 0,
+                "hasVisibilityForcedInAnimSystem": 0,
+                "hitInstigatorCooldownID": {
+                  "$type": "gameDelayID"
+                },
+                "isDead": 0,
+                "isHighlightedInFocusMode": 0,
+                "isIconic": 0,
+                "isIllegal": 0,
+                "isInIconForcedVisibilityRange": 0,
+                "isScannerDataDirty": 0,
+                "isTargetedWithSmartWeapon": 0,
+                "itemTDBID": {
+                  "$type": "TweakDBID",
+                  "$storage": "string",
+                  "$value": "Items.generic_hanako_flowers_shard"
+                },
+                "killRewardDisabled": 0,
+                "lastEngineTime": 0,
+                "lastHitInstigatorID": {
+                  "$type": "entEntityID",
+                  "hash": "0"
+                },
+                "lockedByKey": {
+                  "$type": "TweakDBID",
+                  "$storage": "uint64",
+                  "$value": "0"
+                },
+                "lootQuality": "Common",
+                "lootTables": [],
+                "markAsQuest": 0,
+                "persistentState": {
+                  "HandleId": "745",
+                  "Data": {
+                    "$type": "ShardCaseContainerPS",
+                    "isDisabled": 0,
+                    "isLocked": 0,
+                    "markAsQuest": 0,
+                    "shouldHideLockedUI": 0,
+                    "started": 0
+                  }
+                },
+                "playerSocket": {
+                  "$type": "gamePlayerSocket"
+                },
+                "prereqListeners": [],
+                "receivedDamageHistory": [],
+                "renderSceneLayerMask": "Default",
+                "scanningComponent": null,
+                "shardMesh": null,
+                "sourceShootComponent": null,
+                "squadMemberComponent": null,
+                "statusEffectComponent": null,
+                "statusEffectListeners": [],
+                "stimBroadcaster": null,
+                "tags": {
+                  "$type": "redTagList",
+                  "tags": []
+                },
+                "targetShootComponent": null,
+                "uiSlotComponent": null,
+                "useAreaLoot": 1,
+                "visibilityCheckDistance": 16000,
+                "visionComponent": null,
+                "wasLootInitalized": 0,
+                "wasOpened": 0,
+                "willDieSoon": 0,
+                "workspotMapper": null
+              }
+            ]
+          }
+        }
+      }
+    },
+    "ioPriority": "Immediate",
+    "isHostOnly": 0,
+    "isVisibleInGame": 1,
+    "proxyScale": null,
+    "sourcePrefabHash": "17977730056932040999",
+    "tag": "None",
+    "tagExt": "None"
+  }
+}

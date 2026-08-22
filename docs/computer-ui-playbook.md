@@ -209,13 +209,29 @@ lines, three wraps, no UI classes touched, no trigger hook.
 
 # Shards (the OTHER way to put text on screen)
 
-Established 2026-08-13 for gig 01's comic pp. 23-24. Read this before deciding
-between a computer document and a shard. They are different objects and the
-choice is a narrative one, not a technical one.
+**The recipe moved. `shard-playbook.md` is the authority** for putting a
+readable shard in the world: the journal entry, the item record, the container
+node, and detecting the read. This section is only the choice between the two.
 
-**A shard's text is a JOURNAL ENTRY, not an item and not a file.** That single
-fact is what makes a custom shard cheap. `ReadAction.CompleteAction`
-(`cyberpunk/items/actions/readAction.swift`) is the entire mechanism:
+## Which one do you want
+
+They are different objects and the choice is narrative, not technical.
+
+| | a computer document | a shard |
+|---|---|---|
+| where it is | on a screen the player walks up to | an object they can pick up and carry |
+| who can see it | anyone at that terminal | whoever holds it |
+| after reading | stays on the machine | stays in the Shards list, re-readable |
+| the text is | your own UI, drawn by your mod | a journal onscreen entry |
+
+Use a computer for something that belongs to a place. Use a shard for something
+someone left behind, or that the player should be able to take away.
+
+## The one thing both share
+
+**A shard's text is a JOURNAL ENTRY, not an item and not a file.**
+`ReadAction.CompleteAction` (`cyberpunk/items/actions/readAction.swift`) is the
+whole mechanism:
 
 ```
 ChangeEntryState(path, "gameJournalOnscreen", gameJournalEntryState.Active, Notify);
@@ -226,109 +242,15 @@ evt.text = entry.GetDescription(); evt.m_imageId = entry.GetIconID();
 GameInstance.GetUISystem(game).QueueEvent(evt);
 ```
 
-`NotifyShardRead` is the reader overlay. Everything a "real" shard has that
-this does not. A TweakDB item record, an `ItemSecondaryAction` carrying
-`.journalEntry`, a loot container, a `ShardCaseContainer` on a desk, sits
-*upstream* of that event. A mod can raise it directly and skip all of it.
+`NotifyShardRead` is the reader overlay, and a mod can raise it directly. That
+is worth knowing on its own: **you can show the reader with no item, no
+container and no object at all**, which is the cheapest possible way to put a
+long piece of text in front of a player. Gig 01 shipped exactly that for
+months, and `CCG01Shard.Open` still does it as an anti-stall.
 
-What you still get by doing it this way rather than faking a popup: the entry
-lands in the Shards list and stays re-readable, the read is persistent
-(`PopupsManager.ShardRead` calls `SetEntryVisited`), and the quest can observe
-it.
+What you get by going through the journal rather than faking a popup: the entry
+lands in the Shards list and stays re-readable, the read is persistent, and the
+quest can observe it.
 
-## Authoring the entry
-
-Copy a shipped street story's shape. Gig 01 copied `sts_bls_ina_03`. Folder
-types matter and are not all the same class:
-
-```
-onscreens                     gameJournalPrimaryFolderEntry
-  emails                      gameJournalFolderEntry
-    quests                    gameJournalFolderEntry
-      street_stories          gameJournalFolderEntry
-        <quest id>            gameJournalFolderEntry
-          onscreens           gameJournalOnscreenGroup     <- the leaf group
-            <shard id>        gameJournalOnscreen          <- title/description
-```
-
-`title` and `description` are LocKeys (bare keys, no `LocKey#`: gotcha 1),
-`iconID` 0, `tag` `None`. The tags you see in the data (`world`, `notes`,
-`articles`...) belong to the *generic collectible* shards under
-`onscreens/emails/generic/shards`; quest shards do not use them.
-
-`GetTitle()` / `GetDescription()` return finished display strings, the journal
-resolves the LocKeys, so nothing is localized by hand. Real newlines are the
-line breaks, same as the computer documents above.
-
-## Knowing when it has been READ (the one real trap)
-
-**The entry goes `Active`, and `IsEntryVisited` goes true, when the popup
-OPENS.** Both are therefore useless as "the player has read it": a quest step
-waiting on either resumes while the shard is still on screen, under a modal
-popup that pauses the game and hides subtitles, so the next lines are spoken
-into nothing.
-
-The close signal is `PopupsManager.OnShardReadClosed`. Wrap it:
-
-```reds
-@wrapMethod(PopupsManager)
-protected cb func OnShardReadClosed(data: ref<inkGameNotificationData>) -> Bool {
-    let result: Bool = wrappedMethod(data);
-    // ...gate on your own "we opened it" fact: this fires for EVERY shard the
-    // player ever reads, including ones they picked up in the street.
-    return result;
-}
-```
-
-The popup pauses the game (`PauseGameState` → `SystemRequestsHandler.PauseGame`
-+ `UIGameContext.ModalPopup`), so DelaySystem ticks do not advance while it is
-up, which is what makes a tick-counted anti-stall safe: it cannot expire while
-the player is still reading.
-
-## Putting a PHYSICAL object in the world (three routes, two of them wrong)
-
-Gig 01 needed a shard V could see on a desk and press F on. This took three
-attempts, and the two failures are documented because other mods will hit them.
-
-**1. `DynamicEntitySystem.CreateEntity` + `DynamicEntitySpec.templatePath` - 
-HALF works, and the half that fails is silent.** The entity attaches, script
-callbacks fire, an `InteractionComponent` publishes its choice and the prompt
-appears, and the mesh never renders. Twice, with screenshots. That spec is
-an NPC/device spawner; it is what this repo uses for Johnny and his workspot
-device, both of which are invisible by design, so the gap had never shown.
-
-Declaring the mesh in the template's `resolvedDependencies` (Flags `Soft`, the
-way the shipped shard does) is *necessary*. An empty list means the resource is
-never streamed, but it was not sufficient here.
-
-**2. `exEntitySpawner.Spawn(path, transform)`: the one other mods use, and
-redscript cannot see it.** CyberScript places every prop this way
-(`mod/modules/housing.lua`, `npc.lua`), so it is proven, but it is a Codeware
-native registered for CET Lua only. A redscript probe fails to compile with
-`unresolved reference 'exEntitySpawner'`. If your mod is Lua, use it; if it is
-redscript, it does not exist.
-
-**3. A `worldEntityNode` in your own streaming sector, what the game does.**
-`worldEntityNode` (template resref + `appearanceName`) plus a matching
-`nodeData` entry carrying the position. Copy both shapes field-for-field from a
-shipped sector; `tools/gig01/gen_sector.py` is a worked generator.
-
-Two things to check before blaming the node:
-
-- **`version: 62`** on the sector, not 0.
-- **The streaming block's box must cover the point.** Gig 01's is infinite, so
-  its sector is always resident, which is also why the "custom marker nodes do
-  not resolve" finding in `map-pins-playbook.md` is about NodeRef *resolution*
-  and not about streaming. The sector loads fine; it is only useless as a pin
-  anchor.
-
-The object is then in the world from load, not from the quest step. For a prop
-that belongs in the room anyway that is the right trade; gate the *behaviour* on
-a fact instead.
-
-## Worked example
-
-`mods/gig-01-negative-balance/source/scripts/Gig01_Shard.reds` (one wrap for the
-journal takeover, one for the object's press) plus `onscreens()` in
-`tools/gig01/gen_journal.py`, the entity in `tools/gig01/gen_shard_ent.py`, its placement in
-`tools/gig01/gen_sector.py`, and the three-fact handshake in `tools/gig01/gen_questphase.py`.
+Everything else, including the physical object and the two ways a shard can be
+read, is in `shard-playbook.md`.

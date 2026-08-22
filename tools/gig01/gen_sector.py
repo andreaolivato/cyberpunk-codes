@@ -3,47 +3,46 @@ r"""Generates the world files that put the data shard on the office desk.
   mod\worlds\03_night_city\_compiled\default\cc_g01_world.streamingsector
   mod\worlds\03_night_city\_compiled\default\cc_g01_world.streamingblock
 
-WHAT THIS SHIPS, AND WHY IT IS THE SHAPE IT IS.
+WHAT THIS SHIPS: a `worldEntityNode` carrying the game's own shard case
+container, holding the gig's own item, standing where the desk's original shard
+stood. It renders, it offers "F Take / R Read", and reading it opens the gig's
+note. The `.archive.xl` deletes the original so the desk carries one shard.
 
-A `worldEntityNode` pointing at our own `cc_g01_shard.ent`. It RENDERS - that
-much is proven in game - and it is read by WALKING UP TO IT, not by pressing a
-key. Gig01_Encounter fires the beat on proximity.
+THE THREE THINGS THAT MAKE IT WORK, each measured against a control on
+2026-08-22 after this file spent months saying a prompt was impossible. Full
+account in docs/backlog.md 6.
 
-THE PROMPT WAS ABANDONED DELIBERATELY, after seven attempts and a lot of
-one evening. What was established, in order, and none of it should be
-re-derived:
+  * THE NODE HAS A NAME. `QuestPrefabRefHash` as a full `$/03_night_city/...`
+    path, repeated in the sector's own `nodeRefs`. This is not decoration: a
+    node without one DOES NOT LOAD AT ALL. Eight named objects were found and
+    three unnamed ones were absent, standing four metres apart in the same row.
+    A short-form name is enough to load, but only the long form resolves, so
+    the long form is what ships.
+  * THE INSTANCE DATA COMES ACROSS WHOLE. All 53 fields of the vanilla node's
+    `ShardCaseContainer` chunk, lifted mechanically by this file rather than
+    retyped. A slot that omitted it rendered an oversized grey slab and offered
+    nothing.
+  * THE ITEM'S TEXT HANGS OFF `itemSecondaryAction`, not off any name field.
+    See source/tweaks/shard.yaml, which carries that finding in full.
+
+What turned out NOT to matter, each with its own bench slot: `appearanceName`,
+`sourcePrefabHash`, `Pivot`, the vanilla `MaxStreamingDistance`, the sector's
+`level`, area loot, and writing a name onto the container's own instance data.
+
+WHAT WAS RULED OUT EARLIER AND STAYS RULED OUT:
 
   * `DynamicEntitySystem` + `templatePath` attaches an entity and never renders
     its mesh. It is an NPC/device spawner, not a prop placer.
-  * `exEntitySpawner.Spawn` - what CyberScript and friends use to make objects
-    appear - is a Codeware native for CET LUA ONLY. `unresolved reference` from
-    redscript.
-  * A sector node DOES render, once the sector copies a working mod's
-    conventions: `mod\worlds\03_night_city\_compiled\default\...`, category
-    Exterior, level 1, a REAL streaming box (+-5000, not float-max), and the
-    node flags of an entity node rather than a trigger area's.
-  * A prompt on a bespoke entity could not be raised at all. The class attached
-    (`cc_g01_dbg_shard_class = 1`), the interaction component resolved, the
-    hotspot definition loaded, the choice was published on both the default and
-    the `Loot` layer, a collider on the "Interaction Object" filter and a
-    targeting component were added - and `GetActiveInputLayers` never reported a
-    single active layer (`cc_g01_dbg_shard_ui = 3`, every sample, two minutes).
-  * A VERBATIM copy of the working container - same template, same appearance,
-    all 53 fields of its instance data, same node flags - was equally inert in a
-    mod-added sector. That is the unexplained part, and it is where a future
-    attempt should start.
-  * Swapping the ITEM on the vanilla container, to fix its "Flowers of Silence"
-    title, never ran: `cc_g01_dbg_shard_item` stopped at 1, meaning no
-    `ShardCaseContainer` ever takes control within 12 m of that desk. Whatever
-    that object is at runtime, it is not the class its own sector node names.
-
-So: a shard you can see, walk to, and have V react to. the design call, and the
-right one - "let's put back the duplicate shard, and start reading it on
-proximity rather than action" beats a tooltip nobody can fix.
+  * `exEntitySpawner.Spawn` is a Codeware native for CET LUA ONLY.
+    `unresolved reference` from redscript.
+  * A mod `.ent` may only name an entity class the game already ships.
+  * ArchiveXL can delete and mutate nodes in a shipped sector but not ADD to
+    one, so a mod's own sector is the only place a new node can go.
 """
 import json
 import math
 import os
+import subprocess
 import sys
 
 # questkit is in tools/, one level up from this gig's generators. See
@@ -58,14 +57,47 @@ RAW = os.path.join(REPO, 'mods', 'gig-01-negative-balance', 'source', 'wkit',
                    'raw', 'mod', 'worlds', '03_night_city', '_compiled', 'default')
 
 SECTOR_DEPOT = r'mod\worlds\03_night_city\_compiled\default\cc_g01_world.streamingsector'
-SHARD_ENT = r'mod\negative_balance\entity\cc_g01_shard.ent'
+# WHERE THE CONTAINER COMES FROM.
+#
+# The office desk's own shard is node 527 of `exterior_-4_-23_0_0`, and this
+# generator lifts that node and its whole 53-field instance data MECHANICALLY.
+# Nothing here is retyped: a copy made by hand is not a copy, which this
+# project has proved twice.
+#
+# The `.archive.xl` deletes the original (instance 591 of 1242, and both of
+# those numbers count instances rather than nodes, gotcha 47), so the desk ends
+# up carrying one shard: ours.
+CLI = os.path.expandvars(r'%LOCALAPPDATA%\Programs\WolvenKit.CLI\WolvenKit.CLI.exe')
+GAME = r'C:\Program Files (x86)\Steam\steamapps\common\Cyberpunk 2077'
+VANILLA_ARCHIVE = os.path.join(GAME, 'archive', 'pc', 'content',
+                               'basegame_3_nightcity.archive')
+VANILLA_SECTOR = 'exterior_-4_-23_0_0.streamingsector'
+DESK_NODE = 527
+CACHE = os.path.join(_TOOLS, '_vanilla_sector_cache')
+# The lifted node, COMMITTED. Written by --refresh, read by every ordinary run,
+# never edited by hand. See vanilla_container().
+SOURCE = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                      'shard_container_node.json')
 
-# CAPTURED IN GAME, standing ON the desk ("another desk", 2026-08-13), so z is
-# the desk SURFACE. Keep in step with CCG01Shard.ObjectSpot() in
-# Gig01_Shard.reds. (It also named tools/patch_cooked_mappins.py, which was
-# deleted on 2026-08-14 when ArchiveXL turned out to compute pin positions
-# itself; nothing needs keeping in step with it any more).
-SHARD_POS = (-245.654, -1454.667, 15.400)
+# THE NODE CARRIES A NAME, AND THAT IS WHAT MAKES IT WORK.
+#
+# Measured 2026-08-22 against a deliberate control: named nodes in a mod sector
+# load, unnamed ones are not there at all, eight against three with the two
+# kinds standing four metres apart. The long `$/...` form, repeated in the
+# sector's own `nodeRefs`. backlog.md 6 and 11.
+SHARD_REF = '$/03_night_city/#c_santo_domingo/arroyo/#cc_g01_shard_container'
+
+# What the container offers. See source/tweaks/shard.yaml, and read its header
+# before changing anything about the item: a shard's title and text hang off
+# `itemSecondaryAction`, not off any name field.
+SHARD_ITEM = 'Items.cc_g01_shard'
+
+# THE VANILLA SHARD'S OWN SPOT ON THAT DESK, read out of the sector's nodeData
+# rather than captured with a look-at ray. Ours stands exactly where the game's
+# stood, which is what a shard on that desk should look like.
+#
+# Keep in step with CCG01Shard.ObjectSpot() in Gig01_Shard.reds.
+SHARD_POS = (-244.931305, -1454.17786, 15.3999996)
 
 # HOW FAR THE SHARD RENDERS FROM, and therefore how big the sector's streaming
 # box has to be. Written here rather than inline because the box below is
@@ -146,38 +178,122 @@ def header(name):
     return cr2w.header(name)
 
 
-def sector():
-    node = {
-        '$type': 'worldEntityNode',
-        'appearanceName': cname('default'),
-        'debugName': cname('{cc_g01_shard}'),
-        'entityLod': 0,
-        'entityTemplate': {'DepotPath': {'$type': 'ResourcePath',
-                                         '$storage': 'string',
-                                         '$value': SHARD_ENT},
-                           'Flags': 'Soft'},
-        'instanceData': None,
-        'ioPriority': 'Immediate',
-        'isHostOnly': 0,
-        'isVisibleInGame': 1,
-        'proxyScale': None,
-        'sourcePrefabHash': '0',
-        'tag': 'None',
-        'tagExt': 'None',
+def refresh_source():
+    r"""Re-extract the container node from the game and commit it to SOURCE.
+
+    `python tools\gig01\gen_sector.py --refresh`. Needs the game and WolvenKit;
+    an ordinary run needs neither.
+    """
+    out = os.path.join(CACHE, 'base', 'worlds', '03_night_city', '_compiled',
+                       'default', VANILLA_SECTOR + '.json')
+    if not os.path.exists(out):
+        print('extracting %s, this takes about a minute...' % VANILLA_SECTOR)
+        os.makedirs(CACHE, exist_ok=True)
+        subprocess.run([CLI, 'unbundle', VANILLA_ARCHIVE, '-o', CACHE,
+                        '-w', '*' + VANILLA_SECTOR], capture_output=True)
+        raw = out[:-len('.json')]
+        if not os.path.exists(raw):
+            raise SystemExit('could not extract %s from %s'
+                             % (VANILLA_SECTOR, VANILLA_ARCHIVE))
+        subprocess.run([CLI, 'convert', 'serialize', raw], capture_output=True)
+        if not os.path.exists(out):
+            raise SystemExit('WolvenKit did not serialize %s' % raw)
+
+    with open(out, encoding='utf-8-sig') as fh:
+        rc = json.load(fh)['Data']['RootChunk']
+    inst = [i for i, e in enumerate(rc['nodeData']['Data'])
+            if e['NodeIndex'] == DESK_NODE]
+    doc = {
+        'sector': VANILLA_SECTOR,
+        'node': DESK_NODE,
+        'instance': inst[0],
+        'nodes': len(rc['nodes']),
+        'expectedNodes': len(rc['nodeData']['Data']),
+        'data': rc['nodes'][DESK_NODE]['Data'],
     }
+    with open(SOURCE, 'w', encoding='utf-8', newline='\n') as fh:
+        json.dump(doc, fh, indent=2)
+    print('wrote', SOURCE)
+    print('  %s: %d nodes, %d instances'
+          % (VANILLA_SECTOR, doc['nodes'], doc['expectedNodes']))
+    print('  the .archive.xl must say expectedNodes: %d and index: %d'
+          % (doc['expectedNodes'], doc['instance']))
+
+
+def vanilla_container():
+    """The desk's shard node, out of the committed source file.
+
+    THIS DOES NOT NEED THE GAME. `tools/gig01/shard_container_node.json` is
+    committed, so a fresh clone regenerates the sector with nothing installed
+    and no archive to read. Every generator here is meant to work that way.
+
+    It is still a MECHANICAL copy. The file is written by `--refresh` off the
+    shipped sector and never edited by hand.
+    """
+    if not os.path.exists(SOURCE):
+        raise SystemExit(
+            '%s is missing. Run: python tools/gig01/gen_sector.py --refresh\n'
+            '(that one needs the game and WolvenKit; ordinary runs do not)'
+            % os.path.basename(SOURCE))
+    with open(SOURCE, encoding='utf-8') as fh:
+        doc = json.load(fh)
+    print('container lifted from %s node %d (instance %d of %d)'
+          % (doc['sector'], doc['node'], doc['instance'], doc['expectedNodes']))
+    print('  the .archive.xl must say expectedNodes: %d and index: %d'
+          % (doc['expectedNodes'], doc['instance']))
+    return doc['data']
+
+
+def renumber(obj, base, counter):
+    """Fresh, file-unique HandleIds for the lifted chunk.
+
+    A handle id resolves WITHIN the file, so the vanilla node's ids cannot be
+    reused as they stand. The values mean nothing beyond being distinct.
+    """
+    if isinstance(obj, dict):
+        out = {}
+        for k, v in obj.items():
+            if k == 'HandleId':
+                counter[0] += 1
+                out[k] = str(base + counter[0])
+            elif k == 'BufferId':
+                out[k] = str(base)
+            else:
+                out[k] = renumber(v, base, counter)
+        return out
+    if isinstance(obj, list):
+        return [renumber(v, base, counter) for v in obj]
+    return obj
+
+
+def sector():
+    van = vanilla_container()
+
+    node = json.loads(json.dumps(van))
+    node['debugName'] = cname('{cc_g01_shard}')
+    # The whole 53-field ShardCaseContainer chunk comes across. WITHOUT IT the
+    # object renders as an oversized grey slab and offers nothing: measured
+    # 2026-08-22 on a bench slot that omitted it.
+    node['instanceData'] = renumber(
+        json.loads(json.dumps(van['instanceData'])), 2000, [0])
+    node['instanceData']['Data']['buffer']['Data']['Chunks'][0]['itemTDBID'] = {
+        '$type': 'TweakDBID', '$storage': 'string', '$value': SHARD_ITEM}
+
     data = {
         'Id': '0',
         'NodeIndex': 0,
         'Position': vec4(SHARD_POS),
-        # Identity, i.e. standing upright. It was briefly laid flat and playtesting
-        # asked for it back: flat and chip-sized it is a sliver nobody can pick
-        # out of a dark office. Legibility beats realism for a thing the quest
-        # requires you to find.
+        # Upright, as the vanilla node has it. It was briefly laid flat and
+        # playtesting asked for it back: flat and chip-sized it is a sliver
+        # nobody can pick out of a dark office.
         'Orientation': {'$type': 'Quaternion', 'i': 0, 'j': 0, 'k': 0, 'r': 1},
         'Scale': vec3((1, 1, 1)),
         'Pivot': vec3((0, 0, 0)),
         'Bounds': {'$type': 'Box', 'Max': vec4(SHARD_POS), 'Min': vec4(SHARD_POS)},
-        'QuestPrefabRefHash': {'$type': 'NodeRef', '$storage': 'uint64', '$value': '0'},
+        # THE NAME. An unnamed node does not load at all, and a container on an
+        # unnamed node was the whole of backlog.md 6.
+        'QuestPrefabRefHash': {'$type': 'NodeRef', '$storage': 'string',
+                               '$value': SHARD_REF},
         'UkHash1': {'$type': 'NodeRef', '$storage': 'uint64', '$value': '0'},
         'CookedPrefabData': {'DepotPath': {'$type': 'ResourcePath',
                                            '$storage': 'uint64', '$value': '0'},
@@ -215,7 +331,9 @@ def sector():
                              'PublicKeyToken=null'),
                     'Data': [data],
                 },
-                'nodeRefs': [],
+                # The name again, which is how a sector declares it.
+                'nodeRefs': [{'$type': 'NodeRef', '$storage': 'string',
+                              '$value': SHARD_REF}],
                 'nodes': [{'HandleId': '0', 'Data': node}],
                 'persistentNodeIndex': 0,
                 'persistentNodes': [],
@@ -274,10 +392,14 @@ def block():
 
 
 if __name__ == '__main__':
+    if '--refresh' in sys.argv:
+        refresh_source()
+        raise SystemExit(0)
     os.makedirs(RAW, exist_ok=True)
     for name, doc in (('cc_g01_world.streamingsector.json', sector()),
                       ('cc_g01_world.streamingblock.json', block())):
         with open(os.path.join(RAW, name), 'w', encoding='utf-8', newline='\n') as fh:
             json.dump(doc, fh, indent=2)
         print('wrote', os.path.join(RAW, name))
-    print('shard at', SHARD_POS, '- read on PROXIMITY, see Gig01_Encounter')
+    print('shard at', SHARD_POS, '- named', SHARD_REF)
+    print('holding', SHARD_ITEM, '- read with [F]/[R], see Gig01_Shard.reds')

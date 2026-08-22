@@ -121,11 +121,11 @@ python .\tools\gig01\gen_scenes.py               # FOURTEEN .scene conversations
                                                  #  the scene, not in the localization
                                                  #  resource. Run AFTER gen_voice.py: it
                                                  #  paces sections from durations.json
-python .\tools\gig01\gen_shard_ent.py            # the physical data shard on the office
-                                                 #  desk: a HealthConsumable-class .ent
-                                                 #  with an interaction + mesh. A mod
-                                                 #  .ent can only name a class the GAME
-                                                 #  ships - see the file's header
+python .\tools\gig01\gen_shard_ent.py            # a bespoke interactable .ent. NOT what
+                                                 #  the shard on the desk uses any more;
+                                                 #  kept as a worked example of a mod
+                                                 #  .ent naming a class the GAME ships,
+                                                 #  which is the only kind it may name
 python .\tools\gig01\gen_sector.py               # the world sector + streaming block that
                                                  #  put the shard entity on the office
                                                  #  desk. Rarely re-run - only when the

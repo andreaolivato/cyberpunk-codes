@@ -54,7 +54,41 @@ public abstract class CCG01Shard {
     // in Gig01_Encounter measures against. Captured in game standing ON that
     // desk, so z is the surface.
     public static func ObjectSpot() -> Vector4 {
-        return new Vector4(-245.654, -1454.667, 15.400, 1.0);
+        return new Vector4(-244.931305, -1454.17786, 15.3999996, 1.0);
+    }
+
+    // Our own item, which is what the container on that desk offers. The read
+    // callback below uses it to tell OUR shard from any other the player might
+    // pick up in the street.
+    public static func ItemId() -> TweakDBID { return t"Items.cc_g01_shard"; }
+
+    // HAS THE PLAYER READ IT, WHEREVER THEY READ IT.
+    //
+    // The close callback at the bottom of this file only covers the reader the
+    // game raises when a shard is read IN THE WORLD. Playtest, 2026-08-22:
+    // taking the shard with [F] and reading it out of the backpack left the
+    // objective up. Reading it is reading it, and the beat has to notice.
+    //
+    // The journal is the signal that does not care where it happened. Reading
+    // a shard runs `ReadAction.CompleteAction`, which sets its onscreen entry
+    // Active and marks it VISITED, and that is true whether the reader came
+    // from the container, from the inventory or from the Shards list.
+    //
+    // VISITED RATHER THAN ACTIVE, and the distinction is the whole point. An
+    // entry goes Active when the shard is merely PICKED UP, so a state check
+    // would complete the objective for a player who took it and never read a
+    // word, which is exactly the case this exists to catch.
+    public static func HasBeenRead(game: GameInstance) -> Bool {
+        let jm: ref<JournalManager> = GameInstance.GetJournalManager(game);
+        if !IsDefined(jm) {
+            return false;
+        }
+        let entry: ref<JournalEntry> =
+            jm.GetEntryByString(CCG01Shard.Path(), "gameJournalOnscreen");
+        if !IsDefined(entry) {
+            return false;
+        }
+        return jm.IsEntryVisited(entry);
     }
 
     // Set by the quest phase once V's "A data shard..." line has played.

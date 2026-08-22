@@ -135,6 +135,11 @@ OBJECTIVES = [
     # identify it." A 20 cm chip on a desk in a dark office is not findable
     # without one. See SHARD_PATH below for the shard itself.
     ('obj_shard',    'obj-shard',    ANCHOR_SHARD),
+    # READING IT IS A SECOND OBJECTIVE, and it carries NO PIN on purpose.
+    # obj_shard's pin marks where the shard lies; once it has been found the
+    # player may have taken it into the inventory, and a world marker on an
+    # empty desk would be pointing at nothing.
+    ('obj_shard_read', 'obj-shard-read', None),
     ('obj_nix',      'obj-nix',      None),
     # Being clear of the compound and having talked to Nix are two different
     # things, and one objective covering both left the journal saying "keep

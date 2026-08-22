@@ -1,25 +1,51 @@
 # The data shard on the office desk (comic pp. 23-24).
 #
-# OUR OWN ITEM, CLONED FROM THE ONE THAT IS ALREADY IN THAT ROOM.
+# The desk ships a shard case holding `Items.generic_hanako_flowers_shard`,
+# "The Flowers of Silence. A biography of Hanako Arasaka." Playtesting rejected
+# that on sight, and renaming the vanilla item would change it everywhere in
+# the game. So the gig ships its own container holding its own item, and the
+# `.archive.xl` deletes the vanilla node so the desk carries one shard.
 #
-# The office desk ships a shard case holding `Items.generic_hanako_flowers_shard`
-# - "The Flowers of Silence. A biography of Hanako Arasaka." Reading it already
-# shows OUR note (Gig01_Shard.reds intercepts PopupsManager.OnShardRead during
-# the beat), but the loot list still showed the vanilla title, and the playtest was
-# right that this is not shippable: "people will not understand it."
-#
-# So the container keeps working exactly as the game built it and we change what
-# it HOLDS. This record is that item.
-#
-# `$base` copies everything - icon, quality, the readable behaviour - and we
-# override only what the player reads. The TweakDBID came out of the sector's
-# own instanceData (see tools/gig01/gen_sector.py); it is not guessable and was twice
-# called undiscoverable in this project before anyone looked in the world data.
-#
-# displayName / localizedDescription take a BARE ArchiveXL key, with no
-# `LocKey#` prefix - the same convention the journal uses (docs/gotchas.md #1).
+# displayName / localizedDescription take a BARE ArchiveXL key with no
+# `LocKey#` prefix, the same convention the journal uses (docs/gotchas.md #1).
 # The strings live in tools/gig01/gen_localization.py.
+
+# ---------------------------------------------------------------------------
+# WHAT A READABLE SHARD IS MADE OF, measured 2026-08-22 and worth reading
+# before touching this file, because none of it is guessable from field names.
+# Full account in docs/backlog.md 6 and docs/gotchas.md 48.
+#
+# THE TITLE ON SCREEN IS THE JOURNAL ENTRY'S TITLE, in both places it appears:
+# the CONTENTS line under the crosshair and the scanner panel on the right. It
+# is not the item's name. The vanilla shard's DisplayName is empty and it still
+# shows a title.
+#
+# THE JOURNAL PATH COMES FROM `itemSecondaryAction`, which names an
+# ObjectAction record whose `journalEntry` flat is the onscreen path. All 335
+# shards in the game are built that way.
+#
+# `objectActions` IS NOT THAT LIST. The vanilla shard's is
+# `[ItemAction.Drop, ItemAction.Disassemble]` with no read action in it.
+# Overriding it does nothing useful and silently costs Disassemble.
+#
+# THE BASE IS `Items.Shard1`, THE GAME'S PLAIN SHARD, AND THAT MATTERS.
+# Playtest, 2026-08-22: *"why do you create a shard that already has a name?
+# Can't we create a brand new one which is empty?"* This file previously cloned
+# the Hanako shard, and a `$base` clone inherits every inline child the base
+# had, still pointing at the base's content. Both routes were built and both
+# work in game; this is the one that inherits no story at all.
+#
+# `Items.Shard1` carries exactly the five fields that matter: displayName,
+# localizedDescription, itemType, quality, itemSecondaryAction.
+
+ObjectAction.cc_g01_shard_read:
+  $base: Items.generic_hanako_flowers_shard_inline0
+  journalEntry: onscreens/emails/quests/street_stories/cc_g01_negative_balance/onscreens/cc_g01_shard_note
+
 Items.cc_g01_shard:
-  $base: Items.generic_hanako_flowers_shard
+  $base: Items.Shard1
   displayName: cc-g01-shard-item
   localizedDescription: cc-g01-shard-item-desc
+  # THE LINE THE WHOLE BEAT HANGS OFF. Without it the shard shows the base
+  # item's title in both panels and opens the base item's note.
+  itemSecondaryAction: ObjectAction.cc_g01_shard_read

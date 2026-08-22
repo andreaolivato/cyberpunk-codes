@@ -49,7 +49,17 @@ STRINGS = {
     'obj-office': 'Get inside the Arasaka compound',
     'obj-terminal': 'Find the terminal and read the ledger',
     'obj-disconnect': 'Disconnect from the terminal',
-    'obj-shard': 'Search the office desk',
+    # PLURAL, AND DELIBERATELY. The shard is not on the desk V has just been
+    # standing at: the terminal is one desk and the shard is on another across
+    # the room. "Search the office desk" pointed at the one he had finished
+    # with, which reads as an objective that has already been done.
+    'obj-shard': 'Search the desks',
+    # ITS OWN OBJECTIVE, because finding the shard and reading it are two
+    # actions and the second one can happen somewhere else entirely. [F] takes
+    # it into the inventory and [R] reads it where it lies; a player who
+    # presses F needs to be told the beat is not over and that the shard is now
+    # something they carry.
+    'obj-shard-read': 'Read the shard',
     'obj-nix': 'Get clear of the compound',
     # SHORT, for the same reason as obj-nixwait below. This used to read "Call
     # Nix: who signs off on the payouts?", carrying the INTENT of the call in

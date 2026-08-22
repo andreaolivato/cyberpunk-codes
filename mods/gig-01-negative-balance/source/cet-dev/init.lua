@@ -1698,6 +1698,17 @@ registerForEvent("onDraw", function()
     -- Recover both from the commit before gig-01/v1.2.4 if a future estate
     -- question needs them. Do not rebuild from memory.
 
+    -- The loot bench lived here: twenty one objects in the street, each
+    -- varying one field, plus a look-at probe, a direction finder and
+    -- seven live TweakDB rewrites. It answered backlog 6 and was removed
+    -- with it, 2026-08-22. A probe that outlives its question ships by
+    -- accident, and this one wrote a hundred facts four times a second.
+    --
+    -- The findings are in backlog.md 6 and gotchas.md 47 and 48. The
+    -- recipe is in tools/gig01/gen_sector.py and source/tweaks/shard.yaml.
+    -- Recover the bench from the commit before gig-01/v1.2.5 if a future
+    -- container question needs it; do not rebuild it from memory.
+
     ImGui.Spacing()
     ImGui.Text("Teleports")
     ImGui.Separator()

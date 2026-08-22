@@ -757,3 +757,143 @@ Never renumber. Append.
 
     Gotcha 45 is the same root cause landing somewhere else entirely, on a
     `.reds` file, where it breaks an import instead.
+
+47. **ArchiveXL's `expectedNodes` and `nodeDeletions[].index` count a sector's
+    INSTANCES, not its nodes, and the two numbers are different.**
+
+    A `.streamingsector` carries two parallel tables. `nodes` is one entry per
+    distinct thing, and `nodeData` is one entry per PLACEMENT of one, pointing
+    back at its node through `NodeIndex`. The two are nowhere near equal:
+    `exterior_-4_-23_0_0` has 939 nodes and 1242 instances.
+
+    Both `.archive.xl` fields want the second table. A node at index 527 in
+    `nodes` is at 591 in `nodeData`, and `expectedNodes` wants 1242 despite its
+    name.
+
+    Getting it wrong is refused cleanly rather than silently, which is the one
+    good thing about it. ArchiveXL logs, to
+    `red4ext\plugins\ArchiveXL\ArchiveXL.log`:
+
+    ```
+    [WorldStreaming] Patching sector "base\worlds\...\exterior_-4_-23_0_0.streamingsector"...
+    [WorldStreaming] <mod>.archive.xl: The target sector has 1242 node(s), but the mod expects 939.
+    [WorldStreaming] No patches have been applied to "base\worlds\...".
+    ```
+
+    Read that log before concluding anything about a sector patch. The line is
+    written when the sector STREAMS IN, not at startup, so it does not appear
+    until the player is near the place being patched, and a grep that stops at
+    the first few hundred lines will miss it.
+
+    While you are in there, ArchiveXL 1.27 can `nodeDeletions`, `nodeMutations`
+    (position, orientation, scale, mesh, material, effect, entityTemplate,
+    appearance, meshAppearance, recordID), `instanceDeletions`,
+    `instanceMutations`, `actorDeletions` and `actorMutations` on a shipped
+    sector. There is no addition, so a mod cannot append a node to a base-game
+    sector; its own sector is the only place a new one can go.
+
+48. **A readable shard's title and text hang off `itemSecondaryAction`, not
+    off any name on the item and not off `objectActions`. A `$base` clone
+    inherits that property still pointing at the BASE item's inline record, so
+    the clone shows the base item's shard.**
+
+    The chain, measured 2026-08-22, because none of it is guessable from the
+    field names:
+
+    - The loot line and the scanner title are the **journal entry's title**.
+      `base\journal\cooked_journal.journal` gives `generic_hanako_flowers` a
+      `title` of `LocKey#7190`, and `base\localization\en-us\onscreens` resolves
+      that to the exact string on screen. The vanilla ITEM's DisplayName
+      accessor returns `None`: it has no name at all and still shows a title.
+    - The journal path lives on an **inline ObjectAction record**,
+      `Items.<shard>_inline0`, in its `journalEntry` flat.
+    - The item reaches that record through **`itemSecondaryAction`**. All 335
+      shards in the game are built this way.
+    - **`objectActions` is not that list.** The vanilla shard's is
+      `[ItemAction.Drop, ItemAction.Disassemble]`, with no read action in it.
+      Overriding it does nothing useful and silently drops Disassemble.
+
+    So:
+
+    ```yaml
+    ObjectAction.my_shard_read:
+      $base: Items.generic_hanako_flowers_shard_inline0
+      journalEntry: onscreens/emails/quests/.../my_shard_note
+
+    Items.my_shard:
+      $base: Items.generic_hanako_flowers_shard
+      displayName: my-shard-item
+      localizedDescription: my-shard-item-desc
+      itemSecondaryAction: ObjectAction.my_shard_read
+    ```
+
+    **The wider rule, and the cheaper one: `$base` is not free.** A clone
+    carries every inline child the base had, and those children keep pointing
+    at the base's content. Cloning a shard that already has a story attached
+    means inheriting that story through a property nobody thinks to look at.
+    Starting from something empty avoids the whole class.
+
+    Four wrong guesses preceded this, all of them about name fields, and each
+    looked plausible because a clone that applies in full can still show the
+    base's text. The reading that would have short-circuited it is the ITEM
+    record's own `objectActions`, printed back: seeing `[Drop, Disassemble]`
+    says immediately that the read action is somewhere else.
+
+    Method notes worth keeping:
+
+    - An item's flat names come out of CET's `tweakdbstr.kark` (the route in
+      `gameplay-restrictions.md`). `TweakDB:GetFlat` in CET Lua prints what one
+      resolved to without quitting, and `TweakDB:SetFlat` plus `TweakDB:Update`
+      tests a candidate in the running session, since TweakDB is built at
+      launch.
+    - `SetFlat` CREATES a flat whether or not the record exists, so a flat
+      reading back what you just wrote is not evidence the record is real.
+      Check a second flat on the same record.
+    - **CET's Lua sandbox has no `_G`.** Indexing it throws, and inside a
+      `pcall` that becomes a silent failure. Three candidate fixes were
+      reported as tried when they had never run.
+    - A flat holding a `LocKey` accepts a plain string from `SetFlat` and then
+      does nothing.
+    - ArchiveXL LocKeys are FNV1a64 of the bare key, so a `LocKey(...)` printed
+      by `GetFlat` can be checked against the key you meant at the desk.
+    - Identify the OBJECT before reading anything off it.
+      `TargetingSystem:GetLookAtObject` returns what the CROSSHAIR is on, while
+      a direction finder built on `GetWorldForward` steers off the player's
+      BODY; with test objects four metres apart the two disagree. Match the
+      object's `GetWorldPosition()` against known positions instead.
+
+49. **`PopupsManager.OnShardReadClosed` only fires for a shard read IN THE
+    WORLD. Reading the same shard out of the backpack, or out of the Shards
+    list, does not run it.**
+
+    Measured in playtest, 2026-08-22. A quest step waiting on that callback
+    sits there while the player reads the note in front of them, which is
+    indistinguishable from a permanent stall.
+
+    Ask the journal instead. It does not care where the reader was raised
+    from:
+
+    ```reds
+    let entry = jm.GetEntryByString(path, "gameJournalOnscreen");
+    return jm.IsEntryVisited(entry);
+    ```
+
+    Two things about that, and both bite.
+
+    **`IsEntryVisited` goes true when the popup OPENS**, not when it closes.
+    Acting on it directly resumes the quest while the shard is still on screen,
+    under a modal popup that pauses the game and hides subtitles, so the next
+    lines are spoken into nothing. Let TWO TICKS pass first: the popup pauses
+    the game, DelaySystem ticks do not advance while it is up, so two of them
+    cannot elapse until the reader has been shut. That converts the open signal
+    into a close signal with no second callback.
+
+    **Visited, not `Active`.** An entry goes `Active` when the shard is merely
+    PICKED UP. A state check therefore completes the objective for a player who
+    took the shard and read nothing, which is the exact case this exists to
+    catch.
+
+    Keep the close callback as well. It fires instantly for the common case,
+    and the journal check is the net under everything else.
+
+    See `shard-playbook.md`.

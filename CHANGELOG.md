@@ -5,6 +5,27 @@ Negative Balance releases, newest first. The same changelog is on the mod's
 
 ---
 
+## 1.2.5 (2026-08-22)
+
+Safe to install mid-save. Nothing to restart.
+
+- **Changed: the data shard on the Arasaka office desk is picked up and read
+  like any other shard.** It carries a Take and Read prompt instead of opening
+  its own reader when V walks within two metres of it.
+- **Fixed: the office desk carried two shards.** The gig placed its own beside
+  the one the base game puts there. The base game's is now removed from that
+  desk, so there is one.
+- **Changed: the shard reads "Internal Financial Note" in the loot list and on
+  the scanner**, rather than the base game's "The Flowers of Silence".
+- **Changed: "Search the office desk" is now "Search the desks".** The shard is
+  on a different desk from the terminal, and the old wording pointed at the one
+  V had just finished with.
+- **Added: "Read the shard" is its own objective**, from the moment the shard is
+  found until it has been read. Taking it with Take rather than reading it in
+  place leaves the objective up until it is read from the inventory.
+
+---
+
 ## 1.2.4 (2026-08-22)
 
 Safe to install mid-save. Nothing to restart. A save in which Hoshino has

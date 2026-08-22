@@ -350,6 +350,13 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
     private let m_shardOpened: Bool;
     private let m_shardTicks: Int32;
     private let m_shardWait: Int32;
+    // How long the player has been left alone with the [F] prompt before the
+    // gig gives up waiting and raises the reader itself. See the shard beat.
+    private let m_shardGrace: Int32;
+    // Ticks since the shard's journal entry went VISITED. Two of them cannot
+    // pass while the reader is open, so this is "the popup has been closed"
+    // for a read that happened anywhere, including out of the inventory.
+    private let m_shardVisited: Int32;
     // Placement latch: 1 = no body found yet, 2 = placed. NOT a diagnostic -
     // this is what stops him being re-placed every tick, and what re-arms the
     // next beat. The cc_g01_dbg_lip_* facts that used to shadow it are gone.
@@ -1338,48 +1345,30 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
                     this.StartTerminalTalk();
                 }
 
-                // THE SHARD IN THE DESK, comic pp. 23-24. Three steps, and the
-                // quest phase owns the middle of the sandwich - see
-                // Gig01_Shard.reds for what the reader actually is.
+                // THE SHARD IN THE DESK, comic pp. 23-24.
                 //
-                // THE SHARD IS THE ONE ALREADY LYING ON THAT DESK, and V
-                // reading it is what sets cc_g01_shard_found - see the
-                // ReadAction wrap in Gig01_Shard.reds.
+                // The object is the game's own shard case container, placed by
+                // tools/gig01/gen_sector.py in this mod's own sector, holding
+                // Items.cc_g01_shard. It has Take and Read on it, and reading
+                // it opens the gig's note. The .archive.xl deletes the vanilla
+                // shard that stood there, so the desk carries one.
                 //
-                // WE SHIPPED OUR OWN AND IT NEVER RENDERED. The .ent attached,
-                // the prompt worked, but the mesh was never visible - playtesting
-                // twice, with screenshots. The trace then settled what had
-                // actually happened: cc_g01_shard_found came from the 30-second
-                // proximity fallback below, not from a pickup, so the object was
-                // doing nothing at all.
+                // docs/shard-playbook.md is the recipe; docs/backlog.md 6 is
+                // the history, including the routes that failed.
                 //
-                // Two dead ends and one sitting in plain sight. the playtest had
-                // already pointed at it: "the shard is already in the room so
-                // maybe you can use its location and override the content." The
-                // room ships a readable shard on the desk the objective already
-                // sends V to. It renders, it has a prompt, it is lit, it is
-                // scannable - every property that was hard to reproduce. The
-                // only thing wrong with it is what it says, and text is the one
-                // part we can replace outright.
+                // Four facts, four owners, no guessing about who sets what:
+                //   cc_g01_shard_found  HERE  - V is at the desk
+                //   cc_g01_shard_open   quest - the find line is over
+                //   cc_g01_shard_read   HERE or Gig01_Shard's close wrap
+                //   the objective split - the quest phase, "Search the desks"
+                //                         then "Read the shard"
                 //
-                // So: no spawn. The pin marks that shard, the player reads it,
-                // and the wrap swaps our note in for its own.
-                //
-                // (tools/gig01/gen_shard_ent.py and cc_g01_shard.ent stay in the tree.
-                // They are a WORKING recipe for a custom interactable - the
-                // prompt half is proven - and gigs 02-04 may want one somewhere
-                // that has no convenient shard. Nothing spawns it today).
+                // WHY THIS STILL MEASURES PROXIMITY. The prompt is the player's
+                // to press, and pressing it is the SECOND objective. This one
+                // is "he has found it", which is what raises that objective and
+                // what plays V's line about it, and neither should wait on an
+                // interaction the player may not perform for a while.
 
-                // THE SHARD IS READ BY WALKING UP TO IT. the design call after
-                // seven attempts at an [F] prompt: "let's put back the duplicate
-                // shard, and start reading it on proximity rather than action."
-                //
-                // The object is real, visible and pinned - tools/gig01/gen_sector.py
-                // places it, and that file records everything that was ruled out
-                // on the way to giving up on the prompt. What could never be
-                // raised was the INTERACTION; being there and being findable
-                // both work.
-                //
                 // 2.0 m of the shard itself, not 5 m of the terminal: V has to
                 // cross the room to it, so it reads as finding something rather
                 // than as the objective completing itself while he stands at the
@@ -1421,16 +1410,79 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
                     }
                 }
 
-                // 2. The quest phase plays V's "A data shard..." line and then
-                //    sets cc_g01_shard_open. Raising the reader from the tick
-                //    rather than from the quest graph is what lets it be
-                //    RETRIED: GetEntryByString can return null if the journal
-                //    has not resolved our merged entry yet, and a quest node
-                //    that fired into nothing would strand the gig here.
+                // 2. THE PLAYER READS IT. The shard on that desk is a real
+                //    container now, with "F Take / R Read" on it, so the
+                //    normal path is that they press R and the wrap on
+                //    PopupsManager.OnShardReadClosed sets cc_g01_shard_read.
+                //
+                //    THE AUTOMATIC READER IS A FALLBACK NOW, NOT THE ROUTE.
+                //    It used to fire the instant cc_g01_shard_open arrived,
+                //    which is what "reading on proximity" meant, and it would
+                //    now snatch the beat out of the player's hands a second
+                //    after they walked up to the desk.
+                //
+                //    THE INTENDED BEHAVIOUR, and this clock must not get in
+                //    its way. [R] reads the shard where it lies and finishes
+                //    the objective. [F] takes it, and "Read the shard" then
+                //    STAYS UP until the player reads it out of the inventory,
+                //    which raises the same reader and runs the same close
+                //    callback.
+                //
+                //    So the clock is a last resort, not a nudge: 200 ticks,
+                //    about five minutes of gameplay. At 40 it would have
+                //    changed the objective while the player was still walking
+                //    to their backpack, which is exactly the thing this beat
+                //    was split in two to avoid. Ticks do not advance while a
+                //    menu is open, so time spent in the inventory is free.
+                //
+                //    What it actually protects against is the shard being
+                //    dropped or disassembled, which are both one click away
+                //    and would otherwise leave nothing to read at all.
+                //
+                //    Raising it from the tick rather than from the quest graph
+                //    is also what lets it be RETRIED: GetEntryByString returns
+                //    null if the journal has not resolved our merged entry
+                //    yet, and a quest node that fired into nothing would
+                //    strand the gig here.
+                //
+                //    A player who reads the shard BEFORE the quest reaches
+                //    cc_g01_shard_open is covered by the same fallback: the
+                //    close wrap is gated on that fact so it will not have
+                //    counted, and this raises our own reader once the quest
+                //    catches up. CCG01Shard.Open needs no object, so it works
+                //    whether or not the shard has already been taken.
                 if qs.GetFactStr("cc_g01_shard_open") > 0
                     && qs.GetFactStr("cc_g01_shard_read") == 0
                     && !this.m_shardOpened {
-                    this.m_shardOpened = CCG01Shard.Open(game);
+                    this.m_shardGrace += 1;
+                    if this.m_shardGrace > 200 {
+                        this.m_shardOpened = CCG01Shard.Open(game);
+                    }
+                }
+
+                // 2b. READ FROM ANYWHERE, and this is the one that carries the
+                //     [F] case. Gig01_Shard's wrap on OnShardReadClosed only
+                //     covers the reader raised at the container; playtest,
+                //     2026-08-22, taking the shard and reading it out of the
+                //     backpack did not complete the objective.
+                //
+                //     CCG01Shard.HasBeenRead asks the JOURNAL instead, which
+                //     does not care where the reader came from.
+                //
+                //     TWO TICKS, AND THE DELAY IS DOING REAL WORK. The entry
+                //     is marked visited when the popup OPENS, not when it
+                //     closes. Ticks do not advance while a modal popup has the
+                //     game paused, so counting two of them cannot happen until
+                //     the player has actually shut the reader - which is the
+                //     same trick the anti-stall below uses, and the reason V's
+                //     next lines do not start underneath it.
+                if qs.GetFactStr("cc_g01_shard_open") > 0
+                    && qs.GetFactStr("cc_g01_shard_read") == 0
+                    && CCG01Shard.HasBeenRead(game) {
+                    this.m_shardVisited += 1;
+                    if this.m_shardVisited > 1 {
+                        qs.SetFactStr("cc_g01_shard_read", 1);
+                    }
                 }
 
                 // 3. ANTI-STALL. Gig01_Shard's wrap on

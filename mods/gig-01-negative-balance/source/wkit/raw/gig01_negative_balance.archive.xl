@@ -165,6 +165,33 @@ streaming:
     # always-loaded sectors: see ANCHOR_POS in tools/gig01/gen_journal.py and
     # docs/map-pins-playbook.md.
     - mod\worlds\03_night_city\_compiled\default\cc_g01_world.streamingblock
+  # REMOVING THE VANILLA SHARD FROM THE OFFICE DESK.
+  #
+  # The desk ships a shard case holding `Items.generic_hanako_flowers_shard`,
+  # and the gig puts its own shard beside it, so the desk currently carries
+  # two. Exactly one has to be there.
+  #
+  # ArchiveXL 1.27 can DELETE and MUTATE nodes in a shipped sector but not add
+  # to one, which is itself an answer: a mod cannot append its container to the
+  # vanilla sector, so its own sector is the only place one can go. The gig's
+  # own container is in cc_g01_world.streamingsector above.
+  #
+  # BOTH NUMBERS COUNT INSTANCES, NOT NODES, which is not what the key name
+  # suggests. A sector has a `nodes` table of distinct things and a `nodeData`
+  # table of placements of them; this one has 939 and 1242. `expectedNodes`
+  # wants 1242, and `index` is into the same table, so the vanilla shard is
+  # 591 rather than the 527 it is numbered in `nodes`.
+  #
+  # The first cut used 939 and 527 and ArchiveXL refused the whole patch:
+  #   "The target sector has 1242 node(s), but the mod expects 939."
+  # That is a good failure, and its log line is the only reason it cost one
+  # launch. tools/gig01/gen_sector.py prints both numbers every run.
+  sectors:
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-4_-23_0_0.streamingsector
+      expectedNodes: 1242
+      nodeDeletions:
+        - index: 591
+          type: worldEntityNode
 quest:
   phases:
     - path: mod\negative_balance\quest\gig01.questphase

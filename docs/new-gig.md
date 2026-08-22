@@ -238,8 +238,9 @@ everything works except that nobody speaks.
 
 Skip what your gig does not have. An unvoiced gig with no conversations needs
 only `gen_journal`, `gen_localization` and `gen_questphase`. This repo's
-`gen_shard_ent.py` and `gen_sector.py` exist for one physical object gig 01
-puts on a desk, so they are examples rather than steps.
+`gen_sector.py` exists for one physical object gig 01 puts on a desk, so it is
+an example rather than a step. If your gig wants a readable shard of its own,
+`shard-playbook.md` is the recipe and that generator is its worked example.
 
 Two rules about the loop itself:
 
