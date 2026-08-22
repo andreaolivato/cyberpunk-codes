@@ -1248,9 +1248,9 @@ live probe.
 ## 6. The shard prompt - UNSOLVED, deliberately parked (2026-08-14)
 
 The shard on the office desk is read on proximity, not with an [F] prompt,
-because a prompt on a mod-placed object could not be made to work in eight
-attempts. Full account: `docs/architecture.md`, "the shard, and eight rounds of being
-wrong about it". The short version:
+because a prompt on a mod-placed object could not be made to work. Every route
+tried is below, with its outcome, so that a future attempt starts after them
+rather than among them.
 
 **The object renders.** A `worldEntityNode` in our own sector, following
 `GeneralShadowsFix`'s conventions exactly: path under
@@ -1272,9 +1272,44 @@ was instrumented:
 | `cc_g01_dbg_shard_ui` | 3 | hotspot definition loads, no layer ever activates |
 | `cc_g01_dbg_shard_item` | 1 | no `ShardCaseContainer` takes control near that desk |
 
+### What was tried, and what each one did
+
+| route | outcome |
+|---|---|
+| `DynamicEntitySystem` + `templatePath` | entity attaches, prompt works, **the mesh never renders**. It is an NPC and device spawner, not a prop placer |
+| `exEntitySpawner.Spawn` | a Codeware native for **CET Lua only**. `unresolved reference` from redscript |
+| `worldEntityNode` in a mod sector | **renders**, once the sector copies a working mod's conventions field for field |
+| a scripted interaction on that node | class attaches, component resolves, hotspot definition loads, choice published on the default AND `Loot` layers, collider on "Interaction Object", targeting component present, and `GetActiveInputLayers` never reports one active layer |
+| a **verbatim** copy of the working vanilla container | same template, same appearance, all 53 instance fields, same node flags, produced mechanically rather than retyped. **Equally inert** |
+| swapping the item on the vanilla container | never ran: no `ShardCaseContainer` takes control within 12 m of that desk |
+
 **Where to start if it is revisited:** whatever binds a container to the loot
 system is not in the node, the template or the instance data. Find that and the
 prompt follows. Do NOT start by writing another bespoke entity.
+
+### Method notes, which cost more than the fix
+
+These are why the account above is trustworthy, and each was a wasted round.
+
+- **Copy the thing that works, first.** The office desk had a working shard on
+  it the whole time. Rounds went into debugging a bespoke design instead of
+  diffing it against the shipped one twenty centimetres away.
+- **A copy made by hand is not a copy.** The first "verbatim" container was read
+  off a dump and retyped: eight of fifty-three fields, `persistentState`
+  missing. It looked like a copy in the diff. The second was produced by a
+  script reading the vanilla sector, which is what the word has to mean.
+- **Never gate your only evidence on the thing you are testing.** Two
+  diagnostics in a row wrote their fact INSIDE the check under test, so "never
+  ran" and "ran and was rejected" looked identical, and those need opposite
+  fixes. Set the evidence unconditionally, then narrow.
+- **A probe that samples at the wrong moment is not a probe.** The first hotspot
+  reading ran two seconds after the entity attached, with V nowhere near the
+  desk. Hotspot layers activate off screen-centre distance. It was a correct
+  answer to a useless question.
+- **A look-at capture returns the aim ray's hit point**, not an entity origin,
+  and a prefab-instanced node's runtime transform need not be where its node
+  says. Two attempts died on a 1 m radius test against such a point. Identify a
+  thing by what it IS, not by where you think it is.
 
 **Settled, do not re-derive:**
 
