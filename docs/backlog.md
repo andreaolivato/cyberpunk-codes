@@ -32,13 +32,18 @@ being given it.
 |---|---|
 | 6 | The `[F]` interaction prompt on a mod-placed object. UNSOLVED and deliberately parked; seven approaches ruled out, each with its outcome |
 | 10i | Reload crashes on heavily modded installs. Two reporters, same symptom. No mechanism found; the A/B test is now deterministic, see 14 |
-| 17 | The spawned guards huddle where the navmesh dropped them and do not react to V. A hostile attitude is not perception; 11 is the structural fix and is unsolved |
-| 22 | Hoshino's objective marker stays at his captured position after he joins a fight and walks away from it. Either hold him there or make the marker follow him |
-| 23 | The estate guards spawn at 45 m from the gate, so V watches an empty compound populate. The office side already spawns 40 m before it triggers; the estate does not |
+| 11 | Binding a `.community` resource to the world. Research only, and no longer blocking anything: the guard placement it was wanted for was accepted as-is in 17 |
 
-Everything else is closed. Two entries look open and are not: 2f (re-time
-scenes from real clip length) shipped as `durations.json`, and 0b is the
-release checklist, all of it struck through.
+Everything else is closed. Three entries look open and are not: 2f (re-time
+scenes from real clip length) shipped as `durations.json`, 0b is the release
+checklist with all of it struck through, and 11's own heading says closed
+because the half it was opened for was answered by 20.
+
+17, 22, 23, 24 and 25 all closed on 2026-08-21 and shipped in 1.2.4. Two of
+them closed without being fixed, which is worth knowing before reopening
+either: the guard huddle in 17 was accepted by the design call as reading like
+kill teams, and the police response in 24 turned out to be the base game's
+residents rather than anything this mod places.
 
 ## Closed, and what each one still answers
 
