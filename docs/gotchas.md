@@ -730,3 +730,30 @@ Never renumber. Append.
 
     Anything above zero is the fault. The same applies to the `module` rewrite
     on the shared files themselves, which is anchored the same way.
+
+46. **A generator that writes through Python's text mode produces different
+    bytes on Windows than anywhere else, and the output stops being
+    reproducible.** `open(path, "w")` translates every newline to a carriage
+    return plus newline on Windows. Git in this repo is `core.autocrlf=input`,
+    so it stores and checks out LF. Every generator run therefore rewrote its
+    own output, and sixteen generated files showed as modified while the content
+    was identical: `lipsync_picks.json` was 3,043 bytes as committed and 3,125
+    on disk, one byte per line and nothing else.
+
+    It is worse than noise. It means a regenerated file cannot be diffed against
+    the committed one to see whether a change to a generator did what you
+    intended, which is the whole reason the generated output is committed at
+    all. And it is intermittent: the files agree right after a regen and
+    disagree after a fresh clone, so the fault looks like it comes and goes.
+
+    Every writer under `tools/` passes an explicit newline:
+
+    ```python
+    with open(path, 'w', encoding='utf-8', newline='\n') as fh:
+    ```
+
+    Do the same in any new one. `tools/native/vendor/` is excluded, being
+    somebody else's SDK.
+
+    Gotcha 45 is the same root cause landing somewhere else entirely, on a
+    `.reds` file, where it breaks an import instead.

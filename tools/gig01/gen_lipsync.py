@@ -257,7 +257,7 @@ def main():
         'lines': lines,
     }
     os.makedirs(os.path.dirname(PICKS), exist_ok=True)
-    with open(PICKS, 'w', encoding='utf-8') as fh:
+    with open(PICKS, 'w', encoding='utf-8', newline='\n') as fh:
         json.dump(doc, fh, indent=1, sort_keys=True)
     worst = max(report, key=lambda r: r[3]) if report else None
     print('wrote %s (%d lines across %d scene/actor pairs)'

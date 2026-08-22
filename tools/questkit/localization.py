@@ -58,6 +58,6 @@ def write_onscreens(path, strings):
             'EmbeddedFiles': [],
         },
     }
-    with open(path, 'w', encoding='utf-8') as fh:
+    with open(path, 'w', encoding='utf-8', newline='\n') as fh:
         json.dump(doc, fh, indent=2)
     return len(strings)

@@ -277,7 +277,7 @@ if __name__ == '__main__':
     os.makedirs(RAW, exist_ok=True)
     for name, doc in (('cc_g01_world.streamingsector.json', sector()),
                       ('cc_g01_world.streamingblock.json', block())):
-        with open(os.path.join(RAW, name), 'w', encoding='utf-8') as fh:
+        with open(os.path.join(RAW, name), 'w', encoding='utf-8', newline='\n') as fh:
             json.dump(doc, fh, indent=2)
         print('wrote', os.path.join(RAW, name))
     print('shard at', SHARD_POS, '- read on PROXIMITY, see Gig01_Encounter')

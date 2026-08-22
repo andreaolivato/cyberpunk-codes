@@ -180,7 +180,7 @@ def convert(wavs):
     # wsources goes in there too; it is scratch, not something to keep.
     with tempfile.TemporaryDirectory() as tmp:
         ws = os.path.join(tmp, 'generated.wsources')
-        with open(ws, 'w', encoding='utf-8') as fh:
+        with open(ws, 'w', encoding='utf-8', newline='\n') as fh:
             fh.write('\n'.join(lines) + '\n')
         subprocess.run([WWISE, 'convert-external-source', WWISE_PROJ,
                         '--source-file', ws, '--output', tmp,
@@ -243,7 +243,7 @@ def write_vomap(entries):
         },
     }
     os.makedirs(os.path.dirname(VOMAP_OUT), exist_ok=True)
-    with open(VOMAP_OUT, 'w', encoding='utf-8') as fh:
+    with open(VOMAP_OUT, 'w', encoding='utf-8', newline='\n') as fh:
         json.dump(doc, fh, indent=2)
     print('wrote %s (%d voiceover entries)' % (VOMAP_OUT, len(entries)))
 

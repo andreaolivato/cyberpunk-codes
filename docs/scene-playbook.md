@@ -1229,6 +1229,206 @@ ends at its own exit point and the quest phase does the fact work, so there is
 one graph builder to maintain instead of two. Revisit only if something needs to
 happen part-way through a section: that is what `scneventsSocket` is for.
 
+## An NPC who turns on the player when the conversation ends
+
+A conversation that changes nothing is a cutscene. This is the recipe for one
+whose ending changes the world: the man you have just finished talking to draws
+on you, or lets you go, or calls his security. It is what a gig needs for a
+meeting that goes badly, and it is the same machinery a choice-based ending
+would use.
+
+Four parts, and three of them are the ones that catch people out.
+
+### 1. The scene ending is a graph event, so hang a fact on it
+
+A `questSceneNodeDefinition` continues from its exit socket when the scene
+finishes. Put a `questSetVar` node between that socket and whatever the graph
+does next, and the fact means "this conversation happened, all of it".
+
+```python
+TALK   = add_scene(SCENES + 'hoshino.scene', ANCHOR, ['in'], ['out'])
+TALKED = add_setvar('cc_g01_hoshino_talked', 1)
+b.connect((TALK, 'out'), (TALKED, 'In'))
+b.connect((TALKED, 'Out'), (JOIN, 'Succeeded'))
+```
+
+**On the branch, not on the rejoin.** If the graph forks earlier, for instance
+on whether the NPC is already dead, both branches meet again at some later node.
+Hanging the fact on the rejoin sets it for a player who never heard a word.
+`gig01.questphase` puts it between the scene and the rejoin for exactly this
+reason: a corpse does not need an attitude.
+
+### 2. An attitude is not enough. Turn his senses on too
+
+This is the part that made the first attempt at this look impossible.
+
+Flipping the NPC to hostile on that fact does nothing observable if his record
+carries `enableSensesOnStart: false`, which any NPC written to stay calm during
+his own scene will. He becomes an enemy who is never looking, so he stands
+exactly as he did before, and the obvious conclusion is that the flip did not
+work.
+
+Both halves, together:
+
+```reds
+let agent: ref<AttitudeAgent> = npc.GetAttitudeAgent();
+if IsDefined(agent) {
+    agent.SetAttitudeTowards(player.GetAttitudeAgent(), EAIAttitude.AIA_Hostile);
+}
+let senses: ref<SenseComponent> = npc.GetSensesComponent();
+if IsDefined(senses) {
+    senses.Toggle(true);
+}
+```
+
+`SetAttitudeTowards` and not `SetAttitudeGroup(n"hostile")`. The group version
+makes him an enemy of every other group in the room, his own security included,
+and the symptom is a firefight that breaks out among the people who are supposed
+to be on the same side.
+
+### 3. Turning senses on is safe HERE and nowhere earlier
+
+The reason this recipe works at all is that the flip is a single event at a
+moment the graph chooses. Senses on after the last line cannot reach back into a
+scene that has finished.
+
+It follows that nothing else may be making him hostile in the meantime. A tick
+that asserts an attitude every second or two defeats the whole arrangement,
+because "senses on at the moment the scene ends" and "senses on during the
+scene" become the same thing. If a scene actor is behaving as though a record
+field is being ignored, look for a script writing over it before concluding the
+field does not work.
+
+### 4. Make him unkillable until he has spoken
+
+Otherwise the scene is optional in the worst way: a sniper shot or a quickhack
+from outside the building deletes the beat the whole leg was built around, and
+the player never learns there was one.
+
+`GodModeSystem` is the base game's own mechanism for this.
+
+```reds
+let gods: ref<GodModeSystem> = GameInstance.GetGodModeSystem(game);
+gods.AddGodMode(id, gameGodModeType.Invulnerable, n"cc_g01_hoshino");
+...
+gods.RemoveGodMode(id, gameGodModeType.Invulnerable, n"cc_g01_hoshino");
+```
+
+`Invulnerable` takes no damage at all. `Immortal` takes damage that cannot
+finish him, which is the wrong one if anything else in the gig reads his health,
+because it produces an NPC who is hostile and cannot be killed.
+
+**God mode is only half of it. Make him friendly as well.** Damage and the
+reticle are separate systems: an NPC with god mode alone still gets locked onto,
+still draws a health bar, and still invites a shot that then does nothing. That
+middle state reads worse than either extreme.
+
+What the reticle reads is the ATTITUDE, and both halves of it are needed:
+
+```reds
+agent.SetAttitudeGroup(n"friendly");                               // which side he is on
+agent.SetAttitudeTowards(player.GetAttitudeAgent(), EAIAttitude.AIA_Friendly);
+```
+
+Then, when the scene ends, out of the group before making him hostile:
+
+```reds
+agent.SetAttitudeGroup(n"neutral");
+agent.SetAttitudeTowards(player.GetAttitudeAgent(), EAIAttitude.AIA_Hostile);
+```
+
+**Leaving him in the friendly group is a second way to make the shield
+permanent**, and it looks nothing like the first: he takes damage again but the
+player still cannot lock onto him.
+
+Re-assert the friendly pair every tick rather than once. An attitude set on an
+entity that is still resolving does nothing, and one missed call means a
+targetable NPC for the rest of the visit.
+
+The friendly GROUP is safe for a character who belongs to the faction around
+him. It is not safe in general, for the same reason `n"hostile"` is not: a group
+sets him against or alongside every other group in the room.
+
+**Two things that look like the answer and are not.** There is no TweakDB field
+for targetability: `defaultCrosshair`, `hideUIDetection`, `hideUIElements` and
+`uiNameplate` all concern what is drawn, and nothing matching `targetab` exists
+in the database outside the smart gun's own stats. And
+`TargetingComponent.Toggle(false)`, reached with
+`FindComponentByName(n"TargetingComponent")`, compiles, resolves, and changes
+nothing in play: the NPC is still targetable, still takes the shot and still
+plays the pain reaction.
+
+**Giving it back is the part that matters.** A shield left on is an NPC who can
+never die, which is a quest that can never finish. It is invisible in testing,
+because testing starts from a clean save and goes forward.
+
+So do not write the release as a one-shot beside the flip. Derive it every tick
+from facts that are in the save:
+
+```reds
+let wantShield: Bool = qs.GetFactStr("cc_g01_hoshino_talked") == 0
+    && qs.GetFactStr("cc_g01_hoshino_dead") == 0
+    && qs.GetFactStr("cc_g01_done") == 0
+    && !hostileNow;
+```
+
+A missed tick, a reload part-way through the scene and a scene that never played
+all reach the release on the next pass. `docs/gotchas.md` 21 is the rule this
+obeys.
+
+### 5. Give the shield a dead man's handle
+
+The fact that releases the shield is set by a quest node. A save made before
+that node existed is past it forever, so on an upgrade the fact can never
+arrive, every shield condition stays true, and the NPC is protected for the rest
+of that save. That is an unfinishable quest caused by installing a new version.
+
+Nothing in normal testing finds this, because testing starts from a clean save
+before the quest and goes forward. Reason about it at the desk instead.
+
+Start a clock when the player reaches the NPC, and drop the shield if the scene
+has not finished within a couple of minutes:
+
+```reds
+if qs.GetFactStr("cc_g01_hoshino_met") > 0
+    && qs.GetFactStr("cc_g01_hoshino_talked") == 0 {
+    this.m_hoshinoMetTicks += 1;
+}
+```
+
+A real conversation takes seconds, so this never fires on a normal run. Keep it
+in a field rather than a fact, so a reload restarts it: a reload respawns the
+NPC as well, and the question is being asked again from the start.
+
+### What it gives you
+
+The NPC is a fixture until you talk to him and a person afterwards. Every ending
+the conversation can have is now a different fact off a different exit socket,
+so "he draws on you", "he lets you go" and "he calls his security" are three
+`questSetVar` nodes and three branches, not three systems.
+
+The gig's own use is the simplest of them: one exit, one fact, and Hoshino turns
+on V because the ledger is closed and he knows what V came for.
+
+### The whole lifecycle, in one place
+
+Everything above, in the order it happens, for one NPC:
+
+| when | attitude group | attitude to V | god mode | senses |
+|---|---|---|---|---|
+| spawned, waiting to be met | `friendly` | Friendly | Invulnerable | off |
+| the scene plays | unchanged | unchanged | unchanged | off |
+| the scene's exit fires | `neutral` | Hostile | removed | **on** |
+
+Four systems, four separate calls, and none of them substitutes for another.
+The group decides the reticle, the pairwise value decides what he thinks of the
+player, god mode decides whether damage lands, and the senses decide whether he
+can act on any of it. Every failure recorded in this project's register was one
+of those four set without the others.
+
+Measured across eight rounds of playtesting on 2026-08-21. `docs/backlog.md` 22
+carries the dead ends, including two that compile and do nothing.
+
 ## Validating offline
 
 There is no substitute for playing it, but two checks catch most of it:

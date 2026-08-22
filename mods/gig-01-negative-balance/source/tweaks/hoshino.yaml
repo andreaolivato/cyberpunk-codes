@@ -6,6 +6,38 @@
 #
 # displayName points at LocKey#<FNV1a64("cc-g01-hoshino-name")>, which is the
 # hash ArchiveXL registers our own localization string under.
+#
+# TWO NAME FIELDS, AND THE SCANNER READS THE OTHER ONE. Playtest, 2026-08-21:
+# scanning his body returns "HOSHINO SOLDIER", which is our own name with the
+# base record's role still attached. displayName alone was never going to cover
+# it, because Character_Record carries `displayName` AND `fullDisplayName` and
+# the scanner shows the full one. Both are set below, to the same string.
+#
+# The field list was read off CET's own TweakDB string table rather than
+# guessed, by the route in docs/gameplay-restrictions.md ("Reproducing the
+# list"): `Character.cpz_arasaka_bodyguard_ranged3_kenshin_mb_rare` really does
+# carry both, plus `alternativeDisplayName` and `alternativeFullDisplayName`
+# which are a separate mechanism and are left alone.
+#
+# THAT PROVES THE NAME EXISTS AND NOT THAT TWEAKXL WILL TAKE IT. It is the same
+# shape as `securityAreaType`, which is a real-looking property this file
+# carried for months while every run silently discarded it (docs/backlog.md 13).
+# So the TweakXL log was read, and it is clean: no unknown-property line, and the
+# counts move. `fullDisplayName` applies.
+#
+# AND IT WAS STILL "HOSHINO SOLDIER", WHICH IS THE USEFUL PART. Both name fields
+# were correct and the scanner appended the role anyway, so the role was never
+# coming from a name field. `skipDisplayArchetype` is what turns it off, and it
+# is on the same record in the same string table, next to `archetypeName` and
+# `archetypeData`. Named characters are what it exists for.
+#
+# The lesson is the one 13 already carries, arriving from the other direction: a
+# clean TweakXL log says the property was accepted, not that it was the right
+# property. Reading the log ruled out the wrong explanation, which is worth the
+# minute it takes, and only measuring in game ruled in the right one.
+#
+# `fullDisplayName` stays. It is accepted, it is correct, and it is what other
+# surfaces than the scanner read.
 
 # HE MUST NOT OPEN FIRE DURING HIS OWN CONVERSATION (playtest, 2026-08-12: he
 # "still gets alert, still attacks, and also alerts other guards").
@@ -52,6 +84,8 @@
 Character.cc_g01_hoshino:
   $base: Character.cpz_arasaka_bodyguard_ranged3_kenshin_mb_rare
   displayName: LocKey#9345113511651514373
+  fullDisplayName: LocKey#9345113511651514373
+  skipDisplayArchetype: true
   affiliation: Factions.Arasaka
   reactionPreset: ReactionPresets.NoReaction
   baseAttitudeGroup: neutral

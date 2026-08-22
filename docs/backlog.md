@@ -34,6 +34,7 @@ being given it.
 | 10i | Reload crashes on heavily modded installs. Two reporters, same symptom. No mechanism found; the A/B test is now deterministic, see 14 |
 | 17 | The spawned guards huddle where the navmesh dropped them and do not react to V. A hostile attitude is not perception; 11 is the structural fix and is unsolved |
 | 22 | Hoshino's objective marker stays at his captured position after he joins a fight and walks away from it. Either hold him there or make the marker follow him |
+| 23 | The estate guards spawn at 45 m from the gate, so V watches an empty compound populate. The office side already spawns 40 m before it triggers; the estate does not |
 
 Everything else is closed. Two entries look open and are not: 2f (re-time
 scenes from real clip length) shipped as `durations.json`, and 0b is the
@@ -3009,7 +3010,7 @@ The ring gate on foot and riding, declining and ringing out, all three windows,
 the beats staged beside a stationary V, the message at a vehicle and its absence
 away from one, and the dismount prompt.
 
-## 17. The spawned guards do not react to V. Reported 2026-08-18, open
+## 17. The spawned guards do not react to V. Reported 2026-08-18, MEASURED, FIXED and CLOSED 2026-08-21. The huddle was accepted as-is
 
 Two observations from the same field report, one underlying question:
 
@@ -3088,6 +3089,140 @@ face to face with a hostile guard and nothing happened.
   me", which is worth re-reading because it is the same sentence as this report
   arriving from a different cause. The budget is not the problem this time: the
   bodyguard was standing next to V long after any retry would have finished.
+
+
+### CORRECTION, read at the desk 2026-08-21: the estate squad is never made hostile
+
+The paragraph above says both squads get `SetAttitudeTowards(player, AIA_Hostile)`
+and that the bodyguard "was set hostile, so his standing still is the fault".
+That is not what ships. `SpawnSquad` applies the attitude inside `if !estate`,
+so the office detail gets it and the estate detail gets nothing at all
+(`Gig01_Encounter.reds`, the block whose comment is headed COMPOUND GUARDS ONLY).
+
+The reasoning behind that block is on the record and was sound when it was
+written: playtesting on 2026-08-13 found the compound guards ignoring V while
+the estate detail behaved correctly, and read the difference off the two record
+lists. The compound list is mostly `sts_*` street-story security, whose default
+affiliation does not treat V as an enemy; the estate list is Arasaka combat
+archetypes, which do. Asserting the attitude only where the default was wrong
+follows from that.
+
+So the estate bodyguard was standing on his record's default, not on an
+attitude this mod set. Two things follow.
+
+- The 2026-08-13 reading is now contradicted by the 2026-08-18 one, on the same
+  squad. Either the defaults changed under a game update, or the earlier reading
+  was of a guard who happened to react and was generalised.
+- Whether asserting hostility on the estate squad too would fix it is untested,
+  and it is the cheapest thing to try. It is also not obviously the right fix:
+  if the office squad is hostile and ALSO does not react, the attitude was never
+  the lever, and the huddle and the missing reaction have one cause rather than
+  two.
+
+The bench reads both squads the same way, so one walk answers this.
+
+### CORRECTION: no squad anchor sits on Hoshino
+
+The report puts a bodyguard "right in his face" upstairs with Hoshino. The
+nearest estate anchor to `Hoshino()` is `EstateSideEntry`, about 16 m away, and
+the scatter reaches 1.8 m out from an anchor. So the man beside him is probably
+not ours, and if he is vanilla then none of this section applies to the second
+observation.
+
+The bench reports whether whatever V is aiming at carries our tag, which settles
+it before any of the rest is worth arguing about.
+
+### The bench, built 2026-08-21
+
+`Gig01_Bench.reds` plus the dev menu's "Estate bench" panel. It reads, per quarter second:
+
+- every tagged guard within 200 m
+- how many of them read back hostile to V
+- how many are Alerted, and how many are in Combat
+- for whatever V is aiming at: its attitude, its high-level state, how many
+  threats its target tracker holds, and whether it is one of ours
+
+The high-level state is what separates the two explanations this section offers.
+A guard who is Relaxed with V in front of him never noticed, which is
+perception. One who is Alerted or in Combat and still does nothing has noticed
+and will not act, which is behaviour.
+
+The threat count is the stronger reading of the two, because it is the list the
+combat AI picks targets from. Hostile on paper with an empty tracker is this
+section answered outright. `TargetTrackerComponent` has no `IsThreat` in 2.31
+whatever the name suggests; `GetHostileThreats(true)` is the call that compiles.
+
+The panel shows a vanilla NPC through the same row, which is the control. A
+bench that can only read the suspect cannot tell an empty field from a field
+that is always empty, which is the lesson 11 paid for.
+
+
+### MEASURED 2026-08-21, and it is the attitude after all
+
+Read off the estate readout in one playthrough, walking in without camo.
+
+| where | guards within 200 m | hostile to V | alerted | in combat |
+|---|---|---|---|---|
+| approaching the gate | 12 | 0 | 0 | 0 |
+| at the gate | 22 | 0 | 0 | 0 |
+| in the grounds, standing among them | 25 | 0 | 0 | 0 |
+| once a fight had started by other means | 20 | 20 | 0 | 20 |
+
+So the reaction is in the records and it is intact. The last row is the whole
+squad flipping together the moment combat exists. What none of them ever does is
+start it, because not one of them held V as an enemy: twenty-five of them, at
+6.3 m, with V in the open.
+
+That settles the question this section opened with. It is not perception. A
+guard who is Relaxed with V standing in front of him has nothing to perceive V
+*as*. The three candidates listed above, senses, an AI role and a security area,
+did not need to be examined, because the field that was supposed to be set was
+not set.
+
+The 2026-08-13 reading that produced the `if !estate` was of a squad in the last
+row's state, not the first.
+
+### FIXED 2026-08-21, awaiting verification
+
+The `if !estate` is gone from `SpawnSquad`, so both squads get the pairwise
+`CCSharedAttitude.Hostile`. The record lists are untouched, which keeps the two
+tiers of security looking different, and that was the reason the guard was
+written the way it was.
+
+Open, from the same design call: the estate detail should read as *more*
+alert inside the grounds than at the gate. The inner anchors already draw the
+harder archetypes (sniper, netrunner, shotgun tactician) against the plainer
+ranged guards outside, so the tiering exists in the records. What "more hostile"
+should mean beyond that is not defined yet, and detection range is the obvious
+candidate.
+
+The huddle is NOT addressed and is still open. This section always held two
+faults, and only the attitude one is fixed: they still stand where the navmesh
+query dropped them, with no post, patrol or idle. 11 remains the structural
+answer and remains unsolved.
+
+### CLOSED 2026-08-21: both halves, and the second was not fixed
+
+The attitude half is fixed and confirmed in play: the estate detail is hostile
+at the gate and inside, and the readout that measured twenty-two guards and zero
+hostile now measures them all.
+
+**The huddle was accepted rather than fixed, by the design call.** *"It's ok,
+sounds like kill teams. More difficult."* A squad standing in a tight group
+where the navmesh dropped them reads as a fireteam holding a position, and it
+makes the fight harder rather than worse. Nothing about it was changed.
+
+That matters for what it does to 11. The huddle was the standing reason to want
+communities working, because a community entry brings spots and a phase with it
+and would place these guards with somewhere to stand. Nothing else here needs
+that now, so **11 loses its last consumer in gig 01** and stays open as research
+for a future gig rather than as a blocker for this one.
+
+**"More alert inside than at the gate" was dropped.** *"Ignore, they plenty
+aggressive."* The tiering that already exists in the record lists, harder
+archetypes on the inner anchors, turned out to be enough once the attitude was
+set, so nothing needs a detection range.
+
 
 ## 18. El Coyote Cojo is shut until "Heroes" is done. Measured and FIXED 2026-08-18
 
@@ -3481,7 +3616,7 @@ four lines, and the file now reads 60 spoken lines across 14 scenes. Nothing
 shipped in the archive was affected; the .scene resources have been regenerated
 many times since, and all of them came out byte-identical here.
 
-## 22. Hoshino's marker does not follow him once he moves. Reported 2026-08-21, open
+## 22. Hoshino's marker does not follow him once he moves. Reported, MEASURED at 96 m, FIXED and CLOSED 2026-08-21. The marker never needed to move
 
 Field report, playing the estate without stealth: V enters the residence, kills a
 guard, and Hoshino joins the fight rather than waiting to be spoken to. V kills
@@ -3516,6 +3651,21 @@ position. 20 established that a pin can anchor to a node this mod ships and that
 a moving entity rather than a point, which is not established. This is the more
 correct fix and the more unknown one.
 
+### A third option, which may be the same as the first
+
+**Sit him down.** Reported as a nice-to-have from the same playthrough: an
+administrator at his desk should probably be sitting at it. A seated NPC is in a
+workspot, and an NPC in a workspot is not walking anywhere, so this may be the
+"hold him in place" fix arriving in a form that also looks better rather than
+worse.
+
+That is a guess about the mechanism and not a measurement. What is established
+is that a scene can carry its own workspot with `playAtActorLocation`, which is
+what makes Johnny render at all (2j and 3b). Whether the same shape holds a
+placed NPC in a chair through combat starting near him is not established, and
+"he sits until shot at, then stands up and joins in" would leave the marker
+exactly as wrong as it is now.
+
 ### What is not yet known
 
 Whether the marker being wrong actually costs the player anything here. If he is
@@ -3531,3 +3681,771 @@ one it is decides how much this deserves.
   staging expects.
 - **20** is what is known about pins anchoring to something this mod ships.
 - **9** is the placement layer these captured positions belong to.
+
+
+### CORRECTION, read at the desk 2026-08-21: he is not neutral, and the cause is a leftover
+
+This section says Hoshino "is `SetNeutral` until provoked, deliberately", and so
+does the comment beside the spawn. Neither describes what runs.
+
+He is spawned neutral, once. The encounter tick then does this to him on every
+pass, for as long as he is alive and the gig is open:
+
+```
+agent.SetAttitudeGroup(n"hostile");
+agent.SetAttitudeTowards(player.GetAttitudeAgent(), EAIAttitude.AIA_Hostile);
+```
+
+The block is not gated on the estate, on V's position or on being provoked. It
+is a sibling of the estate branch, so it runs from the first tick after he
+spawns, about 1.5 s after the neutral call.
+
+`git log -L` on the two dates it apart. The forcing lines are from `c9fd9a7`,
+2026-08-11. The neutral spawn is from `eaf853e`, 2026-08-12, the commit whose
+own comment records the playtest that produced it: he "opened fire during his
+own conversation", so he was changed to spawn neutral. That change did not
+remove the tick that overrides it a second and a half later. The fix and the
+thing it was fixing have both been in the file since, and the comment explaining
+the fix has been describing behaviour that does not happen.
+
+### Why that is the likely mechanism, not just an untidiness
+
+`SetAttitudeGroup(n"hostile")` is the call `CCShared_Attitude.reds` documents as
+the wrong one, in a comment written from a playtest: *"those guards start
+killing existing NPCs... this happens only after they see me and start shooting
+at me."* `n"hostile"` is a GROUP, and a member of it is at war with every other
+group in the room, its own side included. That is why the guards use the
+pairwise `SetAttitudeTowards` and nothing else.
+
+Hoshino is in that group. So "Hoshino joins the fight rather than waiting to be
+spoken to" is what a full combatant at war with the estate detail would do, and
+the report reaches this section as a marker complaint because the marker is the
+part the player could see.
+
+If that is right, the fix is neither of the two this section proposed. Dropping
+`SetAttitudeGroup(n"hostile")` and keeping the pairwise line leaves him an enemy
+of V and of nobody else, which is what the shared helper exists to provide, and
+removes the reason he was crossing the estate. Holding him in place or making
+the marker track him would both be treating the symptom.
+
+Dropping the forcing entirely, so the neutral spawn means what its comment says,
+is the larger version and is a design question rather than a bug fix: it decides
+whether he shoots back at all before the conversation.
+
+**Nothing has been changed yet.** The bench reads his attitude and his
+high-level state, so a player who walks up to an untouched Hoshino and reads
+HOSTILE off the panel has confirmed this without a code change, and one who
+reads neutral has refuted it.
+
+### A second consequence, which is worse than the marker
+
+`cc_g01_hoshino_met` is set by V coming within 12 m of `CCGig01Places.Hoshino()`,
+the captured point, and not within 12 m of Hoshino. The quest phase waits on
+that fact before playing `gig01_hoshino.scene`.
+
+So a Hoshino who has walked out of that sphere cannot be greeted at all, however
+close V stands to him. The stale marker points at a spot that is also the only
+place the conversation can start. Killing him still closes the gig, because the
+death branch sets `cc_g01_hoshino_met` itself, so this strands the conversation
+rather than the gig.
+
+This is what decides the question this section left open, about whether the
+wrong marker costs the player anything. It costs them the scene.
+
+### What the bench measures for this
+
+His distance from the captured point every quarter second, and the peak. Under
+12 m and only the marker is wrong. Over 12 m and the conversation is unreachable
+by the time the player follows him.
+
+
+### MEASURED 2026-08-21, and the correction above is confirmed
+
+Two readings, one playthrough.
+
+**Standing at his desk, before anything was shot: Relaxed, and HOSTILE.** That
+is the leftover doing exactly what the correction predicted, on a save where
+nothing had provoked him. His own record says `baseAttitudeGroup: neutral`,
+`reactionPreset: NoReaction` and `enableSensesOnStart: false`, so every field
+that was set deliberately said peaceful, and a runtime call ran over all three
+1.5 s after he spawned.
+
+**Once a fight started: 96.2 m from his captured spot, in Combat.** He crossed
+the estate and died by the front gate, about 20 m from `EstateGate()`. This
+section asked whether the stale marker costs the player anything. At 96 m it
+costs them the whole conversation, because the greeting fires at 12 m from the
+captured point.
+
+### FIXED 2026-08-21, awaiting verification
+
+Two changes, and the second holds whatever the first turns out to do.
+
+**`agent.SetAttitudeGroup(n"hostile")` is gone from the tick.** The pairwise
+`SetAttitudeTowards` stays, so shooting him still starts a fight and he is an
+enemy of V and of nobody else. The neutral spawn now means what its comment has
+claimed since 2026-08-12.
+
+**The greeting measures from the man, not from his spot.**
+`Vector4.Distance(pos, hoshino.GetWorldPosition())` rather than
+`Vector4.Distance(pos, CCGig01Places.Hoshino())`. A Hoshino who moves for any
+reason can still be talked to.
+
+### The marker itself is still anchored, deliberately
+
+`pin_hoshino` is baked into the journal at (300.102, 1054.556, 229.928) by
+`gen_journal.py` and activated with `obj_hoshino` by the quest phase. Making it
+follow him means either regenerating that layer or putting a second, scripted
+pin on top of it, and the second is what would ship soonest:
+`CCSharedMappins.Show` / `.Move` is proven and is what draws the way-in markers
+already, so a pin that tracks a moving entity is not the unknown this section
+assumed. Two markers on screen at once is the cost.
+
+Not built, because the fix above is meant to stop him leaving in the first
+place. A neutral NPC in a firefight still moves, so this is not closed: the
+number to re-read is the peak in section 3 of the readout. Under 12 m and the
+marker never needed to follow him. Still tens of metres and it does.
+
+### A separate thing the same playthrough found
+
+His scanner name reads "HOSHINO SOLDIER". `displayName` was set to our own
+LocKey and the scanner reads `fullDisplayName`, which was still the bodyguard
+base's. Both are set now, and the TweakXL log is the check, per 13.
+
+
+### SECOND ROUND, 2026-08-21: removing the group was not enough
+
+Playtest after the fix above: he still crossed the estate and reached V at the
+gate. Dropping `SetAttitudeGroup(n"hostile")` left the pairwise
+`SetAttitudeTowards(player, AIA_Hostile)` in place, and an NPC who holds V as an
+enemy engages V once he is aware of him. A firefight around him is what makes
+him aware, so the outcome was unchanged.
+
+**The whole forced-attitude block is gone now, and nothing replaces it.** His
+record already does the job: `baseAttitudeGroup: neutral`, `reactionPreset:
+ReactionPresets.NoReaction`, `enableSensesOnStart: false`, and `hoshino.yaml`
+has said since it was written that "shooting him flips him hostile through the
+game's own damage reaction, so 'peaceful until attacked' needs no script". Every
+runtime attitude call this tick ever made was overriding three fields set
+deliberately to say the same thing.
+
+The greeting is 4 m rather than 12, by the design call: twelve started the
+conversation across a courtyard. Not tighter, because the tick is 1.5 s and V
+walking covers about six metres in one. Missing it costs the scene and not the
+gig, since the kill branch sets `cc_g01_hoshino_met` itself.
+
+### The name, and what reading the log was worth
+
+`fullDisplayName` was accepted. The TweakXL log for the run is clean, no
+unknown-property line, and the record and flat counts move. The scanner still
+read "HOSHINO SOLDIER".
+
+Both name fields were correct and the role was appended anyway, so it was never
+coming from a name field. `skipDisplayArchetype` is what suppresses it, on the
+same record in the same string table, beside `archetypeName` and `archetypeData`.
+
+This is 13 arriving from the other direction. That entry is about a property the
+game silently discards; this is a property the game accepts that was not the
+right property. A clean log rules out one explanation and confirms nothing about
+the other, and only the scanner in game separated them.
+
+
+### THIRD ROUND, 2026-08-21: he stays put, and now he looks frightened
+
+Playtest: *"Stays put, yes. But now looks all scared and defenceless."*
+
+The staying put is the fix working. The cowering is a new symptom of it and is
+not yet diagnosed, so nothing has been changed on a guess.
+
+Two candidates, and the readout separates them without a code change, because
+section 3 already prints his high-level state.
+
+- **His attitude group.** `baseAttitudeGroup: neutral` puts him on the civilian
+  side, and a civilian in a firefight goes into Fear. If the readout says
+  **Fear** during the fight, this is it, and the fix is a group that is neither
+  a civilian nor an enemy.
+- **His reaction preset.** `ReactionPresets.NoReaction` was chosen when he was
+  still being forced hostile at runtime, and the conditions it was chosen under
+  no longer exist. `ReactionPresets.Corpo_Passive` is the one the base game
+  keeps for exactly this character, an executive who does not fight.
+
+`Corpo_Passive` was NOT applied on the strength of that reasoning. The preset is
+one of the three fields that stopped him opening fire during his own
+conversation, which is the worst regression available here, and the state
+reading costs one glance at a panel that is already open.
+
+### And the fourth item is still worth doing for a different reason
+
+Seating him was parked as a nice-to-have, and as a way to hold him in place that
+he no longer needs. The cowering gives it a second reason: a man at a desk is
+not standing in the open with nothing to do when the shooting starts. What is
+established is that a scene can carry its own workspot through
+`playAtActorLocation` (2j and 3b). Whether that survives combat starting nearby
+is not.
+
+### FOURTH ROUND, 2026-08-21: he stands calmly, and he would not fight back either
+
+Playtest: *"It's ok, doesn't engage. But now doesn't even engage after I shoot
+him once."*
+
+The cowering is gone and no field was changed to fix it, so the Fear reading was
+never taken and the two candidates above are both moot. Standing calmly was what
+removing the forced attitude produced once it settled.
+
+**`hoshino.yaml` has been wrong about the damage reaction since it was written.**
+Its comment says "shooting him flips him hostile through the game's own damage
+reaction, so 'peaceful until attacked' needs no script". That was never tested,
+because the runtime call that made him hostile anyway was in the tick the whole
+time, overriding it. With the call gone he takes the shot and does nothing.
+
+The cause is one of the three fields that make him peaceful:
+`reactionPreset: ReactionPresets.NoReaction` removes the damage reaction along
+with every other reaction, so there is nothing left to flip him.
+
+### The flip is scripted now, once, on the first sign of damage
+
+Health as a percentage from the stat pool, so anything under full means he has
+been hit. Nothing here regenerates it and nothing else touches him.
+
+Two things happen together, and the second is the one that is easy to miss:
+
+- his attitude to V goes hostile, pairwise as everywhere else here.
+- **his senses are switched on.** `enableSensesOnStart: false` is the third
+  peaceful field, and an NPC who cannot perceive V cannot shoot at him however
+  hostile he is. `SenseComponent.Toggle(true)`.
+
+`m_hoshinoProvoked` is a FIELD and not a fact, deliberately. It must not survive
+a reload: the same reload respawns him at full health, and a remembered flip
+would make him hostile before he had been touched, which is the bug this whole
+line of work started from.
+
+The dev menu has a "FORCE FIGHT" button that flips him with no shot fired, for
+testing the fight without having to land one. It is one-way within a session,
+same as the real thing.
+
+
+
+### FIFTH ROUND, 2026-08-21: he turns on V when the conversation ends
+
+The design call, after the fight-back fix: being shot should not be the only way
+in. He should turn on V when he has finished speaking.
+
+**This was tried on 2026-08-14 and withdrawn, and the reason it failed then is
+the reason it works now.** It was built as an attitude flip on a fact set after
+his scene, and it did nothing observable, because `enableSensesOnStart: false`
+leaves him hostile and never looking. The playtest verdict: *"Still doesn't
+attack but it's ok let's not complicate things."* The comment left in
+`gen_questphase.py` in its place said the only way to make him fight would be
+turning senses on, which was what kept him peaceful through his own
+conversation, and to leave it alone.
+
+That was correct while the encounter forced him hostile on every tick, because
+senses on at any point meant senses on during the scene. That force is gone, so
+the flip is a single event at a moment the graph chooses, and turning his senses
+on after his last line cannot reach back into a scene that has finished.
+
+### What ships
+
+`cc_g01_hoshino_talked`, set by a `questSetVar` node between the scene's output
+and the objective rejoin, so it is **on the talked branch only**. The dead
+branch reaches the same rejoin without passing through it, which is right: a
+corpse needs no attitude, and the kill scene forks on `cc_g01_hoshino_dead`.
+
+The encounter reads it beside his health, and both routes do the same two
+things: attitude to V hostile, and `SenseComponent.Toggle(true)`. Three ways in
+altogether, counting the dev menu's FORCE FIGHT button.
+
+### The general lesson, which is why this is written up at length
+
+A finding that closed as "impossible, do not try again" was true of the
+conditions it was measured in and not of the mechanism. Nothing about senses
+changed between August 14th and today. What changed is that a second piece of
+code stopped fighting the first.
+
+Worth checking, before re-testing anything this register has closed: whether the
+thing that made it fail is still there.
+
+
+### SIXTH ROUND, 2026-08-21: unkillable until he has spoken
+
+The design call, after the flip landed: *"could we make him invincible until we
+have the conversation? So players cannot kill him from afar like with quickhacks,
+or sniper."* The beat the whole leg is built around should not be deletable from
+outside the building by a player who never learns it was there.
+
+`GodModeSystem`, which is the base game's own mechanism for a quest-critical
+NPC. `AddGodMode(id, gameGodModeType.Invulnerable, n"cc_g01_hoshino")` while he
+has not spoken, removed the moment he has.
+
+**`Invulnerable` rather than `Immortal`, and the choice is load-bearing.**
+Immortal takes damage that cannot finish him, so his health drops, and his
+health is what the fight-back check reads. It would produce an NPC who is
+hostile and cannot be killed.
+
+**The release is derived every tick from facts, not latched beside the flip.**
+
+```reds
+let wantShield: Bool = qs.GetFactStr("cc_g01_hoshino_talked") == 0
+    && qs.GetFactStr("cc_g01_hoshino_dead") == 0
+    && qs.GetFactStr("cc_g01_done") == 0
+    && !hostileNow;
+```
+
+A shield left on is a Hoshino who can never die, which is a gig that can never
+finish, and it is exactly the class of fault a playthrough from a clean save
+cannot find: it only shows up on the path where something went wrong earlier.
+Deriving it from facts means a missed tick, a reload part-way through the scene
+and a scene that never played all reach the release on the next pass. Same
+discipline as `ReleaseMama`, same rule as `gotchas.md` 21.
+
+### What this closes, and one thing it leaves
+
+*"Fights back when shot => not unless we've already finished talking."* That was
+still true after the fifth round and is now unreachable: he cannot be hurt
+before the conversation, so there is no shot to fight back from.
+
+The health route stays in the code as the safety net for the case where
+`cc_g01_hoshino_talked` never arrives, on an old save mid-scene for instance.
+Why it did not fire on its own was never established, and the two candidates
+were never separated: a 1.5 s tick against a kill that lands inside one, or the
+stat pool not reading the way the code assumes. **If the health route is ever
+relied on again, measure that first rather than trusting this paragraph.**
+
+### The recipe is now in the scene playbook
+
+All four parts of it, written for a modder who has never seen this gig:
+`docs/scene-playbook.md`, "An NPC who turns on the player when the conversation
+ends". The design call that sent it there: this is the machinery a choice-based
+gig needs, where the conversation's ending is what decides whether V kills him.
+
+### CLOSED 2026-08-21: he stays at his desk, so the marker is right where it is
+
+Confirmed in play across four rounds. He holds his position, he stands calmly
+rather than cowering, he cannot be killed before he speaks, and he turns on V
+when the conversation ends.
+
+**The marker was never the fault and no marker work shipped.** This section
+opened asking whether to hold him in place or make the pin track him, and called
+that "not a free choice". It was a false choice: he was moving because a
+runtime call from 2026-08-11 was overriding his own record, and with that gone
+the anchored pin at (300.102, 1054.556, 229.928) is simply correct. The
+`CCSharedMappins.Show` / `.Move` route sketched above was never built.
+
+The greeting still measures from the man rather than from the spot, at 8 m. That
+stays: it costs nothing, and it means a future beat that moves him on purpose
+does not silently break the conversation.
+
+**The general shape, which is the part worth carrying.** Two of the four
+symptoms reported here, the wandering and the stale marker, were one cause. A
+third, "he does not fight back", was a consequence of removing that cause and
+only became visible once it was gone. A fourth, the cowering, resolved itself
+and was never diagnosed, because the reading that would have diagnosed it was
+never needed.
+
+Fixing a cause exposes what it was hiding. Reading the whole list of symptoms as
+a list of jobs would have produced a marker system, a hold-in-place system and a
+combat trigger, all to work around one line.
+
+
+
+### SEVENTH ROUND, 2026-08-21: the reticle is a separate thing from the damage
+
+Playtest: *"other friendlies you cannot even target with the pistol. In this
+case it seems that he can be targeted, just doesn't suffer."*
+
+Correct, and the middle state is the worst of the three. God mode decides
+whether damage lands and says nothing about whether the game locks on, draws a
+health bar and lets the player line up a shot. Inviting the shot and then
+ignoring it reads as a broken NPC; refusing the lock reads as a story NPC.
+
+### What was researched, and what it is not
+
+There is **no record field for this.** The full flat list on
+`Character.cpz_arasaka_bodyguard_ranged3_kenshin_mb_rare` was read off CET's
+string table and searched: `defaultCrosshair`, `hideUIDetection`,
+`hideUIElements`, `uiNameplate` and `threatTrackingPreset` are all about what is
+DRAWN, and `quest` is a persistence flag rather than a protection one. Nothing
+matching `targetab` exists anywhere in TweakDB outside the smart gun's own
+angle stats.
+
+`gameGodModeType` carries `Invulnerable` and `Immortal` and neither touches the
+reticle.
+
+### What it is
+
+`TargetingComponent`, on the puppet, switched off while he is protected.
+
+```reds
+let aim: ref<TargetingComponent> =
+    hoshino.FindComponentByName(n"TargetingComponent") as TargetingComponent;
+aim.Toggle(false);
+```
+
+Three dead ends on the way, all resolved by the compiler rather than by
+guessing, and worth recording because the next probe here will hit the same
+ones:
+
+- `ScriptedPuppet.GetTargetingComponent()` does not exist. The accessor of that
+  name in the cache belongs to the PLAYER, whose targeting component is the
+  thing that FINDS targets rather than the thing that IS one.
+- `TargetingComponent.ToggleTargeting()` does not exist either, despite
+  `ToggleTargeting` being a real string in the cache.
+- `Toggle(Bool)` is the method, the same shape as `SenseComponent.Toggle` two
+  rounds earlier. Components in this codebase toggle; they do not have bespoke
+  verbs.
+
+**The component is fetched BY NAME and a wrong name fails silently**, returning
+null and toggling nothing, with the only symptom being a reticle that still
+locks on. Both casings appear in the game's string table, so both are tried.
+
+### Unverified in game at time of writing
+
+It compiles and the shape is right. Whether the name binds, and whether
+switching the component off is enough on its own, is one playtest: aim a pistol
+at him before the conversation and see whether the reticle takes hold.
+
+
+### EIGHTH ROUND, 2026-08-21: the targeting component does nothing, the attitude is what the reticle reads
+
+`TargetingComponent.Toggle(false)` was built, shipped and played. **It does not
+work.** Playtest: *"still possible to target, shoot him, and he has the pain
+reaction."* It compiles, the component resolves by name, and the reticle is
+unaffected. Removed rather than left in, because a call with no effect is
+something someone later debugs for nothing.
+
+That closes the component route, and it is worth stating plainly since the
+research above made it look like the answer: nothing in TweakDB controls
+targetability, and the one component that appeared to is not it either.
+
+### What is being tried instead
+
+The design call's own suggestion: *"spawn him as a friendly and then change its
+status completely after we speak."* A friendly NPC is the one the game will not
+let the player lock onto, and unlike anything on his record it is a state he can
+be moved in and out of.
+
+**Both halves of the attitude, because they answer different questions.**
+
+| | what it says | what reads it |
+|---|---|---|
+| `SetAttitudeGroup(n"friendly")` | which side he is on | the reticle |
+| `SetAttitudeTowards(player, AIA_Friendly)` | what he thinks of V | his own AI |
+
+Setting only one has already failed here twice in opposite directions: the
+pairwise value alone left him targetable, and earlier in this same section the
+GROUP alone (`n"hostile"`) sent him to war with his own security.
+
+**The friendly group is safe for HIM and would not be for the guards.** He is an
+Arasaka administrator standing among Arasaka security, so a group that makes him
+their ally is what he already is. The warning in `CCShared_Attitude.reds` is
+specifically about `n"hostile"`, which puts an NPC at war with every other group
+including his own side.
+
+**RE-ASSERTED EVERY TICK, not once on the transition.** An attitude set on an
+entity that is still resolving does nothing, which is the whole reason the
+shared helper retries at all, and one missed call means a targetable Hoshino for
+the rest of the visit. Two calls every 1.5 s is not worth optimising.
+
+**And the flip takes him out of the group before it makes him hostile.** An NPC
+left in the friendly group is one the player still cannot shoot, which would
+turn the shield into a permanent one by a second route, and that failure would
+look nothing like the first. He goes back to `neutral`, his record's own
+`baseAttitudeGroup`, and the pairwise line is what makes him an enemy of V.
+
+### CONFIRMED IN PLAY 2026-08-21
+
+Both halves. The reticle refuses him while he is protected, and he fights
+properly after the flip. *"Works perfectly."*
+
+### The dead man's handle, added before shipping
+
+`cc_g01_hoshino_talked` is set by a quest node that did not exist in 1.2.3. A
+player who loads a 1.2.3 save in which he has ALREADY been talked to is past
+that node forever, so the fact can never arrive and every shield condition stays
+true for the rest of the save. He would respawn protected and stay protected:
+an unfinishable gig produced by an upgrade rather than by anything the player
+did.
+
+So reaching him starts a clock. Two minutes with V in front of him and no scene
+having finished means the scene is not coming, and the shield drops. A real
+conversation takes seconds, and the only cost on a legacy save is that he is
+briefly unshootable on content already behind them.
+
+It is a field rather than a fact, so a reload restarts the clock, which is
+right: a reload respawns him too and the question is being asked again from the
+start.
+
+**Nothing found this. It was reasoned at the desk**, and it is the class of
+fault the project's own testing cannot see, because testing always starts from a
+clean pre-gig save and goes forward. `gotchas.md` 21 again.
+
+## 23. The estate guards populate while V watches. Reported, FIXED and CONFIRMED IN PLAY 2026-08-21
+
+Field report from the 1.2.3 playthrough: *"as I move towards the gate I see it
+empty first, then they appear. It'd be nicer if the trigger was further so when
+I arrive I already see them there."*
+
+### Why it happens
+
+The two sites trigger differently, and only one of them was given runway.
+
+The office compound spawns at **100 m** from `CompoundEntry` while "arrived" is
+60 m, so the squads are already standing there by the time the player is close
+enough to look. The comment on it is explicit that the callback chain needs the
+head start.
+
+The estate has no such margin. `AuditSite(true)` fires from the same test that
+sets `cc_g01_estate_reached`: 45 m from `EstateGate`, 70 m from Hoshino, or
+anywhere inside the twenty walked points of `InsideEstate`. So the spawn begins
+at the moment of arrival rather than before it, and the squads are spread over a
+callback chain, which is what makes the filling-in visible.
+
+### What to build
+
+Give the estate the same shape the office already has: a wider sphere that only
+starts the spawn, kept separate from the narrower one that counts as arriving.
+The office version is two lines and the estate can copy it.
+
+Two things to settle:
+
+- **How much further.** The office uses 100 against 60, so a margin of about
+  40 m. The estate approach is a driveable hill rather than an industrial park,
+  so V closes the distance faster and may need more. This is measurable in game
+  rather than worth guessing.
+- **Not so far that it populates a compound the player is driving past.** The
+  office comment already names this trade-off, and North Oak has through roads.
+
+### Related
+
+- **10c** and **10d** are the spawn faults already fixed, including why the chain
+  is spread over callbacks in the first place.
+- **17** is the other half of the same approach: they spawn in a huddle and do
+  not react. Fixing where they stand and when they appear are separate from
+  making them behave like guards, and all three are the same walk up to the gate.
+
+
+### FIXED 2026-08-21, awaiting verification
+
+Two spheres now, the shape the office already had.
+
+| | was | is |
+|---|---|---|
+| spawning starts | 45 m from the gate | 120 m from the gate |
+| arriving, and the objective flips | 45 m from the gate | 20 m from the gate |
+
+The outline and the 70 m sphere on Hoshino are unchanged, and both still count
+as arriving, so a player who came over the back wall gets the same estate.
+
+**120 m is the fast travel point.** It reads 116.5 m from the gate on the
+readout, and the design call is that a player landing there should already be
+inside the spawn sphere, so the estate fills while he walks to his car rather
+than while he looks at it. 120 clears that landing by a few metres. The office
+pair is 100 against 60; this one is wider in both halves because the approach is
+a driveable hill rather than a walk through an industrial park.
+
+**20 m rather than 45 is a second report from the same run.** At 45 the
+objective changed to "Find a way into the residence" a car's length short of the
+gate, and the design call is that it should change when the player reaches it.
+Screenshots caught the flip between the 50 m and 45 m marks. Not tighter than
+20: the tick is 1.5 s and a car covers about 30 m in one, so a smaller sphere
+could be stepped over between two samples, and the outline is the backstop.
+
+The altitude band stays 12 below and 25 above the gate. Widening the radius to
+120 m widens what a floor reaching down to the tunnelled road would catch, and
+that road passes under this hill.
+
+### The measurement this was going to be built on was wrong, and the bench was at fault
+
+The readout's fill counter latched on the OFFICE squad and then refused to
+measure again, reporting "first guard at 2775.5 m" from the estate gate, which
+is V standing in the industrial park three kilometres away. Both sites share
+the `n"cc_g01_guard"` tag and the 200 m filter is 200 m from the PLAYER, not
+from the estate.
+
+The numbers were real and measured the wrong site, which is the failure mode
+worth naming: a bench that answers is not a bench that answered the question.
+It now ignores anything beyond 400 m of the estate gate. The peak speed had the
+same shape of fault and read 11255 m/s, because a fast travel is a position
+delta like any other; it now discards anything above 60 m/s.
+
+Neither mattered in the end. The distance came from the field report instead.
+
+### CONFIRMED IN PLAY 2026-08-21, and the arrival radius came back to 45 m
+
+The guards are in place when V lands at the North Oak fast travel point, and the
+objective changes at the gate. Both confirmed.
+
+The arrival radius went 45, 20, 25, 35, 45 across one evening. That reads as
+indecision and is not: what it was being measured against changed underneath it.
+
+The original 45 was condemned for flipping the objective "a car's length short
+of the gate". Arriving and spawning were ONE test at that point, so 45 m was
+also where the squads began appearing, and what the report described was the
+guards materialising at the same moment the objective changed. Splitting the two
+fixed that, and every tightening after it was chasing a fault that had already
+been fixed: 20 put the fight before the side road came into view, and 25 and 35
+were both still short of it.
+
+**Same number, different behaviour, and the lesson is about the measurement
+rather than the number.** A value condemned by a playtest was condemned along
+with everything else that was true at the time. When the thing it was coupled to
+is decoupled, the old verdict does not carry over, and re-deriving it costs one
+run.
+
+
+## 24. NCPD responds to the estate firefight. Reported and CLOSED 2026-08-21, not ours
+
+Field report: *"police showed up once I started killing the guards."*
+
+### The thing it is not
+
+**This mod spawns no civilians anywhere near the estate.** Every record in
+`SpawnSquad` is a security archetype: `nok_security_*`, `arasaka_agent_*`,
+`arasaka_ranger*`, `nok_arasaka_fast_sniper_*`, `arasaka_netrunner_*` at the
+estate, and `sts_std_arr_*`, `arasaka_guard2_*`, `arr_arasaka_ranger1_*`,
+`arasaka_2020guard_*` at the office. The only other two people this gig places
+are Hoshino and the Mama Welles stand-in, and she is in El Coyote Cojo.
+
+So nobody is killing bystanders this mod put in their way. That was the worry
+and it can be closed.
+
+### The likely mechanism, unmeasured
+
+An attitude here is PAIRWISE. `CCSharedAttitude.Hostile` calls
+`SetAttitudeTowards(player, AIA_Hostile)`, which makes a guard an enemy of V and
+changes nothing else. That is deliberate: the group version made them shoot
+each other, which is the playtest recorded in `CCShared_Attitude.reds`.
+
+The crime system reads the world rather than that pairwise relationship. A
+vanilla `sts_*` or `nok_security_*` record keeps its own `baseAttitudeGroup`, so
+as far as the prevention system is concerned V is gunning down Arasaka staff in
+a residential district, and North Oak is about the most policed one there is.
+
+**It is probably not new.** Before 2026-08-21 the estate squad was not made
+hostile at all, so the same kills were the same crime, and the fight is simply
+bigger now that they shoot back.
+
+### What to try, in order
+
+- **Confirm it is not new.** One run on 1.2.3 with the same fight settles
+  whether this session caused it. Cheapest thing here and it should come first.
+- **Read what the guards actually are.** `baseAttitudeGroup` on the shipped
+  records, by the string-table route in `gameplay-restrictions.md` for the field
+  names, then in game for the values.
+- **Do not reach for the hostile GROUP.** It is the obvious fix and it is ruled
+  out already: members of `n"hostile"` are at war with every other group in the
+  room, their own colleagues included.
+- **Look at PreventionSystem.** Whether a fight can be marked as quest combat so
+  it does not register as a crime is not established, and it is the shape a
+  vanilla gig would use.
+
+### Is it even wrong?
+
+Worth asking before building anything. V is shooting up an Arasaka estate in
+North Oak. Police arriving is arguably correct, and the gig has no escape beat
+that a wanted level would break: the objective after Hoshino is a terminal
+inside the house, and then leaving.
+
+The report reads as surprise rather than as a complaint, so the design call is
+open. If it stays, it should stay on purpose.
+
+### Related
+
+- **17**, where the pairwise attitude was chosen and why the group was not.
+- **22**, Hoshino, who is neutral in earnest now, which makes killing him the one
+  kill here that is unambiguously a civilian murder.
+
+### CLOSED 2026-08-21: base-game residents, killed by a grenade
+
+The reporter's own follow-up: *"I think this was because I launched a bomb and
+killed civilians that were already inside the residence, not spawned by
+[this mod]."*
+
+So the crime was real and the victims were real, and neither was this mod's
+doing. The North Oak residence is populated by the base game, and an explosive
+in a courtyard does not check affiliations. Nothing above needed building.
+
+The section stays for the part that is still worth having written down: this mod
+places no civilians anywhere near either site, and the pairwise-attitude
+reasoning that made the question worth asking is correct and is why the hostile
+GROUP is still ruled out.
+
+**Despawning the residents was raised and declined.** They belong to the base
+game's world, not to this gig, and removing them for the duration would be this
+mod reaching into a district it does not own for a cosmetic reason. A player who
+grenades a house gets what a player who grenades a house gets.
+
+## 25. A finished site repopulates after a reload. Reported, FIXED and CONFIRMED IN PLAY 2026-08-21
+
+Field report: a save whose objective was already "get to the Arasaka residence",
+so the compound leg was long finished, driven back past the industrial park.
+The whole office detail spawned again, banner and all.
+
+### Why the latch did not hold
+
+The site is guarded by `m_officeMask`, a per-anchor bitmask recording which
+anchors are populated, and within a session it works. **It is a plain field on a
+ScriptableSystem, so a load leaves it empty and every anchor reads as
+unpopulated again.** The proximity test then does what it is written to do.
+
+`docs/gotchas.md` 21 is the same lesson from the other end, and `Gig01_Holocall`
+carries it too: state that has to outlive a reload belongs in a fact. The mask
+was never wrong for the job it was written for, which is deciding what still
+needs filling during one visit. What was missing is a test for whether there
+should be a visit at all.
+
+Nothing in the tick asked whether the leg was over. `cc_g01_accepted` and
+`cc_g01_done` were the only gates on the whole block, and both are true for the
+entire gig, so every site stayed armed from acceptance to the epilogue.
+
+### The fix
+
+One fact in front of each spawn, and both already existed for the quest graph.
+
+| site | armed while |
+|---|---|
+| the office compound | `cc_g01_left_compound == 0` |
+| the North Oak estate | `cc_g01_escaped == 0` |
+
+`cc_g01_left_compound` is set once the ledger is read and V is 110 m clear of
+the terminal, and the quest graph already advances `obj_nix` on it, so any save
+that has heard from Nix has it set. `cc_g01_escaped` is its equivalent at the
+estate, set once the upload is done and V is 160 m clear of Hoshino.
+
+Both are facts, so they survive the reload the mask does not.
+
+### The doors were left alone, deliberately
+
+`Gig01_OfficeDoors` is gated on `cc_g01_accepted` and `cc_g01_done`, the same
+pair, so on the face of it it has the same fault. It does not have the same
+consequence and the obvious tightening carries a risk the spawn fix does not.
+
+The hook only ever switches a door ON, and only when one streams in DISABLED.
+A door this gig has already opened is open, so a later visit does nothing
+observable. Gating it on `cc_g01_left_compound` would mean a player who leaves
+the compound and goes back for the shard finds a door that is off again, and a
+lockout is worse than an invisible no-op.
+
+### The general shape, for the next gig
+
+Any site a gig populates needs two different pieces of state, and they are not
+interchangeable.
+
+- **Which anchors still need filling on this visit.** A field is right. It is
+  cheap, it is per-visit, and it is meant to be forgotten.
+- **Whether this leg of the gig is still running.** A fact is the only thing
+  that can answer it, because the question outlives the session.
+
+Getting the second one from the first is the bug in this section, and it is
+invisible until someone reloads and goes back.
+
+### Related
+
+- **10c**, **10d** and **10e**, the spawn faults fixed before this one, all
+  within a session.
+- **21** in `gotchas.md`, a latch exercised only in the clean direction.
+
+### CONFIRMED IN PLAY 2026-08-21
+
+A save already past the compound leg, driven back past the industrial park: no
+spawn, no banner. The estate half is the same code and the same two facts, so it
+is covered by the same change; it has not been separately provoked.

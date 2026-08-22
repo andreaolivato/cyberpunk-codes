@@ -374,6 +374,6 @@ def build():
 
 if __name__ == '__main__':
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
-    with open(OUT, 'w', encoding='utf-8') as fh:
+    with open(OUT, 'w', encoding='utf-8', newline='\n') as fh:
         json.dump(build(), fh, indent=2)
     print('wrote %s (class %s, mesh %s)' % (OUT, ENTITY_CLASS, SHARD_MESH))

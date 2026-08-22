@@ -1956,7 +1956,7 @@ class Scene:
         self.validate()
         os.makedirs(OUT_DIR, exist_ok=True)
         path = os.path.join(OUT_DIR, self.name + '.scene.json')
-        with open(path, 'w', encoding='utf-8') as fh:
+        with open(path, 'w', encoding='utf-8', newline='\n') as fh:
             json.dump(self.build(), fh, indent=2)
         print('wrote %s (%d nodes, %d lines, %d options)'
               % (path, len(self.nodes), len(self.lines), len(self.options)))
@@ -2002,7 +2002,7 @@ def write_subtitles(scenes):
         },
     }
     os.makedirs(os.path.dirname(SUBTITLE_OUT), exist_ok=True)
-    with open(SUBTITLE_OUT, 'w', encoding='utf-8') as fh:
+    with open(SUBTITLE_OUT, 'w', encoding='utf-8', newline='\n') as fh:
         json.dump(doc, fh, indent=2)
     print('wrote %s (%d subtitle entries)' % (SUBTITLE_OUT, len(entries)))
 
@@ -2028,7 +2028,7 @@ def write_subtitles(scenes):
             'EmbeddedFiles': [],
         },
     }
-    with open(SUBTITLE_MAP_OUT, 'w', encoding='utf-8') as fh:
+    with open(SUBTITLE_MAP_OUT, 'w', encoding='utf-8', newline='\n') as fh:
         json.dump(doc, fh, indent=2)
     print('wrote %s (subtitle map -> %s)' % (SUBTITLE_MAP_OUT, SUBTITLE_DEPOT))
 
@@ -2099,7 +2099,7 @@ def write_lipmap(scenes):
         },
     }
     os.makedirs(os.path.dirname(LIPMAP_OUT), exist_ok=True)
-    with open(LIPMAP_OUT, 'w', encoding='utf-8') as fh:
+    with open(LIPMAP_OUT, 'w', encoding='utf-8', newline='\n') as fh:
         json.dump(doc, fh, indent=2)
     total = sum(len(e['animSets']) for e in entries)
     print('wrote %s (%d scenes, %d lipsync sets)'

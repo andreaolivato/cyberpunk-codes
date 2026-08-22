@@ -108,7 +108,7 @@ def build_index():
     if not os.path.exists(listing):
         print('listing the voice archive...')
         r = run([CLI, 'archiveinfo', VOICE_ARCHIVE, '-l', '-v', 'Quiet'])
-        with open(listing, 'w', encoding='utf-8') as fh:
+        with open(listing, 'w', encoding='utf-8', newline='\n') as fh:
             fh.write(r.stdout)
 
     # wem side: stringId hex -> [(dir, speaker+scene, gender, depot path)]
@@ -149,7 +149,7 @@ def build_index():
                     'audio': audio,
                 })
 
-    with open(CORPUS, 'w', encoding='utf-8') as fh:
+    with open(CORPUS, 'w', encoding='utf-8', newline='\n') as fh:
         json.dump(rows, fh)
     print('indexed %d spoken lines -> %s' % (len(rows), CORPUS))
     return rows
@@ -430,7 +430,7 @@ def cmd_extract(args):
             'text': clean(r['f'] or r['m']),
         })
     mpath = os.path.join(args.out, 'manifest.json')
-    with open(mpath, 'w', encoding='utf-8') as fh:
+    with open(mpath, 'w', encoding='utf-8', newline='\n') as fh:
         json.dump(manifest, fh, indent=2, ensure_ascii=False)
     print('exported %d clips, %.1f min actual -> %s' % (len(manifest), total / 60.0, args.out))
     print('manifest: %s' % mpath)

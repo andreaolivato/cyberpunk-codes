@@ -5,6 +5,32 @@ Negative Balance releases, newest first. The same changelog is on the mod's
 
 ---
 
+## 1.2.4 (2026-08-22)
+
+Safe to install mid-save. Nothing to restart. A save in which Hoshino has
+already been spoken to is handled.
+
+- **Fixed: the Arasaka security at the North Oak estate did not fight.** None of
+  them treated V as an enemy, so V could walk in among them and stand in front
+  of a guard without being challenged. The office detail was unaffected.
+- **Fixed: the estate security appeared while the player was watching.** They
+  now start arriving 120 m from the gate rather than 45 m, which covers the
+  North Oak fast travel point, so the grounds are held by the time anyone looks.
+- **Fixed: Hoshino left his desk and crossed the estate to join a firefight.**
+  He was being treated as a combatant at war with the estate's own security. He
+  now waits where the marker says he is, and his marker stays right.
+- **Added: Hoshino cannot be killed before he has been spoken to.** No lock-on
+  and no damage until his conversation has finished, so a shot from the garden
+  can no longer skip the meeting he exists for.
+- **Changed: Hoshino turns on V when their conversation ends**, rather than
+  standing there until shot.
+- **Fixed: Hoshino's name read "Hoshino Soldier" on the scanner.**
+- **Fixed: the Arasaka compound repopulated with security after a reload.**
+  Returning to the industrial park later in the gig spawned the whole office
+  detail again, on a leg the player had finished hours before.
+
+---
+
 ## 1.2.3 (2026-08-21)
 
 Safe to install mid-save. Nothing to restart.

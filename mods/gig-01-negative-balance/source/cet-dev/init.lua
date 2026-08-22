@@ -110,6 +110,10 @@ local FACTS = {
     -- the next tick, so a value out of range simply shows nothing.
     "cc_g01_wayin_leg",
     "cc_g01_hoshino_met",
+    "cc_g01_hoshino_talked",
+    -- Flips Hoshino hostile with no shot fired, for testing the fight
+    -- without landing one. One way within a session; reload to undo.
+    "cc_g01_dbg_hoshino_fight",
     "cc_g01_hoshino_dead",
     "cc_g01_malware_done",
     "cc_g01_escaped",
@@ -1686,69 +1690,13 @@ registerForEvent("onDraw", function()
         ImGui.Text(string.format("  %s: %.1f %.1f %.1f", c.name, c.x, c.y, c.z))
     end
 
-    -- ===================================================== THE HOSHINO BENCH
+    -- The estate readout lived here: a live panel over Gig01_Bench.reds,
+    -- built for backlog 17, 22 and 23 and removed with them once they
+    -- closed. A probe that outlives its question ships by accident, and
+    -- this one wrote fifteen facts four times a second.
     --
-    -- Two readings for one open bug, taken in the same playthrough. The
-    -- reasoning is in Gig01_Bench.reds; this presses the buttons and shows the
-    -- numbers.
-    ImGui.Spacing()
-    ImGui.Text("Hoshino bench")
-    ImGui.Separator()
-
-    -- 1. WHERE IS THE SCENE ANCHOR? Only answerable at the estate: a node
-    --    reports a position while its sector is streamed in and not before.
-    if ImGui.Button("RESOLVE THE SCENE ANCHOR (do this at the estate)") then
-        local ok, err = pcall(function()
-            Game.GetQuestsSystem():SetFactStr("cc_g01_bench_go", 1)
-            log("bench: anchor requested, the answer lands within a second")
-        end)
-        if not ok then log("bench anchor failed: " .. tostring(err)) end
-    end
-    do
-        local qs = Game.GetQuestsSystem()
-        local st = qs:GetFactStr("cc_g01_bench_anchor")
-        if st == 4 then
-            local ax = qs:GetFactStr("cc_g01_bench_ax") / 10.0
-            local ay = qs:GetFactStr("cc_g01_bench_ay") / 10.0
-            local az = qs:GetFactStr("cc_g01_bench_az") / 10.0
-            ImGui.Text(string.format("  anchor: %.1f %.1f %.1f", ax, ay, az))
-            ImGui.Text(string.format("  where 1.1.3 buried him: %.1f %.1f %.1f", ax, ay, az - 2.5))
-            if ImGui.Button("TELEPORT TO THE OLD BURIAL SPOT") then
-                teleportTo({ x = ax, y = ay, z = az - 2.5, w = 1.0 })
-            end
-            ImGui.TextDisabled("Rock or under a floor = the burial worked. A room,")
-            ImGui.TextDisabled("a pillar or open air = that is what the report saw.")
-        elseif st == 3 then
-            ImGui.TextDisabled("anchor: the name resolves, nothing streamed. Try it at the estate.")
-        elseif st == 1 then
-            ImGui.TextDisabled("anchor: THE NAME MEANT NOTHING. The scene has no marker.")
-        else
-            ImGui.TextDisabled("anchor: not read yet.")
-        end
-    end
-
-    -- 2. IS THERE STILL A SECOND BODY NEXT TO V? Counted through walls, so an
-    --    absent body and a hidden one read differently. Switch it on before
-    --    walking up to him: his scene lasts seconds.
-    ImGui.Spacing()
-    local watchOn = Game.GetQuestsSystem():GetFactStr("cc_g01_bench_watch") > 0
-    if ImGui.Button(watchOn and "HOSHINO WATCH: ON (click to stop)"
-                             or "HOSHINO WATCH: off (click to start)") then
-        Game.GetQuestsSystem():SetFactStr("cc_g01_bench_watch", watchOn and 0 or 1)
-    end
-    do
-        local qs = Game.GetQuestsSystem()
-        ImGui.Text(string.format("  now: %d within 60 m, furthest %.1f m",
-            qs:GetFactStr("cc_g01_bench_n"), qs:GetFactStr("cc_g01_bench_d") / 10.0))
-        ImGui.Text(string.format("  most seen at once: %d, furthest %.1f m",
-            qs:GetFactStr("cc_g01_bench_peak"), qs:GetFactStr("cc_g01_bench_peakd") / 10.0))
-        if ImGui.Button("reset the peak") then
-            qs:SetFactStr("cc_g01_bench_peak", 0)
-            qs:SetFactStr("cc_g01_bench_peakd", 0)
-        end
-    end
-    ImGui.TextDisabled("1 through the whole conversation = only the man you fight.")
-    ImGui.TextDisabled("2 = a second body is still being staged beside you.")
+    -- Recover both from the commit before gig-01/v1.2.4 if a future estate
+    -- question needs them. Do not rebuild from memory.
 
     ImGui.Spacing()
     ImGui.Text("Teleports")

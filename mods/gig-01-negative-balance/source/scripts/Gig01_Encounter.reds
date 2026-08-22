@@ -313,6 +313,14 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
     private let m_hoshinoSpawned: Bool;
     private let m_hoshinoSeenAlive: Bool;   // only then can we call him dead
     private let m_hoshinoGreeted: Bool;
+    // Set the first time he is hit, and NOT persisted. See the tick.
+    private let m_hoshinoProvoked: Bool;
+    // Whether he is currently unkillable, and whether that has been given
+    // back. Neither is persisted; both are re-derived from facts on load.
+    private let m_hoshinoShielded: Bool;
+    // Ticks since V reached him with no scene having finished. The dead man's
+    // handle on the shield; see the tick.
+    private let m_hoshinoMetTicks: Int32;
     private let m_downloadBusy: Bool;
     private let m_uploadBusy: Bool;
     private let m_sendBusy: Bool;
@@ -448,12 +456,27 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
         // ordinary compound security and an elite estate detail are meant to look
         // different, and trading that away to fix an attitude bug would flatten
         // the two tiers into one.
-        if !estate {
-            let i: Int32 = 0;
-            while i < ArraySize(placed) {
-                CCSharedAttitude.Hostile(this.GetGameInstance(), placed[i]);
-                i += 1;
-            }
+        //
+        // BOTH SQUADS NOW, AND THE `if !estate` THAT USED TO BE HERE WAS WRONG.
+        //
+        // The paragraph above reads the estate records as ones that "do" treat V
+        // as an enemy, off a 2026-08-13 playtest, and asserted the attitude only
+        // where the default was believed wrong. Measured on 2026-08-21 with the
+        // estate readout, that belief is false: standing at the gate with the
+        // site fully populated, TWENTY-TWO estate guards were within 200 m and
+        // ZERO of them read back hostile to V. None was Alerted and none was in
+        // Combat. Walking in among them changed nothing.
+        //
+        // The same reading also shows what happens once a fight starts by other
+        // means: every one of them flips to hostile and in-combat together. So
+        // the records do carry the reaction, they simply never initiate, and the
+        // 2026-08-13 reading was of a squad that had already been provoked.
+        //
+        // docs/backlog.md 17.
+        let i: Int32 = 0;
+        while i < ArraySize(placed) {
+            CCSharedAttitude.Hostile(this.GetGameInstance(), placed[i]);
+            i += 1;
         }
         return ArraySize(placed);
     }
@@ -1255,8 +1278,29 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
                 }
                 // Spawning starts EARLIER than arriving, because the squads are
                 // spread over a callback chain and that chain needs runway.
-                if atOffice
-                    || Vector4.Distance(pos, CCGig01Places.CompoundEntry()) < 100.0 {
+                //
+                // AND IT STOPS WHEN THE COMPOUND LEG IS OVER, which is what
+                // `cc_g01_left_compound` means and what this had no test for.
+                // Field report, 2026-08-21: a save whose objective was already
+                // "get to the Arasaka residence" was driven back past the
+                // compound, and the whole office detail spawned again, banner
+                // and all.
+                //
+                // WHY THE EXISTING LATCH DID NOT STOP IT, and this is the part
+                // worth carrying to the next site of this shape. The site is
+                // guarded by `m_officeMask`, a per-anchor bitmask that records
+                // which anchors are populated, and it does its job perfectly
+                // within a session. It is a plain field on a ScriptableSystem,
+                // so it is empty again after a load, and every anchor reads as
+                // unpopulated. docs/gotchas.md 21 is the same lesson: state that
+                // has to outlive a reload belongs in a fact.
+                //
+                // So the mask stays for what it is good at, deciding which
+                // anchors still need filling during a visit, and a fact decides
+                // whether there should be a visit at all.
+                if qs.GetFactStr("cc_g01_left_compound") == 0
+                    && (atOffice
+                        || Vector4.Distance(pos, CCGig01Places.CompoundEntry()) < 100.0) {
                     this.AuditSite(false);
                 }
 
@@ -1427,12 +1471,81 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
                     // the back get the same estate as one who drove to the gate.
                     // Same correction as the way-in objective got in 1.1.0, now
                     // applied to the guards.
-                    if CCSharedWorld.Near(pos, CCGig01Places.EstateGate(), 45.0, 12.0, 25.0)
+                    // TWO SPHERES, THE SHAPE THE OFFICE ALREADY HAD.
+                    //
+                    // Arriving and spawning were one test here, at 45 m on the
+                    // gate, so the squads began to arrive at the moment the
+                    // player was close enough to watch them arrive. Field
+                    // report, 1.2.3: *"as I move towards the gate I see it
+                    // empty first, then they appear."*
+                    //
+                    // ARRIVING is the gate itself. This has been 45, then 20,
+                    // and 25 is where two design calls meet.
+                    //
+                    // BACK TO 45, AND IT IS NOT THE SAME 45. It went 45, 20,
+                    // 25, 35, 45 across one evening of playtests, which looks
+                    // like indecision and is not: the thing it was measured
+                    // against changed underneath it.
+                    //
+                    // The original 45 was condemned for flipping the objective
+                    // "a car's length short of the gate". At that point arriving
+                    // and spawning were ONE test, so 45 m was also where the
+                    // squads began to appear, and what the report was really
+                    // describing was the guards materialising at the same moment
+                    // the objective changed. Splitting the two (spawning at
+                    // 120 m, see below) fixed that, and each tightening after it
+                    // was chasing a fault that had already been fixed. 20 put
+                    // the fight before the side road on the right came into
+                    // view; 25 and 35 were walked and driven and were still
+                    // short of it.
+                    //
+                    // So the number is the same and the behaviour is not. The
+                    // guards are in place long before V reaches this sphere.
+                    //
+                    // Not tighter than 20 in any case: the tick is 1.5 s and a
+                    // car covers about 30 m in one, so a smaller sphere could be
+                    // stepped over between two samples. The outline below is the
+                    // backstop for that.
+                    let atEstate: Bool =
+                        CCSharedWorld.Near(pos, CCGig01Places.EstateGate(), 45.0, 12.0, 25.0)
                         || CCSharedWorld.Near(pos, CCGig01Places.Hoshino(), 70.0, 12.0, 25.0)
-                        || CCGig01Places.InsideEstate(pos) {
+                        || CCGig01Places.InsideEstate(pos);
+                    if atEstate {
                         if qs.GetFactStr("cc_g01_estate_reached") == 0 {
                             qs.SetFactStr("cc_g01_estate_reached", 1);
                         }
+                    }
+
+                    // SPAWNING starts much further out, and 120 m is measured
+                    // rather than picked. The North Oak fast travel point reads
+                    // 116.5 m from the gate, and the design call is that a
+                    // player landing there should already be inside the spawn
+                    // sphere, so the estate fills while he walks to his car
+                    // instead of while he looks at it. 120 m clears that
+                    // landing by a few metres.
+                    //
+                    // The office pair is 100 against 60. This one is wider in
+                    // both halves because the estate approach is a driveable
+                    // hill rather than a walk through an industrial park.
+                    //
+                    // The altitude band is the same 12 below and 25 above the
+                    // gate that the arrival test uses, and it is doing the same
+                    // job: the tunnelled road passes under this hill, and a
+                    // floor that reaches down to it would populate the estate
+                    // for a player driving underneath who never comes up.
+                    //
+                    // AND IT STOPS ONCE V IS CLEAR OF THE ESTATE, for the reason
+                    // given at the office spawn above: the per-anchor mask is a
+                    // field and does not survive a reload, so without a fact in
+                    // front of it a later drive past North Oak would repopulate
+                    // an estate the player has already finished with.
+                    //
+                    // `cc_g01_escaped` is the estate's equivalent of
+                    // `cc_g01_left_compound`: set once the upload is done and V
+                    // is 160 m clear of Hoshino.
+                    if qs.GetFactStr("cc_g01_escaped") == 0
+                        && (atEstate
+                            || CCSharedWorld.Near(pos, CCGig01Places.EstateGate(), 120.0, 12.0, 25.0)) {
                         this.AuditSite(true);
                     }
 
@@ -1526,17 +1639,291 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
 
                     if IsDefined(hoshino) && ScriptedPuppet.IsAlive(hoshino) {
                         this.m_hoshinoSeenAlive = true;
-                        let agent: ref<AttitudeAgent> = hoshino.GetAttitudeAgent();
-                        if IsDefined(agent) {
-                            agent.SetAttitudeGroup(n"hostile");
-                            agent.SetAttitudeTowards(player.GetAttitudeAgent(), EAIAttitude.AIA_Hostile);
+                        // THE SetAttitudeGroup(n"hostile") THAT WAS HERE IS
+                        // GONE, AND IT HAD BEEN OVERRIDING A FIX FOR TEN DAYS.
+                        //
+                        // He is spawned neutral, deliberately: he opened fire
+                        // during his own conversation (playtest, 2026-08-12) and
+                        // the point of him is that he is an administrator rather
+                        // than a soldier. See the comment by that spawn.
+                        //
+                        // This block predates that fix (`c9fd9a7`, 2026-08-11,
+                        // against `eaf853e`, 2026-08-12) and is not gated on the
+                        // estate, on the player's position or on being provoked,
+                        // so it undid the neutral spawn about 1.5 s later, every
+                        // session. Measured 2026-08-21: walk up to an untouched
+                        // Hoshino standing at his desk and he reads Relaxed and
+                        // HOSTILE.
+                        //
+                        // n"hostile" is a GROUP, not "hostile to the player", and
+                        // a member of it is at war with every other group in the
+                        // room including its own. CCShared_Attitude.reds carries
+                        // the playtest that established this. It is why he leaves
+                        // his desk and crosses the estate as a combatant: the
+                        // same run measured him 96.2 m from where he starts.
+                        //
+                        // AND THE PAIRWISE LINE IS GONE TOO, ON THE NEXT
+                        // READING. Removing only the group was not enough:
+                        // playtest, 2026-08-21, he still crossed the estate and
+                        // reached V at the gate. An NPC who holds V as an enemy
+                        // engages V once he is aware of him, and a firefight
+                        // around him is what makes him aware.
+                        //
+                        // Nothing here replaces it, because his record already
+                        // does this job and does it better. `hoshino.yaml` sets
+                        // `baseAttitudeGroup: neutral`, `reactionPreset:
+                        // ReactionPresets.NoReaction` and `enableSensesOnStart:
+                        // false`, and its own comment records why: "shooting him
+                        // flips him hostile through the game's own damage
+                        // reaction, so 'peaceful until attacked' needs no
+                        // script". Every runtime attitude call this block has
+                        // ever made was overriding three record fields that were
+                        // set deliberately to say the same thing.
+                        //
+                        // So he stands at his desk and does not join a fight he
+                        // is not part of. docs/backlog.md 22.
+                        //
+                        // WHAT DOES NOT COME FOR FREE IS HIM FIGHTING BACK, and
+                        // `hoshino.yaml` has been wrong about that since it was
+                        // written. Its comment says "shooting him flips him
+                        // hostile through the game's own damage reaction, so
+                        // 'peaceful until attacked' needs no script", and that
+                        // was never tested with the runtime call removed,
+                        // because the runtime call was always there overriding
+                        // it. Playtest, 2026-08-21, with it gone: he takes the
+                        // shot and does nothing at all.
+                        //
+                        // The reason is one of the three fields that make him
+                        // peaceful. `reactionPreset: ReactionPresets.NoReaction`
+                        // removes the damage reaction along with every other
+                        // one, so there is nothing left to flip him.
+                        //
+                        // So the flip is scripted, once, on the first sign that
+                        // he has been hit. Health is a percentage from the stat
+                        // pool, so anything under full means damage: his own
+                        // record cannot regenerate it, and nothing else here
+                        // touches him.
+                        //
+                        // ONE-WAY AND ONCE. m_hoshinoProvoked is a field rather
+                        // than a fact deliberately: it must not survive a reload,
+                        // because he is respawned at full health by the same
+                        // reload and a remembered flip would make him hostile
+                        // before he had been touched, which is the bug this
+                        // whole line of work started from.
+                        let hostileNow: Bool = this.m_hoshinoProvoked;
+                        if !hostileNow {
+                            let hp: Float = GameInstance.GetStatPoolsSystem(game)
+                                .GetStatPoolValue(Cast<StatsObjectID>(this.m_hoshinoId),
+                                                  gamedataStatPoolType.Health, false);
+                            // THREE WAYS IN, and the second is the one the
+                            // story wants. He turns on V when the conversation
+                            // ends, because the ledger is closed and he knows
+                            // what V came for; being shot first is the other
+                            // route to the same fight, for a player who never
+                            // let him speak.
+                            //
+                            // cc_g01_hoshino_talked is set by the quest graph on
+                            // the talked branch of the fork, after his last
+                            // line. See gen_questphase.py, which carries why the
+                            // 2026-08-14 attempt at this failed and why the same
+                            // thing works now.
+                            hostileNow = hp < 99.0
+                                || qs.GetFactStr("cc_g01_hoshino_talked") > 0
+                                || qs.GetFactStr("cc_g01_dbg_hoshino_fight") > 0;
+                        }
+                        // ------------------------------------ UNKILLABLE
+                        //
+                        // UNTIL HE HAS SAID HIS PIECE. The design call,
+                        // 2026-08-21: a sniper shot or a quickhack from across
+                        // the garden should not be able to delete the scene the
+                        // whole leg is built around.
+                        //
+                        // `GodModeSystem` is the base game's own mechanism for a
+                        // quest-critical NPC, and `Invulnerable` is the harder of
+                        // its two settings: no damage at all, rather than damage
+                        // that cannot finish him. Immortal was the other
+                        // candidate and is wrong here, because health dropping is
+                        // what the fight-back check reads, so it would produce an
+                        // enemy who is hostile and cannot be killed.
+                        //
+                        // GIVING IT BACK IS THE PART THAT MATTERS, and it is
+                        // written the way ReleaseMama is for the same reason: a
+                        // shield left on is a Hoshino who can never die, which is
+                        // a gig that can never finish. So the release is NOT a
+                        // one-shot beside the flip. It is re-checked every tick
+                        // against facts that are in the save, so a missed tick,
+                        // a reload mid-scene or a skipped scene all still reach
+                        // it on the next pass.
+                        //
+                        // docs/gotchas.md 21 is the rule being obeyed: a latch
+                        // that is only ever set in the clean direction is one
+                        // nobody tests in the dirty one.
+                        // THE DEAD MAN'S HANDLE, and it is here for a save
+                        // made before this shipped.
+                        //
+                        // `cc_g01_hoshino_talked` is set by a quest node added
+                        // in 1.2.4. A player who loads a 1.2.3 save in which he
+                        // has ALREADY been talked to is past that node forever:
+                        // the fact can never arrive, and every condition below
+                        // stays true for the rest of the save. He would respawn
+                        // protected and stay protected, which is a gig that
+                        // cannot be finished, from an upgrade rather than from
+                        // anything the player did.
+                        //
+                        // So reaching him starts a clock. Two minutes with V
+                        // stood in front of him and no scene having finished
+                        // means the scene is not coming, and the shield is not
+                        // worth a stuck save. A real conversation takes seconds;
+                        // the only cost on a legacy save is that he is briefly
+                        // unshootable on content that is already behind them.
+                        //
+                        // NOT PERSISTED, so a reload restarts the clock. That is
+                        // correct: a reload also respawns him, and the question
+                        // is being asked again from the start.
+                        if qs.GetFactStr("cc_g01_hoshino_met") > 0
+                            && qs.GetFactStr("cc_g01_hoshino_talked") == 0 {
+                            this.m_hoshinoMetTicks += 1;
+                        }
+                        let wantShield: Bool = qs.GetFactStr("cc_g01_hoshino_talked") == 0
+                            && qs.GetFactStr("cc_g01_hoshino_dead") == 0
+                            && qs.GetFactStr("cc_g01_done") == 0
+                            && this.m_hoshinoMetTicks < 80
+                            && !hostileNow;
+                        //
+                        // AND THE RETICLE, WHICH IS A SEPARATE THING FROM THE
+                        // DAMAGE. Playtest, 2026-08-21: *"other friendlies you
+                        // cannot even target with the pistol. In this case it
+                        // seems that he can be targeted, just doesn't suffer."*
+                        //
+                        // God mode decides whether damage lands and nothing
+                        // else. On its own it produces the worst of the three
+                        // states: the game locks on, draws a health bar, invites
+                        // the shot, and then ignores it.
+                        //
+                        // `TargetingComponent.Toggle(false)` WAS TRIED HERE AND
+                        // DOES NOT WORK. It compiles, the component resolves by
+                        // name, and in play he is still targetable, still takes
+                        // the shot and still plays the pain reaction. Removed
+                        // rather than left in: a call with no effect is a thing
+                        // someone later debugs for nothing. docs/backlog.md 22.
+                        //
+                        // WHAT DECIDES THE RETICLE IS THE ATTITUDE, which is the
+                        // design call's own suggestion: *"spawn him as a friendly
+                        // and then change its status completely after we speak."*
+                        // A friendly NPC is the one the game will not let the
+                        // player lock onto, and friendly is a state he can be put
+                        // into and taken out of, unlike anything on his record.
+                        //
+                        // BOTH HALVES OF THE ATTITUDE, because they answer
+                        // different questions. The GROUP is which side he is on,
+                        // and it is what the reticle reads. The PAIRWISE value is
+                        // what he thinks of V specifically. Setting only one has
+                        // failed here twice in different directions.
+                        //
+                        // Being in the friendly group is safe for him in a way it
+                        // would not be for the guards: he is an Arasaka
+                        // administrator standing among Arasaka security, so a
+                        // group that makes him their ally is what he already is.
+                        // The warning in CCShared_Attitude.reds is about
+                        // n"hostile", which puts an NPC at war with every other
+                        // group including his own side.
+                        let gods: ref<GodModeSystem> = GameInstance.GetGodModeSystem(game);
+                        let shieldAgent: ref<AttitudeAgent> = hoshino.GetAttitudeAgent();
+                        if wantShield {
+                            // RE-ASSERTED EVERY TICK rather than once on the
+                            // transition. An attitude set on an entity that is
+                            // still resolving silently does nothing, which is the
+                            // whole reason CCShared_Attitude retries, and one
+                            // missed call here means a targetable Hoshino for the
+                            // rest of the visit. It is two calls a second and a
+                            // half.
+                            if IsDefined(shieldAgent) && IsDefined(player.GetAttitudeAgent()) {
+                                shieldAgent.SetAttitudeGroup(n"friendly");
+                                shieldAgent.SetAttitudeTowards(player.GetAttitudeAgent(),
+                                                               EAIAttitude.AIA_Friendly);
+                            }
+                        }
+                        if IsDefined(gods) {
+                            if wantShield && !this.m_hoshinoShielded {
+                                gods.AddGodMode(this.m_hoshinoId,
+                                                gameGodModeType.Invulnerable,
+                                                n"cc_g01_hoshino");
+                                this.m_hoshinoShielded = true;
+                            }
+                            if !wantShield && this.m_hoshinoShielded {
+                                gods.RemoveGodMode(this.m_hoshinoId,
+                                                   gameGodModeType.Invulnerable,
+                                                   n"cc_g01_hoshino");
+                                this.m_hoshinoShielded = false;
+                            }
+                        }
+
+                        if hostileNow && !this.m_hoshinoProvoked {
+                            this.m_hoshinoProvoked = true;
+                            let agent: ref<AttitudeAgent> = hoshino.GetAttitudeAgent();
+                            if IsDefined(agent) {
+                                // OUT OF THE FRIENDLY GROUP FIRST. He was put in
+                                // it to keep the reticle off him while he was
+                                // protected, and an NPC left there is one the
+                                // player still cannot shoot, which would turn the
+                                // shield into a permanent one by another route.
+                                //
+                                // Back to `neutral`, his record's own
+                                // `baseAttitudeGroup`, rather than to n"hostile":
+                                // the pairwise line below is what makes him an
+                                // enemy of V, and the hostile GROUP would set him
+                                // against the Arasaka guards as well.
+                                agent.SetAttitudeGroup(n"neutral");
+                                agent.SetAttitudeTowards(player.GetAttitudeAgent(),
+                                                         EAIAttitude.AIA_Hostile);
+                            }
+                            // AND HIS EYES ON, which the attitude does not do.
+                            // `enableSensesOnStart: false` is the third peaceful
+                            // field, and an NPC who cannot perceive V cannot
+                            // shoot at him however hostile he is.
+                            let senses: ref<SenseComponent> = hoshino.GetSensesComponent();
+                            if IsDefined(senses) {
+                                senses.Toggle(true);
+                            }
                         }
                         // His exchange is a real scene now (gig01_hoshino.scene,
                         // run by the quest phase). All this does is say "V is
                         // in front of him"; the words and the choice of opening
                         // line live in the scene.
+                        //
+                        // MEASURED FROM THE MAN, NOT FROM HIS CAPTURED SPOT.
+                        //
+                        // This used to read Vector4.Distance(pos, Places.Hoshino()),
+                        // the fixed point the marker is anchored to, so a Hoshino
+                        // who had walked out of that sphere could not be greeted
+                        // at all however close V stood to him, and the quest phase
+                        // waits on this fact before playing his scene. The same
+                        // 2026-08-21 run measured him 96.2 m from that point.
+                        //
+                        // Fixing where he goes is the other half and is above.
+                        // This half holds even if some future beat moves him on
+                        // purpose. docs/backlog.md 22.
+                        //
+                        // EIGHT METRES. This has been 12, then 4, and both
+                        // ends were measured against the wrong thing.
+                        //
+                        // 12 looked too far, but the run that produced that
+                        // reading had Hoshino walking to the gate, so what fired
+                        // early was his POSITION and not the radius. 4 was the
+                        // correction and it is too tight to be comfortable: the
+                        // design call, 2026-08-21, is that V has to stand in his
+                        // face for it.
+                        //
+                        // 8 is a room's width rather than a courtyard's, and it
+                        // is measured from the man, so the reading that condemned
+                        // 12 does not apply to it. Now that he stays at his desk
+                        // this is the first honest test of the radius on its own.
+                        //
+                        // Missing it does not strand the gig. Killing him sets
+                        // cc_g01_hoshino_met itself, in the branch below, so the
+                        // quest phase moves on; what is lost is the scene.
                         if !this.m_hoshinoGreeted
-                            && Vector4.Distance(pos, CCGig01Places.Hoshino()) < 12.0 {
+                            && Vector4.Distance(pos, hoshino.GetWorldPosition()) < 8.0 {
                             this.m_hoshinoGreeted = true;
                             qs.SetFactStr("cc_g01_hoshino_met", 1);
                         }

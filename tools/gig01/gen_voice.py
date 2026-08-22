@@ -352,7 +352,7 @@ def main():
     for _wav, out in wavs:
         check_wem(os.path.join(WEM_OUT, out))
 
-    with open(DURATIONS, 'w', encoding='utf-8') as fh:
+    with open(DURATIONS, 'w', encoding='utf-8', newline='\n') as fh:
         json.dump(durations, fh, indent=2, sort_keys=True)
     print('wrote %s (%d measured durations)' % (DURATIONS, len(durations)))
 

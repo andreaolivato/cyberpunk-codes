@@ -365,7 +365,7 @@ ElevenLabs for all six speakers, not Audioware for two; and the existing-line
 audit was run against the whole 62,992-line corpus and killed the reuse premise
 (3 matches out of 59).
 
-**Build status: released at 1.2.3 (2026-08-21).** The gig plays end to end,
+**Build status: released at 1.2.4 (2026-08-22).** The gig plays end to end,
 fully voiced and lipsynced. Playtest, 2026-08-14, on the last three builds:
 *"Everything is perfect"*, *"It all works perfectly"*. Everything from 1.1.x
 onward is field bug fixes on top of that, and `CHANGELOG.md` is the

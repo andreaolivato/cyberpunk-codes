@@ -422,19 +422,34 @@ b.connect((HOSHINO_ALIVE, 'Out'), (HOSHINO_TALK, 'hoshino_in'))
 # with the kill instead of the objective being silently skipped.
 HOSHINO_JOIN = add_journal('gameJournalQuestObjective',
                            QUEST + '/phase_main/obj_hoshino', notify=0)
-b.connect((HOSHINO_TALK, 'hoshino_out'), (HOSHINO_JOIN, 'Succeeded'))
+# HE TURNS ON V WHEN THE CONVERSATION ENDS, and this fact is how.
+#
+# ON THE TALKED BRANCH ONLY. The dead branch rejoins below without passing
+# through here, which is correct: a corpse does not need an attitude, and the
+# kill scene reads cc_g01_hoshino_dead rather than this.
+#
+# THIS WAS TRIED ONCE AND WITHDRAWN, and the reason it failed then is the
+# reason it works now. The design called for it on 2026-08-14, it was built as
+# an attitude flip on this fact, and it did nothing observable, because
+# `enableSensesOnStart: false` on his record leaves him hostile and never
+# looking. The playtest verdict: *"Still doesn't attack but it's ok let's not
+# complicate things."* The comment that replaced it said the only way to make
+# him fight would be turning senses on, which is what kept him peaceful through
+# his own conversation, and to leave it alone.
+#
+# That was right while the encounter script forced him hostile on every tick,
+# because senses on at any point meant senses on during the conversation.
+# That force is gone (docs/backlog.md 22), so the flip is now a single event at
+# a moment the graph chooses, and turning his senses on AFTER his last line
+# cannot reach back into a scene that has finished.
+#
+# The flip itself is in Gig01_Encounter.reds, which reads this fact alongside
+# his health. Both do the same two things: attitude to V hostile, senses on.
+HOSHINO_TALKED = add_setvar('cc_g01_hoshino_talked', 1)
+b.connect((HOSHINO_TALK, 'hoshino_out'), (HOSHINO_TALKED, 'In'))
+b.connect((HOSHINO_TALKED, 'Out'), (HOSHINO_JOIN, 'Succeeded'))
 b.connect((HOSHINO_DEAD, 'Out'), (HOSHINO_JOIN, 'Succeeded'))
 chain.append((HOSHINO_JOIN, 'Out'))
-# HE IS NOT MADE HOSTILE HERE, AND THAT WAS TRIED. the design called for it on
-# 2026-08-14, it was built as an attitude flip on this fact, and it did nothing
-# observable: `enableSensesOnStart: false` on his record means he is hostile but
-# never looking, so he stands there exactly as before. The playtest verdict: *"Still
-# doesn't attack but it's ok let's not complicate things. Feel free to remove
-# the last change if it can create other issues."* Removed - a code path with no
-# effect is a thing someone later debugs for nothing.
-#
-# The only way to make him fight would be turning senses on, which is what
-# kept him peaceful through his own conversation. Do not.
 
 # "Find Hoshino" is done - succeeded by HOSHINO_JOIN above, which is where the
 # two branches meet. Say what the gig wants next instead of leaving a completed
@@ -652,7 +667,7 @@ step(add_output(), in_sock='In', out_sock=None)
 # (nothing here - see the block above)
 
 result = b.build()
-with open(OUT, 'w', encoding='utf-8') as fh:
+with open(OUT, 'w', encoding='utf-8', newline='\n') as fh:
     json.dump(result, fh, indent=2)
 print(f'wrote {OUT}')
 print(f'nodes: {len(b.nodes)}, connections: {len(b.conns)}, handles used: {b.next_handle}')

@@ -429,7 +429,7 @@ def build():
     }
 
 
-with open(OUT, 'w', encoding='utf-8') as fh:
+with open(OUT, 'w', encoding='utf-8', newline='\n') as fh:
     json.dump(build(), fh, indent=2)
 print(f'wrote {OUT}')
 print(f'objectives: {len(OBJECTIVES)}, pins: '

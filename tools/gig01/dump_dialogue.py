@@ -309,7 +309,7 @@ def main():
     out.append(rule(tally))
     out.append('')
 
-    with open(args.out, 'w', encoding='utf-8') as fh:
+    with open(args.out, 'w', encoding='utf-8', newline='\n') as fh:
         fh.write('\n'.join(out))
     print('wrote %s (%s)' % (args.out, tally))
 

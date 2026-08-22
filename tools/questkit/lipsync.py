@@ -139,7 +139,7 @@ def rebuild_cache():
                            e['Data']['animation']['Data']['animBuffer']['Data']['duration']]
                           for e in root['animations']],
             }
-        with open(CATALOGUE, 'w', encoding='utf-8') as fh:
+        with open(CATALOGUE, 'w', encoding='utf-8', newline='\n') as fh:
             json.dump(cat, fh, indent=1)
         total = sum(len(v['anims']) for v in cat.values())
         print('wrote %s (%d sets, %d animations)' % (CATALOGUE, len(cat), total))
