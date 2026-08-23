@@ -157,12 +157,267 @@ and not in Video. `showAvatar` still puts the contact's portrait on screen.
 
 So: from script, a call is Audio.
 
-**A true video holocall is CLOSED, tried and ruled out** (2026-08-13). The
-only route is to let vanilla's per-contact holocall phase own the call, and that
-hands over the whole call, including that contact's own small-talk dialogue
-options, precisely the clutter already rejected. Video and vanilla's
-options are the same switch; there is no version that takes one and leaves the
-other. `backlog.md` 3d, and the code for it has been removed.
+**A true video holocall WORKS for a mod**, measured in game 2026-08-22. Set
+`holo_<contact>_calls_v_start_activate` and the caller appears on the phone
+rendered live and moving, with no dialogue options and no crash. The crash
+above applies to a SCRIPT-issued call and to nothing else.
+
+This paragraph used to say video was closed, on the grounds that the only
+route would hand over that contact's small-talk options as well. That was
+wrong twice over: the staging phase carries no dialogue at all, and the small
+talk belongs to the character rather than to the call.
+
+How it fits together:
+
+- **The staging phase supplies no dialogue.** Every
+  `base\quest\holocalls\<contact>\<contact>_holocall.questphase` is a copy of
+  the template `base\quest\graph_templates\qb_holocall_initializer.questphase`.
+  It stages the studio and drives the chrome, and nothing else. A vanilla gig
+  briefing scene sets `holo_<contact>_calls_v_start_activate`, waits on
+  `..._start_done`, **speaks its own lines**, then sets `..._end_activate`.
+  `ma_std_arr_03_holocall_brief.scene` is a worked example.
+- **The small talk belongs to the contact.** It is
+  `base\quest\tertiary_characters\default_dialogues\<name>_default.scene`,
+  which has an entry point named `holocall_in`. A contact a mod invents has no
+  such scene, which is why gig 01 rings its own `cc_g01_nix`.
+- **The video feed is one global render target.** All three shipped
+  `base\cinematics\cameras\holocall_camera*.ent` write to the same
+  `holocall_camera_render_texture.dtex` through a
+  `gameuiHolocallCameraComponent` named `RenderToTextureCamera`, shipped
+  disabled. Vanilla enables one with
+  `questEntityManagerToggleComponent_NodeType`.
+- **The studio is one room.** A single Quest sector off the map at about
+  (5894.2, 6135.8, 0) holds 59 per-contact setups, and 51 of the 59 workspots
+  are the same point.
+- **`holocallInitializerPath` on a Character record is a dead end.** Every
+  record carries the flat and every one reads 0, Nix's included, so the game
+  does not use it. `scnActorDef.holocallInitScn` is 0 in every scene read here
+  too.
+
+### The recipe, proven end to end 2026-08-23
+
+1. **Set `holo_<contact>_calls_v_start_activate` and wait on
+   `..._start_done`.** That stages the studio, puts the contact in it, enables
+   the camera and rings the phone. It works from anywhere, with no quest of
+   yours involved, and the contact is rendered live.
+2. **Play your own scene over it.** Its speaker must be the body the staging
+   phase put in the studio, acquired with `acquisitionPlan: spawnSet`, entry
+   `<contact>_holo`, reference `#<contact>_holo`. Not spawned: an acquired body
+   is the whole point.
+3. **Give that scene its own lipsync set**, exactly as any other scene. It
+   lands on the acquired body.
+4. **Lines are `isHolocallSpeaker: 1`, `voExpression: Vo_Expression_Phone`,**
+   as any call line.
+5. **Set `..._end_activate` and wait on `..._end_done`** to hang up, and reset
+   both `_done` facts to 0 afterwards, because vanilla's own callers do.
+
+`ma_std_arr_03_holocall_brief.scene` and its phase are the shipped worked
+example. Copy them rather than reasoning from here.
+
+### The MOD-OWNED recipe, which works for OUTGOING calls too
+
+The recipe above uses the base game's holocall phase, and that only works when
+the caller rings the PLAYER. **A mod cannot make V call a base-game contact**:
+the contact's own default dialogue is what drives that direction, it owns the
+call, and a quest adds its lines as a branch inside that conversation. A mod
+cannot add a branch to a base-game scene.
+
+So for anything outgoing, and arguably for everything, own the whole call:
+
+1. **Open the studio.** It is a Quest sector with no streaming box and does not
+   load by proximity. Show `#holocalls_studio_lighting` /
+   `<contact>_holocall_lights` and `#<contact>_holocall_setup` /
+   `<contact>_holocall_setup` with `questTogglePrefabVariant_NodeType`. The
+   second brings the camera, lookat and workspot into existence.
+2. **Switch on `RenderToTextureCamera`** on that setup's camera node, with
+   `questEntityManagerToggleComponent_NodeType`. Read the state back.
+3. **Issue the call with `questCallContact_NodeType`**, carrying
+   `prefabNodeRef: #holocalls_studio`. That field is what points the phone at
+   the feed and a script-issued `questTriggerCallRequest` has no equivalent.
+   **Caller and addressee are JOURNAL PATHS**, so your own contact works, and
+   that is what keeps the base-game conversation out of it in both directions.
+4. **Spawn your own body** as the SCENE's actor, offset (0, 0, 0) from
+   `#holocall_marker`, with `forceMaxVisibility` set. Without it the room
+   renders into the phone and the body does not, because an NPC that far from
+   the player is culled.
+5. **Speak** as any holocall line, with the scene's own lipsync set. The
+   speaker and the body on camera being the same actor is what makes the
+   lipsync land without borrowing anything.
+
+### Keeping the contact's own dialogue out of your call
+
+Ask this before anything else, because it decides which contact you ring and
+that decision is baked into every node above.
+
+**Every base-game contact has a conversation of its own**, in
+`base\quest\tertiary_characters\default_dialogues\<name>_default.scene`, with
+an entry point named `holocall_in`. It is what puts "What's it like working
+with Rogue?" on screen. It belongs to the CHARACTER, not to the call, so
+staging a call to that character brings it along: small-talk options during
+your conversation, and vanilla's own hang-up options after it, so the player
+ends up hanging up on someone who has already hung up.
+
+**A mod cannot remove it or branch it.** It is a base-game scene. Vanilla
+quests that ring a fixer add their lines as a branch INSIDE that conversation,
+which is a thing only the base game can do.
+
+**So do not ring that contact. Ring one of your own.**
+`questCallContact_NodeType` takes JOURNAL PATHS for caller and addressee, not
+CNames, so `contacts/<your_prefix>_nix` is as valid as `contacts/nix`. Merge
+your own contact with ArchiveXL, give it the same display name and the same
+avatar, and it behaves identically in the phone UI. `HudPhoneGameController`
+resolves a caller by walking `JournalManager.GetContacts()` and matching the
+id, so a merged contact is indistinguishable from a shipped one.
+
+A contact you invented has no `_default.scene` behind it. Nothing to suppress,
+nothing to branch, nothing to hang up twice.
+
+**This is what makes the outgoing direction possible at all**, and it is worth
+being clear about why. Vanilla's own outgoing call is DRIVEN by that default
+conversation: the contact's scene is the thing that sets
+`holo_v_calls_<name>_start_activate`. Setting that fact by hand stages the
+studio and dials, and then the contact's conversation owns the call: its
+options appear, your scene never starts, `..._start_done` never arrives, and
+the quest waits for ever. Measured in a playthrough. Your own contact has no
+such handshake to lose, because your quest phase is issuing the call.
+
+The cost is one extra contact in the player's phone list. In practice nobody
+notices, because it carries the same name and portrait as the real one.
+
+**Camera height is POSE, not contact.** All 59 setups share one floor spot and
+differ only in where the camera sits, because each is framed on that contact's
+pose: Nix SITS and his camera is at 0.75, Mama Welles STANDS and hers is at
+1.52. A plain spawned NPC stands. Pick the setup whose camera matches your
+pose; nothing else about it is that contact's.
+
+**Yaw and offset are in the MARKER's frame**, and `#holocall_marker` carries
+its own rotation of about -141 degrees, so an angle reasoned from world
+coordinates points the wrong way.
+
+**The worked example is `tools/gig01/gen_questphase.py`, `nix_call()`**, which
+is one function used for both directions, and `gen_scenes.nix_actor()` for the
+body that stands in the studio. `backlog.md` 3d has every measurement, and the
+benches that proved it were removed once they had nothing left to prove.
+
+### The player declines, or never picks up
+
+This is the part that decides whether the recipe above is shippable, because a
+quest phase has no error path. A node waiting on something that never arrives
+is a quest that stops there: no log line, no message, and an objective on
+screen still telling the player to take a call that will not ring again.
+
+**The signal is a FACT, and not the condition node vanilla uses.** This is the
+one thing in the whole recipe that had to be found in play rather than read out
+of the shipped data.
+
+`questPhonePickUp_ConditionType` is what vanilla waits on, and for a call a mod
+issues from a quest phase it reports nothing at all. Measured 2026-08-23: the
+player tapped to answer, the game recorded the answer on time, and the pause
+node never completed. The call sat connected and silent until the game dropped
+it six seconds later. Both variants of the field, vanilla's own node, fields
+checked against the SDK. Gotcha 58 has the trace and the candidates for why.
+
+What works is the fact `PhoneSystem` writes itself:
+
+```
+"phonecall_" + caller + "_with_" + addressee      both lowercased, CONTACT IDS
+    Ended 0    Initializing 1    Talking 2    Rejected 3
+```
+
+**Clear it before every ring.** It persists, and it persists at Talking once a
+call has been answered, so a ring placed without clearing it finds the answer
+already reported and connects itself before the phone has rung.
+
+**A ring nobody touches leaves it at Initializing**, so the wait still has to be
+raced against a clock, and racing in a quest graph has three traps of its own
+(gotcha 55).
+
+Vanilla's shape, which is the right shape even though its middle node is not
+usable here (`nix_holocall.scene` nodes 356 to 444):
+
+```
+ring (isRejectable: 1)
+  |-- wait: the player did something   fact > 1
+  `-- wait: ten seconds                longer than the phone's own 8 s timeout
+        first one wins, the other is cut
+          then RE-READ THE FACT with a condition node
+            == 2  answered  -> the conversation
+            else            -> hang up, count it, ring again
+```
+
+The re-read is the load-bearing part. Which wait woke you is not the same
+question as what is true now: a declined call reports Rejected and then reports
+Talking about a second and a half later, so a branch that trusted the event it
+woke on would be wrong about half the time (gotcha 10j). Reading in the SAME
+TICK the race resolved is what makes it safe, because the value is still
+Rejected then.
+
+A quest phase has no XOR node the way a scene graph does. The equivalent is
+`questCutControlNodeDefinition`, wired to every arm and fired by whichever one
+completes, plus a claim fact so two arms completing on the same frame cannot
+send two tokens down one chain. `questgraph.add_race2` is that, in one call.
+
+**What to do when the answer is "no" is a design decision, and the only wrong
+answer is nothing.** Gig 01 hangs up, waits thirty seconds and rings again, and
+counts: after five missed rings it abandons the video route and falls back to
+an ordinary audio call driven from script, which never gives up. Two different
+mechanisms means a fault in one cannot end the playthrough.
+
+Three more waits in that recipe can also never complete, and each needs the
+same treatment:
+
+- **The studio may never arrive.** Showing a prefab variant asks for a Quest
+  sector; it does not deliver one. Vanilla waits on the camera node with
+  `questNodeLoadingCondition` and waits for ever. Race it, and treat losing as
+  "no video this time" rather than as an error.
+- **The phone may never be in a state to ring.** In combat, mid-menu or during
+  a fast travel the call is dropped on the floor, and a call answered while the
+  player is doing 30 m/s stages the next beat somewhere useless. Those are
+  script questions, so gig 01 has `Gig01_Holocall.reds` publish one fact the
+  graph waits on, and caps the wait, because a call refused for ever is worse
+  than a call placed at an awkward moment.
+- **A save can land in the middle of any of it.** A quest phase's progress is
+  saved and a fact outlives the node that wrote it, so clear every latch at the
+  top of the block rather than at the bottom of the last one.
+
+`tools/gig01/gen_questphase.py`, `nix_call()`, is the worked example. It is one
+block used for both directions, and the outgoing one is much the simpler:
+**V calling out cannot strand at all.** Vanilla's player-calling path plays an
+initiation tone for two to four seconds and connects itself, so there is
+nothing to answer and nothing to miss. Everything above is about the incoming
+half.
+
+### What was proven in play, and what was not
+
+Played 2026-08-23, on the gig rather than a bench:
+
+| | |
+|---|---|
+| the studio opens and streams in on demand | **yes**, within two seconds |
+| it opens and closes twice in one playthrough | **yes** |
+| `questNodeLoadingCondition` reports it | **yes** |
+| outgoing: V rings the contact, on screen | **yes**, end to end |
+| incoming: the contact rings V, on screen | **yes**, once the fact route replaced the pick-up condition |
+| declining it, and letting it ring out | **yes**, hangs up and rings back |
+| giving up on video after N missed rings | **yes**, the audio call arrives |
+| refusing to ring while the player is riding | **yes** |
+
+**Do NOT bolt the studio body on as an additional speaker.** A `scnAdditionalSpeakers`
+entry whose actor never acquires crashes the game at scene teardown, 4.3 s in,
+deterministically. See BRIDGE_BODY_DOUBLE in `questkit/scene.py`.
+
+**A script-issued Video call does NOT crash.** Gotcha 10 said it did. It
+draws an EMPTY FRAME: the missing `prefabNodeRef` is what leaves the phone with
+no feed to point at, not a fault. Measured 2026-08-23 with a body and a camera
+in place.
+
+**A video holocall cannot be fast-forwarded.** Not in a mod and not in vanilla,
+confirmed in play. It is not the phone restriction: releasing both locks for
+the whole call changes nothing. The game's skip logic asks the phone what kind
+of call is up. Match the behaviour rather than fighting it.
+
+`backlog.md` 3d carries every measurement and the four bench faults that
+happened on the way.
 
 Related, and CORRECTED 2026-08-13. The vanilla scene this was modelled on, the
 NCPD dispatcher brief, has no player actor at all. This playbook concluded that
@@ -1042,6 +1297,65 @@ Set both `female...` and `male...` to the same `f_` name. The prefix is the
 PLAYER's body type, not the speaker's, and an NPC line is one recording:
 `sts_hey_gle_04_johnny.scene` asks for an `m_` animation that does not exist in
 Johnny's set.
+
+### Whether it LOOKS right is a question about the size of your pool
+
+The mechanism above will move a mouth on the first try. Whether it is
+convincing is a separate problem, and it has one dominant cause that is not
+obvious.
+
+**One `.anims` set serves a whole scene.** `scnActorDef.lipsyncAnimSet` is a
+single id, so every line an actor speaks in one conversation must come out of
+one file. The pick is therefore per-SCENE, not per-line: choose the set whose
+animations best fit all of that scene's lines at once.
+
+**So the number of sets you can choose from decides the result.** Measured on
+this gig, on two characters using the identical technique:
+
+| | sets available | worst scene, total length error |
+|---|---|---|
+| Johnny | 209 | 270 ms |
+| Nix, drawing only on his own | **7**, holding 1, 2, 5, 18, 19, 21 and 31 animations | 1477 ms |
+| Nix, drawing on male civilians | 1199 | 227 ms |
+
+At seven sets a four-line scene was casting from at most 31 candidates and
+landing 386 ms long on an 880 ms line: the mouth still moving half a second
+after the words stopped. Playtest called it *"really really bad"*. Nothing
+about the technique changed to fix it; the pool did.
+
+**Borrow freely.** Every lipsync animation is `AdditiveFromRefPose` over 344
+joints and 414 tracks, whoever it was authored on. The `rig` field records what
+it was baked against, not what it may be played on, and
+`generic_facial_lipsync_gestures.anims` is the game's own proof: it plays on
+arbitrary NPCs in interactive scenes and its rig is the player's head. Male
+civilian sets are the useful bulk, and they are the right register for
+conversation.
+
+**Two more things that matter for short lines specifically:**
+
+- **Rank sets on RELATIVE error, not total milliseconds.** A 400 ms miss on a
+  four second line is a mouth slightly out of step; the same miss on an 880 ms
+  line is a mouth moving in silence. Summing milliseconds treats them as equal
+  and picks accordingly.
+- **Penalise overshoot more than undershoot.** An animation that outlasts its
+  clip leaves the mouth going after the audio stops, which reads as broken. One
+  that finishes early reads as somebody finishing a sentence.
+
+`questkit/lipsync.py` does both. The remaining ceiling is real and worth
+knowing before you chase it: these are recorded performances of DIFFERENT
+sentences, so the mouth moves plausibly and says something else. Only baked
+animation fixes that, and baking is out of reach. Matching on the WORDS rather
+than the duration (every animation is named after the vanilla line it came
+from, and that text is recoverable from the English text table) is the untried
+middle ground, and it matters most at one or two syllables, where the eye can
+count mouth openings.
+
+**Watch for lines you did not generate.** A line that reuses a vanilla
+recording by pointing at its `stringId` has no clip of yours, so it falls out
+of every list built from "what we synthesised", including the lipsync casting.
+It ships with an empty animation name and a face that never moves, and nothing
+errors. Its length is free: vanilla baked an animation for that exact line,
+named `f_<stringId>`, and its duration is the clip's. Gotcha 59.
 
 ## STAGING A CHARACTER WHO SPEAKS, LIPSYNCS AND STANDS BESIDE V
 

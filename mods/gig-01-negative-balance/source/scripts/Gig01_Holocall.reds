@@ -9,17 +9,11 @@
 // holocall phase that a scene talks to with facts (a real gig briefing scene
 // sets holo_<contact>_calls_v_start_activate and waits on ..._start_done).
 //
-// CORRECTION, 2026-08-12: this file used to continue "mods have no such phase
-// for their own contacts", and that was read for months as "mods cannot use
-// them at all". Both halves need separating:
-//   * TRUE for Elena. She is a contact we merged in, so no vanilla phase exists
-//     for her and this system is the only way to ring the player.
-//   * FALSE for Nix, and for any BASE-GAME contact. base\quest\holocalls\nix\
-//     ships a full phase + scene, lives in the base quest graph, and is
-//     triggered by setting holo_nix_calls_v_start_activate. It even gives a
-//     real VIDEO holocall, which the scripted route below cannot.
-// See docs/backlog.md 3d. The mistake was generalising from the only contact
-// that had been tried.
+// A MOD CAN DRIVE THAT CHROME ITSELF, and Nix's two calls now do. Not through
+// the base game's per-contact phase, which cannot be used for an outgoing call
+// and drags that contact's small talk in with it either way, but by emitting
+// the same nodes vanilla does into our own quest phase. See docs/backlog.md 3d,
+// docs/scene-playbook.md, and the note further down about what is left here.
 //
 // This system therefore plays that part for OUR contacts, using PhoneSystem's
 // own request type:
@@ -73,18 +67,33 @@
 // so there is no face to show. showAvatar keeps her contact portrait on screen
 // next to the waveform.
 //
-// A VIDEO holocall is NOT POSSIBLE HERE, and the reason is design, not effort.
-// Closed 2026-08-13, the design call - see docs/backlog.md 3d before reopening it.
+// So: every call THIS FILE makes is Audio, with the contact portrait on screen.
 //
-// The only route to a live video feed is to let vanilla's own per-contact
-// holocall phase own the call - the ones under base/quest/holocalls/, driven by
-// holo_nix_calls_v_start_activate. Handing the call to vanilla hands it ALL of
-// vanilla's call, including Nix's standard small-talk dialogue options - which
-// is the exact thing already rejected as clutter in 3e. There is no version of
-// this that takes the video and leaves the options.
+// ---------------------------------------------------------------------------
+// NIX'S TWO CALLS ARE NOT IN THIS FILE ANY MORE, except as the safety net
 //
-// So: every call this mod makes is Audio, with the contact portrait on screen.
-// That is also the right look for Elena, who is UNKNOWN CALLER in the comic.
+// They are video holocalls now, and this file cannot make one. The reason is
+// the paragraph above: `questTriggerCallRequest` carries no `prefabNodeRef`,
+// so nothing tells the phone where the picture comes from. Measured twice on
+// 2026-08-23, with a body standing in the studio and the studio open, a
+// script-issued Video call does not crash. It draws an empty frame. That field
+// is the whole difference, and only the quest graph's own
+// `questCallContact_NodeType` has it.
+//
+// So `gig01.questphase` rings both of Nix's calls itself, on our own contact,
+// and this file's part in them is what it can still do better than a graph:
+//
+//   * IT ANSWERS "MAY THE PHONE RING RIGHT NOW", through cc_g01_ring_ok. Three
+//     playtest fixes live in that answer: no ring during a fast travel, none
+//     while V is riding, none while the phone is unusable, and a graph cannot
+//     ask any of them.
+//   * IT IS THE FALLBACK. If the studio never arrives, the graph sets
+//     <prefix>_request and the audio call below runs exactly as it has since
+//     1.2.0, with the back-off ladder that never gives up.
+//
+// Elena is unchanged and always was: she is UNKNOWN CALLER in the comic, the
+// game ships no studio setup for a contact it does not know, and a portrait is
+// the right look for her anyway.
 module CyberpunkCodes.Gig01
 
 public class NegativeBalanceHolocall extends ScriptableSystem {
@@ -187,6 +196,46 @@ public class NegativeBalanceHolocall extends ScriptableSystem {
     // So a player-placed call is the same request with the two names swapped.
     private func PlayerInitiated(call: Int32) -> Bool {
         return call == 2;
+    }
+
+    // ------------------------------- MAY THE PHONE RING RIGHT NOW?
+    //
+    // The one thing this file still does for Nix's calls, which the quest graph
+    // owns. cc_g01_ring_want is the graph saying "I am about to ring"; the
+    // answer goes back as cc_g01_ring_ok, and the graph waits for it.
+    //
+    // Three questions, and every one of them is a playtest fix that would have
+    // been thrown away by moving the ring into the graph:
+    //
+    //   IsCallingEnabled   in combat or mid-menu the call is dropped on the
+    //                      floor, so ringing then is a ring nobody hears
+    //   FastTravelClear    a ring across a loading screen, reported twice
+    //   MountedClear       a call answered at 30 m/s produces a Johnny who is
+    //                      behind you before he finishes his first word
+    //
+    // ASKED ONLY WHILE THE GRAPH IS WAITING, because two of those three keep
+    // counters. MountedClear gives up after ninety seconds and rings anyway,
+    // and a counter left running whenever V happens to be on a bike would have
+    // spent that budget long before any call was pending.
+    //
+    // The answer is a fact rather than a return value, so it is also visible in
+    // the dev menu's trace, which is how "the phone never rang" gets told apart
+    // from "the graph never asked".
+    private func PublishRingOk(qs: ref<QuestsSystem>) -> Bool {
+        if qs.GetFactStr("cc_g01_ring_want") <= 0 {
+            qs.SetFactStr("cc_g01_ring_ok", 0);
+            return false;
+        }
+        // Call index 1 is Nix's callback, and MountedClear only reads the index
+        // to decide whether the ninety-second cap applies. Both of the graph's
+        // calls are Nix's, so both want the cap.
+        let ok: Bool = this.Phone().IsCallingEnabled() && this.FastTravelClear()
+            && this.MountedClear(1);
+        qs.SetFactStr("cc_g01_ring_ok", ok ? 1 : 0);
+        // Reported live so the cap is counted in live ticks, the same as every
+        // other counter in this file. At the idle cadence ninety seconds of
+        // budget would take fifteen minutes to spend.
+        return true;
     }
 
     // Written by the GAME, not by us: PhoneSystem.GetPhoneCallFactName builds
@@ -392,10 +441,14 @@ public class NegativeBalanceHolocall extends ScriptableSystem {
     // StageHolocallStudio / UnstageHolocallStudio / HoloActivateFact lived here.
     // They set holo_nix_calls_v_start_activate to ask vanilla to stage the
     // holocall studio, gated behind the dev fact cc_g01_call_video. Removed
-    // 2026-08-13: the experiment cannot pay off (see the note at the top), and
-    // an unstaged Video call hard-crashes the game, so leaving a switch for it
-    // in the tree is a hazard rather than an option. The research that produced
-    // them is preserved in docs/backlog.md 3d.
+    // 2026-08-13, on the reasoning at the top of this file that has since been
+    // withdrawn. The second reason it cited, that an unstaged Video call hard
+    // crashes, is also withdrawn: measured twice on 2026-08-23, it draws an
+    // empty frame. Neither is why these methods are gone. They are gone
+    // because the quest phase owns the video route now, and does it better.
+    // The second half still holds and the first does not. The bench in
+    // docs/backlog.md 3d is where this gets settled; do not rebuild these three
+    // methods from memory, recover them from the commit before gig-01/v1.2.0.
 
     // caller = Elena, addressee = the player: she is the one calling V.
     private func Call(call: Int32, phase: questPhoneCallPhase) -> Void {
@@ -408,12 +461,12 @@ public class NegativeBalanceHolocall extends ScriptableSystem {
             req.addressee = n"player";
         }
         req.callPhase = phase;
-        // ALWAYS Audio. Video is closed, tried and ruled out, because the only
-        // route to it hands the whole call to vanilla's per-contact phase and
-        // brings Nix's standard dialogue options with it. See the note at the
-        // top of this file and docs/backlog.md 3d.
+        // ALWAYS Audio, and the reason is the crash rather than the design
+        // trade this used to cite. See the note at the top of this file:
+        // docs/backlog.md 3d is reopened, and if the bench there says a staged
+        // Video call is safe, this is the line that changes.
         //
-        // It is also the dangerous one: a Video call with nothing staged HARD
+        // It is the dangerous one: a Video call with nothing staged HARD
         // CRASHES the game the moment the player answers (docs/gotchas.md #10),
         // which is why no flag is left here to turn it back on by accident.
         req.callMode = questPhoneCallMode.Audio;
@@ -502,6 +555,13 @@ public class NegativeBalanceHolocall extends ScriptableSystem {
             }
             call += 1;
         }
+        // The quest graph's own Nix calls, which are not in the loop above
+        // because this file does not place them. It only answers whether the
+        // phone may ring, and reports live while it is being asked so the
+        // ninety-second cap inside MountedClear is counted in live ticks.
+        if this.PublishRingOk(GameInstance.GetQuestsSystem(this.GetGameInstance())) {
+            live = true;
+        }
         this.ApplyLock();
         this.UpdateVehicleLock();
 
@@ -586,6 +646,21 @@ public class NegativeBalanceHolocall extends ScriptableSystem {
                 want = true;
             }
             call += 1;
+        }
+        // AND THE QUEST PHASE'S OWN RINGS, which no state above covers because
+        // this file does not place them. cc_g01_ringing is raised by the graph
+        // between issuing the call and finding out what the player did, and by
+        // nothing else, so the window is exact rather than derived. That is
+        // better than the m_waited arithmetic above, and it is the same lock:
+        // a loading screen must not land on a ringing phone.
+        //
+        // It is still DERIVED, never remembered. The fact is written by the
+        // graph on both sides of the ring and cleared again on every exit, so
+        // a load that finds it stale gets one ring's worth of lock and then the
+        // graph clears it. Nothing here holds a lock the graph is not asking for.
+        if GameInstance.GetQuestsSystem(this.GetGameInstance())
+            .GetFactStr("cc_g01_ringing") > 0 {
+            want = true;
         }
         // The early-out must NOT apply to the first pass of a session, or the
         // paragraph above is a lie: after a load both `want` and m_ftLocked read

@@ -86,5 +86,22 @@ if ($LASTEXITCODE -ne 0) { throw "pack failed" }
 # 3) Copy the .archive.xl next to the packed archive
 Copy-Item (Join-Path $raw "$archiveName.archive.xl") $packed -Force
 
+# 4) Record WHAT went in, so deploy-dev can tell a stale archive from a
+#    re-run of a generator that produced the same bytes.
+#
+#    The first version of that guard compared TIMESTAMPS and cried wolf the
+#    first time it mattered: an audit pass re-ran every generator, every output
+#    was byte-identical, and 22 files came back "newer than the archive". A
+#    guard that is wrong when you are busy is a guard that gets bypassed with
+#    a flag, and then it is not a guard.
+$manifest = Get-ChildItem $raw -Recurse -File | Sort-Object FullName | ForEach-Object {
+    $rel = $_.FullName.Substring($raw.Length).TrimStart([char]92)
+    "$rel $((Get-FileHash $_.FullName -Algorithm SHA256).Hash)"
+}
+$sha = [System.Security.Cryptography.SHA256]::Create()
+$bytes = [System.Text.Encoding]::UTF8.GetBytes(($manifest -join "`n"))
+$digest = ($sha.ComputeHash($bytes) | ForEach-Object { $_.ToString('x2') }) -join ''
+Set-Content -Path (Join-Path $packed 'raw.sha256') -Value $digest -Encoding ascii
+
 Get-ChildItem $packed | ForEach-Object { Write-Host "  packed: $($_.Name) ($([math]::Round($_.Length/1KB,1)) KB)" }
 Write-Host "Build complete. Deploy with tools\deploy-dev.ps1 $Mod"

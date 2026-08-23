@@ -170,9 +170,18 @@ def load_catalogue():
 
 
 
+# Below this, a line is treated as "as short as it gets" for the relative
+# weighting in _score. See the note there.
+SHORT_FLOOR_MS = 400
+
+
 def _score(anims, wanted_ms):
     """Assign each wanted line a DISTINCT animation from one set, greedily,
-    longest line first; return (total error in ms, [names]) or None.
+    longest line first.
+
+    Returns (relative cost, {key: name}, total error in ms) or None. The first
+    is what sets are ranked on and the third is what the report prints, because
+    milliseconds are what a human can judge.
 
     Longest first because the long lines are the ones with few candidates - a
     set full of short animations has plenty to spare for a short line, and
@@ -181,11 +190,25 @@ def _score(anims, wanted_ms):
     Overshoot is penalised 1.5x. A lipsync animation that outlasts its clip
     leaves the mouth moving in silence, which reads as broken; one that runs
     short just stops, which reads as the speaker finishing a sentence.
+
+    SETS ARE RANKED ON RELATIVE ERROR, lines on absolute. The per-line choice
+    is the nearest animation either way, because dividing by a length that is
+    fixed for that line cannot reorder its candidates. What it changes is which
+    SET wins, and that is the decision that was being made badly: summing
+    milliseconds says a 400 ms miss on a four second line is as bad as a 400 ms
+    miss on an 880 ms one, and it is not. The first is a mouth a fraction out of
+    step, the second is a mouth still moving half a second after the words have
+    stopped. Playtest 2026-08-23, on the first video holocall in the gig:
+    *"really really bad... especially for the shorter sentences"*.
+
+    The floor stops a very short line dominating the whole scene's score. 400 ms
+    is about the shortest line this project has, so below it the weighting stops
+    getting harsher.
     """
     pool = sorted(anims, key=lambda a: -a[1])
     if len(pool) < len(wanted_ms):
         return None
-    used, names, err = set(), {}, 0
+    used, names, err, rel = set(), {}, 0, 0.0
     for key, ms in sorted(wanted_ms, key=lambda kv: -kv[1]):
         best, best_cost = None, None
         for i, (name, seconds) in enumerate(pool):
@@ -198,7 +221,8 @@ def _score(anims, wanted_ms):
         used.add(best)
         names[key] = pool[best][0]
         err += best_cost
-    return err, names
+        rel += best_cost / max(ms, SHORT_FLOOR_MS)
+    return rel, names, err
 
 
 
@@ -249,16 +273,16 @@ def pick(catalogue, wanted_lines, verbose=False):
             scored = _score(entry['anims'], wanted)
             if scored is None:
                 continue
-            err, names = scored
-            if best is None or err < best[0]:
-                best = (err, depot, names, entry)
+            rel, names, err = scored
+            if best is None or rel < best[0]:
+                best = (rel, depot, names, entry, err)
         if best is None:
             raise SystemExit(
                 'no lipsync set found for %s in %s - is the catalogue built? '
                 '(%d candidates matched %r)'
                 % (char, scene, sum(1 for d in catalogue if rx.search(d)),
                    CHARACTERS[char]['regex']))
-        err, depot, names, entry = best
+        _rel, depot, names, entry, err = best
         if entry['voicetag'] in (None, '0'):
             raise SystemExit('%s: chosen set %s has no voicetag in the vanilla '
                              'lipmap - our lipmap entry would be unkeyed'

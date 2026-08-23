@@ -478,19 +478,38 @@ nothing to route it to.
   phone) and `Vo_Expression_InnerDialog` (Johnny, in V's head) are 2D and need no
   anchor at all.
 - **Holocall = scene + chrome, meeting at a fact.** Caller lines set
-  `isHolocallSpeaker`; the chrome is `PhoneSystem` driven by
-  `questTriggerCallRequest` from `Gig01_Holocall.reds`, because the per-contact
-  holocall phase vanilla uses does not exist for mod contacts. A mod-added
-  journal contact IS a valid call addressee (the phone UI matches on contact
-  id). Answering does not raise the call UI. The `StartCall` phase does, and
-  an unanswered call times out after 8 s, so ringing must retry.
-- **From script the call must be `Audio`. `Video` crashes the game on answer**
-  (verified 2026-08-11): Video renders a live feed of the caller, staged in
-  vanilla by `questCallContact_NodeType.prefabNodeRef = "#holocalls_studio"`, and
-  `questTriggerCallRequest` has no such field. Audio has no render texture and
-  still shows the contact portrait. Closed for good 2026-08-13: the only
-  route to Video hands the call to vanilla's per-contact phase, which brings that
-  contact's own dialogue options with it (`backlog.md` 3d).
+  `isHolocallSpeaker`. A mod-added journal contact IS a valid call addressee
+  (the phone UI matches on contact id). Answering does not raise the call UI:
+  the `StartCall` phase does, and an unanswered call times out after 8 s, so
+  ringing must always be able to retry.
+- **THERE ARE TWO WAYS TO DRIVE THE CHROME, and which one to use is decided by
+  whether the caller has to be SEEN.**
+
+  **Audio, from script.** `questTriggerCallRequest` from
+  `Gig01_Holocall.reds`. This is Elena's call and it is the fallback under both
+  of Nix's. It shows the contact portrait, it is the only way to ring for a
+  contact that needs no picture, and its retry ladder is what guarantees no
+  missed call can strand a gig.
+
+  **Video, from the quest graph.** SOLVED 2026-08-23, and it supersedes the
+  paragraph that stood here saying video was closed for good. That paragraph
+  was right that a SCRIPT-issued Video call cannot work and wrong about the
+  only alternative being vanilla's per-contact phase. A mod can emit the same
+  nodes vanilla does: open the holocall studio with
+  `questTogglePrefabVariant_NodeType`, switch on `RenderToTextureCamera` with
+  `questEntityManagerToggleComponent_NodeType`, and ring with
+  `questCallContact_NodeType`, whose `prefabNodeRef = "#holocalls_studio"` is
+  the field that points the phone at a feed and the whole reason the scripted
+  route cannot do this. Its caller and addressee are JOURNAL PATHS, so a
+  contact the mod invented works, which is what keeps a base-game contact's
+  small talk out of the call in BOTH directions. `gen_questphase.nix_call()`.
+
+  The Video route is only worth it when the caller's face is the point. It
+  costs a studio that has to be opened and waited for, a body of the scene's
+  own standing in it, and an answer/decline/retry loop written by hand, because
+  a quest graph has no error path and every wait in it can hang for ever. Full
+  account in `backlog.md` 3d, recipe in `scene-playbook.md`, traps in gotchas
+  55 to 58.
 - **V DOES speak, through a player actor** (corrected 2026-08-13). The old note
   here said there was none in any scene, and that a player actor would stage V at
   a distant marker. That was inference and it was wrong: `scnPlayerActorDef` has

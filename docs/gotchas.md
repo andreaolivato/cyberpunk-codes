@@ -60,6 +60,21 @@ Never renumber. Append.
     `questCallContact_NodeType.prefabNodeRef = "#holocalls_studio"`, a field
     `questTriggerCallRequest` does not have. See `scene-playbook.md`.
 
+    **CORRECTED 2026-08-23, and the correction matters more than the rule.**
+    A script-issued Video call DOES NOT CRASH. Measured twice, with a body
+    standing in the studio and the studio open: it draws an EMPTY FRAME. The
+    missing `prefabNodeRef` is what leaves the phone with nothing to point at,
+    not a fault. Whatever crashed in 2026-08-11 has not been reproduced since
+    and is not this.
+
+    The rule at the top still stands as advice, because a script-issued Video
+    call is useless either way: no field, no feed, no picture.
+
+    **A mod CAN have a real video holocall, in both directions**, by emitting
+    the nodes vanilla uses into its own quest phase rather than issuing a
+    request from script. Played in the gig 2026-08-23. `backlog.md` 3d,
+    `scene-playbook.md`, and gotchas 55 to 58.
+
 11. On a hard crash read `%LOCALAPPDATA%\CD Projekt Red\Cyberpunk 2077\
     CrashInfo.json`. It has position, district and session length when every
     other log has nothing. CET's logs are buffered and lose the last seconds;
@@ -897,3 +912,251 @@ Never renumber. Append.
     and the journal check is the net under everything else.
 
     See `shard-playbook.md`.
+
+50. **A redscript class in a module is registered under its FULL
+    module-qualified name.** `ScriptableSystemsContainer.Get(n"MySystem")`
+    returns null; `Get(n"CyberpunkCodes.Gig01.MySystem")` returns the system.
+    Every class this project ships appears in the compiled bundle as
+    `CyberpunkCodes.<Gig>.<Name>`, never bare.
+
+    It bites when something OUTSIDE redscript reaches in, which in practice
+    means the CET menu. It had never bitten before because the only lookups in
+    the tree are for base-game systems, which carry no module.
+
+    It also rules out reaching a mod class as a CET Lua global: a dotted name
+    is not an identifier, and CET has no `_G` to index through. A
+    `ScriptableSystem` is the way in.
+
+    Pair any such lookup with a base-game CONTROL in the same press. A null
+    that comes back beside a working `PhoneSystem` says the name is wrong; a
+    null beside a null says the container was never reached. Those need
+    opposite fixes and look identical.
+
+51. **A quest phase's progress is SAVED, so a linear dev branch runs once per
+    SAVE, not once per load.** Fire its fact a second time and nothing happens:
+    the phase walked to its output and there is no longer anything listening.
+    The fact sits at 1 with nothing consuming it, which looks exactly like a
+    button that has stopped working.
+
+    Vanilla's holocall phases are LOOPS: an input node, no output node, and the
+    first pause node fed from more than one place. Copy that shape for anything
+    meant to be run repeatedly.
+
+    Fan-in on a pause node is ordinary (29 shipped sockets carry two sources).
+    Fan-in on a SCENE node is what vanilla never does and what fails silently,
+    and a second scene node inside one phase is what crashed the game on load.
+    See `gen_questphase.py`.
+
+52. **A forced, sourced gameplay restriction is released BY ITS SOURCE, not by
+    its record.** A staged holocall locks the phone through
+    `questSetPhoneRestriction_NodeType` with `forcedApply: 1` and a named
+    source. Removing `GameplayRestriction.PhoneCall` as a status effect returns
+    without error and removes nothing, through either removal API. The release
+    is the same node with `applyPhoneRestriction: 0` and the SAME source
+    string, which `questgraph.add_phone_restriction` emits.
+
+    The source string is load-bearing: a wrong one releases nothing, silently.
+    Read it out of the contact's own phase.
+
+    **And the phone lock is NOT what stops a line being skipped.** Measured
+    2026-08-23: both locks off for a whole call, skip still unavailable. A
+    VIDEO holocall cannot be fast-forwarded, in vanilla either, and the gig
+    matches that. The game's fast-forward logic has a second gate,
+    `PhoneBBStateBlockingFF`, which asks the phone what kind of call is up.
+
+53. **An empty CName is the STRING `"None"`, never a null, and a node the game
+    cannot read is a QUEST PHASE THAT SILENTLY DOES NOT RUN.**
+
+    `questkit/questgraph.py`'s `cname()` emitted `"$value": null` for an empty
+    name until 2026-08-23. It never bit because every node that builder had
+    ever emitted passed a real string. The first node type that needed empty
+    ones, `questEntityManagerToggleComponent_NodeType`, whose
+    `gameEntityReference` carries three, produced a phase that did nothing at
+    all.
+
+    **There is no error anywhere.** ArchiveXL still logs `Merged phase`,
+    because the file went in; only the graph fails. The dev fact sits at 1,
+    pressing the button again changes nothing, and every symptom points at the
+    thing under test rather than at the file. It cost an afternoon.
+
+    `questkit/scene.py`'s `cname()` had always been correct. The two were never
+    reconciled. Both do `v if v else 'None'` now.
+
+    Whenever a new node type is emitted, DIFF THE GENERATED JSON AGAINST
+    VANILLA'S before running the game. Ten seconds, and it finds this class of
+    fault without a launch.
+
+54. **A quest phase has a POSITION, nothing reports it, and a parked phase
+    looks exactly like a broken button.**
+
+    A dev branch that stopped halfway leaves its trigger fact at 1. Pressing
+    the button sets a fact that is already set, the phase is not waiting where
+    you think it is, and nothing happens. No error, no log line, nothing in the
+    trace, because a fact that does not CHANGE is not a change.
+
+    Two things follow, and both are cheap:
+
+    - **Drop a breadcrumb after every node.** `gen_questphase.nix_call()`
+      writes `<prefix>_step` 1 to 9 and 20 to 21, one number per node, and it
+      is the only thing that tells "the studio never arrived" apart from "the
+      call was never answered". A phase that stops then says WHERE.
+    - **Flush before you start.** Pulse the later waits so the token walks its
+      loop home wherever it was, then start clean. It costs a second and does
+      nothing when nothing was stuck.
+
+    See also 51: a phase's progress is SAVED, so a linear dev branch is once
+    per save. Loop it.
+
+55. **A pause node that loses a race is still armed, and it fires later.**
+
+    Two pause nodes off one source is two waits, not a choice. Whichever
+    completes first carries the token on, and the other one keeps waiting: it
+    completes minutes later, in the middle of whatever the winner started, and
+    pushes a second token down the same chain. A scene node entered twice is
+    gotcha 51.
+
+    Vanilla never leaves that open. `qb_holocall_initializer.questphase` wires
+    one `questCutControlNodeDefinition` to the `CutDestination` socket of all
+    eight of its waits and fires it the moment any one of them completes,
+    cutting the winner along with the losers. `permanent: 0`, so the same waits
+    re-arm when the graph loops back round to them.
+
+    Three parts, and all three are needed:
+
+    - **Cut the losers.** The node above, wired to every arm.
+    - **Do not trust the arm that won.** Which wait woke you is a different
+      question from what is true now. Vanilla races "answered", "answered or
+      declined" and a six second timer, and then asks the phone again with a
+      `questConditionNodeDefinition` before branching
+      (`nix_holocall.scene` node 444). Gotcha 10j is why: a declined call
+      reports Rejected and then reports Talking a second and a half later.
+    - **Close the same-frame window.** The cut lands after the winner has
+      already left, so two arms completing on one frame is two tokens in
+      flight. `questgraph.add_race2` has each arm check a claim fact is still 0
+      before writing its own number, and the second token dies at an
+      unconnected socket.
+
+    `questConditionNodeDefinition` is the node for any branch that must be
+    taken once: it reads its condition on arrival, sends the token down True or
+    False, and is finished. A pause node arms. They look interchangeable in a
+    graph editor and they are not.
+
+56. **Neither phone pick-up condition reports a call that simply rang out.**
+
+    `questPhonePickUp_ConditionType` carries `releaseOnRejection`:
+
+        0   completes when the call is ANSWERED
+        1   completes when it is answered OR declined
+
+    A ring that nobody touches completes neither, so a wait built on these
+    alone waits for ever. The phone gives up on its own after eight seconds
+    (`HudPhoneGameController.m_TimeoutPeroid`) and takes the chrome down, and
+    the graph is never told.
+
+    Vanilla races them against a 6.015 second timer, which is deliberately
+    SHORTER than the phone's own timeout so the graph decides rather than
+    discovering the ring has already gone. Ours is longer, 10 seconds, because
+    it wants the opposite: the chrome fully gone before it hangs up and rings
+    again.
+
+    `questPhone_ConditionType` is a different thing and answers a different
+    question: which PHASE the call is in, not whether anyone picked up. It is
+    what vanilla waits on to know the ring has registered.
+
+    **SUPERSEDED IN PRACTICE BY 58**, which is the same subject and the harder
+    finding: for a call a mod issues from a quest phase, neither pick-up
+    condition reports anything at all, not even the answer. Everything above is
+    still true of vanilla's own use of them and is why a race is needed either
+    way; 58 is why the arm of that race has to be a fact.
+
+57. **`deploy-dev.ps1` does not build the archive, and a stale one looks exactly
+    like a change that did not work.**
+
+    It copies whatever `build-archive.ps1` last produced. Regenerate the JSON,
+    skip the build step, deploy, and the game gets THIS build's redscript with
+    LAST build's quest graph, scenes, journal and localization. Nothing warns.
+
+    2026-08-23: a whole playthrough was spent testing an archive an hour old.
+    Both beats under test took their old path, which is what a change that
+    silently failed looks like, and the deploy had printed
+    `archive -> archive\pc\mod\...` and `Done.`
+
+    The two halves fail differently and that is the trap. Redscript is copied
+    from source on every deploy so it is never stale; everything that goes
+    through WolvenKit is only as new as the last pack. A build where the script
+    is current and the resources are not is the worst of the three states.
+
+    `deploy-dev.ps1` now refuses when anything under `source\wkit\raw` is
+    newer than the packed archive, and names the files. `-AllowStaleArchive`
+    deploys anyway. The same guard, for the same reason, as the audio staleness
+    check inside `build-archive.ps1`.
+
+    Check the game folder rather than the console when a change appears to have
+    had no effect at all: the archive's timestamp there is the answer in one
+    line.
+
+58. **`questPhonePickUp_ConditionType` reports nothing for a call a mod issues
+    from a quest phase. Watch the fact instead.**
+
+    Measured in play 2026-08-23, on a `questCallContact_NodeType` call with a
+    mod's own journal contact. The player tapped to answer, PhoneSystem wrote
+    `phonecall_cc_g01_nix_with_player = 2` on time, and the pause node built on
+    this condition never completed. The call sat connected and silent until the
+    game dropped it six seconds later.
+
+    It is vanilla's own node, read out of vanilla's own holocall scene, with
+    every field checked against the SDK header. It works there. The difference
+    has not been found; the candidates are that it resolves against a scene's
+    context rather than a phase's, or that it tracks the call object the
+    scene's own call node created.
+
+    **The fact is the route, and it always was.** PhoneSystem writes
+    `"phonecall_" + caller + "_with_" + addressee`, both lowercased, from the
+    CONTACT IDS, with `questPhoneTalkingState`: Ended 0, Initializing 1,
+    Talking 2, Rejected 3. `add_pause_fact(name, 1, 'Greater')` waits for the
+    player to do something and `add_condition_fact(name, 2, 'Equal')` asks
+    which. Both are ordinary nodes this project has shipped for a year.
+
+    Two things come with it:
+
+    - **Clear the fact before every ring.** It persists, and it persists at
+      Talking once a call has been answered, so a ring placed without clearing
+      finds the answer already reported and connects before the phone rings.
+    - **It is visible in the dev menu's fact trace**, which is how this was
+      found in one playthrough. A condition node's state is visible nowhere.
+
+    The general form: prefer the signal you can watch. A quest node that is
+    supposed to fire and does not looks exactly like a phase that stopped for
+    some other reason, and gotcha 54 is the only thing that tells them apart.
+
+59. **A line that reuses a vanilla recording gets no lipsync, because the
+    casting is driven by the lines you generated audio FOR.**
+
+    Pointing a line at vanilla's own `stringId` gets the text and the voiceover
+    for nothing, and it is the right thing to do when the script quotes a line
+    the game already has. It also takes that line out of every list built from
+    "what did we synthesise": it has no `.wav`, so no entry in the duration
+    sidecar, so no entry in the lipsync casting, so
+    `scnscreenplayDialogLine.maleLipsyncAnimationName` ships empty.
+
+    **Nothing errors.** The actor is configured correctly, the animation set
+    resolves, the other lines in the same scene move perfectly, and that one
+    face sits completely still while its audio plays.
+
+    Reported in play 2026-08-23, and only because the speaker had just been put
+    in close-up on a phone. The same line had been mouthless behind a static
+    contact portrait since 1.2.0, where there was nothing to see.
+
+    **The duration is exact and free.** Vanilla baked a lipsync animation for
+    that very line, named `f_<the stringId in 16 hex digits>`, and its length
+    is the clip's length: 1533 ms against the 1537 ms this project had recorded
+    by hand. Look it up in the catalogue rather than estimating.
+
+    **It cannot simply be given its own animation**, tempting as that is, since
+    one `.anims` set serves a whole scene and the set holding `f_<stringId>` is
+    the contact's own, which is usually a tiny pool (backlog 2j). Cast it by
+    length with everything else. If the picker does land on that set, the exact
+    animation wins on merit, because its length error is zero.
+
+    The general shape: any list built from "the things we generated" silently
+    omits the things we borrowed. Check the borrowed ones separately.

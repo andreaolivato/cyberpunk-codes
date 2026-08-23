@@ -100,7 +100,7 @@
           },
           "lipsyncAnimSet": {
             "$type": "scnLipsyncAnimSetSRRefId",
-            "id": 4294967295
+            "id": 0
           },
           "spawnDespawnParams": {
             "$type": "scnSpawnDespawnEntityParams",
@@ -195,7 +195,7 @@
           },
           "voicetagId": {
             "$type": "scnVoicetagId",
-            "id": "0"
+            "id": "1624173162010260272"
           }
         }
       ],
@@ -691,7 +691,27 @@
         "dynamicAnimSets": [],
         "gameplayAnimNames": [],
         "gameplayAnimSets": [],
-        "lipsyncAnimSets": []
+        "lipsyncAnimSets": [
+          {
+            "$type": "scnLipsyncAnimSetSRRef",
+            "asyncRefLipsyncAnimSet": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "string",
+                "$value": "base\\localization\\en-us\\lipsync\\base\\quest\\side_quests\\sq023\\scenes\\sq023_01_hook\\civ_low_m_05_enus_40.anims"
+              },
+              "Flags": "Soft"
+            },
+            "lipsyncAnimSet": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Default"
+            }
+          }
+        ]
       },
       "ridResources": [],
       "sceneCategoryTag": "dialoguesQuests",
@@ -1178,7 +1198,7 @@
             "femaleLipsyncAnimationName": {
               "$type": "CName",
               "$storage": "string",
-              "$value": "None"
+              "$value": "f_1ED8D0F934757000"
             },
             "itemId": {
               "$type": "scnscreenplayItemId",
@@ -1191,7 +1211,7 @@
             "maleLipsyncAnimationName": {
               "$type": "CName",
               "$storage": "string",
-              "$value": "None"
+              "$value": "f_1ED8D0F934757000"
             },
             "speaker": {
               "$type": "scnActorId",
@@ -1214,7 +1234,7 @@
             "femaleLipsyncAnimationName": {
               "$type": "CName",
               "$storage": "string",
-              "$value": "None"
+              "$value": "f_196A5B5F72386000"
             },
             "itemId": {
               "$type": "scnscreenplayItemId",
@@ -1227,7 +1247,7 @@
             "maleLipsyncAnimationName": {
               "$type": "CName",
               "$storage": "string",
-              "$value": "None"
+              "$value": "f_196A5B5F72386000"
             },
             "speaker": {
               "$type": "scnActorId",
@@ -1250,7 +1270,7 @@
             "femaleLipsyncAnimationName": {
               "$type": "CName",
               "$storage": "string",
-              "$value": "None"
+              "$value": "f_19139C1685386000"
             },
             "itemId": {
               "$type": "scnscreenplayItemId",
@@ -1263,7 +1283,7 @@
             "maleLipsyncAnimationName": {
               "$type": "CName",
               "$storage": "string",
-              "$value": "None"
+              "$value": "f_19139C1685386000"
             },
             "speaker": {
               "$type": "scnActorId",
@@ -1286,7 +1306,7 @@
             "femaleLipsyncAnimationName": {
               "$type": "CName",
               "$storage": "string",
-              "$value": "None"
+              "$value": "f_1ED4964400757000"
             },
             "itemId": {
               "$type": "scnscreenplayItemId",
@@ -1299,7 +1319,7 @@
             "maleLipsyncAnimationName": {
               "$type": "CName",
               "$storage": "string",
-              "$value": "None"
+              "$value": "f_1ED4964400757000"
             },
             "speaker": {
               "$type": "scnActorId",
@@ -1358,7 +1378,7 @@
             "femaleLipsyncAnimationName": {
               "$type": "CName",
               "$storage": "string",
-              "$value": "None"
+              "$value": "f_1922188625386000"
             },
             "itemId": {
               "$type": "scnscreenplayItemId",
@@ -1371,7 +1391,7 @@
             "maleLipsyncAnimationName": {
               "$type": "CName",
               "$storage": "string",
-              "$value": "None"
+              "$value": "f_1922188625386000"
             },
             "speaker": {
               "$type": "scnActorId",

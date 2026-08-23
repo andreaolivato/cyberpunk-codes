@@ -535,6 +535,12 @@ class Scene:
         # Lines pointed at a vanilla stringId instead of one of ours, reported
         # at write time so a reuse can never happen by accident or unnoticed.
         self.reused = []
+        # Who SPOKE each reused line, by actor id. Kept beside `reused` rather
+        # than inside it because two other tools unpack that list as 3-tuples.
+        # It exists so gen_lipsync can cast a mouth for a reused line: without
+        # a speaker there is no way to tell whose lipsync set the line belongs
+        # to, and a line nobody casts is a line whose mouth never moves.
+        self.reused_actor = {}
         self.loc_vd = []
         self.loc_vp = []
         # (locstring ruid, text) for every line and option - this is what the
@@ -605,12 +611,20 @@ class Scene:
                               validate=1)
 
     def add_actor(self, actor_name, record, offset=(1000.0, 1000.0, -100.0),
-                  appearance='default', voicetag='0', validate=0, yaw=0.0):
+                  appearance='default', voicetag='0', validate=0, yaw=0.0,
+                  force_visible=False):
         """A speaking NPC the scene spawns itself.
 
         The offset puts the body a kilometre away and a hundred metres down:
         this actor exists so the line has a speaker (and therefore a name over
         the subtitle), not to be looked at. See the module docstring.
+
+        `force_visible` is for the one case where it IS looked at and the player
+        is nowhere near it: a holocall. Measured 2026-08-23, in a studio 8.5 km
+        from the player, with the camera live and running: the ROOM rendered
+        into the phone and the body did not. Vanilla's own studio actors carry
+        `forceMaxVisibility: 1` for exactly this, because an NPC that far away
+        is culled however correctly it was spawned.
         """
         aid = self.next_actor
         self.next_actor += 1
@@ -661,7 +675,7 @@ class Scene:
                 'appearance': cname(appearance),
                 'dynamicEntityUniqueName': cname(actor_name),
                 'findInWorld': 0,
-                'forceMaxVisibility': 0,
+                'forceMaxVisibility': 1 if force_visible else 0,
                 'isEnabled': 1,
                 'itemOwnerId': {'$type': 'scnPerformerId', 'id': 4294967040},
                 'keepAlive': 0,
@@ -1052,6 +1066,7 @@ class Scene:
         if vanilla_sid is not None:
             ls = str(vanilla_sid)
             self.reused.append((key, ls, text))
+            self.reused_actor[key] = speaker
         else:
             ls = self._locstring(key, text, male)
             # Only OUR lines can be voiced by us, and only our lines are paced

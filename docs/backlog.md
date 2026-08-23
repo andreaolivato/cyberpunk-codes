@@ -30,9 +30,27 @@ being given it.
 
 | § | Item |
 |---|---|
-| 6 | The `[F]` interaction prompt on a mod-placed object. UNSOLVED and deliberately parked; seven approaches ruled out, each with its outcome |
 | 10i | Reload crashes on heavily modded installs. Two reporters, same symptom. No mechanism found; the A/B test is now deterministic, see 14 |
 | 11 | Binding a `.community` resource to the world. Research only, and no longer blocking anything: the guard placement it was wanted for was accepted as-is in 17 |
+
+**6 closed on 2026-08-22 and shipped in 1.2.5**, after standing open since
+2026-08-14. The shard on the office desk has a Take and Read prompt, carries
+this mod's own title and text, and the desk holds one shard. `shard-playbook.md`
+is the recipe.
+
+**3d closed on 2026-08-23 and shipped in 1.2.6.** Both of Nix's conversations
+put him on the phone as a live rendered image, in a studio this mod opens
+itself, on a contact this mod invented, with none of the base game's small talk
+in either direction. Every branch played, including declining it, ignoring it,
+ignoring it five times, and being on a bike when it rings.
+
+It had been reopened on 2026-08-22 after standing closed since 2026-08-13, and
+that is the part worth carrying forward. It was closed the first time on one
+measured fact with an untested inference stacked on it, and the inference did
+not survive reading the game's own files. Same shape as 6, which stood closed
+as impossible for eight days. Two of the three faults found while building it
+were the same mistake in miniature: a number that measured the wrong thing, and
+a symptom that named the wrong system.
 
 Everything else is closed. Three entries look open and are not: 2f (re-time
 scenes from real clip length) shipped as `durations.json`, 0b is the release
@@ -54,7 +72,8 @@ residents rather than anything this mod places.
 | 2a-2i | The voice route: why a mod voiceover map works and Audioware is not needed; why reusing vanilla takes does not scale (3 of 59 lines matched) |
 | 2j | Lipsync, whole mechanism. Includes `type: Tag` being dead, and a crash that took a session to attribute |
 | 3, 3b | Johnny's apparition: the workspot is what makes him render at all |
-| 3c, 3d, 3e | Three features deliberately NOT built. The reasoning is the value |
+| 3c, 3e | Two features deliberately NOT built. The reasoning is the value. 3e's Nix half was solved in the shipped build and the entry did not say so |
+| 3d | Reopened. See the open table above |
 | 5 | Three refinements from playing the finished gig |
 | 7, 8 | Post-release bug reports and their fixes, including the office doors |
 | 9 | Placing a scene actor relative to the player. Corrects two claims this register had wrong, and deletes the burial-and-lift workaround built on them |
@@ -686,6 +705,107 @@ native class is declared in `red4ext\plugins\Codeware\Scripts\Codeware.Global
 from script but not from a scene, tagging the REAL Mama Welles is a one-line
 experiment.
 
+### The pool was the problem, not the technique. 2026-08-23
+
+**Reopened by a playtest of the first video holocall**, where Nix's face is in
+close-up on the phone rather than two metres away in a dark office:
+*"the lipsync is really really bad compared to what we did with Johnny...
+especially for the shorter sentences."*
+
+The obvious reading is that the technique had met its ceiling. It had not. The
+whole difference between Johnny and Nix was HOW MANY ANIMATIONS THEY COULD BE
+CAST FROM.
+
+| | sets in the pool | worst scene, before | after |
+|---|---|---|---|
+| Johnny | 209 | 270 ms | unchanged |
+| Nix | **7**, holding 1, 2, 5, 18, 19, 21 and 31 animations | 1477 ms | **210 ms** |
+
+One `.anims` set serves a whole scene, so a four-line Nix scene was choosing
+from at most 31 candidates. It landed 386 ms long on an 880 ms line: the mouth
+still moving for nearly half a second after the words stopped, which is what
+"really bad" was describing. Johnny, casting from 209 sets, lands inside 30 ms
+on almost every line he has.
+
+**The fix is one regex.** `gen_lipsync.CHARACTERS['nix']['regex']` now matches
+every male civilian set as well as his own seven: 1199 sets instead of 7.
+Borrowing is safe for the reason already in that file's docstring, and Hoshino
+has borrowed a civilian's since 1.2.0.
+
+**And one change to the scorer, which is the half that matters for short
+lines.** Sets were ranked on the SUM OF MILLISECONDS across a scene, so a
+400 ms miss on a four second line counted the same as a 400 ms miss on an
+880 ms one. They are not the same: the first is a mouth slightly out of step,
+the second is a mouth moving in silence. `questkit.lipsync._score` now ranks
+sets on relative error, with a 400 ms floor so one very short line cannot own
+the whole scene's score. Per-line choice is unaffected, because dividing by a
+length that is fixed for that line cannot reorder its candidates.
+
+What that bought on the line that prompted this, `gig01_nix_brief/b05`, wanted
+at 880 ms:
+
+```
+before          1266 ms     386 over    44% too long
+pool widened     966 ms      86 over    10% too long
++ relative       833 ms      47 under    5% short, and short is the safe side
+```
+
+Every line in that scene now runs slightly UNDER its clip. The scene's absolute
+total went from 210 ms to 227 ms and that is the right trade: overshoot is what
+reads as broken, undershoot reads as somebody finishing a sentence.
+
+**Only Nix's six scene/actor pairs changed.** Johnny, Mama Welles and Hoshino
+pick exactly what they picked before, which is the check that says the scorer
+change did not disturb anything that was already good.
+
+**Not yet judged in play.** The numbers are better; whether a civilian's facial
+performance suits Nix in close-up is a question only a playtest answers, and
+the picks file is committed so reverting is one `git checkout`.
+
+#### And one line had no mouth at all, for a different reason
+
+Playtest, after the pool was widened: *"just the first phrase when he says
+how's things v, he's completely immobile, no mouth movement at all. The rest
+are all good."*
+
+`gig01_nix_brief/b01` is the one line in the gig that reuses a vanilla
+recording whole (2c). It points at vanilla's `stringId` and gets the text and
+the audio for nothing. It also has no `.wav` of ours, so no entry in
+`durations.json`, so `gen_lipsync._wanted()` never asked for it, so it shipped
+with an empty animation name. Nothing errored: the actor was configured, the
+set resolved, the other four lines moved perfectly, and that one face sat still.
+
+**It had been like that since 1.2.0** and nobody could see it, because until
+this session the line played behind a static contact portrait.
+
+The duration turned out to be free. Vanilla baked a lipsync animation for that
+exact line, `f_30B57ED4CF7DF000` in `nix_default`, and it is 1533 ms against
+the 1537 ms this project had written down by hand. So the fix reads the length
+out of the animation and casts the line with the rest of the scene; b01 now
+matches to 0 ms and the other four are untouched. Gotcha 59.
+
+Worth noticing what the shape of that bug is, because it is not specific to
+lipsync: **any list built from "the things we generated" silently omits the
+things we borrowed.**
+
+#### What is still true, and what to try next if this is not enough
+
+The mouth still says a different sentence. That part IS the technique's
+ceiling: these are real recorded performances of other words, and only baked
+animation would fix it.
+
+**The untried lever is matching on the WORDS.** Each animation is named
+`f_<stringId>`, and that stringId resolves to the vanilla line's text through
+the English text table this repo already caches in `tools/_vo_cache/text_json`.
+Scoring on syllable count, and on which vowels fall where, is the difference
+between "a mouth moving" and "a mouth that looks like it is saying roughly
+that". It matters most exactly where the complaint was: at one or two
+syllables, the eye can count mouth openings, and at four seconds nobody can.
+
+Duration is a decent proxy for syllable count, which is why widening the pool
+helped as much as it did. It is a proxy, though, and the real thing is
+available for the cost of one lookup table.
+
 ## 3. Johnny's ghost beside V: BUILT AND CONFIRMED 2026-08-13
 
 **Status: done.** He appears beside V at six beats, see-through, correctly
@@ -984,7 +1104,759 @@ subtitle changes from "Unknown Caller" to "Elena Ortega" on her introduction.
 That is the comic's staging and needs no UI hooks at all. Needs the design call on
 the contacts-list cost.
 
-## 3d. Nix's call as a real VIDEO holocall: CLOSED, will not do
+## 3d. A real VIDEO holocall: SOLVED, SHIPPED IN THE GIG, PLAYED 2026-08-23
+
+**Both of Nix's conversations put him on screen**, in a studio this mod opens
+itself, on a contact this mod invented, speaking this gig's own lines in his
+own voice with his mouth moving. No base-game contact, no base-game holocall
+phase, no small talk in either direction, no crash. Playtest: *"Everything
+seems to be working."*
+
+Playtest on the release build, benches removed, no dev menu: *"The playthrough
+works perfectly. Test approved."* Every branch played, including declining it,
+letting it ring out, ignoring it five times into the audio fallback, and being
+on a bike when it rings.
+
+**Two benches proved this and both were removed for 1.2.6.** Everything below
+that names `gen_holoown_phase.py`, `gen_holotest_phase.py`, `build_holoown`,
+`build_holotest` or `Gig01_HoloLab.reds` is describing what they did, not
+pointing at a file. They are in the commit before `gig-01/v1.2.6` if a future
+question needs them; do not rebuild them from memory. The shipped worked
+example is `gen_questphase.nix_call()`.
+
+The account below is in the order it was found, because most of it is about
+what does NOT work and why. If you only want the recipe, it is in
+`scene-playbook.md`; if you want the traps, gotchas 50 to 59.
+
+**Measured in game, 2026-08-22, run one.** A mod sets one base-game fact and
+gets a real video holocall: Nix rendered live on the phone, moving. No dialogue
+options. No crash. The call ends cleanly on a second fact.
+
+The 2026-08-13 account is kept at the bottom, unchanged. The facts in it are
+still facts; the inference stacked on them is what has gone.
+
+### Run one, 2026-08-22. What was measured
+
+The whole run is one press of `holo_nix_calls_v_start_activate`, from a dev
+menu, standing in the street 8.5 km from the studio, with no quest phase of
+ours involved.
+
+| observed | result |
+|---|---|
+| Nix's face on the phone, rendered live and moving | **yes** |
+| his dialogue options | **none** |
+| a crash | **none** |
+| words | **none, and that is the point** |
+
+"No words" is the finding rather than a gap. It is what the shipped files
+predicted: the staging phase supplies the studio and the chrome, and the
+CALLING quest supplies the dialogue. Nobody was calling.
+
+The handshake ran exactly as `qb_holocall_initializer.questphase` says it
+should, and the trace is worth keeping because it is the contract a mod has to
+honour:
+
+```
+holo-A1: set holo_nix_calls_v_start_activate = 1
+  +0.1  holo_setup_active = 1          the studio takes the lock
+  +0.4  phonecall_nix_with_player = 1  the phone rings
+  +2.0  holo_setup_started = 1         staged
+        holo_setup_active = 0          lock released
+        holo_nix_calls_v_start_done = 1   <- what a caller waits on
+        phonecall_nix_with_player = 2  Talking
+  ... 27 seconds of a live video call with nothing to say ...
+holo-A2: set holo_nix_calls_v_end_activate = 1
+  +0.3  holo_setup_started = 0
+        phonecall_nix_with_player = 0
+```
+
+An unanswered ring is handled too: the first attempt timed out after about six
+seconds and came back `holo_nix_calls_v_rejected = 1` with the lock released,
+so a missed call is not a dead end.
+
+### What this settles, and what it does not
+
+**Settled.** Video is available to a mod. It does not require vanilla's
+dialogue, it does not require vanilla's contact conversation, and it does not
+crash. 3d's deciding reason is gone.
+
+**Not settled, and it is the next build.** Whether OUR words play over it with
+lipsync. Vanilla's gig briefings do exactly that, and the mechanism is visible
+in `ma_std_arr_03_holocall_brief.scene`: the briefing scene acquires the SAME
+body the holocall phase staged, through `acquisitionPlan: spawnSet` on its own
+actor. Our scenes spawn their actors instead. So the open question is not
+whether a mod can speak over a staged call, it is whether our generator can
+emit an actor acquired from a spawn set, and whether lipsync lands on a body
+the scene did not spawn (gotcha 16 says lipsync lands on the scene's own
+actor, and "acquired" versus "spawned" has never been tested).
+
+### Two instrument findings from the same run, both reusable
+
+**A redscript class in a module is registered under its FULL module-qualified
+name.** `ScriptableSystemsContainer.Get(n"NegativeBalanceHoloLab")` returns
+null; `Get(n"CyberpunkCodes.Gig01.NegativeBalanceHoloLab")` returns the system.
+Every class this project ships appears in the compiled bundle as
+`CyberpunkCodes.Gig01.<Name>`, never bare. This cost two rounds of the bench
+being unreachable, and it had never bitten before because nothing in the tree
+had ever looked up one of its own systems by name; the only lookups are for
+base-game systems, which carry no module. It also rules out reaching a mod
+class as a CET Lua global, because a dotted name is not an identifier and CET
+has no `_G` to go through.
+
+**Backlog 11's warning about long paths is exact, and this run reproduced it.**
+Every `$/03_night_city/...` probe read 3, INCLUDING the control naming a node
+nothing ships. Only the short-form probes carried information: `#holocalls_studio`
+and `#nix_holocall_camera` read 3, `#cc_g01_not_a_node_at_all` read 1, and
+`#nix_sm_holocall` read 1 as well, so the marker Nix's own scene names as its
+location is not a registered name and the call works anyway.
+
+Everything studio-side read "nothing streamed" from 8.5 km away, which is
+correct rather than a failure: the studio is one Quest sector and it is only in
+memory during a call or while standing in it. Camera reads have to happen with
+a call up.
+
+### Run three, 2026-08-22. A mod's OWN character renders too
+
+Spawning `Character.cc_g01_elena` onto the studio spot during a staged Nix call
+puts her on the phone. Both bodies show, because the spot is one spot and Nix
+was already on it: the screenshot is V standing in the studio with Elena
+planted inside a cross-legged Nix, and the phone broadcasting the pair.
+
+So the feed carries whoever is standing there, and a character the game ships
+no setup for is not excluded. What is NOT solved is having ours there INSTEAD
+of the base-game caller, because the room, the lighting and the camera only
+appear as part of staging that caller.
+
+Two smaller results from the same run:
+
+- **The camera is what makes the picture.** Toggling
+  `RenderToTextureCamera` on `#nix_holocall_camera` during a live call read
+  `enabled before=yes after=no`, so vanilla does enable it, and a mod can
+  switch it. Probing it mid-call returned `probe 4 LIVE gameObject at
+  (5894.005371, 6134.676758, 0.746895)`, matching the sector file to six
+  decimals, and `comps` listed `[RenderToTextureCamera]`. Only the ACTIVE
+  contact's setup instantiates: Mama Welles' camera stayed unstreamed
+  throughout.
+- **`holocallInitializerPath` is empty on every character record**, Nix's
+  included, so route 3 above is dead. The game does not use the per-character
+  hook, and neither does `scnActorDef.holocallInitScn` in any scene read here.
+
+A body will not spawn into the studio through `CCSharedWorld.Spawn`: that
+helper sets `alwaysSpawned = false`, so the entity waits for a player who is
+8.5 km away by definition. The lab builds its own spec with `alwaysSpawned`
+on. The helper's default is right for every gig NPC and wrong for this.
+
+### Run four, 2026-08-22. THE BENCH PASSED. Every piece works
+
+Playtest: *"Yes, it works. Lipsync is bad but I think it's still a super
+improvement."* All three observations, in order:
+
+| asked | answer |
+|---|---|
+| do his lips move | **yes**, "weirdly but they do" |
+| are our words in his voice | **yes** |
+| does his face stay on screen through them | **yes** |
+
+So a mod CAN put a real video holocall on screen for a base-game contact, with
+its own dialogue, its own voice takes and its own lipsync, and no vanilla
+conversation attached. 3d is answered.
+
+**The lipsync looks approximate because that is this technique's ceiling, not
+because the pick is poor.** The bench's two lines matched to 87 ms and 107 ms,
+193 ms total, which is the best error of any Nix scene in the gig. The
+animations are real recorded Nix performances of DIFFERENT sentences, chosen by
+length, because baking our own is out of reach (2j). The mouth therefore moves
+plausibly and says something else. Nothing in the picker will fix that; only
+baked animation would, and that is still out of reach.
+
+> **WRONG, and corrected 2026-08-23 the same day it was written.** The pick WAS
+> poor. "193 ms, the best error of any Nix scene" was true and it was being
+> compared against the wrong thing: the other Nix scenes, all of which were
+> casting out of the same seven-file pool. Against Johnny, who lands inside 30
+> ms, it is six times worse. Widening the pool took the same two lines to 27 ms
+> without touching the picker at all. See 2j, "The pool was the problem".
+>
+> This is gotcha 31's shape exactly: an impression ("it looks about as good as
+> this can get") written up as a measurement, with a real number next to it
+> that measured something else.
+
+### THE MOD-OWNED HOLOCALL: the route that works in BOTH directions
+
+**Proven on the bench 2026-08-23.** Nix rendered live on the phone, in a studio
+this mod opened, speaking this gig's own lines in his own voice with his mouth
+moving, on a contact this mod invented. No base-game contact, no base-game
+holocall phase, no small talk, no crash.
+
+This supersedes the vanilla-phase route below for anything outgoing, and is
+probably the right route for everything.
+
+#### Why the vanilla phase is not enough
+
+**A mod cannot make V CALL a base-game contact.** `nix_default.scene`, the
+contact's own small talk, is the thing that SETS
+`holo_v_calls_nix_start_activate` and waits on `..._start_done`. That fact is
+its private handshake with the studio, not a public entry point. Vanilla quests
+that ring a fixer do it by adding a branch INSIDE that conversation, which is
+why it carries hooks like `q305_nix_return_call` and `q305_nix_details_explained`.
+
+A mod cannot add a branch to a base-game scene. So setting the fact by hand
+stages the studio and dials, and then Nix's own conversation owns the call: the
+options appear, our scene never starts, `_start_done` never arrives, and the
+gig stalls with the objective still reading "Call Nix". Measured in a
+playthrough, and the latch confirmed `_start_done` never moves even watched
+every frame for twenty-four seconds.
+
+The incoming half works because the contact's conversation is not involved.
+
+#### The recipe, all of it mod-owned
+
+Five things, and the mod supplies every one:
+
+1. **OPEN THE STUDIO.** It is a `category: Quest` sector with no streaming box
+   and it does NOT load by proximity: standing 2.8 m from the spot, its camera
+   still probes 3, "nothing streamed". Only a quest node pulls it in.
+   `add_prefab_variant` shows the two variants vanilla shows,
+   `#holocalls_studio_lighting` and `#<contact>_holocall_setup`. The second is
+   what brings the camera, the lookat and the workspot into existence.
+2. **SWITCH THE CAMERA ON.** `RenderToTextureCamera`, shipped disabled, on the
+   setup's camera node. `add_toggle_component` emits vanilla's own node for it.
+   **Read the state back**: `enable: 1` in a file is not evidence.
+3. **ISSUE THE CALL FROM THE GRAPH**, not from script. `add_call_contact`
+   emits `questCallContact_NodeType`, which carries `prefabNodeRef:
+   #holocalls_studio` and is the ONLY thing that tells the phone where the feed
+   comes from. `questTriggerCallRequest` has no such field, which is what
+   gotcha 10 was really about all along.
+   **Its caller and addressee are JOURNAL PATHS**, so `contacts/cc_g01_nix` is
+   as valid as `contacts/nix`. That is what removes the small talk in both
+   directions, and it is the whole reason this route exists.
+4. **PUT OUR OWN BODY ON THE SPOT**, as the SCENE's own actor, spawned at
+   offset (0, 0, 0) from `#holocall_marker` with `forceMaxVisibility`. The
+   scene owning the actor is what makes the lipsync land with no borrowing.
+5. **SPEAK.** An ordinary scene, `isHolocallSpeaker: 1`,
+   `voExpression: Vo_Expression_Phone`, its own lipsync set.
+
+`gen_questphase.nix_call()` and `gen_scenes.nix_actor()` are the worked
+example. `gen_holoown_phase.py` and `build_holoown` were the bench that proved
+it, removed for 1.2.6, so everything below that names them is history.
+
+#### Four things that are easy to get wrong, all of them measured
+
+- **CAMERA HEIGHT IS POSE, NOT CONTACT.** The 59 setups share one floor spot
+  and differ in where the camera sits, because each is framed on that contact's
+  pose. `#nix_holocall_camera` is at z 0.75 because Nix SITS cross-legged;
+  `#mama_welles_holocall_camera` is at 1.52 because she STANDS. A plain spawned
+  NPC stands, so Nix's own camera frames the air above his head. The bench uses
+  Mama Welles' setup with our Nix standing in it; nothing about it is hers
+  except the name.
+- **THE BODY IS CULLED AT RANGE.** With the studio open, the camera live and
+  running, and the player 8.5 km away, the ROOM rendered into the phone and the
+  body did not. `forceMaxVisibility` on the actor's spawn params is what
+  vanilla's studio actors carry, and it is what fixes it.
+- **YAW AND OFFSET ARE IN THE MARKER'S FRAME.** `#holocall_marker` carries its
+  own rotation of about -141 degrees, so a yaw reasoned from world coordinates
+  points the wrong way. 180 was derived from "the camera is at -Y" and put him
+  back to the lens; 0 is correct, and it was found by looking at him.
+- **A SCRIPT-ISSUED VIDEO CALL DOES NOT CRASH.** Measured twice, with a body
+  and with the studio open. It draws an empty frame. Gotcha 10's crash was
+  never about the missing `prefabNodeRef` causing a fault; the field is what
+  points the phone at the feed, and without it there is simply no picture.
+
+#### The new quest node types, and they are the reusable part
+
+`questgraph.b.node` takes the type as a FREE STRING, so emitting a node type
+this project has never shipped is a matter of getting the fields right rather
+than of the builder supporting it. That was the opening this whole session was
+started to test, and four now exist:
+
+| helper | node type | what it does |
+|---|---|---|
+| `add_phone_restriction` | `questSetPhoneRestriction_NodeType` | lock or unlock the phone, BY SOURCE |
+| `add_prefab_variant` | `questTogglePrefabVariant_NodeType` | show or hide a world prefab variant. This is what makes a Quest sector exist |
+| `add_toggle_component` | `questEntityManagerToggleComponent_NodeType` | switch a component on a world entity |
+| `add_call_contact` | `questCallContact_NodeType` | ring the phone WITH a feed, for any journal contact |
+
+Read every name out of the contact's own holocall scene. Prefab refs, variant
+names and restriction sources are all load-bearing and none is guessable; a
+wrong one is a silent no-op.
+
+#### Two bugs in two-year-old tooling, both found by this
+
+- **`questgraph.cname(None)` emitted `$value: null`**, where the game writes
+  the string `"None"`. It never bit because every node the builder had ever
+  emitted passed a real string; the component toggle's `gameEntityReference`
+  carries three empty ones and is the first that did not. A node the game
+  cannot read is a PHASE THAT SILENTLY DOES NOT RUN: ArchiveXL still logs
+  "Merged phase" because the file went in, there is no error anywhere, and the
+  dev fact simply sits there. It cost an afternoon. `questkit.scene.cname` had
+  always been correct; the two were never reconciled. Gotcha 53.
+- **A quest phase has a POSITION and nothing reports it.** A bench phase parked
+  mid-chain looks exactly like a broken button: the dev fact stays 1, pressing
+  it again changes nothing, and there is no error. The fix is a breadcrumb
+  fact after every node, and the bench phase writes `cc_g01_dev_holoown_step`
+  1 to 9. Gotcha 54.
+
+### WIRED INTO THE GIG, 2026-08-23. Both Nix calls, and what a missed one does
+
+The bench became the gig. `gen_questphase.nix_call()` is one block used twice:
+`cc_g01_nixbrief`, V ringing Nix with the ledger, and `cc_g01_nixcall`, his
+callback with Hoshino's address. `nix_actor(holo=True)` stopped acquiring
+vanilla's studio body and spawns its own, so both scenes are the shape
+`build_holoown` proved. **Not played yet.**
+
+#### The question the wiring was actually about
+
+Everything in the recipe above was proven with a tester pressing a button to
+connect the call. The gig has a player who can decline, or be in a firefight,
+or simply not hear the phone. So the question that had to be answered before
+any of it could ship was what an unanswered call does, and the honest starting
+position was that it stalls the gig for ever: the waits that report a pick-up
+do not report a ring-out, and a quest phase that stops has no error path.
+
+**The base game had already answered it, and reading the answer beat all three
+options this was going to choose between.** `nix_holocall.scene`, nodes 356 to
+444:
+
+```
+ring, isRejectable 1
+  |-- questPhonePickUp, releaseOnRejection 0    answered
+  |-- questPhonePickUp, releaseOnRejection 1    answered or declined
+  `-- questRealtimeDelay 6.015 s                rang out
+        -> scnXorNode
+             -> questConditionNodeDefinition, questPhonePickUp again
+                  True  -> the conversation
+                  False -> holo_nix_calls_v_rejected = 1, hang up, unstage
+```
+
+Three things in that are worth more than the specific numbers:
+
+- **The re-read at the end.** Which arm woke you is not the question. A
+  declined call reports Rejected and then reports Talking a second and a half
+  later (gotcha 10j), so vanilla asks the phone again, with a condition node,
+  at the moment it needs the answer. This project found 10j the hard way and
+  then guessed at the fix; the game had the general form of it all along.
+- **Vanilla's timer is SHORTER than the phone's own.** 6.015 s against the
+  phone's 8, so the graph decides rather than discovering the ring has already
+  gone. Ours is longer, 10 s, deliberately: it wants the chrome fully down
+  before it hangs up and rings again.
+- **`isRejectable` is per call node and vanilla flips it from a fact.** Six of
+  the seven call nodes in that scene are non-rejectable; only the one behind
+  `holo_nix_calls_v_rejectable` offers ANSWER / DECLINE.
+
+#### What a quest phase has instead of an XOR
+
+`scnXorNode` is a scene node. A quest graph has no equivalent, and the
+substitute is three parts (gotcha 55):
+
+| part | node | what it stops |
+|---|---|---|
+| cut the losers | `questCutControlNodeDefinition` | the arm that lost firing minutes later, into the middle of the scene |
+| decide once | `questConditionNodeDefinition` | a pause node's arm-and-wait semantics, where a branch can be taken twice |
+| claim the race | a fact, checked then set per arm | two arms completing on the same frame sending two tokens down one chain |
+
+`questgraph.add_race2` is all three in one call and is used five times. Only
+the first of those three was actually needed for the ring race, because the
+phone dies at 8 s and the timer is at 10, so the arms cannot collide. The other
+two are there because the studio race and the ring-gate race have no such
+argument and a beat half an hour into a gig is the wrong place to be relying on
+one.
+
+#### Four things that can never complete, and the cap on each
+
+| wait | cap | what losing means |
+|---|---|---|
+| the studio streams in | 20 s | no video this time; the audio call instead |
+| the phone may ring | 90 s | ring anyway |
+| the player picks up | 10 s | hang up, wait 30 s, ring again |
+| five rings missed | no cap | the audio call instead |
+
+**The floor under all of it is the route that has shipped since 1.2.0.** The
+graph sets `<prefix>_request` and `Gig01_Holocall.reds` rings an ordinary audio
+call, with the back-off ladder that never gives up and the guards three
+playtests bought. Two mechanisms, so a fault in the new one cannot end a
+playthrough.
+
+#### What stayed in the script, and why it is not all of it
+
+The script no longer places Nix's calls. It keeps two jobs:
+
+- **`cc_g01_ring_ok`.** Three playtest fixes are script questions and a graph
+  cannot ask any of them: is the phone usable at all, is a fast travel in
+  progress, is V on a bike. The graph raises `cc_g01_ring_want`, the script
+  answers, and the graph waits for the answer with a 90 second cap.
+- **`cc_g01_ringing`.** The fast-travel lock, which is the one thing here that
+  takes something away from the player. The script used to derive the ring
+  window from its own state machine and got it wrong in a way that broke fast
+  travel for the rest of the save (10a). The graph knows exactly when the phone
+  is ringing, so it says so, and the window is a fact rather than arithmetic.
+
+Deleted with the old route: `VideoCall()`, `HoloFact()`, `VideoStageTicks()`,
+state 10, and the video branches of `Call()` and `PhoneFact()`. All of it drove
+the base game's per-contact phase, which is the route that cannot do outgoing.
+
+#### One deliberate difference from vanilla, flagged for the playtest
+
+`applyPhoneRestriction` is **0** on all seven of our call nodes and 1 on all
+seven of vanilla's. It buys nothing measured: it is not what blocks the skip on
+a video call, and this mod's calls have never carried one. Against that, a
+restriction applied by a call that is then abandoned is a phone that stays
+broken for the rest of the save, and gotcha 52 is about how hard a sourced one
+is to remove. Worth checking in play whether anything about the call feels
+loose without it.
+
+#### Played 2026-08-23. The outgoing call works. The pick-up condition does not
+
+Two runs. The first proved nothing: `deploy-dev.ps1` does not build the
+archive, that step was skipped, and the game ran new redscript against the
+previous build's graph, so both calls took their old path (gotcha 57).
+
+The second run, on the real build:
+
+| | |
+|---|---|
+| the studio opens and streams in | **yes**, both calls, `_step` 3 within two seconds |
+| `questNodeLoadingCondition` clears | **yes** |
+| the outgoing call (V rings Nix) | **works**, end to end |
+| the incoming call (Nix rings V) | rings, is answerable, and then nothing |
+
+**`questPhonePickUp_ConditionType` reports nothing.** Playtest: *"I can see T
+and long press T. I tried to tap T and I just hung up."* The trace says what
+really happened, and it is not what it looked like:
+
+```
+756.1  cc_g01_nixcall_video = 1                    the studio is there
+756.1  cc_g01_nixcall_step  = 3
+758.0  phonecall_cc_g01_nix_with_player = 1        ringing
+758.0  cc_g01_nixcall_step  = 4
+761.7  phonecall_cc_g01_nix_with_player = 2        ANSWERED, on time
+767.7  phonecall_cc_g01_nix_with_player = 0        the game gives up
+769.6  cc_g01_nixcall_step  = 5                    our 10 s timer, one ring missed
+```
+
+The tap worked. The pick-up condition did not fire on it, so the graph never
+issued StartCall and never started the scene, and the player sat on a
+connected, silent call for six seconds until the game dropped it. From his side
+that is "tapping T hung up on me", which is the right description of what he
+saw and points at the wrong thing entirely.
+
+**The fact was right there the whole time**, and it is what
+`Gig01_Holocall.reds` has watched since 1.0. The ring race now waits on
+`phonecall_<caller>_with_<addressee> > 1` (the player did something) and
+re-reads `== 2` (he answered), which is the same two-step shape as before with
+a signal that can be watched in the dev menu. Gotcha 58, and it carries the
+clear-before-ringing rule that comes with a persistent fact.
+
+The two condition helpers are kept in `questgraph.py` with the measurement in
+their docstrings. They are vanilla's own nodes and they work in vanilla's own
+scene; the difference has not been found. Candidates: the condition resolves
+against a scene's context rather than a phase's, or it tracks the call object
+the scene's own call node created.
+
+#### Third run: it works
+
+Playtest, 2026-08-23: *"Everything seems to be working."* Both of Nix's
+conversations put him on screen, in a studio this mod opens, on a contact this
+mod invented, speaking this gig's lines in his own voice with his mouth moving,
+answered from the phone in the ordinary way. 3d is done.
+
+**What that run covered:** the outgoing call end to end, the incoming call end
+to end, and the studio opening and closing twice in one playthrough without
+either call interfering with the other.
+
+#### Fourth run: every path, including the ones that were only reasoned about
+
+Played 2026-08-23. The four branches that had never been exercised all behave:
+
+| path | |
+|---|---|
+| declining the callback with a long press | **works** |
+| letting it ring out | **works** |
+| five missed rings falling back to the audio call | **works** |
+| the ring gate while V is on a bike | **works** |
+
+The decline is the one worth calling out, because it is 10j's ground and 10j
+has bitten twice. Ending the call from the graph the moment the re-read says
+"not answered" is what makes it behave: the banner goes, and the key coming
+back up cannot answer a call that is already over.
+
+**So the whole beat is played, in every branch it has.** Nothing in it can
+strand a playthrough by any route that has been found, and the audio fallback
+underneath has now been reached deliberately and seen to work.
+
+#### The three faults this took, and what each one really was
+
+Worth keeping together, because all three presented as "the feature does not
+work" and none of them was:
+
+| what it looked like | what it was |
+|---|---|
+| nothing we did was applied | the archive was never rebuilt; `deploy-dev.ps1` only copies (gotcha 57) |
+| tapping T hung up on me | the tap worked; the graph could not see it (gotcha 58) |
+| the beat does nothing at all | earlier in the session, a malformed CName stopping the phase (gotcha 53) |
+
+The common thread is that a quest phase reports nothing when it goes wrong, so
+every fault arrives wearing the costume of the thing under test. Two of the
+three were diagnosed in minutes from the dev menu's fact trace and the third
+from a file timestamp. Neither is a debugger; both beat one here.
+
+### THE SKIP: closed 2026-08-23. It is the game's behaviour, and we match it
+
+**A video holocall cannot be fast-forwarded, in vanilla either.** Confirmed in
+play: *"You are right and I was wrong. Cannot skip video also in vanilla."* So
+the gig loses nothing by matching it, and there is nothing here to fix.
+
+Getting to that took most of a morning and eliminated a wrong suspect, which is
+worth writing down because the suspect was extremely plausible.
+
+**What the difference looked like.** Two calls, one instrument, one session:
+
+```
+Elena  (skips)      elena=2   locks=[]
+bench  (will not)   nix=2     locks=[PhoneCall,PhoneCallDeviceActionRestrictions]
+```
+
+Our own calls carry no phone restriction, because `Gig01_Holocall.reds` sets
+`isPlayerTriggered = false` on purpose; a staged holocall carries two. The
+project's own note from 2026-08-15 said the restriction was what stopped the
+first Nix call being hurried. Everything pointed one way.
+
+**It was wrong, and the disproof is clean.** The release node below takes both
+locks off for the whole call, and the skip still does not work:
+
+```
+57.8  locked    locks=[PhoneCall, PhoneCallDeviceActionRestrictions]
+58.1  connected locks=[]
+60.3  still     locks=[]
+```
+
+The remaining difference is the call MODE, and the game's fast-forward logic
+has two independent gates, visible in the compiled scripts:
+`IsBlockedByPhoneCallRestriction` (now excluded) and `PhoneBBStateBlockingFF`,
+which asks the phone what kind of call is up.
+
+### A phone restriction is released BY ITS SOURCE, and that is a new capability
+
+Worth keeping even though it did not buy the skip, because it is the first
+quest node type this project has emitted outside the four it started with.
+
+`qb_holocall_initializer.questphase` locks the phone through
+`questSetPhoneRestriction_NodeType` with `forcedApply: 1` and a NAMED SOURCE
+(`NPC_phonecall`, or `nix_phonecall` in the per-contact copy). A forced,
+sourced restriction is tracked by that source, so removing the RECORD does
+nothing: measured twice, through both `StatusEffectHelper.RemoveStatusEffect`
+and `StatusEffectSystem.RemoveStatusEffect`, twice each. One of the two locks
+comes off that way and `GameplayRestriction.PhoneCall` never does.
+
+The release is the same node with `applyPhoneRestriction: 0` and the same
+source string, which is now `questgraph.add_phone_restriction`. **The source
+string is load-bearing**: wrong source, silent no-op.
+
+`b.node` taking the type as a free string is what made this a matter of getting
+four fields right rather than of the builder supporting it, exactly as the
+session was opened to test.
+
+### The bench for the last question, built 2026-08-22 and RUN. It passed
+
+The one thing still open is whether OUR words move HIS mouth. `gig01_holotest`
+answers it, and nothing in the gig is touched:
+
+- `gen_scenes.build_holotest` makes a two-line scene whose speaker is acquired
+  from the `nix_holo` spawn set, the way `ma_std_arr_03_holocall_brief.scene`
+  acquires the NCPD dispatcher. Both takes are md5-identical copies of Nix's
+  existing ones under bench keys.
+- `gen_holotest_phase.py` gives it a quest phase of its own, entered on
+  `cc_g01_dev_holotest` and nothing else. A separate resource, because a second
+  scene node inside the gig's phase crashed the game on load and a second edge
+  into an existing one silently does nothing.
+- `gen_lipsync.py` now covers Nix. The entry excluding him said a holocall
+  "draws a static contact portrait, not a rendered caller", which run one
+  disproved. His picks come from the game's own `nix.anims` sets.
+- **It must come out before any release.** The `.archive.xl` entry says so and
+  lists everything to remove.
+
+The body double is deliberately NOT the route. It was built for this exact
+shape in August and crashed the game twice, deterministically 4.3 s in at scene
+teardown, when an additional speaker's actor never acquired. The studio body
+has to be the speaker.
+
+### Four bench faults, and every one of them looked like a finding
+
+This is the part to read before building the next bench. Four separate rounds
+of testing measured the bench rather than the game, and each one arrived
+disguised as a result about the holocall.
+
+- **The bench was unreachable, twice.** A redscript class in a module is
+  registered under its FULL module-qualified name, so
+  `Get(n"NegativeBalanceHoloLab")` is null and
+  `Get(n"CyberpunkCodes.Gig01.NegativeBalanceHoloLab")` is the system. What
+  saved it was a control: `PhoneSystem` resolved by name in the same press, so
+  the container was fine and only the name was wrong. Gotcha 50.
+- **The probe read nothing and said `?`.** `GetAllBlackboardDefs()` is nil in
+  CET's sandbox; it is `Game.GetAllBlackboardDefs()`. The pcall swallowed it
+  into a question mark, so a whole run's comparison was of two unknowns. It
+  reports which of three things was missing now. A probe that cannot say why it
+  failed is worse than no probe.
+- **The bench died after one run.** A quest phase's progress is SAVED, so a
+  linear dev branch runs once per SAVE and not once per load, which is what its
+  comment claimed. The dev fact sat at 1 with nothing listening, which looks
+  exactly like a broken button. Vanilla's holocall phase loops; ours does now.
+  Gotcha 51.
+- **Two buttons were both called "run the bench".** The plain one got pressed,
+  which is the only sensible thing to do, and the experiment never ran. There
+  is one button now and it does the whole sequence, probe included. A bench
+  that needs the right button in the right order measures the instructions.
+
+The common thread is that all four were caught by reading state back rather
+than by trusting that a call had worked, and the two that were NOT caught that
+way (the module name, the duplicate button) cost the most time.
+
+### What the files said before any of this was run
+
+The section below was written from the shipped data alone, before the bench
+existed. It is kept because it predicted the result, and because the mechanism
+is the part a future gig needs.
+
+### The two claims, separated
+
+**Still true, and measured:** a call issued from script with
+`questTriggerCallRequest` and `questPhoneCallMode.Video` hard crashes the game
+the moment the player answers (`gotchas.md` 10). That request type carries no
+`prefabNodeRef`, so nothing tells the phone where to point a camera.
+
+**Not true, and never tested:** that the only way to get a video feed is to
+hand the whole call to vanilla's per-contact holocall phase, and that doing so
+drags that contact's small-talk options in with it. Both halves fail on the
+shipped data.
+
+### What the shipped data says
+
+Read on 2026-08-22 with WolvenKit CLI out of `basegame_3_nightcity.archive`
+and `basegame_4_gamedata.archive`, plus CET's decompressed TweakDB string
+table.
+
+**The video feed is one global render target.** All three shipped
+`base\cinematics\cameras\holocall_camera*.ent` carry a
+`gameuiHolocallCameraComponent` named `RenderToTextureCamera`, shipped
+`isEnabled: 0`, and all three write to the same
+`base\cinematics\cameras\holocall_camera_render_texture.dtex`. Nothing about
+the feed is per-contact. Enabling any one of those components should fill it.
+
+**The holocall studio is a real room, and it is one room.** It sits off the map
+at about (5894.2, 6135.8, 0), and the whole of it is a single Quest sector,
+`quest_ec82d0423d8f1435.streamingsector`: 639 nodes, 59 per-contact setups
+under `$/03_night_city/ne2/#holocalls_studio`. The setups are near-identical.
+51 of the 59 workspots are the same point, and `#holocall_marker` in
+`always_loaded_2` is that same point, which follows from only one person ever
+being on a holocall at once. Nix's camera and Mama Welles' camera are 15 cm
+apart and both are copies of the same `.ent`.
+
+**Vanilla stages it with ordinary quest nodes.** `nix_holocall.scene` is a copy
+of the shipped template `base\cinematics\scene_blocks\
+sb_holocall_initializer.scene`, with the placeholder `NPC` replaced by `nix`
+throughout. It activates the `nix_holo` spawn set, puts the body in
+`#nix_holocall_workspot`, shows two prefab variants, enables
+`RenderToTextureCamera` on `#nix_holocall_camera` through
+`questEntityManagerToggleComponent_NodeType`, and issues
+`questCallContact_NodeType` with `mode: Video` and
+`prefabNodeRef: "#holocalls_studio"`. `base\quest\graph_templates\
+qb_holocall_initializer.questphase` is the matching quest-phase template, and
+every `base\quest\holocalls\<contact>\<contact>_holocall.questphase` is a copy
+of it with the contact's name substituted into ten fact names.
+
+**The staging phase supplies no dialogue at all.** `nix_holocall.scene` holds
+two dialogue lines and no choice nodes. The words come from the CALLING quest.
+A shipped gig briefing, `ma_std_arr_03_holocall_brief.scene`, does exactly
+this: it sets `holo_ncpd_dispatcher_calls_v_start_activate`, waits on
+`..._start_done`, speaks its own lines through its own actor, then sets
+`..._end_activate` and waits on `..._end_done`. That is the entire contract,
+and it is the shape a mod would copy.
+
+**The small talk belongs to the contact, not to the call.** Nix's ordinary
+phone conversation is `base\quest\tertiary_characters\default_dialogues\
+nix_default.scene`, which carries an entry point named `holocall_in` and four
+choice nodes. It is a per-character default dialogue, reached by a different
+route from the holocall phase.
+
+The gig already proved the practical half of that in playtest and wrote the
+result into shipped code without the register catching up: `Gig01_Holocall.reds`
+`Contact()` rings `cc_g01_nix` rather than the base game's `nix`, and its
+comment records why. "A mod contact has no conversation behind it. Same name,
+same avatar, none of the baggage." So a mod that wants video does not have to
+accept vanilla's options, because it does not have to use vanilla's contact.
+
+**Every Character record carries a `holocallInitializerPath` flat.** The TweakDB
+string table has one for all 7433 character records, including this gig's
+`Character.cc_g01_elena`. `scnActorDef` carries the matching
+`holocallInitScn` field. That is the game's own per-character hook for "which
+scene stages this person's holocall", and it is writable by a mod. What the
+base-game records actually hold is a runtime read, because TweakDB values stay
+hashed on disk.
+
+### What follows, if the bench agrees
+
+Three routes exist where the register said there were none.
+
+1. **A base-game contact, vanilla staging, our words.** Set
+   `holo_<contact>_calls_v_start_activate`, play our own scene, set
+   `..._end_activate`. Costs nothing to try and is one fact.
+2. **Our own contact, our own staging.** Ship a copy of
+   `qb_holocall_initializer.questphase` and of `sb_holocall_initializer.scene`
+   with our fact names, enable a studio camera, put our own body on the studio
+   spot. No base-game contact is involved anywhere.
+3. **`holocallInitializerPath` on our own Character record**, pointing at our
+   own initializer scene. The sanctioned hook rather than a workaround, if it
+   turns out to be honoured for a mod record.
+
+Lipsync is not expected to be a separate problem. The caller in the studio is
+the SCENE's own actor, which is the condition gotcha 16 states, so the
+`animLipsyncMapping` route that 2j already ships applies unchanged.
+
+### The bench
+
+`Gig01_HoloLab.reds` plus a section of the CET dev menu, both added 2026-08-22.
+It runs entirely outside the quest: load any save, open the menu, work down the
+list. Nothing has to be started and no beat has to be reached.
+
+The redscript is one method, `Run(cmd, a1, a2, a3) -> String`, so a new
+experiment is a new BUTTON rather than a new build. Redscript needs a quit to
+desktop and Lua does not.
+
+| button | what it tests |
+|---|---|
+| SELF-TEST | that the bench is wired up, before ten buttons fail for one reason |
+| PROBE, 10 paths | that a mod can address the studio by name. Two of the ten are names nothing ships and MUST read 1 |
+| PROBE, components | that a studio camera really carries `RenderToTextureCamera`, so "not found" later is a finding rather than a broken instrument |
+| READ, `holocallInitializerPath` | what the base-game records actually hold |
+| TEST A | vanilla's phase, fired by one fact from a mod. Does video appear, and do Nix's options appear with it |
+| TEST B | the camera alone, with no call at all |
+| TEST C | driving the chrome ourselves, with the contact and the mode as free text, and the three phases as separate buttons |
+| SPAWN | our own Elena on the studio spot, facing the camera |
+| TELEPORT | into the studio, to see the room rather than infer it |
+
+`holo_setup_active` is a mutex on the studio and a test that leaves it at 1
+blocks every later test, so there is a button that clears the whole `holo_*`
+set, and the live readout shows all ten facts.
+
+The trace file carries the base-game handshake facts now
+(`holo_setup_started`, `holo_setup_active`, the four `holo_nix_calls_v_*`, and
+`phonecall_nix_with_player`), because `call_trace.log` writes and closes per
+line and this is the one area of the game known to hard crash.
+
+### What is still unknown
+
+- Whether the base-game holocall quest phases are live on an ordinary save, or
+  whether their parent graph has to be entered first. The readout answers this
+  in one press: if `holo_setup_started` never moves, the phase never ran.
+- Whether the studio sector streams in when a mod asks, rather than when a
+  vanilla scene anchored inside it asks. `#nix_sm_holocall`, the marker Nix's
+  scene is located at, is in neither the studio sector nor the always-loaded
+  ones.
+- Whether the crash in `gotchas.md` 10 is caused by the missing
+  `prefabNodeRef` or by the phone finding an empty render texture. TEST C
+  separates them: same call, camera on and camera off.
+- What a mod-shipped `.questphase` copy of the template does, which is only
+  worth building once the bench says the mechanism works at all.
+
+### The 2026-08-13 account, kept
 
 **Decided 2026-08-13 (playtest): skip it, and the code is removed.** Keeping the
 research below because the "why not" is the useful part, but this is not a task
@@ -1043,6 +1915,19 @@ Nix's options are structural: he is a base-game *callable* contact, so a real
 call to him offers his standard conversation. Nothing short of making the contact
 non-callable would hide them, and it is a persistent change to a base-game
 contact for a cosmetic gain.
+
+**Nix's half was solved since, and this section never said so.** The gig
+stopped ringing the base-game `nix` and rings its own `cc_g01_nix` instead,
+which has no conversation behind it to offer. `Gig01_Holocall.reds` `Contact()`
+carries the change and the reason, and it is in the shipped build. Where those
+options come from was read off disk on 2026-08-22:
+`base\quest\tertiary_characters\default_dialogues\nix_default.scene`, entry
+point `holocall_in`, four choice nodes. They hang off the CHARACTER, so a
+contact this mod invents has nothing there. Mama Welles at the bar is a
+different mechanism and is still as described above.
+
+That matters beyond tidiness. 3d was closed on the belief that a video holocall
+and these options arrive together, and they do not.
 
 If it is ever revisited, the one untried idea is swapping the epilogue to our own
 **stand-in** Mama, who has no vanilla dialogue at all. Rejected for now because

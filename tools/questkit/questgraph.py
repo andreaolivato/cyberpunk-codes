@@ -29,7 +29,7 @@ import os    # noqa: F401
 # add_scene() below turns it into a Tag-type scnWorldMarker rather than a
 # NodeRef. Importing it rather than restating it removes a constant that three
 # separate comments used to warn had to be "kept in step" by hand.
-from questkit.scene import ANCHOR_PLAYER
+from questkit.scene import ANCHOR_PLAYER, noderef
 from questkit import cr2w
 
 # --------------------------------------------------------------- per-mod config
@@ -43,7 +43,21 @@ def configure(phase_name):
 
 
 def cname(v):
-    return {'$type': 'CName', '$storage': 'string', '$value': v}
+    """An empty CName is the STRING "None", never a null.
+
+    This returned `$value: null` for an empty name until 2026-08-23, and it
+    never bit because every node this builder had ever emitted passed a real
+    string. The first node type that needed an empty one, the component toggle,
+    whose `gameEntityReference` carries three, produced a field the game cannot
+    read, and a node the game cannot read is a PHASE THAT SILENTLY DOES NOT RUN.
+
+    ArchiveXL still logs "Merged phase", because the file went in; the graph
+    just never executes. There is no error anywhere, which cost an afternoon.
+
+    `questkit.scene.cname` has always done this correctly. The two were never
+    reconciled.
+    """
+    return {'$type': 'CName', '$storage': 'string', '$value': v if v else 'None'}
 
 
 def jpath(class_name, real_path):
@@ -157,6 +171,13 @@ b = Builder()
 NID = iter(range(1000))
 
 STD = [('CutDestination', 'CutDestination'), ('In', 'Input'), ('Out', 'Output')]
+# A branch that is decided the moment the token arrives, rather than a wait.
+# Socket order is read off `nix_holocall.questphase` node 26.
+COND = [('CutDestination', 'CutDestination'), ('In', 'Input'),
+        ('True', 'Output'), ('False', 'Output')]
+# Order read off the same file, node 14.
+CUT = [('CutDestination', 'CutDestination'), ('In', 'Input'),
+       ('Out', 'Output'), ('CutSource', 'CutSource')]
 JRN = [('CutDestination', 'CutDestination'), ('Active', 'Input'), ('Inactive', 'Input'),
        ('Succeeded', 'Input'), ('Failed', 'Input'), ('Out', 'Output')]
 
@@ -264,6 +285,366 @@ def add_setvar(fact, value):
     b.node(nid, 'questFactsDBManagerNodeDefinition', {'type': {'@handle': {
         '$type': 'questSetVar_NodeType', 'factName': fact, 'setExactValue': 1, 'value': value}}},
         STD)
+    return nid
+
+
+def add_addvar(fact, amount=1):
+    """Add to a fact instead of setting it, which is how the game counts.
+
+    `setExactValue: 0` on the same node type means "add `value`" rather than
+    "make it `value`". Vanilla counts rejected holocalls with exactly this:
+    `holo_<contact>_calls_v_rejected_count` is incremented by a node with
+    setExactValue 0 and value 1 (`nix_holocall.scene` node 422).
+    """
+    nid = next(NID)
+    b.node(nid, 'questFactsDBManagerNodeDefinition', {'type': {'@handle': {
+        '$type': 'questSetVar_NodeType', 'factName': fact, 'setExactValue': 0,
+        'value': amount}}}, STD)
+    return nid
+
+
+def add_pause_facts(conditions, operation='AND'):
+    """Wait until several fact comparisons hold at once.
+
+    conditions is a list of (factName, value, comparisonType). Vanilla gates
+    every holocall on three at a time: the caller's own activate fact, plus
+    `holo_setup_active < 1` and `holo_setup_started < 1`, which are the studio's
+    mutex. It does it with one questLogicalCondition rather than a chain of
+    pause nodes. A chain would pass the first check, wait on the second, and by
+    then the first may no longer be true.
+    """
+    nid = next(NID)
+    b.node(nid, 'questPauseConditionNodeDefinition', {'condition': {'@handle': {
+        '$type': 'questLogicalCondition',
+        'conditions': [{'@handle': {
+            '$type': 'questFactsDBCondition',
+            'type': {'@handle': {'$type': 'questVarComparison_ConditionType',
+                                 'comparisonType': cmp, 'factName': fact,
+                                 'value': value}},
+        }} for fact, value, cmp in conditions],
+        'operation': operation,
+    }}}, STD)
+    return nid
+
+
+def add_condition_fact(fact, value=0, cmp='Greater'):
+    """A fork decided NOW, on the state of a fact: True and False sockets.
+
+    The difference from add_pause_fact matters and it is not stylistic. A pause
+    node ARMS and stays armed until its condition becomes true, so two of them
+    off one source is two things that may each fire, at different times, and
+    possibly both. A condition node reads the fact once, sends the token down
+    exactly one of two sockets, and is finished.
+
+    Anywhere a branch must be taken once and only once, this is the node.
+    Vanilla uses it for every such decision in the holocall graph.
+    """
+    nid = next(NID)
+    b.node(nid, 'questConditionNodeDefinition', {'condition': {'@handle': {
+        '$type': 'questFactsDBCondition',
+        'type': {'@handle': {'$type': 'questVarComparison_ConditionType',
+                             'comparisonType': cmp, 'factName': fact, 'value': value}},
+    }}}, COND)
+    return nid
+
+
+def add_cut_control():
+    """Disarm pause nodes that are still waiting, from somewhere else in the graph.
+
+    THIS IS WHAT MAKES A RACE SAFE. Two pause nodes off one source is two armed
+    waits; the first to complete carries the token on, and the OTHER ONE IS
+    STILL ARMED. It fires later, in the middle of whatever the winner started,
+    and sends a second token down the same chain. A scene entered twice is the
+    crash gotcha 51 describes.
+
+    Firing this node cuts every socket its `CutSource` is wired to, and the
+    convention is to cut all the racers including the one that won. Vanilla's
+    holocall phase does exactly that: one cut node wired to all eight of its
+    waits, fired the moment any of them completes.
+
+    `permanent: 0` is vanilla's value, and it is what allows the same waits to
+    be re-armed when the graph loops back round to them.
+    """
+    nid = next(NID)
+    b.node(nid, 'questCutControlNodeDefinition', {'permanent': 0}, CUT)
+    return nid
+
+
+def add_pause_node_loaded(node_ref, inverted=False):
+    """Wait until a world node is actually streamed in.
+
+    The holocall studio is a `category: Quest` sector: showing its prefab
+    variant asks for it, and the sector arrives some frames later. Everything
+    aimed at it before then, switching the camera on most of all, is a silent
+    no-op against an entity that does not exist yet.
+
+    Vanilla waits here rather than guessing a delay
+    (`nix_holocall.scene` node 331, on `#nix_holocall_camera`). It waits FOR
+    EVER, though, which is fine for the base game and not for a mod: race this
+    against a timeout, or a studio that never arrives is a gig that stops.
+    """
+    nid = next(NID)
+    b.node(nid, 'questPauseConditionNodeDefinition', {'condition': {'@handle': {
+        '$type': 'questNodeLoadingCondition',
+        'inverted': 1 if inverted else 0,
+        'objectRef': noderef(node_ref),
+    }}}, STD)
+    return nid
+
+
+def _phone_pickup(caller, addressee, release_on_rejection):
+    return {'$type': 'questSystemCondition', 'type': {'@handle': {
+        '$type': 'questPhonePickUp_ConditionType',
+        'addressee': {'@handle': jpath('gameJournalContact', addressee)},
+        'caller': {'@handle': jpath('gameJournalContact', caller)},
+        'releaseOnRejection': 1 if release_on_rejection else 0,
+    }}}
+
+
+def add_pause_phone_pickup(caller, addressee, release_on_rejection=False):
+    """Wait for the player to answer a call, or, optionally, to decline it.
+
+    **IT DOES NOT COMPLETE FOR A CALL A MOD ISSUES FROM A QUEST PHASE.**
+    Measured in play 2026-08-23: the player answered, the game wrote
+    `phonecall_<caller>_with_<addressee> = 2` on time, and this never fired.
+    Both variants, on a `questCallContact_NodeType` call with our own journal
+    contact. Kept because it is vanilla's own node and works in vanilla's own
+    scene, so the difference is worth someone else finding; do not build on it
+    without watching it fire first. Watch the fact instead: `add_pause_fact`
+    on the name PhoneSystem writes. See docs/gotchas.md 58.
+
+    `releaseOnRejection` is the whole of the difference:
+
+        0   completes only when the call is ANSWERED
+        1   completes when it is answered OR declined
+
+    Neither completes when the phone simply rings out, so a wait built on these
+    alone is a wait that can last for ever. Vanilla races both of them against a
+    6 second timer and then re-reads the phone with add_condition_phone_pickup
+    to find out what actually happened.
+
+    Read off `base\\quest\\holocalls\\nix\\nix_holocall.scene`, nodes 356, 364
+    and 370.
+    """
+    nid = next(NID)
+    b.node(nid, 'questPauseConditionNodeDefinition',
+           {'condition': {'@handle': _phone_pickup(caller, addressee,
+                                                   release_on_rejection)}}, STD)
+    return nid
+
+
+def add_condition_phone_pickup(caller, addressee):
+    """Is this call answered, right now? True or False, decided on arrival.
+
+    Same warning as add_pause_phone_pickup above: unproven for a mod-issued
+    call, and its pause-node sibling was measured not to work at all. Read the
+    fact with `add_condition_fact` instead.
+
+    The re-read that makes a decline safe. Which branch of a race completed is
+    not evidence of what the player did: a declined call reports Rejected and
+    then reports Talking about a second and a half later (gotcha 10j), so a
+    branch that trusted the event it woke on would be wrong half the time. This
+    asks the phone instead, at the moment the answer is needed.
+
+    Vanilla does the same thing in the same place (`nix_holocall.scene` node
+    444), which is the reason to trust the shape rather than only the reasoning.
+    """
+    nid = next(NID)
+    b.node(nid, 'questConditionNodeDefinition',
+           {'condition': {'@handle': _phone_pickup(caller, addressee, False)}}, COND)
+    return nid
+
+
+def add_race2(src, arm_a, arm_b, claim_fact):
+    r"""Two waits, one winner, exactly one token out the other side.
+
+    `src` is a (node, socket) pair that enters both waits. Each arm is a
+    (node, in_socket, out_socket) triple. The return is a condition node whose
+    **True socket is "arm A won"** and whose False socket is "arm B won".
+
+    THE PROBLEM THIS SOLVES, in the order the three parts of it bite:
+
+    1. The loser stays armed. It completes minutes later, in the middle of
+       whatever the winner started, and pushes a second token down the chain.
+       add_cut_control fixes that, and it is what vanilla uses.
+    2. Which arm woke you is not the same question as what is true now. A
+       declined call reports Rejected and then Talking a second and a half
+       later. So the answer comes from re-reading, not from the branch: this
+       returns a CONDITION node, and the caller is free to ignore the claim and
+       ask the world instead.
+    3. Two arms can complete on the same frame. The cut lands after the first
+       one has already left, so both tokens are in flight and both reach the
+       far side. The claim fact closes it: each arm checks the fact is still 0
+       before writing its own number, so the second token dies at an
+       unconnected socket.
+
+    `claim_fact` MUST be reset to 0 before the race is entered, and a graph
+    that loops back through a race has to reset it every time round.
+    """
+    cut = add_cut_control()
+    for arm, mark in ((arm_a, 1), (arm_b, 2)):
+        nid, in_sock, out_sock = arm
+        b.connect(src, (nid, in_sock))
+        gate = add_condition_fact(claim_fact, 0, 'Equal')
+        b.connect((nid, out_sock), (gate, 'In'))
+        claim = add_setvar(claim_fact, mark)
+        b.connect((gate, 'True'), (claim, 'In'))
+        b.connect((claim, 'Out'), (cut, 'In'))
+        b.connect((cut, 'CutSource'), (nid, 'CutDestination'))
+    who = add_condition_fact(claim_fact, 1, 'Equal')
+    b.connect((cut, 'Out'), (who, 'In'))
+    return who
+
+
+def add_phone_restriction(apply_restriction, source):
+    """Lock or UNLOCK the phone, the way the game's own holocall phase does.
+
+    Measured 2026-08-23, and this node exists because of it. A staged video
+    holocall puts two restrictions on the player:
+
+        GameplayRestriction.PhoneCallDeviceActionRestrictions   comes off
+        GameplayRestriction.PhoneCall                           WILL NOT
+
+    Removing them as status effects takes the first off and leaves the second,
+    through either of the two removal APIs, twice each. And the second is the
+    one that stops the player skipping a line: our own Elena call carries
+    neither and skips exactly as it always has.
+
+    The reason it will not come off is in the shipped data.
+    `base\\quest\\graph_templates\\qb_holocall_initializer.questphase` applies it
+    through this node type with `forcedApply: 1` and a NAMED SOURCE
+    (`NPC_phonecall`, or `nix_phonecall` in the per-contact copy). A forced,
+    sourced restriction is tracked by its source, so removing the record does
+    not release it. The game's own release is this node again with
+    `applyPhoneRestriction: 0` and the SAME source.
+
+    So the source string is load-bearing: get it wrong and this releases
+    nothing, silently. Read it out of the contact's own phase rather than
+    guessing.
+
+    `b.node` takes the type as a free string, which is what makes emitting a
+    node type this gig has never shipped a matter of getting the fields right
+    rather than of the builder supporting it.
+    """
+    nid = next(NID)
+    b.node(nid, 'questPhoneManagerNodeDefinition', {'type': {'@handle': {
+        '$type': 'questSetPhoneRestriction_NodeType',
+        'applyPhoneRestriction': 1 if apply_restriction else 0,
+        'forcedApply': 1,
+        'forcedApplySource': cname(source)}}}, STD)
+    return nid
+
+
+def add_prefab_variant(prefab_ref, variant, show=True):
+    """Show or hide a variant of a world prefab, the way the game stages a set.
+
+    THIS IS WHAT MAKES A QUEST SECTOR EXIST. Measured 2026-08-23: the holocall
+    studio is a `category: Quest` sector with no streaming box, and it does NOT
+    load by proximity. Standing 2.8 m from the studio spot, its camera still
+    probes 3, "a real entity id, nothing streamed". Spawning a body there does
+    not pull it in either; the body renders and the room around it does not.
+
+    Only a quest node does. Vanilla's holocall scene toggles two variants on
+    the way in, `#holocalls_studio_lighting` and `#<contact>_holocall_setup`,
+    and everything per-contact (the camera, the lookat, the workspot) exists
+    because of the second one.
+
+    So a mod that wants the studio without vanilla's call has to toggle them
+    itself, and this is the node that does it.
+
+    Both names matter and neither is guessable: the PREFAB is addressed by
+    NodeRef and the VARIANT by the name inside it. Read both out of the
+    contact's own holocall scene.
+    """
+    nid = next(NID)
+    b.node(nid, 'questWorldDataManagerNodeDefinition', {'type': {'@handle': {
+        '$type': 'questTogglePrefabVariant_NodeType',
+        'params': [{
+            '$type': 'questTogglePrefabVariant_NodeTypeParams',
+            'prefabNodeRef': noderef(prefab_ref),
+            'variantStates': [{
+                '$type': 'questVariantState',
+                'name': cname(variant),
+                'show': 1 if show else 0,
+            }],
+        }]}}}, STD)
+    return nid
+
+
+def add_call_contact(caller, addressee, phase, video=True, prefab='#holocalls_studio',
+                     rejectable=False, show_avatar=False, restrict=True):
+    """Ring the phone from the quest graph, the way the game itself does.
+
+    THIS IS THE FIELD A SCRIPT-ISSUED CALL CANNOT HAVE, and after a day of
+    measuring it is the only thing left between this mod and a video feed.
+
+    `questTriggerCallRequest`, which `Gig01_Holocall.reds` queues, carries no
+    `prefabNodeRef`. Everything else can now be staged by a mod: the studio
+    opens (add_prefab_variant), the camera loads and switches on, a body of
+    ours stands on the spot, and a Video call issued from script connects
+    WITHOUT crashing, which is what gotcha 10 forbade. What it draws is an
+    EMPTY FRAME. Measured 2026-08-23 with every one of those confirmed in the
+    same run.
+
+    So the missing piece is not staging. It is telling the phone where the feed
+    comes from, and this node is the only thing that does.
+
+    `caller` and `addressee` are JOURNAL PATHS, not CNames, which is what makes
+    this usable: `contacts/cc_g01_nix` is as valid here as `contacts/nix`. A
+    call issued this way is with OUR contact, so it brings none of the base
+    game contact's small talk, in either direction. That is the whole reason
+    outgoing calls were dead until now (backlog 3d).
+
+    phase is 'IncomingCall', 'StartCall' or 'EndCall'. Vanilla issues all three
+    for one call and sets `applyPhoneRestriction` on every one of them.
+    """
+    nid = next(NID)
+    b.node(nid, 'questPhoneManagerNodeDefinition', {'type': {'@handle': {
+        '$type': 'questCallContact_NodeType',
+        'addressee': {'@handle': jpath('gameJournalContact', addressee)},
+        'applyPhoneRestriction': 1 if restrict else 0,
+        'caller': {'@handle': jpath('gameJournalContact', caller)},
+        'isRejectable': 1 if rejectable else 0,
+        'mode': 'Video' if video else 'Audio',
+        'phase': phase,
+        'prefabNodeRef': noderef(prefab),
+        'showAvatar': 1 if show_avatar else 0,
+        'visuals': 'Default',
+    }}}, STD)
+    return nid
+
+
+def add_toggle_component(object_ref, component, enable=True):
+    """Switch a component on or off on a world entity, from the quest graph.
+
+    Written for the holocall camera, which is the only thing that puts a
+    picture on the phone: `RenderToTextureCamera` on the studio's camera node,
+    shipped disabled, and this is how vanilla turns it on.
+
+    It can be done from redscript instead (`FindComponentByName(...).Toggle()`,
+    proven 2026-08-22) but not from a quest phase without this, and the phase is
+    where the rest of the staging lives. Keeping them together means one press
+    stages everything instead of a script and a graph having to agree on
+    timing.
+    """
+    nid = next(NID)
+    b.node(nid, 'questEntityManagerNodeDefinition', {'type': {'@handle': {
+        '$type': 'questEntityManagerToggleComponent_NodeType',
+        'params': [{
+            '$type': 'questEntityManagerToggleComponent_NodeTypeParams',
+            'componentName': cname(component),
+            'enable': 1 if enable else 0,
+            'isPlayer': 0,
+            'objectRef': {
+                '$type': 'gameEntityReference',
+                'dynamicEntityUniqueName': cname(None),
+                'names': [],
+                'reference': noderef(object_ref),
+                'sceneActorContextName': cname(None),
+                'slotName': cname(None),
+                'type': 'EntityRef',
+            },
+        }]}}}, STD)
     return nid
 
 

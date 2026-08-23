@@ -20,6 +20,9 @@ from questkit.questgraph import (                                   # noqa: F401
     b, configure, cname, jpath, Builder, STD, JRN,
     add_input, add_output, add_pause_fact, add_delay, add_game_delay,
     add_pause_journal, add_setvar, add_journal, add_scene, add_journal_quest,
+    add_addvar, add_pause_facts, add_condition_fact, add_race2,
+    add_pause_node_loaded, add_pause_phone_pickup, add_condition_phone_pickup,
+    add_prefab_variant, add_toggle_component, add_call_contact,
     ANCHOR_PLAYER,
 )
 
@@ -289,27 +292,388 @@ step(add_journal('gameJournalContact', 'contacts/cc_g01_nix', notify=0), in_sock
 step(add_pause_fact('cc_g01_terminal_done'))
 objective_step('cc_g01_left_compound', 'obj_nix', 'obj_nixcall')
 
+# ============================================================================
+# NIX ON SCREEN: the mod-owned video holocall
+# ============================================================================
+#
+# Both of Nix's conversations put him on the phone as a live picture, in a
+# studio this mod opens itself, on a contact this mod invented. The base game's
+# per-contact holocall phase is not involved in either direction, which is what
+# keeps his ordinary small talk out of them. docs/backlog.md 3d is the whole
+# account and docs/scene-playbook.md is the recipe.
+#
+# Every name below is read out of the contact's own holocall scene. None of
+# them is guessable and a wrong one is a silent no-op.
+STUDIO_MARKER = '#holocall_marker'
+LIGHTS_REF = '#holocalls_studio_lighting'
+CAMERA_REF = '#mama_welles_holocall_camera'
+SETUP_REF = '#mama_welles_holocall_setup'
+# CAMERA HEIGHT IS POSE, NOT CONTACT, which is why the setup borrowed here is
+# not Nix's. The 59 studio setups share one floor spot and differ in where the
+# camera sits, because each is framed on the pose its contact uses:
+# #nix_holocall_camera is at z 0.75 because Nix SITS cross-legged, and
+# #mama_welles_holocall_camera is at 1.52 because she STANDS. Our Nix is a
+# plain spawned NPC and stands, so his own camera frames the air above his
+# head. Nothing about this setup is hers except the name: the variant is
+# scenery and lighting, and our own actor is what stands in it.
+LIGHTS_VARIANT = 'mama_welles_holocall_lights'
+SETUP_VARIANT = 'mama_welles_holocall_setup'
+
+# OUR OWN CONTACT, which is the point. The call node takes JOURNAL PATHS, not
+# CNames, so a contact this mod merged in is as valid as a base-game one, and
+# a mod contact has no conversation behind it to interrupt ours.
+NIX_CONTACT = 'contacts/cc_g01_nix'
+PLAYER_CONTACT = 'contacts/player'
+
+# Seconds. Every one of these is a cap on something that would otherwise be
+# able to wait for ever (docs/gotchas.md 22).
+STUDIO_SECONDS = 20      # for the studio sector to stream in after we ask for it
+GATE_SECONDS = 90        # for a good moment to ring; after this, ring anyway
+RING_SECONDS = 10        # the phone itself gives up at 8, so this outlasts it
+RETRY_SECONDS = 30       # between one missed ring and the next
+RING_TRIES = 5           # missed rings before the video route is abandoned
+
+
+def nix_call(p, holo_scene, plain_scene, entries, exits, incoming):
+    r"""One Nix call: on screen if the studio cooperates, on the phone if not.
+
+    ------------------------------------------------------------------------
+    WHAT THE PLAYER SEES
+    ------------------------------------------------------------------------
+    His phone rings, he answers, and Nix is there as a live picture speaking
+    this gig's lines. If he declines, or lets it ring out, Nix calls back
+    half a minute later, and again, and the call is the same one when he does
+    take it. Nothing about missing it can cost him the gig.
+
+    ------------------------------------------------------------------------
+    THE FOUR THINGS THAT CANNOT BE ALLOWED TO HAPPEN, and where each is handled
+    ------------------------------------------------------------------------
+    A quest phase has no error path. A node that waits on something that never
+    arrives is a gig that stops there, silently, half an hour in, with no log
+    line and nothing on screen to say why (docs/gotchas.md 22 and 54). Every
+    wait below is therefore raced against a clock.
+
+    1. THE CALL IS NEVER ANSWERED. The waits that report a pick-up do not
+       report a ring-out, so on their own they would wait for ever. They are
+       raced against RING_SECONDS, and a missed ring goes round the loop.
+    2. THE CALL IS DECLINED. Same loop, and it is the same code path, because
+       the branch is not decided by which wait woke up. Declining reports
+       Rejected and then reports Talking about a second and a half later
+       (docs/gotchas.md 10j), so the graph re-reads the phone at the moment it
+       needs the answer instead of trusting the event.
+    3. THE STUDIO NEVER ARRIVES. It is a Quest sector and showing its prefab
+       variant only ASKS for it. Raced against STUDIO_SECONDS, and if it loses,
+       the whole beat falls back to the audio call that has shipped since 1.2.0
+       - the same words, the same voice, a contact portrait instead of a face.
+    4. THE PHONE IS NEVER IN A STATE TO RING. Raced against GATE_SECONDS, after
+       which it rings regardless. A call refused for ever is worse than a call
+       placed at an awkward moment.
+
+    The audio fallback is the floor under all of it, and it is deliberately the
+    OLD route, unchanged: `Gig01_Holocall.reds` rings it, with the back-off
+    ladder and the guards that three playtests bought. It never gives up.
+
+    ------------------------------------------------------------------------
+    THE SHAPE
+    ------------------------------------------------------------------------
+    ::
+
+        show the two prefab variants          the studio is asked for
+        wait for the camera node to load  ----timeout----> AUDIO FALLBACK
+        switch the camera on
+      ,-wait for a moment when it may ring    (capped, then ring anyway)
+      | ring
+      | wait for a pick-up  or  a decline  or  RING_SECONDS
+      | re-read the phone: is it actually answered?
+      |     no  --> hang up, count it, and either loop or give up
+      `-----'         after RING_TRIES ------> AUDIO FALLBACK
+            yes --> connect, speak, hang up, put the studio away
+
+    An outgoing call (V ringing Nix) has no pick-up to wait for: vanilla's own
+    player-calling path plays a dial tone for two to four seconds and connects
+    itself, so `incoming=False` replaces the whole ring loop with a delay. That
+    also means the outgoing call has no way to strand at all.
+    """
+    global chain
+    cur = chain[-1]
+
+    def go(nid, in_sock='In', out_sock='Out'):
+        """Append a node to this block's chain."""
+        nonlocal cur
+        b.connect(cur, (nid, in_sock))
+        cur = (nid, out_sock)
+        return nid
+
+    def mark(n):
+        """Leave a number behind, because a stopped phase says nothing.
+
+        A quest phase has a POSITION and nothing reports it. A block parked
+        mid-chain looks exactly like a beat that never started: no error, no log
+        line, and the fact that was supposed to trigger it sitting at 1. This is
+        the only way to find out WHERE it stopped, and it cost an afternoon to
+        learn (docs/gotchas.md 54).
+        """
+        go(add_setvar(p + '_step', n))
+
+    caller = NIX_CONTACT if incoming else PLAYER_CONTACT
+    addressee = PLAYER_CONTACT if incoming else NIX_CONTACT
+
+    # THE FACT THE GAME WRITES WHEN THE PHONE CHANGES STATE, and it is how this
+    # block knows the player answered. PhoneSystem.GetPhoneCallFactName builds
+    # "phonecall_" + caller + "_with_" + addressee from the CONTACT IDS, both
+    # lowercased, so it is derived here rather than typed out: the two would
+    # drift the first time a contact was renamed.
+    #
+    #   Ended 0    Initializing 1    Talking 2    Rejected 3
+    phone_fact = ('phonecall_' + caller.split('/')[-1] + '_with_'
+                  + addressee.split('/')[-1]).lower()
+
+    def call_node(phase, rejectable=False):
+        # applyPhoneRestriction OFF, unlike vanilla, which sets it on every one
+        # of its own call nodes. This mod's calls have never carried a phone
+        # restriction (Gig01_Holocall sets isPlayerTriggered false on purpose)
+        # and none has ever needed one. It buys nothing here: it is not what
+        # blocks the skip on a video call, measured 2026-08-23, docs/gotchas.md
+        # 52. And a restriction that is applied and then not released because
+        # the call was abandoned is a phone that stays broken for the rest of
+        # the save.
+        return add_call_contact(caller, addressee, phase, rejectable=rejectable,
+                                restrict=False)
+
+    # -- every latch this block sets, cleared before it is read ---------------
+    # A fact outlives the node that wrote it and a quest phase's progress is
+    # saved, so a value left behind by an earlier call is a wait that returns on
+    # its first tick.
+    go(add_setvar(p + '_step', 0))
+    go(add_setvar(p + '_rings', 0))
+    go(add_setvar(p + '_video', 0))
+    go(add_setvar(p + '_claim', 0))
+    go(add_setvar('cc_g01_ringing', 0))
+    mark(1)
+
+    # -- 1. ask for the studio, and wait for it to actually be there ----------
+    #
+    # Showing a prefab variant is a request, not an arrival: the holocall studio
+    # is a `category: Quest` sector with no streaming box, and standing 2.8 m
+    # from the spot is not enough to bring it in. Switching the camera on before
+    # it lands is a silent no-op against an entity that does not exist yet, and
+    # the result is a call with a black picture.
+    #
+    # Vanilla waits on the camera node itself rather than guessing a delay
+    # (`nix_holocall.scene` node 331) and then waits for ever. We race it.
+    go(add_prefab_variant(LIGHTS_REF, LIGHTS_VARIANT, True))
+    go(add_prefab_variant(SETUP_REF, SETUP_VARIANT, True))
+    mark(2)
+    studio = add_race2(cur,
+                       (add_pause_node_loaded(CAMERA_REF), 'In', 'Out'),
+                       (add_delay(STUDIO_SECONDS), 'In', 'Out'),
+                       p + '_claim')
+
+    # -- THE AUDIO FALLBACK, reachable from here and from a call nobody answers
+    #
+    # Everything below this point is the route that has shipped since 1.2.0,
+    # untouched. The graph sets <prefix>_request, Gig01_Holocall.reds rings the
+    # phone with its own guards and its own back-off ladder, and the plain scene
+    # plays behind a contact portrait. It cannot strand: that ladder never gives
+    # up, and Elena's call, the only way into the gig, has used it since 1.0.
+    fallback = add_setvar(p + '_video', 0)
+    b.connect((studio, 'False'), (fallback, 'In'))
+    cur = (fallback, 'Out')
+    go(add_setvar(p + '_videofail', 1))
+    go(add_toggle_component(CAMERA_REF, 'RenderToTextureCamera', False))
+    go(add_prefab_variant(SETUP_REF, SETUP_VARIANT, False))
+    go(add_prefab_variant(LIGHTS_REF, LIGHTS_VARIANT, False))
+    go(add_setvar('cc_g01_ring_want', 0))
+    go(add_setvar('cc_g01_ringing', 0))
+    mark(20)
+    go(add_setvar(p + '_request', 1))
+    go(add_pause_fact(p + '_talking'))
+    # V stays on foot from here: Johnny has a beat after this call and he is
+    # staged where V is standing. See the note by Elena's call.
+    go(add_setvar('cc_g01_vlock', 1))
+    go(add_scene(SCENES + plain_scene, ANCHOR_OFFICE, entries, exits),
+       in_sock=entries[0], out_sock=exits[0])
+    go(add_setvar(p + '_end', 1))
+    go(add_pause_fact(p + '_done'))
+    mark(21)
+    audio_tail = cur
+
+    # -- 2. the studio is there: light it and point the camera at the spot ----
+    cur = (studio, 'True')
+    mark(3)
+    go(add_toggle_component(CAMERA_REF, 'RenderToTextureCamera', True))
+    go(add_setvar(p + '_video', 1))
+    go(add_setvar('cc_g01_ring_want', 1))
+
+    # -- 3. wait for a moment when the phone may ring -------------------------
+    #
+    # cc_g01_ring_ok is Gig01_Holocall.reds answering three questions this graph
+    # cannot ask: is the phone usable at all, is a fast travel in progress, and
+    # is V on a bike. All three are playtest fixes and all three would be lost
+    # by moving the ring into the graph, so the script keeps answering and the
+    # graph waits for the answer. holo_setup_active is the base game's own
+    # mutex on the studio: it is read and never written, so nothing this mod
+    # does can leave a vanilla holocall unable to stage.
+    #
+    # This node is also the LOOP TARGET. Vanilla's holocall phases are loops
+    # whose first pause node is fed from more than one place, and fan-in on a
+    # pause node is ordinary (docs/gotchas.md 51).
+    ring_top = add_setvar(p + '_claim', 0)
+    go(ring_top)
+    gate = add_race2(cur,
+                     (add_pause_facts([('cc_g01_ring_ok', 0, 'Greater'),
+                                       ('holo_setup_active', 1, 'Less')]), 'In', 'Out'),
+                     (add_delay(GATE_SECONDS), 'In', 'Out'),
+                     p + '_claim')
+    # Both ways out do the same thing. The cap is not a different outcome, it is
+    # the promise that waiting for a good moment cannot become waiting for ever.
+    armed = add_setvar(p + '_claim', 0)
+    b.connect((gate, 'True'), (armed, 'In'))
+    b.connect((gate, 'False'), (armed, 'In'))
+    cur = (armed, 'Out')
+    mark(4)
+
+    if incoming:
+        # -- 4. ring, and find out what the player did ------------------------
+        # WHILE THIS IS 1 THE PHONE IS ACTUALLY RINGING, and Gig01_Holocall
+        # blocks fast travel for exactly that long. The script used to work it
+        # out from its own state machine and got it wrong in a way that broke
+        # fast travel for the rest of the save: "ringing" was read as the whole
+        # state, which is the ring PLUS the entire back-off, so five-minute
+        # stretches were locked for eight seconds of ringing. The graph knows
+        # precisely, so it says so (docs/gotchas.md 24).
+        # CLEAR THE GAME'S OWN CALL FACT FIRST. It persists, and it persists
+        # at Talking once a call has been answered, so a ring placed without
+        # clearing it finds the answer already reported and connects itself
+        # before the phone has rung. Gig01_Holocall does the same thing in the
+        # same place and for the same reason.
+        go(add_setvar(phone_fact, 0))
+        go(add_setvar('cc_g01_ringing', 1))
+        go(call_node('IncomingCall', rejectable=True))
+        # WAIT ON THE FACT, NOT ON questPhonePickUp_ConditionType.
+        #
+        # Measured in play 2026-08-23, and it is the one thing that did not
+        # work: the player tapped T, the game wrote
+        # `phonecall_cc_g01_nix_with_player = 2` on time, and the pick-up
+        # condition never completed. The call sat connected and silent for six
+        # seconds and the game dropped it. That is vanilla's own node, read out
+        # of its own scene with the fields checked against the SDK, and for a
+        # call a mod issues from a quest phase it reports nothing. See
+        # docs/gotchas.md 58.
+        #
+        # The fact is written by PhoneSystem itself, it is what this mod's
+        # script has watched since 1.0, and it is visible in the dev menu's
+        # trace, which is how this was found. Greater than 1 means Talking or
+        # Rejected: the player did something.
+        answer = add_race2(cur,
+                           (add_pause_fact(phone_fact, 1, 'Greater'), 'In', 'Out'),
+                           (add_delay(RING_SECONDS), 'In', 'Out'),
+                           p + '_claim')
+        # RE-READ. Which wait woke up is not the question; what the phone says
+        # right now is. A declined call reports Rejected and then reports
+        # Talking about a second and a half later, so a branch that trusted the
+        # event would take the wrong one about half the time
+        # (docs/gotchas.md 10j). Reading it HERE, in the same tick the race
+        # resolved, is what makes that safe: the value is still Rejected.
+        # Vanilla asks the same question in the same place with its own node,
+        # `nix_holocall.scene` node 444.
+        picked = add_condition_fact(phone_fact, 2, 'Equal')
+        ring_off = add_setvar('cc_g01_ringing', 0)
+        b.connect((answer, 'True'), (ring_off, 'In'))
+        b.connect((answer, 'False'), (ring_off, 'In'))
+        b.connect((ring_off, 'Out'), (picked, 'In'))
+
+        # NOT ANSWERED: take the chrome down ourselves and go round again.
+        #
+        # Ending it here rather than leaving it to the phone's own 8 s timeout
+        # is what makes a decline behave. Vanilla's per-contact phase reacts to
+        # Rejected by ending the call, and because this mod never did, the
+        # banner stayed up, still answerable, and the key coming back up
+        # answered it.
+        cur = (picked, 'False')
+        go(call_node('EndCall'))
+        mark(5)
+        go(add_addvar(p + '_rings', 1))
+        enough = add_condition_fact(p + '_rings', RING_TRIES, 'GreaterOrEqual')
+        b.connect(cur, (enough, 'In'))
+        # Rung out or waved away enough times that something is probably wrong
+        # with the video route rather than with the player's timing. Fall back
+        # to the phone call, which rings by a completely different mechanism.
+        b.connect((enough, 'True'), (fallback, 'In'))
+        backoff = add_delay(RETRY_SECONDS)
+        b.connect((enough, 'False'), (backoff, 'In'))
+        b.connect((backoff, 'Out'), (ring_top, 'In'))
+
+        cur = (picked, 'True')
+    else:
+        # V IS DIALLING, so there is nothing to answer and nothing to miss.
+        # Vanilla's player-calling path rings the initiation tone and connects
+        # itself two to four seconds later; this is that, at a fixed length.
+        go(add_setvar('cc_g01_ringing', 1))
+        go(call_node('IncomingCall'))
+        go(add_delay(2))
+        go(add_setvar('cc_g01_ringing', 0))
+
+    # -- 5. connect, speak, hang up -------------------------------------------
+    mark(6)
+    go(call_node('StartCall'))
+    # Written for the dev menu's trace rather than for anything that reads them.
+    # The audio route sets the same pair from the script, so a trace of a video
+    # call and a trace of an audio one line up beat for beat.
+    go(add_setvar(p + '_answered', 1))
+    go(add_setvar(p + '_talking', 1))
+    go(add_setvar('cc_g01_ring_want', 0))
+    # Same window as the audio branch: V stays on foot for Johnny's beat.
+    go(add_setvar('cc_g01_vlock', 1))
+    # THE SCENE IS ANCHORED ON THE STUDIO SPOT, not on the office. Its actor
+    # spawns at offset (0, 0, 0) from this marker, so the marker IS where Nix
+    # stands. #holocall_marker lives in always_loaded_2, so it resolves from
+    # anywhere in the city.
+    go(add_scene(SCENES + holo_scene, STUDIO_MARKER, entries, exits),
+       in_sock=entries[0], out_sock=exits[0])
+    mark(7)
+    go(add_setvar(p + '_end', 1))
+    go(call_node('EndCall'))
+    go(add_toggle_component(CAMERA_REF, 'RenderToTextureCamera', False))
+    go(add_prefab_variant(SETUP_REF, SETUP_VARIANT, False))
+    go(add_prefab_variant(LIGHTS_REF, LIGHTS_VARIANT, False))
+    # <prefix>_done is read by Gig01_Encounter (the ledger goes to Nix on
+    # nixbrief_done) and by the rest of this graph, so the video branch has to
+    # write it. On the audio branch the script does.
+    go(add_setvar(p + '_done', 1))
+
+    # -- both ways out of the beat meet here ----------------------------------
+    #
+    # cc_g01_ringing is cleared on every path above already. Clearing it once
+    # more here is the belt on the braces, because it is the only fact this
+    # block writes that another system READS as a reason to take something away
+    # from the player: a stale 1 is fast travel unavailable for the rest of the
+    # save, which is the hardest kind of report to act on (docs/gotchas.md 24).
+    go(add_setvar('cc_g01_ringing', 0))
+    join = add_setvar(p + '_step', 9)
+    b.connect(cur, (join, 'In'))
+    b.connect(audio_tail, (join, 'In'))
+    chain.append((join, 'Out'))
+
+
 # CALL 1 - comic pp. 26-27. V CALLS NIX and hands over the ledger.
 # Player-initiated: Gig01_Holocall swaps caller/addressee for this one, so the
 # phone dials instead of ringing. Nix has no reason to call about a ledger he
 # does not know exists (playtest, 2026-08-12). This is the
 # handover the gig used to do off-screen: it read a kill ledger and then took a
 # callback from a netrunner V had never spoken to.
-step(add_setvar('cc_g01_nixbrief_request', 1))
-step(add_pause_fact('cc_g01_nixbrief_talking'))
 # THIS CALL LEADS TO A BEAT TOO, which is easy to miss because the beat is not
 # the next node: the send sets cc_g01_ledger_sent from Gig01_Encounter first.
 # That is three scripted beats 1.6 s apart, so the gap is seconds rather than
 # anything a player waits through, and gig01_legend follows it.
 #
 # Playtest 2026-08-21: *"after the call start, I can mount the bike, so the
-# second block is not on."* Correct, because this pair was missing.
-step(add_setvar('cc_g01_vlock', 1))
-step(add_scene(SCENES + 'gig01_nix_brief.scene', ANCHOR_OFFICE,
-               ['nix_brief_in'], ['nix_brief_out']),
-     in_sock='nix_brief_in', out_sock='nix_brief_out')
-step(add_setvar('cc_g01_nixbrief_end', 1))
-step(add_pause_fact('cc_g01_nixbrief_done'))
+# second block is not on."* Correct, because this pair was missing. The lock is
+# opened inside nix_call, at the moment the call connects, not here, because
+# from here to a call the player may not answer for minutes is a long time to
+# be told he cannot get on his bike.
+nix_call('cc_g01_nixbrief', 'gig01_nix_brief_holo.scene', 'gig01_nix_brief.scene',
+         ['nix_brief_in'], ['nix_brief_out'], incoming=False)
 
 # The send + the payment, then Johnny's p28 beat while Nix works. Both are
 # script-driven (Gig01_Encounter): the transfer is an on-screen toast in the
@@ -362,15 +726,14 @@ step(add_game_delay(hours=2))
 # Same handshake as Elena's call, different fact prefix - one system in
 # Gig01_Holocall.reds drives both. Nix's contact is a BASE-GAME one, so the
 # addressee is the existing contact id "nix"; nothing new is merged for him.
-step(add_setvar('cc_g01_nixcall_request', 1))
-step(add_pause_fact('cc_g01_nixcall_talking'))
-# Same window as Elena's, for gig01_graves. See the note by the first one.
-step(add_setvar('cc_g01_vlock', 1))
-step(add_scene(SCENES + 'gig01_nix_call.scene', ANCHOR_OFFICE,
-               ['nix_call_in'], ['nix_call_out']),
-     in_sock='nix_call_in', out_sock='nix_call_out')
-step(add_setvar('cc_g01_nixcall_end', 1))
-step(add_pause_fact('cc_g01_nixcall_done'))
+# Same window as Elena's, for gig01_graves, opened inside nix_call when the
+# call connects. See the note by the first one.
+#
+# THIS IS THE ONE CALL IN THE GIG THE PLAYER CAN MISS. He can decline it, he can
+# let it ring out, and either way Nix rings back. nix_call's docstring has the
+# four things that cannot be allowed to happen and where each is handled.
+nix_call('cc_g01_nixcall', 'gig01_nix_call_holo.scene', 'gig01_nix_call.scene',
+         ['nix_call_in'], ['nix_call_out'], incoming=True)
 
 # COMIC p30 - AFTER THE PHONE IS DOWN, not during the call.
 #

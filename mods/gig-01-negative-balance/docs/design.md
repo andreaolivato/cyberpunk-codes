@@ -252,6 +252,19 @@ decisions and their reasoning are in `docs/architecture.md`. What changed here:
   beats and same text as the SMS thread it replaces, so the story is untouched.
   `Gig01_Holocall.reds` drives the chrome; `gig01_elena_call.scene` has the
   words. She keeps `PhoneAvatars.Avatar_Unknown`: the comic's UNKNOWN CALLER.
+- **Nix's two calls are VIDEO**, added 2026-08-23. He is on the phone as a live
+  picture, speaking, with his mouth moving, in both directions: V rings him
+  with the ledger and he rings V back with the address. Elena stays a portrait,
+  which is right for her and is also the only option, because the game ships a
+  holocall studio setup for its own contacts and not for one a mod invents.
+
+  **He is rung on `contacts/cc_g01_nix`, not the base game's `nix`.** The
+  design table above still says the plan was to merge a conversation into the
+  real contact. That was tried and abandoned: ringing him drags his ordinary
+  phone conversation into ours, with small talk during the call and vanilla
+  hang-up options afterwards, so V had to hang up on a man who had already hung
+  up. A contact of our own has no conversation behind it. Same name, same
+  avatar, none of the baggage. `docs/backlog.md` 3d and 3e.
 - **Hoshino** (`gig01_hoshino.scene`) opens with a real choice: name what he
   signed, or say nothing.
 - **The epilogue** (`gig01_epilogue.scene`) has two choice hubs. Johnny's

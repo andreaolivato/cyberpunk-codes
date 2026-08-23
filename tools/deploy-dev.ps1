@@ -11,10 +11,18 @@
 #
 # The mod itself has NO CET dependency to break - see the note by that block
 # below - so this flag changes what is on disk, not how the gig behaves.
+#
+# THIS SCRIPT DOES NOT BUILD THE ARCHIVE. It copies whatever build-archive.ps1
+# last produced. Run that FIRST whenever any resource under source\wkit\raw has
+# changed, or the game gets last build's quest graph, scenes and journal with
+# this build's redscript, which looks exactly like a change that did not work.
+# There is a guard below, and it exists because that happened on 2026-08-23:
+# a whole playthrough was spent testing the previous build.
 param(
     [Parameter(Mandatory = $true)][string]$Mod,
     [string]$GameDir = "C:\Program Files (x86)\Steam\steamapps\common\Cyberpunk 2077",
-    [switch]$NoDevMenu
+    [switch]$NoDevMenu,
+    [switch]$AllowStaleArchive
 )
 
 $ErrorActionPreference = "Stop"
@@ -81,8 +89,64 @@ if ($NoDevMenu) {
     Write-Host "  cet-dev -> bin\x64\...\cyber_engine_tweaks\mods\$cetName"
 }
 
+# STALENESS GUARD, and it is the same guard build-archive.ps1 puts on audio,
+# for the same reason: a build that is silently one revision behind cannot be
+# detected downstream, and every symptom points at the change under test.
+#
+# 2026-08-23: gen_questphase.py, gen_scenes.py and the rest were re-run, this
+# script was run without build-archive.ps1 first, and it faithfully copied an
+# archive an hour old. The redscript WAS current, so the game ran new script
+# against an old quest graph and both of the beats being tested took their old
+# path. The report was "nothing we did was applied at all", which was correct.
+#
+# IT COMPARES CONTENT, NOT TIMESTAMPS, and the difference is the whole value.
+# The first version compared mtimes and cried wolf within the hour: an audit
+# re-ran every generator, every output was byte-identical, and 22 files came
+# back "newer than the archive". A guard that is wrong when you are busy gets
+# bypassed with a flag, and then it is not a guard. build-archive.ps1 writes
+# raw.sha256 next to the archive; this recomputes it.
+$packedDir = Join-Path $modDir.FullName "source\wkit\packed"
+$rawDir = Join-Path $modDir.FullName "source\wkit\raw"
+$packedArchive = Get-ChildItem $packedDir -Filter "*.archive" -File -ErrorAction SilentlyContinue |
+    Select-Object -First 1
+if ($packedArchive -and (Test-Path $rawDir)) {
+    $manifest = Get-ChildItem $rawDir -Recurse -File | Sort-Object FullName | ForEach-Object {
+        $rel = $_.FullName.Substring($rawDir.Length).TrimStart([char]92)
+        "$rel $((Get-FileHash $_.FullName -Algorithm SHA256).Hash)"
+    }
+    $sha = [System.Security.Cryptography.SHA256]::Create()
+    $bytes = [System.Text.Encoding]::UTF8.GetBytes(($manifest -join "`n"))
+    $now = ($sha.ComputeHash($bytes) | ForEach-Object { $_.ToString('x2') }) -join ''
+    $stampFile = Join-Path $packedDir 'raw.sha256'
+    $stale = $false
+    $why = ''
+    if (Test-Path $stampFile) {
+        $was = (Get-Content $stampFile -Raw).Trim()
+        if ($was -ne $now) {
+            $stale = $true
+            $why = "the resources under source\wkit\raw have CHANGED since it was packed"
+        }
+    } else {
+        # No stamp: an archive from before this guard existed. Fall back to the
+        # old timestamp test rather than passing silently, and say which it is.
+        $newer = Get-ChildItem $rawDir -Recurse -File |
+            Where-Object { $_.LastWriteTime -gt $packedArchive.LastWriteTime }
+        if ($newer) {
+            $stale = $true
+            $why = ("no raw.sha256 beside the archive, and {0} file(s) are NEWER than it. " -f $newer.Count) +
+                   "That may only be a re-run; rebuild once to get a content stamp and this stops guessing"
+        }
+    }
+    if ($stale) {
+        $msg = "STALE ARCHIVE: $why.`n`n" +
+               "Run  .\tools\build-archive.ps1 $Mod  first, then deploy again.`n" +
+               "-AllowStaleArchive deploys anyway, and you will be testing the old build."
+        if ($AllowStaleArchive) { Write-Warning $msg } else { throw $msg }
+    }
+}
+
 # Packed archive (built via WolvenKit GUI into source\wkit\packed for now)
-$src = Join-Path $modDir.FullName "source\wkit\packed"
+$src = $packedDir
 if (Test-Path $src) {
     Get-ChildItem $src -Filter "*.archive*" | ForEach-Object {
         Copy-Item $_.FullName (Join-Path $GameDir "archive\pc\mod") -Force

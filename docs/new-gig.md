@@ -374,6 +374,7 @@ diffing the generators against it is the part worth copying.
 | Want | Read |
 |---|---|
 | conversations, choices, phone calls | `docs/scene-playbook.md` |
+| a character on the phone as a live VIDEO image | `docs/scene-playbook.md`, "The MOD-OWNED recipe" |
 | voices | section 6 above, then `BUILDING.md` audio toolchain |
 | mouths moving | `questkit/lipsync.py` |
 | computer screens and shards | `docs/computer-ui-playbook.md` |
@@ -386,6 +387,16 @@ diffing the generators against it is the part worth copying.
 `tools/questkit/` is the reusable half: scenes, quest graphs, journal and map
 pins, the voice pipeline, the lipsync scorer. Each takes a `configure(...)` call
 naming your paths and prefix. Each module has a usage sketch at the top.
+
+**`questgraph.py` emits quest node types by name, not from a fixed menu**, which
+is what makes it worth more than the gig it was written for. `b.node` takes the
+type as a free string, so shipping a node type this project has never used is a
+matter of reading the fields off a vanilla resource and getting them right. The
+video holocall was built that way in a day: open a world prefab variant, toggle
+a component on a world entity, ring the phone with a feed attached, wait for a
+sector to stream in, branch once on a condition, cancel a wait that lost a race.
+All of those are helpers in there now, and none of them is about Nix or about
+this gig.
 
 Plain Python, no dependencies, runs on your machine. Nothing in it becomes a
 player download.

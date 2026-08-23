@@ -150,10 +150,22 @@ VOICE_ARCHIVE = os.path.join(GAME, 'archive', 'pc', 'content', 'lang_en_voice.ar
 #            depot path inside lang_en_voice.archive.
 #
 # V IS NOT HERE AND MUST NOT BE. He is the player and the camera is behind his
-# eyes; there is no mouth to move. Elena and Nix are not here either - both are
-# holocall-only, and a holocall in this gig draws a static contact portrait, not
-# a rendered caller (docs/scene-playbook.md, "a script-issued Video holocall
-# CRASHES the game"). A lipsync set for either would animate nothing.
+# eyes; there is no mouth to move.
+#
+# ELENA IS NOT HERE EITHER, and for the reason this entry used to give for Nix
+# as well: her call draws a static contact portrait, so a lipsync set would
+# animate nothing. She is also UNKNOWN CALLER by design, so there is no face to
+# animate even if there were a body.
+#
+# NIX IS HERE AS OF 2026-08-22, and the entry that excluded him was written
+# against a claim that has since been measured false. It said a holocall in
+# this gig "draws a static contact portrait, not a rendered caller". A mod that
+# sets `holo_nix_calls_v_start_activate` gets Nix rendered live on the phone,
+# no crash, no dialogue options (docs/backlog.md 3d). So there is a mouth after
+# all, and both of his calls in this gig are video as of 1.2.6.
+#
+# His sets are the game's own: `base\quest\holocalls\nix\lipsync\en\...\nix.anims`
+# and its siblings, so the shapes are the real actor's rather than a stand-in's.
 CHARACTERS = {
     'johnny': {
         'actor': gs.JOHNNY_ACTOR,
@@ -171,6 +183,32 @@ CHARACTERS = {
         'actor': 'hoshino',
         'regex': r'lipsync.*civ_(high|mid)_m_\d+_jap_\d+\.anims$',
     },
+    # NIX DRAWS FROM EVERY MALE CIVILIAN SET, not only his own seven.
+    #
+    # His face is in CLOSE-UP on the phone, which is a harder test than any
+    # other mouth in this gig gets, and his own sets cannot pass it. The game
+    # ships seven of them, holding 1, 2, 5, 18, 19, 21 and 31 animations, and
+    # ONE SET has to serve a whole scene. A four-line scene was therefore
+    # casting from at most 31 candidates and landing 386 ms long on an 880 ms
+    # line: the mouth still moving half a second after the words stop, which
+    # is what reads as broken. Playtest, 2026-08-23: *"really really bad
+    # compared to what we did with Johnny"*, and *"especially for the shorter
+    # sentences"*, which is exactly where a small pool fails first.
+    #
+    # Johnny lands inside 30 ms on almost every line. He is not cast better,
+    # he has 209 sets. The difference is the size of the pool and nothing
+    # else.
+    #
+    # Male civilians are 1192 sets and they are the right register: ordinary
+    # conversational speech rather than a performance. His own seven stay in
+    # the pool, so a scene that happens to fit them still gets the real
+    # actor's mouth. Borrowing is safe for the reason in the module docstring
+    # (the `rig` field records what an animation was authored on, not what it
+    # may be played on), and Hoshino has borrowed a civilian's since 1.2.0.
+    'nix': {
+        'actor': 'nix',
+        'regex': r'lipsync.*\\(nix|civ_(low|mid|high)_m_\d+_[a-z]+_\d+)\.anims$',
+    },
 }
 
 # Vanilla's own lipmap, extracted alongside the sets. It is how a source file
@@ -185,7 +223,66 @@ configure(cache=CACHE, catalogue=CATALOGUE, wolvenkit=WK,
           voice_archive=VOICE_ARCHIVE, characters=CHARACTERS)
 
 
-def _wanted():
+def _vanilla_ms(catalogue, string_id):
+    """How long a REUSED vanilla line runs, taken from its own lipsync animation.
+
+    Exact and free. A line the gig reuses whole is identified by vanilla's
+    `stringId`, and vanilla baked a lipsync animation for that very line named
+    `f_<the stringId in 16 hex digits>`. Its length IS the clip's length -
+    measured 1533 ms against the 1537 ms recorded by hand for "How's things,
+    V?", so there is nothing to estimate and nothing to keep in step.
+    """
+    want = ('f_%016X' % int(string_id)).upper()
+    for entry in catalogue.values():
+        for name, seconds in entry['anims']:
+            if name.upper() == want:
+                return int(seconds * 1000)
+    return None
+
+
+def _reused(catalogue):
+    """(scene, actorName, key, ms) for every vanilla line this gig reuses whole.
+
+    THESE FELL OUT OF THE CASTING ENTIRELY AND SHIPPED WITH A DEAD MOUTH.
+    Playtest 2026-08-23, on the first video holocall: *"just the first phrase
+    when he says how's things v, he's completely immobile, no mouth movement at
+    all. The rest are all good."*
+
+    The cause is that a reused line has no clip of ours, so it is not in
+    gen_voice's CAST and not in durations.json, and _wanted() below is built
+    from exactly those two. No entry, no pick, and `scnscreenplayDialogLine`
+    goes out with an empty animation name. Nothing errors: the actor is
+    configured correctly, the set resolves, and the face just sits there.
+
+    It only became visible because his face is now in close-up on the phone.
+    The same line has been mouthless behind a contact portrait since 1.2.0,
+    where there was nothing to see.
+
+    A reused line CANNOT be given its own perfect animation, tempting as it is:
+    one `.anims` set serves a whole scene, and the set holding `f_<stringId>`
+    is the contact's own conversation set, which is the tiny pool that made
+    everything else bad (backlog 2j). It is cast by length like any other line.
+    If the picker ever does choose that set, the exact animation wins on its
+    own merit, because its length error is zero.
+    """
+    out = []
+    for build in gs.ALL_BUILDERS:
+        scene = build()
+        for key, string_id, text in scene.reused:
+            speaker = scene.reused_actor.get(key)
+            if speaker is None or speaker >= len(scene.actors):
+                continue
+            ms = _vanilla_ms(catalogue, string_id)
+            if ms is None:
+                print('  warning: no vanilla lipsync animation for %s/%s '
+                      '(stringId %s); pacing it by estimate instead'
+                      % (scene.name, key, string_id))
+                ms = gs.estimate_ms(text)
+            out.append((scene.name, scene.actors[speaker]['actorName'], key, ms))
+    return out
+
+
+def _wanted(catalogue):
     """(character, scene, [(key, wanted_ms), ...]) for everything we can voice.
 
     Length comes from the REAL clip via gen_voice's duration sidecar - the same
@@ -199,10 +296,12 @@ def _wanted():
         with open(gv.DURATIONS, encoding='utf-8') as fh:
             durations = json.load(fh)
     texts = _line_texts()
+    reused = _reused(catalogue)
     out = []
     for char, scenes in gv.CAST.items():
         if char not in CHARACTERS:
             continue
+        actor = CHARACTERS[char]['actor']
         for scene, keys in sorted(scenes.items()):
             want = []
             for k in keys:
@@ -211,7 +310,23 @@ def _wanted():
                     text = texts.get('%s/%s' % (scene, k), '')
                     ms = gs.estimate_ms(text) if text else 2000
                 want.append((k, int(ms)))
+            # A reused vanilla line is spoken by the same mouth and comes out of
+            # the same set, so it has to be cast alongside the rest of the scene
+            # rather than left out of the list the set is chosen from.
+            want += [(k, ms) for sc, ac, k, ms in reused
+                     if sc == scene and ac == actor]
             out.append((char, scene, want))
+    # ...and a scene whose ONLY line for this character is a reused one would
+    # otherwise never reach the picker at all, because CAST is keyed by what
+    # gen_voice generates audio for.
+    seen = {(c, sc) for c, sc, _ in out}
+    for char, cfg in CHARACTERS.items():
+        extra = {}
+        for sc, ac, k, ms in reused:
+            if ac == cfg['actor'] and (char, sc) not in seen:
+                extra.setdefault(sc, []).append((k, ms))
+        for sc, want in sorted(extra.items()):
+            out.append((char, sc, want))
     return out
 
 
@@ -245,7 +360,7 @@ def main():
     if args.rebuild:
         rebuild_cache()
     catalogue = load_catalogue()
-    sets, lines, report = pick(catalogue, _wanted(), verbose=args.report)
+    sets, lines, report = pick(catalogue, _wanted(catalogue), verbose=args.report)
     _check_actor_names(sets, gs.ALL_BUILDERS)
 
     doc = {

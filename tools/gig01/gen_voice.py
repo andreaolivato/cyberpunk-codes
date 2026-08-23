@@ -128,7 +128,13 @@ CAST = {
     # the comic-verbatim exception to Nix - n05/n06 replace it. Its .wem stays
     # in source/audio, unreferenced; the key is not reused.
     'nix':     {'gig01_nix_brief': ['b02', 'b03', 'b04', 'b05'],
-                'gig01_nix_call': ['n01', 'n05', 'n06', 'n03', 'n04']},
+                'gig01_nix_call': ['n01', 'n05', 'n06', 'n03', 'n04'],
+                # THE VIDEO TWINS of Nix's two calls. Same words in the same
+                # order; audio is keyed by (scene, key), so a second scene needs
+                # its own takes and they are md5-identical copies of the ones
+                # above. Nothing was regenerated and no voice work is involved.
+                'gig01_nix_brief_holo': ['b02', 'b03', 'b04', 'b05'],
+                'gig01_nix_call_holo': ['n01', 'n05', 'n06', 'n03', 'n04']},
     'mama':    {'gig01_epilogue': ['m01', 'm02']},
     # Johnny and V arrived 2026-08-13, when the bar ending stopped being a pair
     # of scripted captions and became a real scene, and when V's hub options
@@ -186,6 +192,9 @@ CAST = {
                 # take; the key is not reused, because a key is how audio finds
                 # a line.
                 'gig01_nix_call': ['on1'],
+                # V's half of the video twins. Same copies, same reason.
+                'gig01_nix_call_holo': ['on1'],
+                'gig01_nix_brief_holo': ['vb1', 'vb2', 'vb5', 'vb6', 'vb4'],
                 'gig01_hoshino': ['vh1'],
                 'gig01_epilogue': ['ve1', 've2'],
                 'gig01_terminal': ['t01', 't03', 't05', 't10'],

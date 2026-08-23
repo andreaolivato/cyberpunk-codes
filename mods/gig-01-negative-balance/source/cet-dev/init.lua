@@ -34,9 +34,9 @@ local FACTS = {
     "phonecall_elena_ortega_with_player",
     -- Diagnostics, both default off:
     --   cc_g01_no_scene   answer the phone with no scene behind it
-    -- (cc_g01_call_video is gone: a Video holocall is closed, tried and ruled
-    --  out - the only route to it drags vanilla's own dialogue options in
-    --  with it. See docs/backlog.md 3d).
+    -- (cc_g01_call_video is gone. It gated a Video holocall, which was closed
+    --  on reasoning withdrawn 2026-08-22. The HOLOCALL LAB section further
+    --  down is where that question is being reopened; see docs/backlog.md 3d.)
     "cc_g01_no_scene",
     -- HOLD THE GIG. Set to 1 and Gig01_Start stops offering the gig, so Elena
     -- never rings; clear it and the next check picks up where it left off. For
@@ -51,6 +51,34 @@ local FACTS = {
     -- it does NOT unblock the gig.
     "cc_g01_heroes_notified",
     -- Nix's call, same handshake with a different prefix.
+    -- THE VIDEO ROUTE for both Nix calls (docs/backlog.md 3d). Read these, do
+    -- not set them: the QUEST PHASE owns both calls now, end to end.
+    --   _video     1 = Nix is on screen, rendered live. 0 = the audio call with
+    --              a portrait, which is the fallback.
+    --   _videofail 1 = the studio never arrived, or the call went unanswered
+    --              enough times, so this beat gave up on video and rang the old
+    --              way instead.
+    --   _rings     how many times the callback has rung unanswered. It falls
+    --              back to the audio call at 5.
+    --   _step      a breadcrumb the phase drops after every node, so a beat
+    --              that stops says WHERE instead of nothing at all. 1 opened
+    --              the studio, 2 asked for it, 3 it arrived, 4 ringing, 5 a
+    --              ring was missed, 6 connected, 7 the words are done, 9 the
+    --              beat is over. 20 and 21 are the audio fallback.
+    --   _claim     internal to the phase's races; 0 between them.
+    "cc_g01_nixbrief_video",
+    "cc_g01_nixbrief_videofail",
+    "cc_g01_nixbrief_step",
+    "cc_g01_nixcall_video",
+    "cc_g01_nixcall_videofail",
+    "cc_g01_nixcall_step",
+    "cc_g01_nixcall_rings",
+    -- MAY THE PHONE RING RIGHT NOW. _want is the quest phase asking,
+    -- _ok is Gig01_Holocall answering (combat, fast travel, V on a bike).
+    -- A callback that never rings with _want 1 and _ok 0 for minutes is V
+    -- riding; the script gives up and rings anyway after ninety seconds.
+    "cc_g01_ring_want",
+    "cc_g01_ring_ok",
     "cc_g01_nixcall_request",
     "cc_g01_nixcall_answered",
     "cc_g01_nixcall_talking",
@@ -300,6 +328,38 @@ local TRACE_FACTS = {
     "cc_g01_bar_done",
     "cc_g01_done",
     "cc_g01_rewarded",
+    -- BASE-GAME facts, traced for the holocall lab (docs/backlog.md 3d). This
+    -- is the one area of the game known to hard crash, so the handshake that
+    -- leads up to a crash has to be on disk before it happens.
+    -- holo_setup_active is a mutex on the studio: one call at a time.
+    "holo_setup_started",
+    "holo_setup_active",
+    "holo_nix_calls_v_start_activate",
+    "holo_nix_calls_v_start_done",
+    "holo_nix_calls_v_end_activate",
+    "holo_nix_calls_v_end_done",
+    "holo_nix_calls_v_rejected",
+    "phonecall_nix_with_player",
+    "phonecall_player_with_nix",
+    "holo_v_calls_nix_start_activate",
+    "holo_v_calls_nix_start_done",
+    "holo_v_calls_nix_end_done",
+    "cc_g01_nixbrief_video",
+    "cc_g01_nixbrief_videofail",
+    "cc_g01_nixbrief_step",
+    "cc_g01_nixcall_video",
+    "cc_g01_nixcall_videofail",
+    "cc_g01_nixcall_step",
+    "cc_g01_nixcall_rings",
+    "cc_g01_ring_want",
+    "cc_g01_ring_ok",
+    -- The AUDIO half of the same vanilla holocall phase. Traced so that "the
+    -- button did nothing" can be told apart from "the fact was set and the
+    -- phase declined to act on it", which need opposite fixes.
+    "audio_nix_calls_v_start_activate",
+    "audio_nix_calls_v_start_done",
+    "audio_nix_calls_v_end_activate",
+    "audio_nix_calls_v_end_done",
 }
 local traceLast = {}
 local traceClock = 0
@@ -333,6 +393,10 @@ registerForEvent("onUpdate", function(delta)
         end
     end
 end)
+
+-- The holocall lab's helpers lived here: the redscript bridge, the fact latch,
+-- the skip probe and the step scheduler. Removed with the bench for 1.2.6. See
+-- the note where its buttons were, further down.
 
 -- {journal path, entry class name}
 local ELENA_PATHS = {
@@ -1708,6 +1772,14 @@ registerForEvent("onDraw", function()
     -- recipe is in tools/gig01/gen_sector.py and source/tweaks/shard.yaml.
     -- Recover the bench from the commit before gig-01/v1.2.5 if a future
     -- container question needs it; do not rebuild it from memory.
+
+    -- The holocall lab lived here, and it came out with the 1.2.6 release.
+    -- It proved the whole video holocall: that a mod can open the studio, take
+    -- the camera, ring its own contact in either direction and speak over the
+    -- feed. All of it is written up in backlog.md 3d, the recipe is in
+    -- scene-playbook.md, and the traps are gotchas 50 to 59. Recover the
+    -- buttons from the commit before gig-01/v1.2.6 if a future question needs
+    -- them; do not rebuild them from memory.
 
     ImGui.Spacing()
     ImGui.Text("Teleports")

@@ -398,7 +398,45 @@ def build_elena():
 
 
 # ========================================================== scene 2: the Nix call
-def build_nix():
+def nix_actor(s, holo):
+    """Nix, either standing in the holocall studio or a kilometre underground.
+
+    THE TWO VARIANTS EXIST SO THE GIG CANNOT STALL, and that is the only reason
+    the dialogue is built twice. The video one needs a studio that has to be
+    opened, streamed and lit before it can be looked at, and a beat half an hour
+    into the gig that cannot start would end the playthrough there. The quest
+    phase opens the studio, waits a bounded time for it, and enters the plain
+    scene instead if it never arrives.
+
+      holo=True   a body of the scene's OWN, spawned on the studio spot and
+                  rendered live on the phone. It is the scene's actor rather
+                  than a borrowed one, which is what makes the lipsync land
+                  (gotcha 16); it is forced visible because the player is 8.5 km
+                  from it and would otherwise see an empty room.
+      holo=False  what has shipped since 1.2.0: the same body, a kilometre away
+                  and a hundred metres down, never seen, behind a static
+                  contact portrait.
+
+    THE OFFSET AND THE YAW ARE IN THE MARKER'S FRAME, not the world's. The
+    quest phase anchors the video scenes at `#holocall_marker`, the studio's own
+    floor spot, so (0, 0, 0) lands him exactly on it. That marker carries its
+    own rotation of about -141 degrees: yaw 180 was derived from "the camera is
+    at -Y" and put him back to the lens. 0 is correct, and it was found by
+    looking at him (playtest, 2026-08-23).
+
+    It used to ACQUIRE vanilla's studio body through the `nix_holo` spawn set.
+    That works, and it only works for an incoming call to a base-game contact,
+    because the body only exists while vanilla's own holocall phase is staging
+    one. Spawning our own is what makes the outgoing call possible and what
+    keeps Nix's small talk out of both (docs/backlog.md 3d).
+    """
+    if holo:
+        return s.add_actor('nix', 'Character.Nix', offset=(0.0, 0.0, 0.0),
+                           yaw=0.0, force_visible=True)
+    return s.add_actor('nix', 'Character.Nix')
+
+
+def build_nix(holo=False):
     """Nix decrypts the ledger and names Hoshino. Was an SMS thread.
 
     Character.Nix is REAL - captured off the live NPC in Afterlife with the dev
@@ -434,8 +472,8 @@ def build_nix():
     key it was filed under. `vo_corpus.py search` prints it, and an audition
     would have caught this in one listen.
     """
-    s = Scene('gig01_nix_call', ANCHOR_OFFICE)
-    nix = s.add_actor('nix', 'Character.Nix')
+    s = Scene('gig01_nix_call_holo' if holo else 'gig01_nix_call', ANCHOR_OFFICE)
+    nix = nix_actor(s, holo)
     # JOHNNY, ADDED 2026-08-13 for his two restored p30 lines. He is voice only
     # here, which is deliberate: his lines are inner=True, and inner dialog
     # plays 2D, confirmed in game - so this actor never needs to be
@@ -553,7 +591,7 @@ def build_graves():
     return s
 
 
-def build_nix_brief():
+def build_nix_brief(holo=False):
     """V hands Nix the ledger and hires him. Comic pp. 26-27, verbatim.
 
     THIS CALL WAS MISSING and its absence was a real hole: the gig had V read a
@@ -577,8 +615,8 @@ def build_nix_brief():
     three consecutive single-option hubs. They are now one V section of three
     lines, which is what they always were.
     """
-    s = Scene('gig01_nix_brief', ANCHOR_OFFICE)
-    nix = s.add_actor('nix', 'Character.Nix')
+    s = Scene('gig01_nix_brief_holo' if holo else 'gig01_nix_brief', ANCHOR_OFFICE)
+    nix = nix_actor(s, holo)
     v = s.add_player()
 
     def N(text, key, vanilla_sid=None):
@@ -1626,11 +1664,28 @@ def build_bar():
 # too - a scene that was in the generator but not in gen_voice's copy of this
 # list was silently unvoiceable, and the failure was a KeyError three tools
 # downstream rather than anything that named the real problem.
+#
+# The two holocall BENCHES that lived at the end of this list are gone, removed
+# for the 1.2.6 release. They proved the video holocall and then had nothing
+# left to prove; docs/backlog.md 3d is the account and keeps everything they
+# measured.
+def build_nix_holo():
+    return build_nix(holo=True)
+
+
+def build_nix_brief_holo():
+    return build_nix_brief(holo=True)
+
+
 ALL_BUILDERS = (build_elena, build_arasaka, build_terminal, build_shard_find,
                 build_shard_read, build_nix_brief,
                 build_legend, build_nix, build_graves, build_hoshino, build_kill,
                 build_malware, build_epilogue,
-                build_bar)
+                build_bar,
+                # The video twins of Nix's two calls. Same words, same keys,
+                # same order; the actor is borrowed from the holocall studio
+                # instead of spawned. See nix_actor().
+                build_nix_brief_holo, build_nix_holo)
 
 
 if __name__ == '__main__':

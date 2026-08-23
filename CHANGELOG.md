@@ -5,6 +5,16 @@ Negative Balance releases, newest first. The same changelog is on the mod's
 
 ---
 
+## 1.2.6 (2026-08-23)
+
+Safe to install mid-save. Nothing to restart.
+
+- **Changed: Nix appears on the phone as a live video image at both of his
+  calls.** He was a static contact portrait; he is now rendered in real time in
+  the game's own holocall studio, speaking, with his mouth moving.
+
+---
+
 ## 1.2.5 (2026-08-22)
 
 Safe to install mid-save. Nothing to restart.

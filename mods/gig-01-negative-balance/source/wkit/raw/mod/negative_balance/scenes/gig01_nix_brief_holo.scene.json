@@ -4,7 +4,7 @@
     "WKitJsonVersion": "0.0.9",
     "GameVersion": 2310,
     "DataType": "CR2W",
-    "ArchiveFileName": "gig01_nix_brief.scene"
+    "ArchiveFileName": "gig01_nix_brief_holo.scene"
   },
   "Data": {
     "Version": 195,
@@ -116,7 +116,7 @@
               "$value": "nix"
             },
             "findInWorld": 0,
-            "forceMaxVisibility": 0,
+            "forceMaxVisibility": 1,
             "isEnabled": 1,
             "itemOwnerId": {
               "$type": "scnPerformerId",
@@ -147,9 +147,9 @@
               "position": {
                 "$type": "Vector4",
                 "W": 0,
-                "X": 1000.0,
-                "Y": 1000.0,
-                "Z": -100.0
+                "X": 0.0,
+                "Y": 0.0,
+                "Z": 0.0
               }
             },
             "spawnOnStart": 1,
@@ -205,7 +205,7 @@
         "performersDebugSymbols": [
           {
             "$type": "scnPerformerSymbol",
-            "editorPerformerId": "2520992263262702471",
+            "editorPerformerId": "3314135394705513726",
             "entityRef": {
               "$type": "gameEntityReference",
               "dynamicEntityUniqueName": {
@@ -238,7 +238,7 @@
           },
           {
             "$type": "scnPerformerSymbol",
-            "editorPerformerId": "2316396516881442825",
+            "editorPerformerId": "2804182492161313386",
             "entityRef": {
               "$type": "gameEntityReference",
               "dynamicEntityUniqueName": {
@@ -316,7 +316,7 @@
             "localeId": "en_us",
             "locstringId": {
               "$type": "scnlocLocstringId",
-              "ruid": "2471150095423650099"
+              "ruid": "2479835703803307780"
             },
             "signature": {
               "$type": "scnlocSignature",
@@ -324,7 +324,7 @@
             },
             "variantId": {
               "$type": "scnlocVariantId",
-              "ruid": "2410660241321224463"
+              "ruid": "3150117497398025298"
             },
             "vpeIndex": 0
           },
@@ -333,7 +333,7 @@
             "localeId": "db_db",
             "locstringId": {
               "$type": "scnlocLocstringId",
-              "ruid": "2471150095423650099"
+              "ruid": "2479835703803307780"
             },
             "signature": {
               "$type": "scnlocSignature",
@@ -341,7 +341,7 @@
             },
             "variantId": {
               "$type": "scnlocVariantId",
-              "ruid": "3450697164049005454"
+              "ruid": "3040250091567141891"
             },
             "vpeIndex": 1
           },
@@ -350,7 +350,7 @@
             "localeId": "en_us",
             "locstringId": {
               "$type": "scnlocLocstringId",
-              "ruid": "2471151194935278310"
+              "ruid": "2479839002338192413"
             },
             "signature": {
               "$type": "scnlocSignature",
@@ -358,7 +358,7 @@
             },
             "variantId": {
               "$type": "scnlocVariantId",
-              "ruid": "3449893206987194810"
+              "ruid": "2571819720394853415"
             },
             "vpeIndex": 2
           },
@@ -367,7 +367,7 @@
             "localeId": "db_db",
             "locstringId": {
               "$type": "scnlocLocstringId",
-              "ruid": "2471151194935278310"
+              "ruid": "2479839002338192413"
             },
             "signature": {
               "$type": "scnlocSignature",
@@ -375,7 +375,7 @@
             },
             "variantId": {
               "$type": "scnlocVariantId",
-              "ruid": "3299987696509972827"
+              "ruid": "3386570559416037270"
             },
             "vpeIndex": 3
           },
@@ -384,7 +384,7 @@
             "localeId": "en_us",
             "locstringId": {
               "$type": "scnlocLocstringId",
-              "ruid": "2471154493470162943"
+              "ruid": "2479831305756794936"
             },
             "signature": {
               "$type": "scnlocSignature",
@@ -392,7 +392,7 @@
             },
             "variantId": {
               "$type": "scnlocVariantId",
-              "ruid": "2487805840522423555"
+              "ruid": "3387650436387635686"
             },
             "vpeIndex": 4
           },
@@ -401,7 +401,7 @@
             "localeId": "db_db",
             "locstringId": {
               "$type": "scnlocLocstringId",
-              "ruid": "2471154493470162943"
+              "ruid": "2479831305756794936"
             },
             "signature": {
               "$type": "scnlocSignature",
@@ -409,7 +409,7 @@
             },
             "variantId": {
               "$type": "scnlocVariantId",
-              "ruid": "2677144020211661034"
+              "ruid": "3136218426932384847"
             },
             "vpeIndex": 5
           },
@@ -418,7 +418,7 @@
             "localeId": "en_us",
             "locstringId": {
               "$type": "scnlocLocstringId",
-              "ruid": "2471155592981791154"
+              "ruid": "2479834604291679569"
             },
             "signature": {
               "$type": "scnlocSignature",
@@ -426,7 +426,7 @@
             },
             "variantId": {
               "$type": "scnlocVariantId",
-              "ruid": "3421666668797353998"
+              "ruid": "2591071678536691355"
             },
             "vpeIndex": 6
           },
@@ -435,7 +435,7 @@
             "localeId": "db_db",
             "locstringId": {
               "$type": "scnlocLocstringId",
-              "ruid": "2471155592981791154"
+              "ruid": "2479834604291679569"
             },
             "signature": {
               "$type": "scnlocSignature",
@@ -443,7 +443,7 @@
             },
             "variantId": {
               "$type": "scnlocVariantId",
-              "ruid": "2874617296956943495"
+              "ruid": "2418110079617803730"
             },
             "vpeIndex": 7
           },
@@ -452,7 +452,7 @@
             "localeId": "en_us",
             "locstringId": {
               "$type": "scnlocLocstringId",
-              "ruid": "3152720861816928544"
+              "ruid": "2722668342718222675"
             },
             "signature": {
               "$type": "scnlocSignature",
@@ -460,7 +460,7 @@
             },
             "variantId": {
               "$type": "scnlocVariantId",
-              "ruid": "3071123569920393736"
+              "ruid": "3141344105422874741"
             },
             "vpeIndex": 8
           },
@@ -469,7 +469,7 @@
             "localeId": "db_db",
             "locstringId": {
               "$type": "scnlocLocstringId",
-              "ruid": "3152720861816928544"
+              "ruid": "2722668342718222675"
             },
             "signature": {
               "$type": "scnlocSignature",
@@ -477,7 +477,7 @@
             },
             "variantId": {
               "$type": "scnlocVariantId",
-              "ruid": "3222044368831240801"
+              "ruid": "2592619906536029644"
             },
             "vpeIndex": 9
           },
@@ -486,7 +486,7 @@
             "localeId": "en_us",
             "locstringId": {
               "$type": "scnlocLocstringId",
-              "ruid": "3152721961328556755"
+              "ruid": "2722667243206594464"
             },
             "signature": {
               "$type": "scnlocSignature",
@@ -494,7 +494,7 @@
             },
             "variantId": {
               "$type": "scnlocVariantId",
-              "ruid": "3059141349932139899"
+              "ruid": "2689034696763166698"
             },
             "vpeIndex": 10
           },
@@ -503,7 +503,7 @@
             "localeId": "db_db",
             "locstringId": {
               "$type": "scnlocLocstringId",
-              "ruid": "3152721961328556755"
+              "ruid": "2722667243206594464"
             },
             "signature": {
               "$type": "scnlocSignature",
@@ -511,7 +511,7 @@
             },
             "variantId": {
               "$type": "scnlocVariantId",
-              "ruid": "2641296521226539954"
+              "ruid": "2823662922283675019"
             },
             "vpeIndex": 11
           },
@@ -520,7 +520,7 @@
             "localeId": "en_us",
             "locstringId": {
               "$type": "scnlocLocstringId",
-              "ruid": "2471153393958534732"
+              "ruid": "2479832405268423147"
             },
             "signature": {
               "$type": "scnlocSignature",
@@ -528,7 +528,7 @@
             },
             "variantId": {
               "$type": "scnlocVariantId",
-              "ruid": "3045451846426286064"
+              "ruid": "2403980072278157713"
             },
             "vpeIndex": 12
           },
@@ -537,7 +537,7 @@
             "localeId": "db_db",
             "locstringId": {
               "$type": "scnlocLocstringId",
-              "ruid": "2471153393958534732"
+              "ruid": "2479832405268423147"
             },
             "signature": {
               "$type": "scnlocSignature",
@@ -545,7 +545,7 @@
             },
             "variantId": {
               "$type": "scnlocVariantId",
-              "ruid": "2384362258518337881"
+              "ruid": "3391080761385569872"
             },
             "vpeIndex": 13
           },
@@ -554,7 +554,7 @@
             "localeId": "en_us",
             "locstringId": {
               "$type": "scnlocLocstringId",
-              "ruid": "3152727458886697810"
+              "ruid": "2722674939787991941"
             },
             "signature": {
               "$type": "scnlocSignature",
@@ -562,7 +562,7 @@
             },
             "variantId": {
               "$type": "scnlocVariantId",
-              "ruid": "2347355534225803954"
+              "ruid": "3316244441197077043"
             },
             "vpeIndex": 14
           },
@@ -571,7 +571,7 @@
             "localeId": "db_db",
             "locstringId": {
               "$type": "scnlocLocstringId",
-              "ruid": "3152727458886697810"
+              "ruid": "2722674939787991941"
             },
             "signature": {
               "$type": "scnlocSignature",
@@ -579,7 +579,7 @@
             },
             "variantId": {
               "$type": "scnlocVariantId",
-              "ruid": "2962980725040924387"
+              "ruid": "2607213189381016026"
             },
             "vpeIndex": 15
           },
@@ -588,7 +588,7 @@
             "localeId": "en_us",
             "locstringId": {
               "$type": "scnlocLocstringId",
-              "ruid": "3152728558398326021"
+              "ruid": "2722673840276363730"
             },
             "signature": {
               "$type": "scnlocSignature",
@@ -596,7 +596,7 @@
             },
             "variantId": {
               "$type": "scnlocVariantId",
-              "ruid": "3231319903394340765"
+              "ruid": "2747036102053806560"
             },
             "vpeIndex": 16
           },
@@ -605,7 +605,7 @@
             "localeId": "db_db",
             "locstringId": {
               "$type": "scnlocLocstringId",
-              "ruid": "3152728558398326021"
+              "ruid": "2722673840276363730"
             },
             "signature": {
               "$type": "scnlocSignature",
@@ -613,7 +613,7 @@
             },
             "variantId": {
               "$type": "scnlocVariantId",
-              "ruid": "3298183194614394500"
+              "ruid": "2370550618887794185"
             },
             "vpeIndex": 17
           }
@@ -624,7 +624,7 @@
             "content": "Bad. Arasaka's running a kill ledger.",
             "variantId": {
               "$type": "scnlocVariantId",
-              "ruid": "2410660241321224463"
+              "ruid": "3150117497398025298"
             }
           },
           {
@@ -632,7 +632,7 @@
             "content": "Bad. Arasaka's running a kill ledger.",
             "variantId": {
               "$type": "scnlocVariantId",
-              "ruid": "3450697164049005454"
+              "ruid": "3040250091567141891"
             }
           },
           {
@@ -640,7 +640,7 @@
             "content": "Cracked the logs. Downloaded the ledger.",
             "variantId": {
               "$type": "scnlocVariantId",
-              "ruid": "3449893206987194810"
+              "ruid": "2571819720394853415"
             }
           },
           {
@@ -648,7 +648,7 @@
             "content": "Cracked the logs. Downloaded the ledger.",
             "variantId": {
               "$type": "scnlocVariantId",
-              "ruid": "3299987696509972827"
+              "ruid": "3386570559416037270"
             }
           },
           {
@@ -656,7 +656,7 @@
             "content": "Someone's signing off on every one of these.",
             "variantId": {
               "$type": "scnlocVariantId",
-              "ruid": "2487805840522423555"
+              "ruid": "3387650436387635686"
             }
           },
           {
@@ -664,7 +664,7 @@
             "content": "Someone's signing off on every one of these.",
             "variantId": {
               "$type": "scnlocVariantId",
-              "ruid": "2677144020211661034"
+              "ruid": "3136218426932384847"
             }
           },
           {
@@ -672,7 +672,7 @@
             "content": "Find me the name.",
             "variantId": {
               "$type": "scnlocVariantId",
-              "ruid": "3421666668797353998"
+              "ruid": "2591071678536691355"
             }
           },
           {
@@ -680,7 +680,7 @@
             "content": "Find me the name.",
             "variantId": {
               "$type": "scnlocVariantId",
-              "ruid": "2874617296956943495"
+              "ruid": "2418110079617803730"
             }
           },
           {
@@ -688,7 +688,7 @@
             "content": "That's exec-tier heat, V.",
             "variantId": {
               "$type": "scnlocVariantId",
-              "ruid": "3071123569920393736"
+              "ruid": "3141344105422874741"
             }
           },
           {
@@ -696,7 +696,7 @@
             "content": "That's exec-tier heat, V.",
             "variantId": {
               "$type": "scnlocVariantId",
-              "ruid": "3222044368831240801"
+              "ruid": "2592619906536029644"
             }
           },
           {
@@ -704,7 +704,7 @@
             "content": "I can dig, but who's paying?",
             "variantId": {
               "$type": "scnlocVariantId",
-              "ruid": "3059141349932139899"
+              "ruid": "2689034696763166698"
             }
           },
           {
@@ -712,7 +712,7 @@
             "content": "I can dig, but who's paying?",
             "variantId": {
               "$type": "scnlocVariantId",
-              "ruid": "2641296521226539954"
+              "ruid": "2823662922283675019"
             }
           },
           {
@@ -720,7 +720,7 @@
             "content": "I am.",
             "variantId": {
               "$type": "scnlocVariantId",
-              "ruid": "3045451846426286064"
+              "ruid": "2403980072278157713"
             }
           },
           {
@@ -728,7 +728,7 @@
             "content": "I am.",
             "variantId": {
               "$type": "scnlocVariantId",
-              "ruid": "2384362258518337881"
+              "ruid": "3391080761385569872"
             }
           },
           {
@@ -736,7 +736,7 @@
             "content": "Heh. That'll take a minute.",
             "variantId": {
               "$type": "scnlocVariantId",
-              "ruid": "2347355534225803954"
+              "ruid": "3316244441197077043"
             }
           },
           {
@@ -744,7 +744,7 @@
             "content": "Heh. That'll take a minute.",
             "variantId": {
               "$type": "scnlocVariantId",
-              "ruid": "2962980725040924387"
+              "ruid": "2607213189381016026"
             }
           },
           {
@@ -752,7 +752,7 @@
             "content": "I'll call you back.",
             "variantId": {
               "$type": "scnlocVariantId",
-              "ruid": "3231319903394340765"
+              "ruid": "2747036102053806560"
             }
           },
           {
@@ -760,7 +760,7 @@
             "content": "I'll call you back.",
             "variantId": {
               "$type": "scnlocVariantId",
-              "ruid": "3298183194614394500"
+              "ruid": "2370550618887794185"
             }
           }
         ]
@@ -931,7 +931,7 @@
                       "executionTagFlags": 0,
                       "id": {
                         "$type": "scnSceneEventId",
-                        "id": "3007506177318819678"
+                        "id": "2505424522037604851"
                       },
                       "scalingData": null,
                       "screenplayLineId": {
@@ -1023,7 +1023,7 @@
                       "executionTagFlags": 0,
                       "id": {
                         "$type": "scnSceneEventId",
-                        "id": "2358505145285655785"
+                        "id": "3185106326538313288"
                       },
                       "scalingData": null,
                       "screenplayLineId": {
@@ -1063,7 +1063,7 @@
                       "executionTagFlags": 0,
                       "id": {
                         "$type": "scnSceneEventId",
-                        "id": "2358504045774027574"
+                        "id": "3185107426049941499"
                       },
                       "scalingData": null,
                       "screenplayLineId": {
@@ -1103,7 +1103,7 @@
                       "executionTagFlags": 0,
                       "id": {
                         "$type": "scnSceneEventId",
-                        "id": "2358502946262399363"
+                        "id": "3185108525561569710"
                       },
                       "scalingData": null,
                       "screenplayLineId": {
@@ -1143,7 +1143,7 @@
                       "executionTagFlags": 0,
                       "id": {
                         "$type": "scnSceneEventId",
-                        "id": "2358501846750771152"
+                        "id": "3185109625073197921"
                       },
                       "scalingData": null,
                       "screenplayLineId": {
@@ -1235,7 +1235,7 @@
                       "executionTagFlags": 0,
                       "id": {
                         "$type": "scnSceneEventId",
-                        "id": "3030250675001252584"
+                        "id": "2390919181929360329"
                       },
                       "scalingData": null,
                       "screenplayLineId": {
@@ -1275,7 +1275,7 @@
                       "executionTagFlags": 0,
                       "id": {
                         "$type": "scnSceneEventId",
-                        "id": "3030251774512880795"
+                        "id": "2390918082417732118"
                       },
                       "scalingData": null,
                       "screenplayLineId": {
@@ -1367,7 +1367,7 @@
                       "executionTagFlags": 0,
                       "id": {
                         "$type": "scnSceneEventId",
-                        "id": "2473010485393900307"
+                        "id": "3039920213962524222"
                       },
                       "scalingData": null,
                       "screenplayLineId": {
@@ -1459,7 +1459,7 @@
                       "executionTagFlags": 0,
                       "id": {
                         "$type": "scnSceneEventId",
-                        "id": "3175296050088630642"
+                        "id": "2368174684246927423"
                       },
                       "scalingData": null,
                       "screenplayLineId": {
@@ -1499,7 +1499,7 @@
                       "executionTagFlags": 0,
                       "id": {
                         "$type": "scnSceneEventId",
-                        "id": "3175297149600258853"
+                        "id": "2368173584735299212"
                       },
                       "scalingData": null,
                       "screenplayLineId": {
@@ -1597,7 +1597,7 @@
         "$type": "scnSceneSolutionHash",
         "sceneSolutionHash": {
           "$type": "scnSceneSolutionHashHash",
-          "sceneSolutionHashDate": "2965828533313645219"
+          "sceneSolutionHashDate": "3330304152083738312"
         }
       },
       "screenplayStore": {
@@ -1656,7 +1656,7 @@
             },
             "locstringId": {
               "$type": "scnlocLocstringId",
-              "ruid": "2471150095423650099"
+              "ruid": "2479835703803307780"
             },
             "maleLipsyncAnimationName": {
               "$type": "CName",
@@ -1692,7 +1692,7 @@
             },
             "locstringId": {
               "$type": "scnlocLocstringId",
-              "ruid": "2471151194935278310"
+              "ruid": "2479839002338192413"
             },
             "maleLipsyncAnimationName": {
               "$type": "CName",
@@ -1728,7 +1728,7 @@
             },
             "locstringId": {
               "$type": "scnlocLocstringId",
-              "ruid": "2471154493470162943"
+              "ruid": "2479831305756794936"
             },
             "maleLipsyncAnimationName": {
               "$type": "CName",
@@ -1764,7 +1764,7 @@
             },
             "locstringId": {
               "$type": "scnlocLocstringId",
-              "ruid": "2471155592981791154"
+              "ruid": "2479834604291679569"
             },
             "maleLipsyncAnimationName": {
               "$type": "CName",
@@ -1800,7 +1800,7 @@
             },
             "locstringId": {
               "$type": "scnlocLocstringId",
-              "ruid": "3152720861816928544"
+              "ruid": "2722668342718222675"
             },
             "maleLipsyncAnimationName": {
               "$type": "CName",
@@ -1836,7 +1836,7 @@
             },
             "locstringId": {
               "$type": "scnlocLocstringId",
-              "ruid": "3152721961328556755"
+              "ruid": "2722667243206594464"
             },
             "maleLipsyncAnimationName": {
               "$type": "CName",
@@ -1872,7 +1872,7 @@
             },
             "locstringId": {
               "$type": "scnlocLocstringId",
-              "ruid": "2471153393958534732"
+              "ruid": "2479832405268423147"
             },
             "maleLipsyncAnimationName": {
               "$type": "CName",
@@ -1908,7 +1908,7 @@
             },
             "locstringId": {
               "$type": "scnlocLocstringId",
-              "ruid": "3152727458886697810"
+              "ruid": "2722674939787991941"
             },
             "maleLipsyncAnimationName": {
               "$type": "CName",
@@ -1944,7 +1944,7 @@
             },
             "locstringId": {
               "$type": "scnlocLocstringId",
-              "ruid": "3152728558398326021"
+              "ruid": "2722673840276363730"
             },
             "maleLipsyncAnimationName": {
               "$type": "CName",
