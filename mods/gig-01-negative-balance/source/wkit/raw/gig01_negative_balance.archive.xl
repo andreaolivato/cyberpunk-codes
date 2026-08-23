@@ -157,13 +157,23 @@ streaming:
     # read.
     #
     # THIS IS THE ONLY SECTOR THE MOD SHIPS. A second block sat here holding
-    # two marker nodes for map pins; deleted 2026-08-14, because a node shipped
-    # in a MOD sector never registers its global name - proven twice in game
-    # ('Can't resolve mappin ... reference'), and confirmed in playtest that
-    # Californication and OneMoreLight, which do exactly that, have broken
-    # pins too. Pins now anchor to base-game nodes in the game's own
-    # always-loaded sectors: see ANCHOR_POS in tools/gig01/gen_journal.py and
-    # docs/map-pins-playbook.md.
+    # two marker nodes for map pins, deleted 2026-08-14 because those pins did
+    # not resolve: 'Can't resolve mappin ... reference', twice in game, and
+    # Californication and OneMoreLight have the same broken pins.
+    #
+    # THE REASON RECORDED HERE WAS WRONG and is corrected 2026-08-23. It read
+    # "a node shipped in a MOD sector never registers its global name". It
+    # does. What does not register is the SHORT form, and the short form was
+    # all this project had ever written. A node named in full,
+    # $/03_night_city/..., resolves and a map pin anchors to it, measured in
+    # game (docs/backlog.md 11 and 20, docs/gotchas.md 39).
+    #
+    # The decision stands on the other reason. A mod sector is streamed by
+    # proximity, so an anchor inside one is absent exactly when a pin is wanted
+    # from across the city, and an always-loaded sector of our own is a bigger
+    # thing to ship than this gig needs. Pins anchor to base-game nodes in the
+    # game's own always-loaded sectors: see ANCHOR_POS in
+    # tools/gig01/gen_journal.py and docs/map-pins-playbook.md.
     - mod\worlds\03_night_city\_compiled\default\cc_g01_world.streamingblock
   # REMOVING THE VANILLA SHARD FROM THE OFFICE DESK.
   #

@@ -31,7 +31,7 @@ being given it.
 | § | Item |
 |---|---|
 | 10i | Reload crashes on heavily modded installs. Two reporters, same symptom. No mechanism found; the A/B test is now deterministic, see 14 |
-| 11 | Binding a `.community` resource to the world. Research only, and no longer blocking anything: the guard placement it was wanted for was accepted as-is in 17 |
+| 11 | Binding a `.community` resource to the world, which is the OPEN half of 11; the naming half closed on 2026-08-17. Research only, and no longer blocking anything: the guard placement it was wanted for was accepted as-is in 17 |
 
 **6 closed on 2026-08-22 and shipped in 1.2.5**, after standing open since
 2026-08-14. The shard on the office desk has a Take and Read prompt, carries
@@ -52,10 +52,10 @@ as impossible for eight days. Two of the three faults found while building it
 were the same mistake in miniature: a number that measured the wrong thing, and
 a symptom that named the wrong system.
 
-Everything else is closed. Three entries look open and are not: 2f (re-time
-scenes from real clip length) shipped as `durations.json`, 0b is the release
-checklist with all of it struck through, and 11's own heading says closed
-because the half it was opened for was answered by 20.
+Everything else is closed. Two entries look open and are not: 2f (re-time
+scenes from real clip length) shipped as `durations.json`, and 0b is the
+release checklist with all of it struck through. 11 is genuinely half open, and
+its heading says which half.
 
 17, 22, 23, 24 and 25 all closed on 2026-08-21 and shipped in 1.2.4. Two of
 them closed without being fixed, which is worth knowing before reopening
@@ -3507,7 +3507,19 @@ everything, and would explain unrelated mods breaking too.
 
 ---
 
-## 11. Can a node this mod ships be addressed by name? YES, measured 2026-08-17. Fully closed by 20
+## 11. Two questions under one number. The NAMING one is closed; the COMMUNITY one is open
+
+**Read this first, because the number covers two things and only one of them
+is finished.**
+
+| | |
+|---|---|
+| **Can a node this mod ships be addressed by name?** | **CLOSED.** Yes, measured 2026-08-17, in the LONG form only. 20 then confirmed a map pin anchors to one. |
+| **What binds a `.community` resource to the world?** | **OPEN.** Nothing has been tried since 2026-08-17. It is the entry in the open-items table at the top of this file. |
+
+They arrived together because the first was asked in order to answer the
+second, and the heading said "fully closed" for months while the table above
+listed 11 as open. Both were half right.
 
 The question decides how a mod places a custom NPC who has to speak. A scene
 acquires an actor through a NodeRef, and so does every quest node that could
