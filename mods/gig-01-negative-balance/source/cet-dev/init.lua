@@ -86,21 +86,52 @@ local FACTS = {
     "cc_g01_nixcall_done",
     "phonecall_cc_g01_nix_with_player",
     "cc_g01_office_reached",
-    -- READ THESE, do not set them. How many guards each site has PLACED so far,
-    -- accumulated by NegativeBalanceEncounter.FinishSpawn. Full strength is 20
-    -- at the office and 25 at the estate (Hoshino is not counted; he is spawned
-    -- outside the chain).
+    -- READ THESE, do not set them. Each site's detail is a community, so these
+    -- say how many of its posts have been FOUND and turned hostile, and the
+    -- bare `cc_g01_dbg_<site>` code says whether the lookup worked at all:
+    --   0 nothing has looked yet
+    --   1 the community name did not resolve, so its sector is not loading
+    --   2 resolved, but no bodies. The quest phase has not switched it on, or
+    --     nothing has streamed in yet
+    --   3 found and turned. `_guards` is how many, `_total` how many there are
     --
-    -- It counts UP as you move. Each of the five office anchors and six estate
-    -- anchors is filled separately, and an anchor whose navmesh is not streamed
-    -- in yet is retried every six seconds while you are on site - so entering
-    -- the estate over the back wall gives a low number that grows as you walk
-    -- towards the gate. A number that stays at 0 is the empty-site bug.
+    -- The count is a high-water mark and it climbs as you move, because a post
+    -- that has not streamed in yet is asked for again every six seconds while
+    -- you are on site. Coming over the estate's back wall gives a low number
+    -- that grows as you walk down to the gate. A number that stays at 0 with a
+    -- code of 2 is the empty-site bug.
     --
-    -- A guard is dropped when the navmesh query at his scattered spot fails, so
-    -- one or two short of full strength is normal and by design.
-    "cc_g01_dbg_office_guards",
+    -- `cc_g01_dbg_office_guards`, the old spawn counter, is gone with the spawn
+    -- chain it counted.
+    "cc_g01_dbg_estate",
     "cc_g01_dbg_estate_guards",
+    -- READ THESE TOO. What actually landed on the guards, as opposed to what
+    -- was asked for. See the panel block for how to read them.
+    "cc_g01_dbg_estate_hostile",
+    "cc_g01_dbg_estate_senses",
+    "cc_g01_dbg_estate_workspot",
+    "cc_g01_dbg_estate_total",
+    -- The same six for the industrial park.
+    "cc_g01_dbg_compound",
+    "cc_g01_dbg_compound_guards",
+    "cc_g01_dbg_compound_total",
+    "cc_g01_dbg_compound_hostile",
+    "cc_g01_dbg_compound_senses",
+    "cc_g01_dbg_compound_workspot",
+    -- READ THESE, do not set them. WHERE THE PLAYER IS, and whether the estate
+    -- boundary accepts it. Ungated: they update everywhere in the city and with
+    -- no gig running, because the fault they exist for is the estate leg doing
+    -- NOTHING and saying nothing about why.
+    --   _pz         height in whole metres. Estate ground is ~220, the office
+    --               level ~226, Hoshino's floor ~230, the roof ~234
+    --   _estate_in  1 = the traced wall outline accepts this spot
+    --   _at_estate  1 = the arrival test accepts it, by the outline OR the gate
+    --               sphere OR the sphere around Hoshino. THIS is what the whole
+    --               estate leg waits on. If it reads 0 while you are standing
+    --               on the estate, that is the bug, and _pz says at what height
+    "cc_g01_dbg_pz",
+    "cc_g01_dbg_estate_in",
+    "cc_g01_dbg_at_estate",
     -- READ THESE, do not set them. The base game ships the doors onto the
     -- office floor with deviceState DISABLED and switches them on during
     -- "Gimme Danger", so a player who has not done that mission cannot get in
@@ -213,10 +244,24 @@ local FACTS = {
 -- Teleport presets. Coords are captured in-game with [Save current position];
 -- placeholders (nil) until we stand at the real spots.
 local presets = {
+    -- The two Personal Mechanics community spots, for the A/B against our
+    -- bench (backlog 29-ADDENDUM-4). Positions are the shop sectors' own box
+    -- centres, raised half a metre so V does not clip the ground.
+    { name = "PM: Miguel's shop (Kabuki)", pos = { x = -1119.9, y = 1201.0, z = 19.2, w = 1.0 } },
+    { name = "PM: Viktor garage mechanic", pos = { x = -1572.5, y = 1260.4, z = 12.0, w = 1.0 } },
     { name = "El Coyote Cojo (bar)", pos = { x = -1259.598, y = -989.166, z = 12.037, w = 1.0 } },
     -- Captured off the live NPC; ~10 m from the bar marker above.
     { name = "Mama Welles (her spot)", pos = { x = -1262.178, y = -998.805, z = 12.057, w = 1.0 } },
     { name = "Arasaka compound entry", pos = { x = -189.371, y = -1464.500, z = 7.596, w = 1.0 } },
+    -- FOUR POINTS AROUND THE COMPOUND, added 2026-08-25. They were the starts of
+    -- four patrol beats that did not work and are gone; the positions are still
+    -- the quickest way to reach the second gate and the yard, which are the
+    -- parts of the site the old placement never covered, so they stay as plain
+    -- teleports under honest names.
+    { name = "Compound: second gate", pos = { x = -225.764, y = -1497.931, z = 7.600, w = 1.0 } },
+    { name = "Compound: yard by the building", pos = { x = -224.379, y = -1435.308, z = 7.600, w = 1.0 } },
+    { name = "Compound: yard by the outer gate", pos = { x = -194.932, y = -1437.813, z = 7.600, w = 1.0 } },
+    { name = "Compound: far side of the yard", pos = { x = -243.136, y = -1487.774, z = 7.600, w = 1.0 } },
     { name = "Arasaka office terminal", pos = { x = -251.915, y = -1456.364, z = 14.600, w = 1.0 } },
     -- The two doors the base game ships DISABLED, both on the office floor and
     -- both on the gig's own route. Stand at one and look at it: no interaction
@@ -742,6 +787,177 @@ local function captureCurrent(name)
     log(string.format("CAPTURED %s = %.3f, %.3f, %.3f (yaw %.1f)", name, p.x, p.y, p.z, yaw))
 end
 
+-- WHAT AM I LOOKING AT, in as much detail as the game will give, to a file.
+--
+-- There has been a device dump in this menu since the office doors, and it asks
+-- DOOR questions: locked, sealed, open. That is the wrong set for a camera, and
+-- it only ever wrote to the log, which means reading it back costs a quit (CET
+-- buffers its writes) or somebody typing the answers out.
+--
+-- This one APPENDS TO A FILE, for the same reason captured_positions.txt does:
+-- a file is readable straight off disk while the game is still running and
+-- nothing has to be transcribed. That is how the sniper on the residence roof
+-- was proved to be the base game's rather than ours, in one press.
+--
+-- WHAT IT IS FOR. Wiring a camera to our guards needs the camera's IDENTITY,
+-- and that is the entity id: a world-placed device's id is the hash of its
+-- node, which is the thing a device connection points at. A position cannot be
+-- pointed at. Everything else here is about telling the states apart that all
+-- look like "the camera is not doing anything": off, disabled, unpowered,
+-- hacked, glitching, EMP'd, or physically wrecked.
+--
+-- EVERY PROBE IS WRAPPED, and the list is deliberately wider than any one
+-- object will answer. CET cannot be asked whether a method exists and a missing
+-- one throws, so each is tried alone and prints "<no such method>" rather than
+-- killing the dump. A row that says that is not a failure, it is that this kind
+-- of object does not have that idea.
+local function dumpLookedAt(name)
+    local target = Game.GetTargetingSystem():GetLookAtObject(Game.GetPlayer(), false, false)
+    if target == nil then
+        log("look: nothing targeted.")
+        log("look: a DISABLED device often cannot be looked at, which is itself")
+        log("look: an answer: it is switched off rather than absent.")
+        return
+    end
+
+    local lines = {}
+    local function say(fmt, ...)
+        local text = select("#", ...) > 0 and string.format(fmt, ...) or fmt
+        table.insert(lines, text)
+        log("look: " .. text)
+    end
+    local function head(t) say(""); say("-- %s", t) end
+    -- A METHOD. Tried on its own so a missing one costs a line, not the dump.
+    local function m(label, fn)
+        local ok, v = pcall(fn)
+        say("  %-26s %s", label, ok and tostring(v) or "<no such method>")
+    end
+    -- A FIELD on the persistent state. Many of the interesting flags are fields
+    -- rather than getters, and which is which varies by class.
+    local function f(obj, key)
+        local ok, v = pcall(function() return obj[key] end)
+        if ok and v ~= nil then say("  %-26s %s", key, tostring(v)) end
+    end
+
+    say("==== %s ====", name ~= "" and name or "looked-at")
+
+    head("identity")
+    local p = target:GetWorldPosition()
+    say("  %-26s %.3f, %.3f, %.3f", "position", p.x, p.y, p.z)
+    m("yaw", function() return target:GetWorldOrientation():ToEulerAngles().yaw end)
+    m("class", function() return target:GetClassName() end)
+    m("display name", function() return target:GetDisplayName() end)
+    -- THE ONE THAT MATTERS FOR WIRING. For anything the world placed, this hash
+    -- IS the node's, and it is what a device connection resolves to.
+    m("entity id", function()
+        local id = target:GetEntityID()
+        local ok, h = pcall(function() return id.hash end)
+        if ok and h ~= nil then return h end
+        return id
+    end)
+    m("record", function() return target:GetRecord():GetID() end)
+    m("is device", function() return target:IsDevice() end)
+    m("is puppet", function() return target:IsPuppet() end)
+
+    head("damage")
+    m("health", function()
+        return Game.GetStatPoolsSystem():GetStatPoolValue(
+            target:GetEntityID(), gamedataStatPoolType.Health, false)
+    end)
+    m("IsDead", function() return target:IsDead() end)
+    m("IsBroken", function() return target:IsBroken() end)
+    m("IsDestroyed", function() return target:IsDestroyed() end)
+
+    local ok2, ps = pcall(function() return target:GetDevicePS() end)
+    if not ok2 or ps == nil then
+        say("")
+        say("  (no device state on this entity, so it is not a device)")
+    else
+        head("device")
+        m("PS class", function() return ps:GetClassName() end)
+        m("device name", function() return ps:GetDeviceName() end)
+        -- THE LADDER. A device walks DISABLED -> OFF -> ON and our script can
+        -- push it up: the office doors have done exactly that since 1.1.3. What
+        -- no script undoes is a wrecked one, which is why damage is above.
+        m("deviceState", function() return ps:GetDeviceState() end)
+        m("IsON", function() return ps:IsON() end)
+        m("IsOFF", function() return ps:IsOFF() end)
+        m("IsDisabled", function() return ps:IsDisabled() end)
+        m("IsUnpowered", function() return ps:IsUnpowered() end)
+        m("IsBroken", function() return ps:IsBroken() end)
+        m("durability", function() return ps:GetDurabilityState() end)
+        m("IsAttached", function() return ps:IsAttachedToGame() end)
+        m("IsInteractive", function() return ps:IsInteractive() end)
+
+        head("hacking")
+        m("wasQuickHacked", function() return ps:WasQuickHacked() end)
+        m("IsQuickHacksExposed", function() return ps:IsQuickHacksExposed() end)
+        m("HasNetworkBackdoor", function() return ps:HasNetworkBackdoor() end)
+        m("IsBreached", function() return ps:IsBreached() end)
+        m("IsPlayerAuthorized", function() return ps:IsPlayerAuthorized() end)
+        m("IsGlitching", function() return ps:IsGlitching() end)
+        m("IsUnderEMP", function() return ps:IsUnderEMPEffect() end)
+        m("personalLinkStatus", function() return ps:GetPersonalLinkStatus() end)
+
+        head("security")
+        m("securityAccessLevel", function() return ps:GetSecurityAccessLevel() end)
+        m("securityAreaType", function() return ps:GetSecurityAreaType() end)
+        m("IsPlayerInside", function() return ps:IsPlayerInside() end)
+        m("IsControlledByPlayer", function() return ps:IsControlledByThePlayer() end)
+
+        -- Door questions, kept because the doors are still a live part of this
+        -- gig and the old probe answered them.
+        head("door")
+        m("IsLocked", function() return ps:IsLocked() end)
+        m("IsSealed", function() return ps:IsSealed() end)
+        m("IsOpen", function() return ps:IsOpen() end)
+
+        -- AND THE RAW FIELDS. Most of the flags that separate "hacked" from
+        -- "off" from "wrecked" live on the persistent state as fields rather
+        -- than getters, and which is which varies by class. Anything nil is
+        -- skipped, so this prints only what this object actually carries.
+        head("raw state (only what exists is listed)")
+        for _, key in ipairs({
+            "deviceState", "cachedDeviceState", "durabilityState",
+            "isGlitching", "isUnderEMPEffect", "wasQuickHacked",
+            "wasRevealedInNetworkPing", "isBeingScanned", "isScanned",
+            "hasNetworkBackdoor", "hasPersonalLinkSlot", "isKeyloggerInstalled",
+            "personalLinkStatus", "hackingMinigameState", "minigameAttempt",
+            "disableQuickHacks", "exposeQuickHacks", "isControlledByThePlayer",
+            "isInitialized", "isAttachedToGame", "isLogicReady",
+            "securityAccessLevel", "securityAreaType", "isTimedTurnOff",
+            "juryrigTrapState", "isLockedViaSequencer", "isRestarting",
+            "distractExecuted", "distractionTimeCompleted", "markAsQuest",
+            "isInteractive", "hasBeenScavenged", "isPlayerInside",
+            "activationState", "backdoorBreachDifficulty", "deviceName",
+            "isHighlightedInFocusMode", "blockSecurityWakeUp",
+            "hasThisAreaReceivedCombatNotification", "isUnpowered",
+        }) do
+            f(ps, key)
+        end
+    end
+
+    local fh = io.open("looked_at.txt", "a")
+    if fh then
+        for _, line in ipairs(lines) do
+            fh:write(line .. "\n")
+        end
+        fh:write("\n")
+        fh:close()
+    end
+end
+
+-- THE DEVICE-ACTION HELPERS ARE GONE, 2026-08-25, with the camera work they
+-- served. What they established is kept in the docs rather than in code:
+--
+--   gotcha 82  a base-game device's runtime id is the FNV1a64 of its NodeRef,
+--              so any of them can be addressed without touching it in game
+--   gotcha 83  the full menu of what a camera accepts, the DISABLED -> OFF ->
+--              ON ladder, one action per frame, and that there is no repair
+--              action at all
+--
+-- `dumpLookedAt` above stays. It only reads.
+
 registerForEvent("onInit", function()
     loadPresets()
 end)
@@ -760,15 +976,19 @@ registerForEvent("onDraw", function()
 
     local qs = Game.GetQuestsSystem()
 
-    ImGui.Text("Quest facts")
-    ImGui.Separator()
-    for _, fact in ipairs(FACTS) do
-        local value = qs:GetFactStr(fact)
-        ImGui.Text(string.format("%-24s = %d", fact, value))
-        ImGui.SameLine(280)
-        if ImGui.SmallButton("0##" .. fact) then qs:SetFactStr(fact, 0) end
-        ImGui.SameLine()
-        if ImGui.SmallButton("1##" .. fact) then qs:SetFactStr(fact, 1) end
+    -- COLLAPSED BY DEFAULT, 2026-08-25. Sixty-odd rows with two buttons each,
+    -- and everything worth reading during a playtest sits below it. A header
+    -- costs one click on the rare visit that sets a fact by hand, and gives
+    -- back most of a screen on every other one.
+    if ImGui.CollapsingHeader("Quest facts (click to open)") then
+        for _, fact in ipairs(FACTS) do
+            local value = qs:GetFactStr(fact)
+            ImGui.Text(string.format("%-24s = %d", fact, value))
+            ImGui.SameLine(280)
+            if ImGui.SmallButton("0##" .. fact) then qs:SetFactStr(fact, 0) end
+            ImGui.SameLine()
+            if ImGui.SmallButton("1##" .. fact) then qs:SetFactStr(fact, 1) end
+        end
     end
 
     ImGui.Spacing()
@@ -1750,6 +1970,30 @@ registerForEvent("onDraw", function()
     end
     ImGui.TextDisabled("Look at the NPC (e.g. Mama Welles) and click - captures THEIR spot.")
     ImGui.TextDisabled("Saved to ...\\mods\\negative_balance_dev\\captured_positions.txt")
+
+    -- ANYTHING, not just an NPC and not just a door. It sits beside the two
+    -- capture buttons rather than down with the door probes, because this is
+    -- the block that gets looked in. The old device dump is still below and is
+    -- still door-shaped; this one supersedes it for everything else.
+    if ImGui.Button("DUMP WHATEVER I'M LOOKING AT (device, NPC, prop)") then
+        local ok, err = pcall(function() dumpLookedAt(captureName) end)
+        if not ok then log("look failed: " .. tostring(err)) end
+    end
+    ImGui.TextDisabled("Type a name first, then look at it and click. Cameras, doors,")
+    ImGui.TextDisabled("terminals, anyone. Writes looked_at.txt beside the captures.")
+    ImGui.TextDisabled("Reports on/off/disabled/hacked/broken and the entity id a")
+    ImGui.TextDisabled("wiring change needs. Rows saying <no such method> are normal.")
+
+    ImGui.Spacing()
+    -- THE DEVICE-ACTION BUTTONS ARE GONE, 2026-08-25. They switched a device
+    -- on and off, listed what it would accept and tried to repair a broken
+    -- one, and all of it existed to serve a camera alarm that has been
+    -- removed. What they found is kept where it belongs: gotcha 83 has the
+    -- full menu of what a camera accepts and the two-step ladder a device
+    -- walks, and gotcha 82 has how to address any base-game device offline.
+    --
+    -- The DUMP button above stays. It reads, it never writes, and it is the
+    -- fastest way to find out what anything in the world actually is.
     for _, c in ipairs(capturedList) do
         ImGui.Text(string.format("  %s: %.1f %.1f %.1f", c.name, c.x, c.y, c.z))
     end
@@ -1780,6 +2024,161 @@ registerForEvent("onDraw", function()
     -- scene-playbook.md, and the traps are gotchas 50 to 59. Recover the
     -- buttons from the commit before gig-01/v1.2.6 if a future question needs
     -- them; do not rebuild them from memory.
+
+    -- ============================================ HOSHINO, AS ONE BODY
+    --
+    -- SHIPPED, not a bench. He is placed by a community this mod ships
+    -- (tools/gig01/gen_community.py) and the quest phase switches the entry on
+    -- and off; the scene speaks through that body instead of spawning an
+    -- invisible second one.
+    --
+    -- Every way this can fail is silent in game: a man who is not there looks
+    -- exactly like a man the game has not placed yet, and a scene with no
+    -- speaker plays no subtitle at all rather than erroring. So it is a number.
+    ImGui.Spacing()
+    ImGui.Text("HOSHINO (one body)")
+    ImGui.Separator()
+    do
+        local qs = Game.GetQuestsSystem()
+        local codes = {
+            [0] = "nothing has looked yet",
+            [1] = "the community name did NOT resolve  <- sector not loading",
+            [2] = "resolved, no body yet  <- phase has not activated it, or still placing",
+            [3] = "FOUND, and set neutral",
+            [4] = "found, and dead",
+        }
+        local c = qs:GetFactStr("cc_g01_dbg_hoshino")
+        ImGui.Text(string.format("  find: %d  %s", c, codes[c] or "?"))
+        ImGui.Text(string.format("  estate reached %d   met %d   talked %d   dead %d",
+                                 qs:GetFactStr("cc_g01_estate_reached"),
+                                 qs:GetFactStr("cc_g01_hoshino_met"),
+                                 qs:GetFactStr("cc_g01_hoshino_talked"),
+                                 qs:GetFactStr("cc_g01_hoshino_dead")))
+
+        -- THE ESTATE DETAIL, one guard per captured post, placed by
+        -- their own community (cc_g01_estate) rather than spawned onto navmesh.
+        --
+        -- The count RISES as you walk in and that is correct, not a fault: a
+        -- post 90 m away has not streamed in yet, exactly as the old spawn's far
+        -- anchors had not. It is asked again every six seconds while you are on
+        -- site and stops at the full count.
+        --
+        -- A count that stays at 0 with find 2 is a community that is switched
+        -- off, which before the estate objective is the RIGHT answer.
+        local ecodes = {
+            [0] = "nothing has looked yet",
+            [1] = "the community name did NOT resolve  <- sector not loading",
+            [2] = "resolved, nobody there  <- phase has not activated it, or not streamed in",
+            [3] = "FOUND, and turned hostile",
+        }
+        local ec = qs:GetFactStr("cc_g01_dbg_estate")
+        ImGui.Text(string.format("  detail: %d  %s", ec, ecodes[ec] or "?"))
+        -- THE TOTAL COMES FROM THE SCRIPT, not from a number typed here. It
+        -- said "of 30" while the list had just become 29.
+        ImGui.Text(string.format("  posts standing: %d of %d",
+                                 qs:GetFactStr("cc_g01_dbg_estate_guards"),
+                                 qs:GetFactStr("cc_g01_dbg_estate_total")))
+        -- WHAT ACTUALLY TOOK, read off the guards themselves.
+        --
+        -- Playtest 2026-08-25: all thirty stood at their posts and none of them
+        -- ever noticed V. They fought when shot and joined in when one of the
+        -- estate's own NPCs raised the alarm, so they were not inert. They
+        -- never STARTED looking. "posts standing" could not tell that apart from
+        -- working guards, because it counts who we asked, not what landed.
+        --
+        -- Whichever of these three is the odd one out is the answer:
+        --   hostile   low  -> the attitude is not reaching these bodies
+        --   senses    low  -> enemies who cannot see. Expected culprit
+        --   workspot  high -> held in an idle, which may suppress perception
+        ImGui.Text(string.format("    hostile to V: %d   senses on: %d   in workspot: %d",
+                                 qs:GetFactStr("cc_g01_dbg_estate_hostile"),
+                                 qs:GetFactStr("cc_g01_dbg_estate_senses"),
+                                 qs:GetFactStr("cc_g01_dbg_estate_workspot")))
+
+        -- THE INDUSTRIAL PARK, the same four rows for the same reasons. Its
+        -- detail is a community too as of 2026-08-25: forty-six walked posts in
+        -- place of five anchors and a navmesh query.
+        --
+        -- Its window is a different one. The compound detail goes on when the
+        -- gig starts and off once V is clear of the site, so `detail: 2` here
+        -- while standing in the compound BEFORE taking the job is right.
+        ImGui.Text("COMPOUND (Arasaka industrial park)")
+        local cc = qs:GetFactStr("cc_g01_dbg_compound")
+        ImGui.Text(string.format("  detail: %d  %s", cc, ecodes[cc] or "?"))
+        ImGui.Text(string.format("  posts standing: %d of %d",
+                                 qs:GetFactStr("cc_g01_dbg_compound_guards"),
+                                 qs:GetFactStr("cc_g01_dbg_compound_total")))
+        ImGui.Text(string.format("    hostile to V: %d   senses on: %d   in workspot: %d",
+                                 qs:GetFactStr("cc_g01_dbg_compound_hostile"),
+                                 qs:GetFactStr("cc_g01_dbg_compound_senses"),
+                                 qs:GetFactStr("cc_g01_dbg_compound_workspot")))
+        -- THE CAMERA AND SECURITY-AREA READOUTS ARE GONE, 2026-08-25.
+        --
+        -- Neither describes anything that ships any more: the camera pass was
+        -- removed at playtest's request, and the security area and its system
+        -- are no longer in the archive because they demonstrably did nothing.
+        -- A panel row reporting a node that is not there is worse than no row.
+        --
+        -- The whole investigation is `backlog.md` 31 and gotchas 79 to 83.
+
+        -- THE EXPERIMENT BUTTONS ARE GONE, 2026-08-25, and so is the script
+        -- block behind them. They asked three questions and all three are
+        -- closed: a hostile attitude is what makes a community guard perceive
+        -- and fight (gotchas 74 and 77), and taking them out of their idle
+        -- changed nothing, twice. The shipped pass in `FindDetail` now does
+        -- what buttons 1 and 3 did, on every guard, every few seconds.
+
+        -- THE GUARD TEST, backlog.md 31. One community-placed guard at a
+        -- vanilla workspot on the estate grounds, with the script-spawned ones
+        -- a short walk away.
+        --
+        -- This row only says he EXISTS. The question is whether he BEHAVES:
+        -- walk up to him, then to a spawned one, and see whether either
+        -- challenges you, looks at you, or reacts at all.
+        local gcodes = { [0] = "not there", [1] = "standing", [2] = "dead" }
+        local gc = qs:GetFactStr("cc_g01_dbg_guard")
+        local gd = qs:GetFactStr("cc_g01_dbg_guard_d") / 10.0
+        local gn = qs:GetFactStr("cc_g01_dbg_guard_n")
+        ImGui.Text(string.format("  guard test: %d  %s", gc, gcodes[gc] or "?"))
+        -- HE LOOKS LIKE THE OTHERS. He wears a record the encounter also
+        -- spawns, so the only way to know which man he is, is to be told.
+        if gc > 0 then
+            local gb = qs:GetFactStr("cc_g01_dbg_guard_b")
+            -- Bearing from YOUR facing: 0 dead ahead, rising clockwise.
+            local side = "ahead"
+            if gb > 15 and gb < 165 then side = "to your RIGHT"
+            elseif gb > 195 and gb < 345 then side = "to your LEFT"
+            elseif gb >= 165 and gb <= 195 then side = "BEHIND you" end
+            ImGui.Text(string.format("    %.1f m away, %d deg %s", gd, gb, side))
+            -- THE ROW THAT SETTLES IT. Compared by entity id, so it does not
+            -- care how many identical guards are standing together.
+            local gl = qs:GetFactStr("cc_g01_dbg_guard_look")
+            local looks = { [0] = "looking at nobody",
+                            [1] = "YOU ARE LOOKING AT HIM",
+                            [2] = "that is somebody else" }
+            ImGui.Text(string.format("    %s", looks[gl] or "?"))
+            ImGui.Text(string.format("    other NPCs within 5 m of him: %d%s", gn,
+                                     gn > 0 and "   (aim to be sure which)" or "   (clean)"))
+        end
+        if ImGui.Button("TELEPORT: the guard test post") then
+            teleportTo({ x = 298.251, y = 1021.907, z = 224.952, w = 1.0 })
+        end
+        if ImGui.Button("HOSHINO: report to the log") then
+            log(string.format("hoshino find %d (%s)", c, codes[c] or "?"))
+            log(string.format("guard test %d (%s) %.1f m, bearing %d, look %d, %d others near",
+                              gc, gcodes[gc] or "?", gd,
+                              qs:GetFactStr("cc_g01_dbg_guard_b"),
+                              qs:GetFactStr("cc_g01_dbg_guard_look"), gn))
+            log(string.format("hoshino estate %d met %d talked %d dead %d",
+                              qs:GetFactStr("cc_g01_estate_reached"),
+                              qs:GetFactStr("cc_g01_hoshino_met"),
+                              qs:GetFactStr("cc_g01_hoshino_talked"),
+                              qs:GetFactStr("cc_g01_hoshino_dead")))
+        end
+        if ImGui.Button("TELEPORT: where Hoshino waits") then
+            teleportTo({ x = 300.102, y = 1054.556, z = 229.928, w = 1.0 })
+        end
+    end
 
     ImGui.Spacing()
     ImGui.Text("Teleports")

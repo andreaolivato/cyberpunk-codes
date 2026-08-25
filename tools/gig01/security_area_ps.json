@@ -1,0 +1,233 @@
+{
+  "$type": "SecurityAreaControllerPS",
+  "actionsWithDisabledRPGChecks": [],
+  "activationState": "NONE",
+  "activeContexts": [],
+  "allowUICameraZoomDynamicSwitch": 0,
+  "areaTransitions": [],
+  "authorizationProperties": {
+    "$type": "AuthorizationData",
+    "alwaysExposeActions": 0,
+    "authorizationDataEntry": {
+      "$type": "SecurityAccessLevelEntryClient",
+      "keycard": {
+        "$type": "TweakDBID",
+        "$storage": "uint64",
+        "$value": "0"
+      },
+      "level": "ESL_NONE",
+      "password": {
+        "$type": "CName",
+        "$storage": "string",
+        "$value": "None"
+      }
+    },
+    "isAuthorizationModuleOn": 1
+  },
+  "autoToggleQuestMark": 1,
+  "availableQuickHacks": [],
+  "availableSpiderbotActions": [],
+  "backdoorBreachDifficulty": "EASY",
+  "backdoorObjectiveData": null,
+  "blackboard": null,
+  "blockSecurityWakeUp": 0,
+  "cachedDeviceState": "OFF",
+  "callbackToDisableQuestMarkID": 0,
+  "canBeInDeviceChain": 0,
+  "canBeTrapped": 0,
+  "canHandleAdvancedInteraction": 0,
+  "canPlayerTakeOverControl": 0,
+  "clearance": null,
+  "connectionHighlightObjects": [],
+  "contentScale": {
+    "$type": "TweakDBID",
+    "$storage": "uint64",
+    "$value": "0"
+  },
+  "controlPanelObjectiveData": null,
+  "currentlyAuthorizedUsers": [],
+  "currentSpiderbotActionPerformed": null,
+  "debugDevice": 0,
+  "debugExposeQuickHacks": 0,
+  "debugID": 0,
+  "debugName": {
+    "$type": "CName",
+    "$storage": "string",
+    "$value": "None"
+  },
+  "debugPath": {
+    "$type": "CName",
+    "$storage": "string",
+    "$value": "None"
+  },
+  "destructionProperties": {
+    "$type": "DestructionData",
+    "canBeFixed": 0,
+    "durabilityType": "INVULNERABLE"
+  },
+  "deviceName": "",
+  "deviceOperationsSetup": null,
+  "deviceState": "ON",
+  "deviceUIStyle": "LightBlue",
+  "disablePersonalLinkAutoDisconnect": 0,
+  "disableQuickHacks": 0,
+  "disassembleProperties": {
+    "$type": "DisassembleOptions",
+    "canBeDisassembled": 0
+  },
+  "distractExecuted": 0,
+  "distractionTimeCompleted": 0,
+  "drawGridLink": 0,
+  "durabilityState": "NOMINAL",
+  "eventsFilters": {
+    "$type": "EventsFilters",
+    "incomingEventsFilter": "ALLOW_ALL",
+    "outgoingEventsFilter": "ALLOW_ALL"
+  },
+  "exposeQuickHacks": 0,
+  "factToDisableQuestMark": {
+    "$type": "CName",
+    "$storage": "string",
+    "$value": "None"
+  },
+  "flatheadScavengeProperties": {
+    "$type": "SpiderbotScavengeOptions",
+    "scavengableBySpiderbot": 0
+  },
+  "forceResolveStateOnAttach": 0,
+  "forceVisibilityInAnimSystemOnLogicReady": 0,
+  "fullDepth": 1,
+  "hackingMinigameState": "Unknown",
+  "hasAuthorizationModule": 1,
+  "hasBeenScavenged": 0,
+  "hasFullScreenUI": 0,
+  "hasNetworkBackdoor": 0,
+  "hasNPCWorkspotKillInteraction": 0,
+  "hasPersonalLinkSlot": 0,
+  "hasThisAreaReceivedCombatNotification": 0,
+  "hasUICameraZoom": 0,
+  "illegalActions": {
+    "$type": "IllegalActionTypes",
+    "quickHacks": 0,
+    "regularActions": 0,
+    "skillChecks": 1
+  },
+  "isAdvancedInteractionModeOn": 0,
+  "isAttachedToGame": 0,
+  "isBeingScanned": 0,
+  "isControlledByThePlayer": 0,
+  "isGlitching": 0,
+  "isHighlightedInFocusMode": 0,
+  "isInitialized": 0,
+  "isInitialStateOperationPerformed": 0,
+  "isInteractive": 1,
+  "isKeyloggerInstalled": 0,
+  "isLinkDynamic": 0,
+  "isLockedViaSequencer": 0,
+  "isLogicReady": 0,
+  "isPlayerInside": 0,
+  "isRestarting": 0,
+  "isScanned": 0,
+  "isSpiderbotInteractionOrdered": 0,
+  "isTimedTurnOff": 0,
+  "isUnderEMPEffect": 0,
+  "juryrigTrapState": "UNARMED",
+  "lastOutput": {
+    "$type": "OutputPersistentData",
+    "areaType": "DISABLED",
+    "breachOrigin": "LOCAL",
+    "currentSecurityState": "UNINITIALIZED",
+    "id": 0,
+    "lastKnownPosition": {
+      "$type": "Vector4",
+      "W": 0,
+      "X": 0,
+      "Y": 0,
+      "Z": 0
+    },
+    "objectOfInterest": {
+      "$type": "entEntityID",
+      "hash": "0"
+    },
+    "reporter": {
+      "$type": "gamePersistentID",
+      "componentName": {
+        "$type": "CName",
+        "$storage": "string",
+        "$value": "None"
+      },
+      "entityHash": "0"
+    },
+    "securityStateChanged": 0,
+    "type": "DEFAULT",
+    "whoBreached": {
+      "$type": "entEntityID",
+      "hash": "0"
+    }
+  },
+  "lastPerformedQuickHack": {
+    "$type": "CName",
+    "$storage": "string",
+    "$value": "None"
+  },
+  "markAsQuest": 0,
+  "masters": [],
+  "mastersCached": 0,
+  "maxDevicesToExtractInOneFrame": 10,
+  "minigameAttempt": 1,
+  "minigameDefinition": {
+    "$type": "TweakDBID",
+    "$storage": "uint64",
+    "$value": "0"
+  },
+  "pendingDisableRequest": 0,
+  "pendingNotifyPlayerAboutTransition": 0,
+  "performedActions": [],
+  "personalLinkCustomInteraction": {
+    "$type": "TweakDBID",
+    "$storage": "uint64",
+    "$value": "0"
+  },
+  "personalLinkForced": 0,
+  "personalLinkStatus": "NOT_CONNECTED",
+  "playstyles": [],
+  "questPlayerHasTriggeredCombat": 0,
+  "quickHackVulnerabilties": [],
+  "quickHackVulnerabiltiesInitialized": 0,
+  "revealDevicesGrid": 0,
+  "revealDevicesGridWhenUnpowered": 0,
+  "runtimeTransitions": [],
+  "securityAccessLevel": "ESL_NONE",
+  "securityAreaType": "RESTRICTED",
+  "shouldNPCWorkspotFinishLoop": 0,
+  "shouldScannerShowAttitude": 0,
+  "shouldScannerShowHealth": 0,
+  "shouldScannerShowNetwork": 1,
+  "shouldScannerShowRole": 0,
+  "shouldScannerShowStatus": 1,
+  "shouldSkipNetrunnerMinigame": 0,
+  "skillCheckContainer": null,
+  "system": null,
+  "tweakDBDescriptionRecord": {
+    "$type": "TweakDBID",
+    "$storage": "uint64",
+    "$value": "138700257142"
+  },
+  "tweakDBRecord": {
+    "$type": "TweakDBID",
+    "$storage": "string",
+    "$value": "Devices.SecurityArea"
+  },
+  "usersInPerimeter": [],
+  "virtualNetworkShapeID": {
+    "$type": "TweakDBID",
+    "$storage": "uint64",
+    "$value": "0"
+  },
+  "wasQuickHackAttempt": 0,
+  "wasQuickHacked": 0,
+  "wasRevealedInNetworkPing": 0,
+  "wasStateCached": 0,
+  "wasStateSet": 0,
+  "willingInvestigators": []
+}

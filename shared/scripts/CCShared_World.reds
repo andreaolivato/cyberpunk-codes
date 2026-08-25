@@ -122,11 +122,37 @@ public abstract class CCSharedWorld {
     //
     // Returns the ids actually placed, so the caller can set an attitude on
     // them (CCSharedAttitude) or hold them for later.
+    // REFUSE WHEN THERE IS NO WORLD TO SPAWN INTO, and this guard is the one
+    // piece of a crash investigation worth carrying forward.
+    //
+    // A reporter on 1.2.6 could reload a checkpoint after dying at the North Oak
+    // estate and crash to desktop, five times out of five, against zero out of
+    // four with the mod removed. Gig 01 drove this function from a chain of
+    // DELAYED CALLBACKS, one squad a second, re-armed every few seconds while
+    // the player was on site. Dying and reloading tears the world down with
+    // links of that chain still in flight, so a callback could land on a world
+    // that was unloading or half re-mounted and ask it for a navmesh point and
+    // twenty-five new entities.
+    //
+    // The caller that did this is gone: gig 01 places its guards with
+    // communities now and spawns nobody. But the shape is a trap for the next
+    // gig that reaches for this function from a callback, and the cost of not
+    // having the guard was weeks of a crash nobody could attribute. Gig 01's
+    // own `FinishSpawn` carried exactly this test, with a comment saying
+    // dereferencing a system that is not there had "flatlined the game once
+    // already"; the half that actually touched the world never got it.
+    //
+    // `backlog.md` 10i.
     public static func Scatter(game: GameInstance, records: array<TweakDBID>,
                                center: Vector4, count: Int32, tag: CName,
                                radius: Float, step: Float) -> array<EntityID> {
-        let nav: ref<NavigationSystem> = GameInstance.GetNavigationSystem(game);
         let placed: array<EntityID>;
+        let player: ref<GameObject> = GameInstance.GetPlayerSystem(game)
+            .GetLocalPlayerMainGameObject();
+        if !IsDefined(player) {
+            return placed;
+        }
+        let nav: ref<NavigationSystem> = GameInstance.GetNavigationSystem(game);
         let i: Int32 = 0;
         while i < count {
             let angle: Float = Cast<Float>(i) * 2.4;

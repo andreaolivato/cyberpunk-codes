@@ -5,6 +5,37 @@ Negative Balance releases, newest first. The same changelog is on the mod's
 
 ---
 
+## 1.3.0 (2026-08-25)
+
+Install before starting the gig. A save already inside either Arasaka location
+may behave oddly; a save from before the gig is fine.
+
+- **Fixed: Hoshino's mouth moves while he speaks**, and he waits sitting on the
+  couch rather than standing at his terminal.
+- **Changed: the guards at the Arasaka compound and the Arasaka estate in North
+  Oak are spread across each site** instead of gathering in one corner, and they
+  now hold the upper floors, the loading deck and the estate roof.
+- **Changed: guards are placed by a "community"**, the game's own system for
+  standing NPCs at authored posts. It is what makes the placement above
+  possible, and it lets each site be switched on and off as one group.
+- **Fixed: the gig could stall at the Arasaka estate with the objective still
+  reading "Get to the Arasaka estate in North Oak".** Parts of the estate,
+  including the upper terraces, fell outside the boundary the gig treated as
+  the grounds, and arriving there advanced nothing: no security, no Hoshino and
+  no objective. Reported by Chernogor7 and sadday.
+- **Changed: reaching Hoshino completes the objectives that lead to him**, by
+  whatever route V got in and even if the way-in marker was never touched.
+- **Fixed: Hoshino's conversation started from the floor below him.** Standing
+  underneath him counted as standing in front of him, so it played through the
+  ceiling.
+- **Changed: nothing in the gig is spawned by script any more.** Reloading a
+  checkpoint after dying at the estate could crash the game to desktop, reported
+  by Petrowsky88 on 1.2.6; the guard spawning that re-ran on every reload is
+  what the community above replaces. Whether that removes the crash is not
+  confirmed.
+
+---
+
 ## 1.2.6 (2026-08-23)
 
 Safe to install mid-save. Nothing to restart.

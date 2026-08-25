@@ -348,6 +348,47 @@ def add_condition_fact(fact, value=0, cmp='Greater'):
     return nid
 
 
+def add_community(action, reference, entry=None, phase=None):
+    """Switch a community, or one entry of it, on or off.
+
+    `questSpawnManagerNodeDefinition` holding a `questCommunityTemplate_NodeType`,
+    which is what 1394 shipped questphases use. Read field for field off
+    `pop_cct_cpz_phase.questphase`.
+
+    THIS IS HOW A MOD'S OWN NPC IS KEPT AWAY UNTIL THE STORY WANTS HIM.
+    `entryActiveOnStart: 0` in the community itself is IGNORED (gotcha 69's
+    bench, run 14): a mod's community spawns its entries on save load whatever
+    that field says. So the phase does it, and it has to do it three times:
+
+        Deactivate  as the phase's first act, before anything can be seen
+        Activate    at the beat that wants him
+        Deactivate  once he is done, because community state PERSISTS IN SAVES
+                    and without it a reload brings a dead man back alive
+
+    `entry` names one entry; leaving it None addresses the whole community,
+    which is what 112 of 133 sampled vanilla uses do. A per-entry action leaves
+    the other entries alone, measured on the bench.
+
+    `reference` is written LONG FORM, 105 of vanilla's 159 uses, and it is the
+    only form a name this mod ships resolves under (gotcha 34).
+    """
+    nid = next(NID)
+    b.node(nid, 'questSpawnManagerNodeDefinition', {
+        'actions': [{
+            '$type': 'questSpawnManagerNodeActionEntry',
+            'type': {'@handle': {
+                '$type': 'questCommunityTemplate_NodeType',
+                'action': action,
+                'communityEntryName': cname(entry),
+                'communityEntryPhaseName': cname(phase),
+                'spawnerReference': {'$type': 'NodeRef', '$storage': 'string',
+                                     '$value': reference},
+            }},
+        }],
+    }, STD)
+    return nid
+
+
 def add_cut_control():
     """Disarm pause nodes that are still waiting, from somewhere else in the graph.
 

@@ -1,0 +1,272 @@
+{
+  "Header": {
+    "WolvenKitVersion": "8.20.0",
+    "WKitJsonVersion": "0.0.9",
+    "GameVersion": 2310,
+    "DataType": "CR2W",
+    "ArchiveFileName": "cc_g01_hoshino_reg.streamingsector"
+  },
+  "Data": {
+    "Version": 195,
+    "BuildVersion": 0,
+    "RootChunk": {
+      "$type": "worldStreamingSector",
+      "category": "AlwaysLoaded",
+      "cookingPlatform": "PLATFORM_PC",
+      "externInplaceResource": {
+        "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "uint64",
+          "$value": "0"
+        },
+        "Flags": "Soft"
+      },
+      "level": 1,
+      "localInplaceResource": [],
+      "nodeData": {
+        "BufferId": "0",
+        "Flags": 4063232,
+        "Type": "WolvenKit.RED4.Archive.Buffer.worldNodeDataBuffer, WolvenKit.RED4, Version=8.20.0.0, Culture=neutral, PublicKeyToken=null",
+        "Data": [
+          {
+            "Id": "0",
+            "NodeIndex": 0,
+            "Position": {
+              "$type": "Vector4",
+              "W": 0,
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0.0,
+              "r": 1.0
+            },
+            "Scale": {
+              "$type": "Vector3",
+              "X": 1,
+              "Y": 1,
+              "Z": 1
+            },
+            "Pivot": {
+              "$type": "Vector3",
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "Bounds": {
+              "$type": "Box",
+              "Max": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": 0,
+                "Y": 0,
+                "Z": 0
+              },
+              "Min": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": 0,
+                "Y": 0,
+                "Z": 0
+              }
+            },
+            "QuestPrefabRefHash": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "5405922296369531349"
+            },
+            "UkHash1": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "CookedPrefabData": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Default"
+            },
+            "MaxStreamingDistance": 17.320507,
+            "UkFloat1": 99999999,
+            "Uk10": 32,
+            "Uk11": 512,
+            "Uk12": 0,
+            "Uk13": "0",
+            "Uk14": "0"
+          }
+        ]
+      },
+      "nodeRefs": [],
+      "nodes": [
+        {
+          "HandleId": "0",
+          "Data": {
+            "$type": "worldCommunityRegistryNode",
+            "communitiesData": [
+              {
+                "$type": "worldCommunityRegistryItem",
+                "communityAreaType": "Regular",
+                "communityId": {
+                  "$type": "gameCommunityID",
+                  "entityId": {
+                    "$type": "entEntityID",
+                    "hash": "1235673552763067636"
+                  }
+                },
+                "entriesInitialState": [
+                  {
+                    "$type": "worldCommunityEntryInitialState",
+                    "entryActiveOnStart": 0,
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "hoshino"
+                    },
+                    "initialPhaseName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "default"
+                    }
+                  }
+                ],
+                "template": {
+                  "HandleId": "1",
+                  "Data": {
+                    "$type": "communityCommunityTemplateData",
+                    "entries": [
+                      {
+                        "HandleId": "2",
+                        "Data": {
+                          "$type": "communitySpawnEntry",
+                          "characterRecordId": {
+                            "$type": "TweakDBID",
+                            "$storage": "string",
+                            "$value": "Character.cc_g01_hoshino"
+                          },
+                          "entryName": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "hoshino"
+                          },
+                          "phases": [
+                            {
+                              "HandleId": "3",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "default"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "default"
+                                },
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g01_hoshino/#cc_g01_hoshino_spot"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            ],
+            "crowdCreationRegistry": null,
+            "debugName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "registry"
+            },
+            "isHostOnly": 0,
+            "isVisibleInGame": 1,
+            "proxyScale": null,
+            "representsCrowd": 0,
+            "sourcePrefabHash": "0",
+            "spawnSetNameToCommunityID": {
+              "$type": "gameCommunitySpawnSetNameToID",
+              "entries": [
+                {
+                  "$type": "gameCommunitySpawnSetNameToIDEntry",
+                  "communityId": {
+                    "$type": "gameCommunityID",
+                    "entityId": {
+                      "$type": "entEntityID",
+                      "hash": "1235673552763067636"
+                    }
+                  },
+                  "nameReference": {
+                    "$type": "CName",
+                    "$storage": "string",
+                    "$value": "#cc_g01_hoshino_com"
+                  }
+                }
+              ]
+            },
+            "tag": "None",
+            "tagExt": "None",
+            "workspotsPersistentData": [
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "18207363334180824791"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": 39193280
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": 138410721
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 30137122
+                  }
+                },
+                "yaw": 151.1
+              }
+            ]
+          }
+        }
+      ],
+      "persistentNodeIndex": 0,
+      "persistentNodes": [],
+      "variantIndices": [
+        0
+      ],
+      "variantNodes": [],
+      "version": 62
+    },
+    "EmbeddedFiles": []
+  }
+}

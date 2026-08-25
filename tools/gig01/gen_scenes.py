@@ -160,6 +160,12 @@ from gig01_config import (                                          # noqa: E402
     REPO, SOURCE, RAW_MOD, DEPOT,
     ANCHOR_OFFICE, ANCHOR_ESTATE, ANCHOR_COYOTE, ANCHOR_BAR, ANCHOR_MAMA,
 )
+# Hoshino's community. Imported rather than restated: the scene asks for the
+# exact string the registry registers, and a typo here is a scene with no
+# speaker rather than an error.
+from gen_community import (                                         # noqa: E402
+    ENTRY as HOSHINO_ENTRY, SPAWNSET_NAME as HOSHINO_SPAWNSET,
+)
 
 OUT_DIR = os.path.join(RAW_MOD, 'scenes')
 # Subtitles take TWO resources, and getting this wrong is silent in game and
@@ -785,7 +791,34 @@ def build_hoshino():
     # that nothing can see it, walk into it or watch it disappear. That costs
     # the audio, and the sections below buy it back by making his lines 2D.
     # Elena and Nix have always worked this way.
-    hoshino = s.add_actor('hoshino', 'Character.cc_g01_hoshino')
+    # AND NOW HE IS NOT SPAWNED AT ALL. THE SCENE TAKES THE BODY THAT IS THERE.
+    #
+    # Everything above is the history of trying to put a SECOND Hoshino
+    # somewhere the player would not notice him: buried under the floor, then a
+    # kilometre out and a hundred metres down, with the lines made 2D to buy
+    # back the audio. The field report that closed the burial, "half-way in a
+    # pillar ... once I selected one of the dialog options, he disappeared" -
+    # is what a scene's own actor looks like when the player can see it.
+    #
+    # There is no second body now. A community this mod ships stands the real
+    # Hoshino at his terminal (`gen_community.py`), the quest phase switches him
+    # on when the estate objective goes up, and this actor ACQUIRES him:
+    #
+    #     acquisitionPlan  spawnSet
+    #     entryName        the community entry
+    #     reference        the string registered in spawnSetNameToCommunityID
+    #
+    # `specRecordId` is 0 on that path, so nothing can be spawned: he is found
+    # or this scene has no speaker. Sixteen bench runs are behind it and
+    # `gotchas.md` 69 is the recipe.
+    #
+    # THE LINES CAN GO BACK TO BEING WORLD LINES. `inner_vo` below made them
+    # play 2D because the speaker was a kilometre away; the speaker is now
+    # standing in front of the player, which is what that flag was compensating
+    # for. Left as it is for THIS build on purpose: one change at a time, and
+    # the acquisition is the change. If he is audible and located correctly in
+    # play, drop the flag and hear him from his own mouth.
+    hoshino = s.add_spawnset_actor('hoshino', HOSHINO_ENTRY, HOSHINO_SPAWNSET)
 
     # NO JOHNNY IN THIS SCENE. He used to stand here through the whole
     # negotiation, with the comic's p43 and p45 lines. the design call, 2026-08-12,
@@ -835,10 +868,23 @@ def build_hoshino():
     # so `voExpression` carries it and `visualStyle: innerDialog` changed
     # nothing visible on a line whose speaker is not Johnny.
     #
-    # Both lines therefore use `inner_vo`: the field that does the work, and
-    # none of the relic register that belongs to Johnny.
-    s1 = s.section([s.add_line(hoshino, "Mmm? You lost, merc?", key='h01')],
-                   inner_vo=True)
+    # AND `inner_vo` IS NOW OFF, because the reason for it is gone.
+    #
+    # Everything above is about a speaker who was a kilometre away and a hundred
+    # metres down: 2D playback was how a voice reached the player from there at
+    # all. He is acquired from the world now (see the actor above), so he is
+    # standing in front of V, and a 2D line from a man two metres away is a line
+    # that does not come from him: no direction, no distance, no falloff when
+    # V walks off mid-sentence.
+    #
+    # Confirmed audible from the body first, playtest 2026-08-24: "He speaks and
+    # his mouth moves." That is what makes this safe to drop rather than a
+    # gamble; positional is the reason the acquisition was worth doing.
+    #
+    # IF HE IS SUDDENLY QUIET, this is the line to put back. `inner_vo=True` on
+    # both sections restores exactly the previous behaviour and costs only the
+    # spatial audio.
+    s1 = s.section([s.add_line(hoshino, "Mmm? You lost, merc?", key='h01')])
     # NOT the comic's wording. p45 reads "You know who I am." - a flat
     # assertion - and playtest, 2026-08-14: "Hoshino's phrasing is weird". It is,
     # and the cause is structural rather than lexical: the comic has a page turn
@@ -857,8 +903,7 @@ def build_hoshino():
     # DO NOT change this string without generating the audio in the same pass.
     # Nothing downstream compares subtitle text to the clip, so a desync here
     # would be silent - this line is why Hoshino was moved to ElevenLabs.
-    s2 = s.section([s.add_line(hoshino, "Do you know who I am?", key='h02')],
-                   inner_vo=True)
+    s2 = s.section([s.add_line(hoshino, "Do you know who I am?", key='h02')])
     c1 = s.choice([s.add_option("Name what he signed.", 'oh1')])
     # ...and then V SAYS it. playtest, 2026-08-13: "V reply to hoshino is silent".
     # It was a hub option and nothing else - the player pressed a line nobody

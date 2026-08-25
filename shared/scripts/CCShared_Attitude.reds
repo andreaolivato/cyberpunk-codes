@@ -48,7 +48,24 @@ public abstract class CCSharedAttitude {
     // One attempt, then reschedule itself if the body is not there yet.
     public static func Apply(game: GameInstance, id: EntityID, hostile: Bool,
                              tries: Int32) -> Void {
-        let obj: ref<GameObject> = GameInstance.GetDynamicEntitySystem().GetEntity(id) as GameObject;
+        // THE DYNAMIC SYSTEM ONLY KNOWS WHAT IT SPAWNED, so ask the world too.
+        //
+        // This file was written when every NPC a gig placed came from
+        // `DynamicEntitySystem`, and `GetEntity` was the whole lookup. Gig 01's
+        // Hoshino is placed by a COMMUNITY now, and that system has never heard
+        // of him: the call returned null every time, the retry below fired forty
+        // times over sixty seconds, and the attitude was never applied at all.
+        //
+        // Nothing announced it. The symptom is the one this file exists to
+        // prevent (an NPC who keeps his record's default attitude) arriving by
+        // a third route, after a missing call and after too small a retry budget.
+        //
+        // Dynamic first, because that is the common case and the cheaper query.
+        let obj: ref<GameObject> = GameInstance.GetDynamicEntitySystem()
+            .GetEntity(id) as GameObject;
+        if !IsDefined(obj) {
+            obj = GameInstance.FindEntityByID(game, id) as GameObject;
+        }
         if IsDefined(obj) {
             let agent: ref<AttitudeAgent> = obj.GetAttitudeAgent();
             if IsDefined(agent) {

@@ -1,0 +1,2866 @@
+{
+  "Header": {
+    "WolvenKitVersion": "8.20.0",
+    "WKitJsonVersion": "0.0.9",
+    "GameVersion": 2310,
+    "DataType": "CR2W",
+    "ArchiveFileName": "cc_g01_compound_reg.streamingsector"
+  },
+  "Data": {
+    "Version": 195,
+    "BuildVersion": 0,
+    "RootChunk": {
+      "$type": "worldStreamingSector",
+      "category": "AlwaysLoaded",
+      "cookingPlatform": "PLATFORM_PC",
+      "externInplaceResource": {
+        "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "uint64",
+          "$value": "0"
+        },
+        "Flags": "Soft"
+      },
+      "level": 1,
+      "localInplaceResource": [],
+      "nodeData": {
+        "BufferId": "0",
+        "Flags": 4063232,
+        "Type": "WolvenKit.RED4.Archive.Buffer.worldNodeDataBuffer, WolvenKit.RED4, Version=8.20.0.0, Culture=neutral, PublicKeyToken=null",
+        "Data": [
+          {
+            "Id": "0",
+            "NodeIndex": 0,
+            "Position": {
+              "$type": "Vector4",
+              "W": 0,
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0.0,
+              "r": 1.0
+            },
+            "Scale": {
+              "$type": "Vector3",
+              "X": 1,
+              "Y": 1,
+              "Z": 1
+            },
+            "Pivot": {
+              "$type": "Vector3",
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "Bounds": {
+              "$type": "Box",
+              "Max": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": 0,
+                "Y": 0,
+                "Z": 0
+              },
+              "Min": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": 0,
+                "Y": 0,
+                "Z": 0
+              }
+            },
+            "QuestPrefabRefHash": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "17451205375391155721"
+            },
+            "UkHash1": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "CookedPrefabData": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Default"
+            },
+            "MaxStreamingDistance": 17.320507,
+            "UkFloat1": 99999999,
+            "Uk10": 32,
+            "Uk11": 512,
+            "Uk12": 0,
+            "Uk13": "0",
+            "Uk14": "0"
+          }
+        ]
+      },
+      "nodeRefs": [],
+      "nodes": [
+        {
+          "HandleId": "0",
+          "Data": {
+            "$type": "worldCommunityRegistryNode",
+            "communitiesData": [
+              {
+                "$type": "worldCommunityRegistryItem",
+                "communityAreaType": "Regular",
+                "communityId": {
+                  "$type": "gameCommunityID",
+                  "entityId": {
+                    "$type": "entEntityID",
+                    "hash": "9820227822267702986"
+                  }
+                },
+                "entriesInitialState": [
+                  {
+                    "$type": "worldCommunityEntryInitialState",
+                    "entryActiveOnStart": 0,
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "gate03"
+                    },
+                    "initialPhaseName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "default"
+                    }
+                  },
+                  {
+                    "$type": "worldCommunityEntryInitialState",
+                    "entryActiveOnStart": 0,
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "gate2_01"
+                    },
+                    "initialPhaseName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "default"
+                    }
+                  },
+                  {
+                    "$type": "worldCommunityEntryInitialState",
+                    "entryActiveOnStart": 0,
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "gate2_02"
+                    },
+                    "initialPhaseName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "default"
+                    }
+                  },
+                  {
+                    "$type": "worldCommunityEntryInitialState",
+                    "entryActiveOnStart": 0,
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "gate2_03"
+                    },
+                    "initialPhaseName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "default"
+                    }
+                  },
+                  {
+                    "$type": "worldCommunityEntryInitialState",
+                    "entryActiveOnStart": 0,
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "inner02"
+                    },
+                    "initialPhaseName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "default"
+                    }
+                  },
+                  {
+                    "$type": "worldCommunityEntryInitialState",
+                    "entryActiveOnStart": 0,
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "inner03"
+                    },
+                    "initialPhaseName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "default"
+                    }
+                  },
+                  {
+                    "$type": "worldCommunityEntryInitialState",
+                    "entryActiveOnStart": 0,
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "inner04"
+                    },
+                    "initialPhaseName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "default"
+                    }
+                  },
+                  {
+                    "$type": "worldCommunityEntryInitialState",
+                    "entryActiveOnStart": 0,
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "inner05"
+                    },
+                    "initialPhaseName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "default"
+                    }
+                  },
+                  {
+                    "$type": "worldCommunityEntryInitialState",
+                    "entryActiveOnStart": 0,
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "inner06"
+                    },
+                    "initialPhaseName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "default"
+                    }
+                  },
+                  {
+                    "$type": "worldCommunityEntryInitialState",
+                    "entryActiveOnStart": 0,
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "inner07"
+                    },
+                    "initialPhaseName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "default"
+                    }
+                  },
+                  {
+                    "$type": "worldCommunityEntryInitialState",
+                    "entryActiveOnStart": 0,
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "inner08"
+                    },
+                    "initialPhaseName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "default"
+                    }
+                  },
+                  {
+                    "$type": "worldCommunityEntryInitialState",
+                    "entryActiveOnStart": 0,
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "inner09"
+                    },
+                    "initialPhaseName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "default"
+                    }
+                  },
+                  {
+                    "$type": "worldCommunityEntryInitialState",
+                    "entryActiveOnStart": 0,
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "inner10"
+                    },
+                    "initialPhaseName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "default"
+                    }
+                  },
+                  {
+                    "$type": "worldCommunityEntryInitialState",
+                    "entryActiveOnStart": 0,
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "inner11"
+                    },
+                    "initialPhaseName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "default"
+                    }
+                  },
+                  {
+                    "$type": "worldCommunityEntryInitialState",
+                    "entryActiveOnStart": 0,
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "inner12"
+                    },
+                    "initialPhaseName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "default"
+                    }
+                  },
+                  {
+                    "$type": "worldCommunityEntryInitialState",
+                    "entryActiveOnStart": 0,
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "deck02"
+                    },
+                    "initialPhaseName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "default"
+                    }
+                  },
+                  {
+                    "$type": "worldCommunityEntryInitialState",
+                    "entryActiveOnStart": 0,
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "deck03"
+                    },
+                    "initialPhaseName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "default"
+                    }
+                  },
+                  {
+                    "$type": "worldCommunityEntryInitialState",
+                    "entryActiveOnStart": 0,
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "deck04"
+                    },
+                    "initialPhaseName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "default"
+                    }
+                  },
+                  {
+                    "$type": "worldCommunityEntryInitialState",
+                    "entryActiveOnStart": 0,
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "inside10"
+                    },
+                    "initialPhaseName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "default"
+                    }
+                  },
+                  {
+                    "$type": "worldCommunityEntryInitialState",
+                    "entryActiveOnStart": 0,
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "inside11"
+                    },
+                    "initialPhaseName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "default"
+                    }
+                  },
+                  {
+                    "$type": "worldCommunityEntryInitialState",
+                    "entryActiveOnStart": 0,
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "inside12"
+                    },
+                    "initialPhaseName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "default"
+                    }
+                  },
+                  {
+                    "$type": "worldCommunityEntryInitialState",
+                    "entryActiveOnStart": 0,
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "inside14"
+                    },
+                    "initialPhaseName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "default"
+                    }
+                  },
+                  {
+                    "$type": "worldCommunityEntryInitialState",
+                    "entryActiveOnStart": 0,
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "inside15"
+                    },
+                    "initialPhaseName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "default"
+                    }
+                  },
+                  {
+                    "$type": "worldCommunityEntryInitialState",
+                    "entryActiveOnStart": 0,
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "inside16"
+                    },
+                    "initialPhaseName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "default"
+                    }
+                  },
+                  {
+                    "$type": "worldCommunityEntryInitialState",
+                    "entryActiveOnStart": 0,
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "inside17"
+                    },
+                    "initialPhaseName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "default"
+                    }
+                  },
+                  {
+                    "$type": "worldCommunityEntryInitialState",
+                    "entryActiveOnStart": 0,
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "inside18"
+                    },
+                    "initialPhaseName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "default"
+                    }
+                  },
+                  {
+                    "$type": "worldCommunityEntryInitialState",
+                    "entryActiveOnStart": 0,
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "office01"
+                    },
+                    "initialPhaseName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "default"
+                    }
+                  },
+                  {
+                    "$type": "worldCommunityEntryInitialState",
+                    "entryActiveOnStart": 0,
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "office02"
+                    },
+                    "initialPhaseName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "default"
+                    }
+                  },
+                  {
+                    "$type": "worldCommunityEntryInitialState",
+                    "entryActiveOnStart": 0,
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "office03"
+                    },
+                    "initialPhaseName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "default"
+                    }
+                  },
+                  {
+                    "$type": "worldCommunityEntryInitialState",
+                    "entryActiveOnStart": 0,
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "office04"
+                    },
+                    "initialPhaseName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "default"
+                    }
+                  }
+                ],
+                "template": {
+                  "HandleId": "1",
+                  "Data": {
+                    "$type": "communityCommunityTemplateData",
+                    "entries": [
+                      {
+                        "HandleId": "2",
+                        "Data": {
+                          "$type": "communitySpawnEntry",
+                          "characterRecordId": {
+                            "$type": "TweakDBID",
+                            "$storage": "string",
+                            "$value": "Character.sts_std_arr_10_security_shotgun_mb"
+                          },
+                          "entryName": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "gate03"
+                          },
+                          "phases": [
+                            {
+                              "HandleId": "3",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "default"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "default"
+                                },
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g01_compound/#cc_g01_compound_gate03"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "HandleId": "4",
+                        "Data": {
+                          "$type": "communitySpawnEntry",
+                          "characterRecordId": {
+                            "$type": "TweakDBID",
+                            "$storage": "string",
+                            "$value": "Character.sts_std_arr_12_security_guard1_ranged1_nue_ma"
+                          },
+                          "entryName": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "gate2_01"
+                          },
+                          "phases": [
+                            {
+                              "HandleId": "5",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "default"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "default"
+                                },
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g01_compound/#cc_g01_compound_gate2_01"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "HandleId": "6",
+                        "Data": {
+                          "$type": "communitySpawnEntry",
+                          "characterRecordId": {
+                            "$type": "TweakDBID",
+                            "$storage": "string",
+                            "$value": "Character.sts_std_arr_10_security_shotgun_mb"
+                          },
+                          "entryName": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "gate2_02"
+                          },
+                          "phases": [
+                            {
+                              "HandleId": "7",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "default"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "default"
+                                },
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g01_compound/#cc_g01_compound_gate2_02"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "HandleId": "8",
+                        "Data": {
+                          "$type": "communitySpawnEntry",
+                          "characterRecordId": {
+                            "$type": "TweakDBID",
+                            "$storage": "string",
+                            "$value": "Character.sts_std_arr_12_security_guard1_ranged1_nue_ma"
+                          },
+                          "entryName": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "gate2_03"
+                          },
+                          "phases": [
+                            {
+                              "HandleId": "9",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "default"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "default"
+                                },
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g01_compound/#cc_g01_compound_gate2_03"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "HandleId": "10",
+                        "Data": {
+                          "$type": "communitySpawnEntry",
+                          "characterRecordId": {
+                            "$type": "TweakDBID",
+                            "$storage": "string",
+                            "$value": "Character.arr_arasaka_ranger1_melee2_knife_ma"
+                          },
+                          "entryName": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "inner02"
+                          },
+                          "phases": [
+                            {
+                              "HandleId": "11",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "default"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "default"
+                                },
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inner02"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "HandleId": "12",
+                        "Data": {
+                          "$type": "communitySpawnEntry",
+                          "characterRecordId": {
+                            "$type": "TweakDBID",
+                            "$storage": "string",
+                            "$value": "Character.sts_std_arr_12_security_guard1_ranged1_nue_ma"
+                          },
+                          "entryName": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "inner03"
+                          },
+                          "phases": [
+                            {
+                              "HandleId": "13",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "default"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "default"
+                                },
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inner03"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "HandleId": "14",
+                        "Data": {
+                          "$type": "communitySpawnEntry",
+                          "characterRecordId": {
+                            "$type": "TweakDBID",
+                            "$storage": "string",
+                            "$value": "Character.sts_std_arr_10_security_shotgun_mb"
+                          },
+                          "entryName": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "inner04"
+                          },
+                          "phases": [
+                            {
+                              "HandleId": "15",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "default"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "default"
+                                },
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inner04"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "HandleId": "16",
+                        "Data": {
+                          "$type": "communitySpawnEntry",
+                          "characterRecordId": {
+                            "$type": "TweakDBID",
+                            "$storage": "string",
+                            "$value": "Character.arasaka_2020guard_ranged1_2020nue_ma"
+                          },
+                          "entryName": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "inner05"
+                          },
+                          "phases": [
+                            {
+                              "HandleId": "17",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "default"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "default"
+                                },
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inner05"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "HandleId": "18",
+                        "Data": {
+                          "$type": "communitySpawnEntry",
+                          "characterRecordId": {
+                            "$type": "TweakDBID",
+                            "$storage": "string",
+                            "$value": "Character.sts_std_arr_12_security_guard1_ranged1_nue_ma"
+                          },
+                          "entryName": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "inner06"
+                          },
+                          "phases": [
+                            {
+                              "HandleId": "19",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "default"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "default"
+                                },
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inner06"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "HandleId": "20",
+                        "Data": {
+                          "$type": "communitySpawnEntry",
+                          "characterRecordId": {
+                            "$type": "TweakDBID",
+                            "$storage": "string",
+                            "$value": "Character.arasaka_guard2_melee1_baton_wa"
+                          },
+                          "entryName": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "inner07"
+                          },
+                          "phases": [
+                            {
+                              "HandleId": "21",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "default"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "default"
+                                },
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inner07"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "HandleId": "22",
+                        "Data": {
+                          "$type": "communitySpawnEntry",
+                          "characterRecordId": {
+                            "$type": "TweakDBID",
+                            "$storage": "string",
+                            "$value": "Character.sts_std_arr_12_security_guard1_ranged1_nue_ma"
+                          },
+                          "entryName": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "inner08"
+                          },
+                          "phases": [
+                            {
+                              "HandleId": "23",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "default"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "default"
+                                },
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inner08"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "HandleId": "24",
+                        "Data": {
+                          "$type": "communitySpawnEntry",
+                          "characterRecordId": {
+                            "$type": "TweakDBID",
+                            "$storage": "string",
+                            "$value": "Character.sts_std_arr_10_security_shotgun_mb"
+                          },
+                          "entryName": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "inner09"
+                          },
+                          "phases": [
+                            {
+                              "HandleId": "25",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "default"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "default"
+                                },
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inner09"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "HandleId": "26",
+                        "Data": {
+                          "$type": "communitySpawnEntry",
+                          "characterRecordId": {
+                            "$type": "TweakDBID",
+                            "$storage": "string",
+                            "$value": "Character.sts_std_arr_12_security_guard1_ranged1_nue_ma"
+                          },
+                          "entryName": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "inner10"
+                          },
+                          "phases": [
+                            {
+                              "HandleId": "27",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "default"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "default"
+                                },
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inner10"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "HandleId": "28",
+                        "Data": {
+                          "$type": "communitySpawnEntry",
+                          "characterRecordId": {
+                            "$type": "TweakDBID",
+                            "$storage": "string",
+                            "$value": "Character.arr_arasaka_ranger1_melee2_knife_ma"
+                          },
+                          "entryName": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "inner11"
+                          },
+                          "phases": [
+                            {
+                              "HandleId": "29",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "default"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "default"
+                                },
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inner11"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "HandleId": "30",
+                        "Data": {
+                          "$type": "communitySpawnEntry",
+                          "characterRecordId": {
+                            "$type": "TweakDBID",
+                            "$storage": "string",
+                            "$value": "Character.sts_std_arr_12_security_guard1_ranged1_nue_ma"
+                          },
+                          "entryName": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "inner12"
+                          },
+                          "phases": [
+                            {
+                              "HandleId": "31",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "default"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "default"
+                                },
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inner12"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "HandleId": "32",
+                        "Data": {
+                          "$type": "communitySpawnEntry",
+                          "characterRecordId": {
+                            "$type": "TweakDBID",
+                            "$storage": "string",
+                            "$value": "Character.sts_std_arr_12_security_guard1_ranged1_nue_ma"
+                          },
+                          "entryName": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "deck02"
+                          },
+                          "phases": [
+                            {
+                              "HandleId": "33",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "default"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "default"
+                                },
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g01_compound/#cc_g01_compound_deck02"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "HandleId": "34",
+                        "Data": {
+                          "$type": "communitySpawnEntry",
+                          "characterRecordId": {
+                            "$type": "TweakDBID",
+                            "$storage": "string",
+                            "$value": "Character.arasaka_2020guard_ranged1_2020nue_ma"
+                          },
+                          "entryName": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "deck03"
+                          },
+                          "phases": [
+                            {
+                              "HandleId": "35",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "default"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "default"
+                                },
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g01_compound/#cc_g01_compound_deck03"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "HandleId": "36",
+                        "Data": {
+                          "$type": "communitySpawnEntry",
+                          "characterRecordId": {
+                            "$type": "TweakDBID",
+                            "$storage": "string",
+                            "$value": "Character.sts_std_arr_12_security_guard1_ranged1_nue_ma"
+                          },
+                          "entryName": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "deck04"
+                          },
+                          "phases": [
+                            {
+                              "HandleId": "37",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "default"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "default"
+                                },
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g01_compound/#cc_g01_compound_deck04"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "HandleId": "38",
+                        "Data": {
+                          "$type": "communitySpawnEntry",
+                          "characterRecordId": {
+                            "$type": "TweakDBID",
+                            "$storage": "string",
+                            "$value": "Character.sts_std_arr_12_security_guard1_ranged1_nue_ma"
+                          },
+                          "entryName": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "inside10"
+                          },
+                          "phases": [
+                            {
+                              "HandleId": "39",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "default"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "default"
+                                },
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inside10"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "HandleId": "40",
+                        "Data": {
+                          "$type": "communitySpawnEntry",
+                          "characterRecordId": {
+                            "$type": "TweakDBID",
+                            "$storage": "string",
+                            "$value": "Character.arr_arasaka_ranger1_melee2_knife_ma"
+                          },
+                          "entryName": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "inside11"
+                          },
+                          "phases": [
+                            {
+                              "HandleId": "41",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "default"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "default"
+                                },
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inside11"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "HandleId": "42",
+                        "Data": {
+                          "$type": "communitySpawnEntry",
+                          "characterRecordId": {
+                            "$type": "TweakDBID",
+                            "$storage": "string",
+                            "$value": "Character.sts_std_arr_12_security_guard1_ranged1_nue_ma"
+                          },
+                          "entryName": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "inside12"
+                          },
+                          "phases": [
+                            {
+                              "HandleId": "43",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "default"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "default"
+                                },
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inside12"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "HandleId": "44",
+                        "Data": {
+                          "$type": "communitySpawnEntry",
+                          "characterRecordId": {
+                            "$type": "TweakDBID",
+                            "$storage": "string",
+                            "$value": "Character.sts_std_arr_12_security_guard1_ranged1_nue_ma"
+                          },
+                          "entryName": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "inside14"
+                          },
+                          "phases": [
+                            {
+                              "HandleId": "45",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "default"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "default"
+                                },
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inside14"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "HandleId": "46",
+                        "Data": {
+                          "$type": "communitySpawnEntry",
+                          "characterRecordId": {
+                            "$type": "TweakDBID",
+                            "$storage": "string",
+                            "$value": "Character.sts_std_arr_10_security_shotgun_mb"
+                          },
+                          "entryName": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "inside15"
+                          },
+                          "phases": [
+                            {
+                              "HandleId": "47",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "default"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "default"
+                                },
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inside15"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "HandleId": "48",
+                        "Data": {
+                          "$type": "communitySpawnEntry",
+                          "characterRecordId": {
+                            "$type": "TweakDBID",
+                            "$storage": "string",
+                            "$value": "Character.sts_std_arr_12_security_guard1_ranged1_nue_ma"
+                          },
+                          "entryName": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "inside16"
+                          },
+                          "phases": [
+                            {
+                              "HandleId": "49",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "default"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "default"
+                                },
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inside16"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "HandleId": "50",
+                        "Data": {
+                          "$type": "communitySpawnEntry",
+                          "characterRecordId": {
+                            "$type": "TweakDBID",
+                            "$storage": "string",
+                            "$value": "Character.arasaka_2020guard_ranged1_2020nue_ma"
+                          },
+                          "entryName": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "inside17"
+                          },
+                          "phases": [
+                            {
+                              "HandleId": "51",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "default"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "default"
+                                },
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inside17"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "HandleId": "52",
+                        "Data": {
+                          "$type": "communitySpawnEntry",
+                          "characterRecordId": {
+                            "$type": "TweakDBID",
+                            "$storage": "string",
+                            "$value": "Character.sts_std_arr_12_security_guard1_ranged1_nue_ma"
+                          },
+                          "entryName": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "inside18"
+                          },
+                          "phases": [
+                            {
+                              "HandleId": "53",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "default"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "default"
+                                },
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inside18"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "HandleId": "54",
+                        "Data": {
+                          "$type": "communitySpawnEntry",
+                          "characterRecordId": {
+                            "$type": "TweakDBID",
+                            "$storage": "string",
+                            "$value": "Character.sts_std_arr_12_security_guard1_ranged1_nue_ma"
+                          },
+                          "entryName": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "office01"
+                          },
+                          "phases": [
+                            {
+                              "HandleId": "55",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "default"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "default"
+                                },
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g01_compound/#cc_g01_compound_office01"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "HandleId": "56",
+                        "Data": {
+                          "$type": "communitySpawnEntry",
+                          "characterRecordId": {
+                            "$type": "TweakDBID",
+                            "$storage": "string",
+                            "$value": "Character.sts_std_arr_10_security_shotgun_mb"
+                          },
+                          "entryName": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "office02"
+                          },
+                          "phases": [
+                            {
+                              "HandleId": "57",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "default"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "default"
+                                },
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g01_compound/#cc_g01_compound_office02"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "HandleId": "58",
+                        "Data": {
+                          "$type": "communitySpawnEntry",
+                          "characterRecordId": {
+                            "$type": "TweakDBID",
+                            "$storage": "string",
+                            "$value": "Character.arr_arasaka_ranger1_melee2_knife_ma"
+                          },
+                          "entryName": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "office03"
+                          },
+                          "phases": [
+                            {
+                              "HandleId": "59",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "default"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "default"
+                                },
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g01_compound/#cc_g01_compound_office03"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "HandleId": "60",
+                        "Data": {
+                          "$type": "communitySpawnEntry",
+                          "characterRecordId": {
+                            "$type": "TweakDBID",
+                            "$storage": "string",
+                            "$value": "Character.sts_std_arr_12_security_guard1_ranged1_nue_ma"
+                          },
+                          "entryName": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "office04"
+                          },
+                          "phases": [
+                            {
+                              "HandleId": "61",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "default"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "default"
+                                },
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g01_compound/#cc_g01_compound_office04"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            ],
+            "crowdCreationRegistry": null,
+            "debugName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "registry"
+            },
+            "isHostOnly": 0,
+            "isVisibleInGame": 1,
+            "proxyScale": null,
+            "representsCrowd": 0,
+            "sourcePrefabHash": "0",
+            "spawnSetNameToCommunityID": {
+              "$type": "gameCommunitySpawnSetNameToID",
+              "entries": []
+            },
+            "tag": "None",
+            "tagExt": "None",
+            "workspotsPersistentData": [
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "8025170056177890219"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -25410797
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": -191384911
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 996147
+                  }
+                },
+                "yaw": -124.0
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "5742344037439046918"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -29591339
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": -196336812
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 996147
+                  }
+                },
+                "yaw": -129.2
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "5742342937927418707"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -29762387
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": -196799889
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 996147
+                  }
+                },
+                "yaw": -120.5
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "5742341838415790496"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -30070013
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": -197372805
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 997588
+                  }
+                },
+                "yaw": -119.9
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "9372359075629146905"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -32228376
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": -195546972
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 996147
+                  }
+                },
+                "yaw": -122.5
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "9372357976117518694"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -35103440
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": -191293554
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 996147
+                  }
+                },
+                "yaw": 159.5
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "9372361274652403327"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -34524364
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": -191650463
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 1003356
+                  }
+                },
+                "yaw": 135.6
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "9372360175140775116"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -36905156
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": -196854415
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 1259208
+                  }
+                },
+                "yaw": -36.7
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "9372363473675659749"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -31567773
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": -192542932
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 996147
+                  }
+                },
+                "yaw": -156.8
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "9372362374164031538"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -32184205
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": -192220758
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 996147
+                  }
+                },
+                "yaw": -158.4
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "9372365672698916171"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -30877548
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": -190156111
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 996933
+                  }
+                },
+                "yaw": -95.2
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "9372364573187287960"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -29409804
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": -188128690
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 996147
+                  }
+                },
+                "yaw": -132.0
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "9371400301489536138"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -27855814
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": -188788244
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 1002700
+                  }
+                },
+                "yaw": -179.4
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "9371401401001164349"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -25550127
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": -188457025
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 996147
+                  }
+                },
+                "yaw": 155.4
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "9371398102466279716"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -26096959
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": -190138941
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 996147
+                  }
+                },
+                "yaw": -156.7
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "14710448483101128370"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -28795076
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": -186937901
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 1914175
+                  }
+                },
+                "yaw": -107.1
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "14710449582612756581"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -27179876
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": -187883454
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 2076835
+                  }
+                },
+                "yaw": -155.0
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "14710441886031359104"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -28435677
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": -187447508
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 1914175
+                  }
+                },
+                "yaw": 22.1
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "5174976058013201736"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -34997141
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": -187216560
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 1127219
+                  }
+                },
+                "yaw": 37.4
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "5174977157524829947"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -33965211
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": -187815952
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 1127219
+                  }
+                },
+                "yaw": -155.9
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "5174978257036458158"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -33457438
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": -189801824
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 1127612
+                  }
+                },
+                "yaw": 69.8
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "5174980456059714580"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -31523209
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": -189936435
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 1913651
+                  }
+                },
+                "yaw": 139.5
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "5174981555571342791"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -31386501
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": -189037412
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 1912602
+                  }
+                },
+                "yaw": 152.0
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "5174982655082971002"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -32543080
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": -188649963
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 1914044
+                  }
+                },
+                "yaw": 126.0
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "5174983754594599213"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -33683800
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": -187837448
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 1957036
+                  }
+                },
+                "yaw": -17.1
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "5174967261920176048"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -34764619
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": -187103182
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 1913782
+                  }
+                },
+                "yaw": 32.0
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "10704877951882234538"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -33038270
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": -190599397
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 1913651
+                  }
+                },
+                "yaw": -74.6
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "10704876852370606327"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -32295354
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": -190763499
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 1913651
+                  }
+                },
+                "yaw": -34.2
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "10704875752858978116"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -33568587
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": -189415948
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 1913651
+                  }
+                },
+                "yaw": -130.7
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "10704874653347349905"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -34547957
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": -188557819
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 1913651
+                  }
+                },
+                "yaw": 45.2
+              }
+            ]
+          }
+        }
+      ],
+      "persistentNodeIndex": 0,
+      "persistentNodes": [],
+      "variantIndices": [
+        0
+      ],
+      "variantNodes": [],
+      "version": 62
+    },
+    "EmbeddedFiles": []
+  }
+}

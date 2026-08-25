@@ -20,6 +20,7 @@ from questkit.questgraph import (                                   # noqa: F401
     b, configure, cname, jpath, Builder, STD, JRN,
     add_input, add_output, add_pause_fact, add_delay, add_game_delay,
     add_pause_journal, add_setvar, add_journal, add_scene, add_journal_quest,
+    add_community,
     add_addvar, add_pause_facts, add_condition_fact, add_race2,
     add_pause_node_loaded, add_pause_phone_pickup, add_condition_phone_pickup,
     add_prefab_variant, add_toggle_component, add_call_contact,
@@ -43,6 +44,71 @@ POI = 'points_of_interest/street_stories/' + QUEST_ID
 # The same string gen_scenes.SCENE_DEPOT builds, and it has to stay so: the
 # lipmap is keyed by FNV1a64 of exactly this path plus the scene name.
 SCENES = DEPOT + chr(92) + 'scenes' + chr(92)
+
+# Hoshino's community, imported rather than restated: the spawner reference has
+# to be the same string the area node carries and the same one the registry item
+# hashes into its id, or the node addresses nothing and says so to nobody.
+from gen_community import (                                         # noqa: E402
+    COMMUNITY_REF, ENTRY as HOSHINO_ENTRY, PHASE as HOSHINO_PHASE,
+)
+# The estate detail, its own community and switched as a whole. Imported for the
+# same reason as Hoshino's above: the reference here has to be the string its
+# area node carries, and a phase addressing a name that does not exist is a
+# quest node reaching for nothing, silently, on every load (gotcha 73).
+import gen_estate_guards                                            # noqa: E402
+import gen_compound_guards                                          # noqa: E402
+
+ESTATE_REF = gen_estate_guards.build().community_ref
+COMPOUND_REF = gen_compound_guards.build().community_ref
+
+
+def estate_guards(action):
+    """Switch the WHOLE estate detail, every post, in one node.
+
+    No `entry`, which addresses the community rather than one of its entries and
+    is what 112 of 133 sampled vanilla uses do. That is the reason the guards are
+    a separate community from Hoshino: naming entries one at a time would be
+    one node per entry at each of three beats, and one node carrying them all is
+    a shape this project has not read off a working example.
+
+    The three beats are the same three Hoshino needs, and for the same reasons:
+    off before anything can be seen, on at the beat that wants them, off at the
+    end because community state persists in saves and an active entry holding a
+    dead man returns him alive on load.
+    """
+    # NEITHER an entry NOR a phase name, and both omissions are the same
+    # decision: address the community itself and set nothing that scopes the
+    # action further. That is the plain whole-community form, which is what 112
+    # of 133 sampled vanilla uses write. A phase name with no entry beside it is
+    # a combination this project has not read off a working example, and this is
+    # not the place to find out what it means.
+    step(add_community(action, ESTATE_REF))
+
+
+def compound_guards(action):
+    """Switch the WHOLE industrial park detail, every post, in one node.
+
+    Same shape and the same reasoning as `estate_guards` above, and the same
+    three beats. The site differs only in when they are wanted: the estate's
+    window opens when Nix gives the address, this one opens when the gig starts
+    and closes when V is clear of the compound.
+    """
+    step(add_community(action, COMPOUND_REF))
+
+
+def hoshino_community(action):
+    """Switch Hoshino's entry, and ONLY his.
+
+    THE GIG PHASE TOUCHES NOTHING IT DOES NOT OWN. It named the guard test's
+    entry here for one build, and when that entry was renamed the phase went on
+    addressing a community entry that no longer existed, which is a quest node
+    reaching for nothing, on every load, for every player. The dev entries are
+    the LAB phase's business and it switches them off itself.
+
+    A per-entry action leaves the other entries alone (bench run 14), so naming
+    one entry is both correct and sufficient."""
+    step(add_community(action, COMMUNITY_REF, entry=HOSHINO_ENTRY,
+                       phase=HOSHINO_PHASE))
 
 # The scene anchors are gig01_config.py, imported above, along with the
 # evidence for each one. They were stated here and in gen_scenes.py, and three
@@ -68,6 +134,32 @@ def step(nid, in_sock='In', out_sock='Out'):
     b.connect((prev_nid, prev_sock), (nid, in_sock))
     chain.append((nid, out_sock))
 
+# HOSHINO IS SWITCHED OFF BEFORE ANYTHING ELSE HAPPENS, and this is the first
+# node in the graph for a reason.
+#
+# He is placed by a community this mod ships (`gen_community.py`), which replaced
+# the old arrangement of a script-spawned body plus an invisible scene actor. A
+# community spawns its entries ON SAVE LOAD with no quest node involved, and
+# `entryActiveOnStart: 0` does not stop it: measured, gotcha 69's bench, run 14.
+# So without this node he would be standing at the North Oak estate from the
+# moment the mod is installed.
+#
+# BEFORE the wait on `cc_g01_start`, not after: the phase is entered at game
+# start for everyone who has the mod, and the gig may never be started at all.
+# A player who never takes this job must never meet him.
+#
+# The window between the save loading and this node running is not zero, and it
+# has not been measured. It only matters to a player who loads a save while
+# standing at the estate, which for a pre-gig save is nobody.
+hoshino_community('Deactivate')
+# AND THE ESTATE DETAIL, for exactly the same reason and on the same terms. It
+# is a detail of armed Arasaka guards at a North Oak residence: a player who never
+# takes this job must never drive past them.
+estate_guards('Deactivate')
+# AND THE INDUSTRIAL PARK, on the same terms. Forty-six armed guards at a
+# working Arasaka site is not something a player who never took this job should
+# drive past.
+compound_guards('Deactivate')
 step(add_pause_fact('cc_g01_start'))
 step(add_setvar('cc_g01_started', 1))
 # The contact is activated either way: Elena has to exist in V's phone before
@@ -122,6 +214,14 @@ step(add_journal('gameJournalQuestObjective', QUEST + '/phase_main/obj_office'),
 step(add_journal('gameJournalQuestMapPin', QUEST + '/phase_main/obj_office/pin_office', notify=0),
      in_sock='Active')
 step(add_journal('gameJournalPointOfInterestMappin', POI, notify=0), in_sock='Active')
+# AND THE DETAIL GOES ON, as the objective that sends V there goes up.
+#
+# Earlier than the estate's equivalent relative to arrival, and deliberately so:
+# the compound is in Arroyo and the player may already be near it when he takes
+# the job, where the estate is a drive across the city. The community needs the
+# walk or the drive to place forty-six bodies, and this is the first moment the
+# gig knows he is going.
+compound_guards('Activate')
 step(add_setvar('cc_g01_nix_done', 0))
 
 # --- objective progression, gated by facts (set by the encounter script)
@@ -291,6 +391,15 @@ step(add_journal('gameJournalContact', 'contacts/cc_g01_nix', notify=0), in_sock
 # but a player who sprints could otherwise outrun it.
 step(add_pause_fact('cc_g01_terminal_done'))
 objective_step('cc_g01_left_compound', 'obj_nix', 'obj_nixcall')
+# AND OFF AGAIN, once V IS OUT. Same argument as the estate's, and the same
+# fact-shaped answer: `cc_g01_left_compound` already means he has gone.
+#
+# The bodies stay for the whole time he can see them, which is what the estate's
+# first attempt got wrong by switching them off while he was still standing
+# among them. The entries cannot simply be left on, because community state
+# persists in saves and an active entry holding a dead man stands him back up
+# alive on the next load.
+compound_guards('Deactivate')
 
 # ============================================================================
 # NIX ON SCREEN: the mod-owned video holocall
@@ -756,6 +865,16 @@ step(add_setvar('cc_g01_vlock', 0))
 step(add_setvar('cc_g01_nix_done', 1))
 # Estate: travel, kill Hoshino, upload the malware from his own terminal.
 objective_step('cc_g01_nix_done', 'obj_nixwait', 'obj_estate', 'pin_estate')
+# AND NOW HE EXISTS. Switched on as the objective goes up rather than on arrival,
+# so the community has the whole drive across the city to place him: a man who
+# streams in while V is already in the room is a man who appears out of nothing.
+hoshino_community('Activate')
+# THE DETAIL COMES ON WITH HIM, and on the same argument: the drive across the
+# city is the community's time to place the bodies. This replaced a script
+# spawn that asked for twenty-five entities as V arrived and delivered them in a
+# callback chain behind him, which is the "they simply weren't there, then they
+# appeared" report the chain was built to answer.
+estate_guards('Activate')
 # NO PIN ON obj_wayin, and it is the only objective in the gig with a marker but
 # no pin entry. Gig01_Encounter registers a runtime mappin instead and walks it
 # up the hill; a journal pin cannot be hidden once its objective is active, which
@@ -856,6 +975,23 @@ step(add_journal('gameJournalQuestMapPin',
      in_sock='Active')
 
 objective_step('cc_g01_malware_done', 'obj_malware', 'obj_escape')
+# AND NOW HIS ENTRY GOES OFF. NOT EARLIER, AND THE REASON IS THE BODY.
+#
+# `Deactivate` removes the community's body, corpse included. It sat right after
+# the pause on his death for one build, and playtest, 2026-08-24 reported
+# exactly what that does: *"it's a bit weird that the body disappeared"*. He was
+# shot and then deleted in front of the player, before the scene over his body
+# had finished.
+#
+# It cannot be dropped altogether either, because community state persists in
+# saves: an entry left active with a dead man in it puts him back at his spot,
+# alive, for anyone who quits after the kill and loads that save again.
+#
+# So it happens here, after the malware is uploaded. By then V has walked away
+# from the body to the terminal and the kill scene is long finished, and the
+# gig has nothing further to do with him. Anyone reloading from here on gets an
+# entry that is already off.
+hoshino_community('Deactivate')
 # ...and the estate terminal exchange, comic p51, AFTER V has unplugged.
 #
 # cc_g01_malware_talk is not cc_g01_malware_done: the upload finishes while V is
@@ -870,6 +1006,24 @@ step(add_scene(SCENES + 'gig01_malware.scene', ANCHOR_PLAYER,
      in_sock='malware_in', out_sock='malware_out')
 step(add_setvar('cc_g01_johnny_done', 1))
 objective_step('cc_g01_escaped', 'obj_escape', 'obj_epilogue', 'pin_epilogue')
+# AND NOW THE DETAIL GOES OFF, once V IS GONE. Not with Hoshino's entry.
+#
+# Playtest 2026-08-25 asked the obvious question: why would the guards vanish,
+# the bodies should stay. That is right, and the earlier placement was wrong. V
+# fights his way through the whole detail and the corpses are the evidence of it;
+# deleting them while he is still standing among them is the same fault that put
+# Hoshino's body out from under the player in August, once per guard.
+#
+# But the entries cannot simply be left on. Community state persists in saves, so
+# an active entry holding a dead man stands him back up alive on the next load,
+# and a hostile Arasaka detail would garrison a North Oak residence for the
+# rest of the save.
+#
+# `cc_g01_escaped` is what resolves it, and it already means exactly the right
+# thing: the upload is done and V is 160 m clear. He has left, the corpses stayed
+# for the whole time he could see them, and the entries go off behind him. Anyone
+# reloading from here gets a clean estate.
+estate_guards('Deactivate')
 # Arriving inside the bar only opens the conversation; the gig closes when Mama
 # Welles has actually been spoken to (last epilogue line sets cc_g01_mama_talked).
 # Arriving and reaching her are two things. cc_g01_at_coyote used to be set

@@ -61,7 +61,7 @@ had gone stale in three rows.
 | ArchiveXL | loads journal / localization / voiceover map / lipmap / streaming / questphase extensions via `.archive.xl` |
 | redscript | gameplay logic + UI wraps, ships as source, compiles at game launch |
 | TweakXL | database records. In use, `source/tweaks/shard.yaml` |
-| Codeware | scripting utilities. In use, `DynamicEntitySystem` spawns the guards, Hoshino and the Mama Welles stand-in |
+| Codeware | scripting utilities. In use, `DynamicEntitySystem` spawns the Mama Welles stand-in; the guards and Hoshino are placed by communities |
 | CET (Lua) | dev tooling only, never shipped gameplay logic |
 
 **Audioware is NOT a dependency and is not shipped.** It sat in this table for
@@ -632,20 +632,50 @@ Two things about the mechanism, which is the part worth copying:
 The corpus that measurement came from is `tools/vo_corpus.py`, which indexes
 every spoken line in the game and applies well beyond this question.
 
-## Spawning: BUILT, and this is what ships
+## Placing NPCs: COMMUNITIES, and this is what ships
 
-Codeware `DynamicEntitySystem` from redscript. Quest-graph `questSpawnSet` nodes
-only reference existing community spawn phases and are unusable for custom NPCs,
-so every NPC this gig places is script-spawned.
+Every NPC this gig places for the player to meet is placed by a community the
+mod itself ships. Three of them, one per site, each with a roster of entries
+naming a `Character` record, a position, a facing and an idle. The full recipe
+is `gotchas.md` 66, the shared implementation is `tools/questkit/community.py`,
+and the per-site rosters are the one thing a `gen_*_guards.py` file contains.
 
-| who | record | notes |
+| community | who | where |
 |---|---|---|
-| Hoshino | `Character.cc_g01_hoshino` | ours, via TweakXL (`source/tweaks/hoshino.yaml`), the one place the "clone an Arasaka record" plan was actually needed |
-| guards, netrunners, snipers | ten vanilla `Character.arasaka_*` / `nok_*` / `sts_std_arr_*` records | listed in `Gig01_Encounter.reds`; vanilla records need no TweakXL at all |
-| Mama Welles stand-in | `Character.Mama_Welles` | only spawned if the REAL one is absent; the script prefers her |
+| `cc_g01_hoshino` | 1 entry, `Character.cc_g01_hoshino` | the North Oak terrace, sitting |
+| `cc_g01_estate` | 29 entries, five vanilla Arasaka combat records | the North Oak residence |
+| `cc_g01_compound` | 30 entries, five vanilla street-security records | the Arasaka compound |
 
-**Johnny is NOT spawned or placed by script, and nothing searches for him.**
-Each of his seven beats is staged entirely by its own scene: the actor is
+Hoshino is ours, via TweakXL (`source/tweaks/hoshino.yaml`), and is the one
+place the "clone an Arasaka record" plan was actually needed. The other ten
+records are vanilla and need no TweakXL at all.
+
+**Why a community rather than a better spawn**, and it is three things:
+
+- **A post has a FACING.** A `DynamicEntitySystem` spawn has an anchor and a
+  navmesh query, and a navmesh query asked repeatedly around one point keeps
+  giving nearly the same answer. That is where the huddle came from, and it is
+  also why no guard could be put on an upper floor or a roof.
+- **The bodies persist properly.** A script spawn is re-run per session and its
+  dead do not stay dead across a reload.
+- **A community can be switched by the quest graph.** `add_community` in
+  `questkit/questgraph.py` is one node per beat, and it is what keeps a site
+  empty until the story wants it.
+
+**And what a community does NOT bring**, which cost two playtests to learn: an
+entry arrives with no quarrel with the player and with its senses switched off
+as far as the player is concerned. `Gig01_Encounter.FindDetail` finds the bodies
+and applies both, on a tick, idempotently. Gotchas 74 and 77.
+
+`DynamicEntitySystem` still places one body: the Mama Welles stand-in, and only
+if the real one is absent. `CCSharedWorld.Scatter` in `shared/scripts` is the
+squad-placement helper the guards used before the communities, and nothing in
+gig 01 calls it now.
+
+**Johnny is NOT placed by either route**, and nothing searches for him. See
+below.
+
+Each of Johnny's seven beats is staged entirely by its own scene: the actor is
 offset from an `around_player` marker, turned to face V by a computed yaw, made
 visible by a workspot, and glitched out by a `scneventsVFXEvent` 250 ms before
 the scene ends. One call does all of it, `Scene.stage_johnny`.

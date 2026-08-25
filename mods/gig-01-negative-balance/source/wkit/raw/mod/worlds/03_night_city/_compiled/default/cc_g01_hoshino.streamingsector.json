@@ -1,0 +1,300 @@
+{
+  "Header": {
+    "WolvenKitVersion": "8.20.0",
+    "WKitJsonVersion": "0.0.9",
+    "GameVersion": 2310,
+    "DataType": "CR2W",
+    "ArchiveFileName": "cc_g01_hoshino.streamingsector"
+  },
+  "Data": {
+    "Version": 195,
+    "BuildVersion": 0,
+    "RootChunk": {
+      "$type": "worldStreamingSector",
+      "category": "AlwaysLoaded",
+      "cookingPlatform": "PLATFORM_PC",
+      "externInplaceResource": {
+        "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "uint64",
+          "$value": "0"
+        },
+        "Flags": "Soft"
+      },
+      "level": 1,
+      "localInplaceResource": [],
+      "nodeData": {
+        "BufferId": "0",
+        "Flags": 4063232,
+        "Type": "WolvenKit.RED4.Archive.Buffer.worldNodeDataBuffer, WolvenKit.RED4, Version=8.20.0.0, Culture=neutral, PublicKeyToken=null",
+        "Data": [
+          {
+            "Id": "0",
+            "NodeIndex": 0,
+            "Position": {
+              "$type": "Vector4",
+              "W": 0,
+              "X": 299.021,
+              "Y": 1055.99,
+              "Z": 229.928
+            },
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0.9683657694796987,
+              "r": 0.24953504062554246
+            },
+            "Scale": {
+              "$type": "Vector3",
+              "X": 1,
+              "Y": 1,
+              "Z": 1
+            },
+            "Pivot": {
+              "$type": "Vector3",
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "Bounds": {
+              "$type": "Box",
+              "Max": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": 299.021,
+                "Y": 1055.99,
+                "Z": 229.928
+              },
+              "Min": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": 299.021,
+                "Y": 1055.99,
+                "Z": 229.928
+              }
+            },
+            "QuestPrefabRefHash": {
+              "$type": "NodeRef",
+              "$storage": "string",
+              "$value": "$/mod/cc_g01_hoshino/#cc_g01_hoshino_spot"
+            },
+            "UkHash1": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "CookedPrefabData": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Default"
+            },
+            "MaxStreamingDistance": 120.0,
+            "UkFloat1": 100.0,
+            "Uk10": 1024,
+            "Uk11": 512,
+            "Uk12": 0,
+            "Uk13": "0",
+            "Uk14": "0"
+          },
+          {
+            "Id": "0",
+            "NodeIndex": 1,
+            "Position": {
+              "$type": "Vector4",
+              "W": 0,
+              "X": 299.021,
+              "Y": 1055.99,
+              "Z": 229.928
+            },
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0.0,
+              "r": 1.0
+            },
+            "Scale": {
+              "$type": "Vector3",
+              "X": 50.0,
+              "Y": 50.0,
+              "Z": 50.0
+            },
+            "Pivot": {
+              "$type": "Vector3",
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "Bounds": {
+              "$type": "Box",
+              "Max": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": 299.021,
+                "Y": 1055.99,
+                "Z": 229.928
+              },
+              "Min": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": 299.021,
+                "Y": 1055.99,
+                "Z": 229.928
+              }
+            },
+            "QuestPrefabRefHash": {
+              "$type": "NodeRef",
+              "$storage": "string",
+              "$value": "$/mod/cc_g01_hoshino/#cc_g01_hoshino_com"
+            },
+            "UkHash1": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "CookedPrefabData": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Default"
+            },
+            "MaxStreamingDistance": 120.0,
+            "UkFloat1": 100.0,
+            "Uk10": 1024,
+            "Uk11": 512,
+            "Uk12": 0,
+            "Uk13": "0",
+            "Uk14": "0"
+          }
+        ]
+      },
+      "nodeRefs": [
+        {
+          "$type": "NodeRef",
+          "$storage": "string",
+          "$value": "$/mod/cc_g01_hoshino/#cc_g01_hoshino_spot"
+        },
+        {
+          "$type": "NodeRef",
+          "$storage": "string",
+          "$value": "$/mod/cc_g01_hoshino/#cc_g01_hoshino_com"
+        }
+      ],
+      "nodes": [
+        {
+          "HandleId": "0",
+          "Data": {
+            "$type": "worldAISpotNode",
+            "debugName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "{cc_g01_hoshino_spot}"
+            },
+            "isWorkspotInfinite": 1,
+            "isWorkspotStatic": 0,
+            "markings": [
+              {
+                "$type": "CName",
+                "$storage": "string",
+                "$value": "sit_chair"
+              }
+            ],
+            "spot": {
+              "HandleId": "1",
+              "Data": {
+                "$type": "AIActionSpot",
+                "resource": {
+                  "DepotPath": {
+                    "$type": "ResourcePath",
+                    "$storage": "string",
+                    "$value": "base\\workspots\\common\\chair\\generic__sit_chair__sit_around__01.workspot"
+                  },
+                  "Flags": "Soft"
+                }
+              }
+            }
+          }
+        },
+        {
+          "HandleId": "2",
+          "Data": {
+            "$type": "worldCompiledCommunityAreaNode_Streamable",
+            "area": {
+              "HandleId": "3",
+              "Data": {
+                "$type": "communityArea",
+                "entriesData": [
+                  {
+                    "$type": "communityCommunityEntrySpotsData",
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "hoshino"
+                    },
+                    "phasesData": [
+                      {
+                        "$type": "communityCommunityEntryPhaseSpotsData",
+                        "entryPhaseName": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "default"
+                        },
+                        "timePeriodsData": [
+                          {
+                            "$type": "communityCommunityEntryPhaseTimePeriodData",
+                            "isSequence": 0,
+                            "periodName": {
+                              "$type": "CName",
+                              "$storage": "string",
+                              "$value": "Day"
+                            },
+                            "spotNodeIds": [
+                              {
+                                "$type": "worldGlobalNodeID",
+                                "hash": "18207363334180824791"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            "debugName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "{cc_g01_hoshino_com}"
+            },
+            "isHostOnly": 0,
+            "isVisibleInGame": 1,
+            "proxyScale": null,
+            "sourceObjectId": {
+              "$type": "entEntityID",
+              "hash": "1235673552763067636"
+            },
+            "sourcePrefabHash": "0",
+            "streamingDistance": 0,
+            "tag": "None",
+            "tagExt": "None"
+          }
+        }
+      ],
+      "persistentNodeIndex": 0,
+      "persistentNodes": [],
+      "variantIndices": [
+        0
+      ],
+      "variantNodes": [],
+      "version": 62
+    },
+    "EmbeddedFiles": []
+  }
+}

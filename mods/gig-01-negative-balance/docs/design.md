@@ -25,7 +25,7 @@ which doubles as the visual/staging reference for every beat.
 | 1 | Night holocall from UNKNOWN CALLER → Elena | Phone call scene (Elena AI-voiced). She reports the pattern; V sends her to El Coyote Cojo ("Stay with Mama Welles") and asks where she works | `cc_g01_started` |
 | 2 | Location received | Elena sends workplace location; journal gig "Negative Balance" + map pin; V/Johnny recognize it as Arasaka-run | `cc_g01_accepted` |
 | 2b | Daytime recon (optional beat) | Approach by day: goons + mech out front make the front door a non-option; establishes night entry | `cc_g01_recon_done` |
-| 3 | Infiltration, LOCATION 1 | Arasaka Industrial Park, Arroyo/Santo Domingo. Street approach x=-177.761, y=-1472.829, z=7.477 (pin anchor `#std_arr_parking_spwn_179`). Guards inside (stealth-viable), hackable cameras | `cc_g01_office_reached` |
+| 3 | Infiltration, LOCATION 1 | Arasaka compound, Arroyo/Santo Domingo. Street approach x=-177.761, y=-1472.829, z=7.477 (pin anchor `#std_arr_parking_spwn_179`). Guards inside (stealth-viable), hackable cameras | `cc_g01_office_reached` |
 | 4 | The terminal | Interactable terminal inside the office → connect/upload sequence. This is where V learns the scheme AND that Hoshino is at the estate | `cc_g01_malware_done` |
 | 4b | **Nix holocall** | V sends the terminal data to Nix (existing game netrunner, contact `contacts/nix`, merge a new conversation into his contact like Elena's). He decrypts it, names Hoshino and sends the estate location | `cc_g01_nix_done` |
 | 5 | Travel, LOCATION 2 | **Arasaka residence on the hill (North Oak estate)**, objective + map pin appear only after Nix's call | `cc_g01_estate_reached` |
@@ -34,7 +34,7 @@ which doubles as the visual/staging reference for every beat.
 | 8 | Epilogue, LOCATION 3 | El Coyote Cojo (pin anchor `#loc_sq022_el_coyote_cojo_bar_marker`): Mama Welles line, drink with Pepe, closing V/Johnny beat | `cc_g01_done` |
 
 **Three-location structure (corrected 2026-08-11 in playtest):** the comic's
-office and Hoshino scenes are different places. The office (industrial park) is
+office and Hoshino scenes are different places. The office (the compound) is
 the intel; Hoshino lives at the **Arasaka estate on the hill in North Oak** - 
 the luxury interior seen in the comic panels. The estate pin must appear only
 after Nix's call, so the reveal drives the travel.

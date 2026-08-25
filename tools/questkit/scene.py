@@ -1388,14 +1388,26 @@ class Scene:
                           entry=WORKSPOT_ENTRY):
         """A node that puts a scene-spawned actor into a workspot IN PLACE.
 
-        Vanilla ships two shapes and only one of them is usable here:
+        Vanilla ships two shapes and this is the one that needs no world node:
 
-          questUseWorkspotParamsV1     points at a `workspotNode` NodeRef in a
-                                       streaming sector. Unusable - a mod's own
-                                       world nodes do not resolve.
           scnUseSceneWorkspotParamsV1  points at a workspotInstanceId in THIS
                                        scene, with playAtActorLocation 1 and no
                                        world node at all. This one.
+          questUseWorkspotParamsV1     points at a `workspotNode` NodeRef. See
+                                       add_world_workspot_node below.
+
+        THIS DOCSTRING USED TO SAY the second shape was "unusable - a mod's own
+        world nodes do not resolve". That was written before gotchas 34, 39 and
+        61 and it was wrong: a mod's own AI spot node holds a scene actor, and
+        gotcha 69 is the measurement. The choice between the two is now about
+        what the beat needs rather than about what works.
+
+          here          the actor holds the pose WHERE IT ALREADY IS, which is
+                        right for a speaker staged relative to the player who
+                        must not move
+          world node    the actor is put in a specific place, which is right
+                        when the pose belongs to a spot rather than to whoever
+                        is playing it
 
         Field values are node 28 of sts_hey_gle_04_johnny.scene crossed with the
         four palc=1 nodes of sts_wat_kab_03_johnny.scene, taking the latter's
@@ -1496,6 +1508,99 @@ class Scene:
                     'workspotInstanceId': {'$type': 'scnSceneWorkspotInstanceId',
                                            'id': nid},
                     'workspotNode': noderef(None),
+                }},
+                'sockets': [quest_socket('CutDestination', 'CutDestination'),
+                            quest_socket('In', 'Input'),
+                            quest_socket('Success', 'Output'),
+                            quest_socket('Work Started', 'Output')],
+            }},
+        })
+        return nid
+
+    def add_world_workspot_node(self, unique_name, spot_ref,
+                                entry=WORKSPOT_ENTRY):
+        """Put a scene actor into a `worldAISpotNode` THIS MOD SHIPS.
+
+        The counterpart to add_workspot_node: that one plays the workspot
+        wherever the actor stands, this one moves the actor to a place in the
+        world and plays the spot node's own workspot resource there. Use it when
+        the pose belongs to the SPOT (a man at a terminal, a woman on a stool)
+        rather than to whoever happens to be playing it.
+
+        Measured 2026-08-24, gotcha 69: an actor spawned 2 m in front of the
+        player ended up in the mod's own spot nine metres away with nothing left
+        beside the player. Californication ships the same thing.
+
+        `scnUseSceneWorkspotParamsV1` EXTENDS `questUseWorkspotParamsV1`, so
+        this is the same field set minus the three the subclass adds
+        (`workspotInstanceId`, `itemOverride`, `playAtActorLocation`), plus a
+        `workspotNode`. Read off the generated class layouts in
+        `tools/native/vendor/RED4ext.SDK`, not from memory.
+
+        Nothing is registered in the scene's own workspot tables: the node
+        supplies the resource. Terminal, like add_workspot_node, and for the
+        same reason: the conversation must never be waiting on it.
+
+        `spot_ref` may be written long or short. Californication references its
+        own node short while naming it long; this project names its own nodes
+        long. Which form the engine prefers is not established, so pass the same
+        string the sector registers unless there is a reason not to.
+        """
+        nid = self._nid()
+        self.nodes.append({
+            '$type': 'scnQuestNode',
+            'ffStrategy': 'automatic',
+            'isockMappings': [cname('CutDestination'), cname('In')],
+            'nodeId': node_id(nid),
+            'osockMappings': [cname('Success'), cname('Work Started')],
+            'outputSockets': [osock(0, 0, []), osock(0, 1, [])],
+            'questNode': {'HandleId': '@qn', 'Data': {
+                '$type': 'questUseWorkspotNodeDefinition',
+                'entityReference': entity_ref(unique_name=unique_name),
+                'id': nid,
+                'paramsV1': {'HandleId': '@qp', 'Data': {
+                    '$type': 'questUseWorkspotParamsV1',
+                    # Californication's own values for the six that decide
+                    # whether he walks over or is simply there.
+                    'changeWorkspot': 1,
+                    'enableIdleMode': 1,
+                    'instant': 1,
+                    'isWorkspotInfinite': 1,
+                    'jumpToEntry': 1,
+                    'teleport': 1,
+                    'continueInCombat': 0,
+                    'dangleResetSimulation': 0,
+                    'entryId': {'$type': 'workWorkEntryId', 'id': entry},
+                    'entryTag': cname(None),
+                    'exitAnimName': cname(None),
+                    'exitEntryId': {'$type': 'workWorkEntryId', 'id': 4294967295},
+                    'finishAnimation': 0,
+                    'forceEntryAnimName': cname(None),
+                    'function': 'UseWorkspot',
+                    'isPlayer': 0,
+                    'maxAnimTimeLimit': 0,
+                    'meshDissolvingEnabled': 1,
+                    'movementType': 'Walk',
+                    'playerParams': {
+                        '$type': 'questUseWorkspotPlayerParams',
+                        'applyCameraParams': 0,
+                        'cameraSettings': {'$type': 'gameTier3CameraSettings',
+                                           'pitchBottomLimit': 45,
+                                           'pitchSpeedMultiplier': 1,
+                                           'pitchTopLimit': 60,
+                                           'yawLeftLimit': 60, 'yawRightLimit': 60,
+                                           'yawSpeedMultiplier': 1},
+                        'cameraUseTrajectorySpace': 1,
+                        'emptyHands': 0,
+                        'parallaxSpace': 'Trajectory',
+                        'parallaxWeight': 1,
+                        'tier': 'Tier3',
+                        'vehicleProceduralCameraWeight': 1},
+                    'repeatCommandOnInterrupt': 0,
+                    'workExcludedGestures': [],
+                    # The whole difference: a world node, not an instance in
+                    # this scene's own table.
+                    'workspotNode': noderef(spot_ref),
                 }},
                 'sockets': [quest_socket('CutDestination', 'CutDestination'),
                             quest_socket('In', 'Input'),

@@ -31,7 +31,18 @@ being given it.
 | § | Item |
 |---|---|
 | 10i | Reload crashes on heavily modded installs. Two reporters, same symptom. No mechanism found; the A/B test is now deterministic, see 14 |
-| 11 | Binding a `.community` resource to the world, which is the OPEN half of 11; the naming half closed on 2026-08-17. Research only, and no longer blocking anything: the guard placement it was wanted for was accepted as-is in 17 |
+| 27 | Hoshino's mouth does not move. His lipsync is generated and correct, and it plays on the invisible actor that carries his voice rather than on the body the player is looking at. Route A is the design call, 2026-08-24: give him a real body in this mod's own sector, which retires the two-body arrangement for gigs 02 to 04 as well |
+
+**29 closed NEGATIVE on 2026-08-24** after nine runs. A community this mod
+ships spawns nobody, with both area-node shapes, both quest node types, the
+identity link verified and every prerequisite proven present. Do not place NPCs
+with a community. 27's route A has a shipped precedent instead, and 29 has it.
+
+**11 closed on 2026-08-23**, by reading rather than by building. A `.community`
+resource is never bound to the world because it never ships: its contents are
+copied at cook time into a `worldCommunityRegistryNode` in an always-loaded
+sector, keyed by a 64-bit id the mod writes on both sides. 28 has the recipe and
+the measurements.
 
 **6 closed on 2026-08-22 and shipped in 1.2.5**, after standing open since
 2026-08-14. The shard on the office desk has a Take and Read prompt, carries
@@ -3269,7 +3280,7 @@ Two facts report the outcome for testing: `cc_g01_dbg_office_guards` and
 **Second pass, 2026-08-17, after playing it.** The first fix worked and left two
 things half done, both found in play.
 
-The two spheres became **the outline**. Four corners of the industrial park were
+The two spheres became **the outline**. Four corners of the compound were
 walked and captured (`compound_1` to `compound_4`), giving a convex ~38,500 m2
 polygon that contains every anchor the gig uses here, and
 `CCGig01Places.InsideCompound` is now what says "V is on site". The 60 m sphere
@@ -3504,6 +3515,76 @@ spawn burst in 10c and 10d, which those fixes reduce.
 Logs and an A/B test with the mod's three folders removed are the only thing
 that can settle it. If their redscript log shows a compile failure that changes
 everything, and would explain unrelated mods breaking too.
+
+### A DETERMINISTIC REPRO, AND A MECHANISM THAT FITS. 2026-08-25
+
+A third reporter, on **1.2.6**, with an A/B that is the best evidence this item
+has ever had:
+
+| | |
+|---|---|
+| died at the North Oak estate, reloaded the last checkpoint | crash to desktop, **5 of 5** |
+| same save, same section, mod removed entirely | no crash, **0 of 4** |
+
+Not reproduced on the development machine, so there are no local dumps. What
+follows is read off 1.2.6's own source rather than off a stack.
+
+**The estate spawn chain ran on delayed callbacks and had no guard against the
+world going away.** `SpawnEstateSecurity` called `SpawnStep(true, 0, 0, 0)`,
+which placed one squad through `CCSharedWorld.Scatter` and then scheduled the
+next link a second later, six times. The audit re-armed the chain every few
+seconds for as long as the player was on site, and the "already populated"
+state was a FIELD on a ScriptableSystem, so it did not survive a reload and
+every anchor read as empty again.
+
+Dying and reloading a checkpoint tears the world down with links of that chain
+still in flight. `Scatter` asks the navigation system for a point and then asks
+Codeware to create an entity, so a stale link lands on a world that is
+unloading or half re-mounted and does both.
+
+**The file already knew about this class of fault and guarded the wrong half.**
+`FinishSpawn` opens by checking the QuestsSystem exists, with a comment saying
+that dereferencing a system that is not there had "flatlined the game once
+already". `SpawnStep`, which is the half that touches the navmesh and spawns
+entities, had no such test.
+
+That also explains the shape the earlier reports never did. 10i's two decoded
+dumps were access violations on engine job-worker threads in the world
+streamer, with no mod DLL on the stack, one while the world was mounting. A
+callback spawning into a mounting world is that, and it is why the trigger is
+specifically death-and-reload rather than ordinary play.
+
+**It is a mechanism that fits, not a proof.** Nothing here was traced to a
+stack, and the reporter's dumps have not been read.
+
+### WHAT 1.3.0 DOES ABOUT IT
+
+The chain is deleted rather than guarded. Both sites are communities, so the
+reload path is one `ResolveNodeRef` and one `GetGameObjectsFromSpawnerEntityID`
+that return in the same tick, and the mod spawns nobody at all. The bodies are
+placed by the game's own community system, which is what it does for its own
+NPCs everywhere.
+
+`CCSharedWorld.Scatter` keeps a guard anyway, because it stays in the shared
+library and the next gig that drives it from a callback would walk into the
+same trap.
+
+**1.3.0 also puts SIX always-loaded sectors into the world streamer where 1.2.6
+had one**, three communities with an area sector and a registry sector each. The
+registry sectors carry a whole-map box by recipe (66 part 2). That is new load
+in the exact subsystem the dumps point at, so this must be A/B tested rather
+than assumed: a build that removes one crash and adds another would read as
+unchanged.
+
+### THE TEST THAT SETTLES IT
+
+Give the reporter a 1.3.0 build and ask for the same protocol they already ran:
+die at the estate, reload the last checkpoint, five times. Their A/B is
+deterministic, which is what every earlier round of this item lacked.
+
+Worth attempting on the development machine too, on 1.3.0, since the sequence
+has never been tried here: reach the estate, die, reload the last checkpoint,
+five times.
 
 ---
 
@@ -5501,7 +5582,7 @@ The office version is two lines and the estate can copy it.
 Two things to settle:
 
 - **How much further.** The office uses 100 against 60, so a margin of about
-  40 m. The estate approach is a driveable hill rather than an industrial park,
+  40 m. The estate approach is a driveable hill rather than a compound,
   so V closes the distance faster and may need more. This is measurable in game
   rather than worth guessing.
 - **Not so far that it populates a compound the player is driving past.** The
@@ -5533,7 +5614,7 @@ readout, and the design call is that a player landing there should already be
 inside the spawn sphere, so the estate fills while he walks to his car rather
 than while he looks at it. 120 clears that landing by a few metres. The office
 pair is 100 against 60; this one is wider in both halves because the approach is
-a driveable hill rather than a walk through an industrial park.
+a driveable hill rather than a walk through the compound.
 
 **20 m rather than 45 is a second report from the same run.** At 45 the
 objective changed to "Find a way into the residence" a car's length short of the
@@ -5550,7 +5631,7 @@ that road passes under this hill.
 
 The readout's fill counter latched on the OFFICE squad and then refused to
 measure again, reporting "first guard at 2775.5 m" from the estate gate, which
-is V standing in the industrial park three kilometres away. Both sites share
+is V standing in the compound three kilometres away. Both sites share
 the `n"cc_g01_guard"` tag and the 200 m filter is 200 m from the PLAYER, not
 from the estate.
 
@@ -5670,7 +5751,7 @@ grenades a house gets what a player who grenades a house gets.
 ## 25. A finished site repopulates after a reload. Reported, FIXED and CONFIRMED IN PLAY 2026-08-21
 
 Field report: a save whose objective was already "get to the Arasaka residence",
-so the compound leg was long finished, driven back past the industrial park.
+so the compound leg was long finished, driven back past the compound.
 The whole office detail spawned again, banner and all.
 
 ### Why the latch did not hold
@@ -5739,6 +5820,2527 @@ invisible until someone reloads and goes back.
 
 ### CONFIRMED IN PLAY 2026-08-21
 
-A save already past the compound leg, driven back past the industrial park: no
+A save already past the compound leg, driven back past the compound: no
 spawn, no banner. The estate half is the same code and the same two facts, so it
 is covered by the same change; it has not been separately provoked.
+
+
+## 26. The North Oak objective stops for anyone who does not use the gate. Reported 2026-08-24, FIXED and CONFIRMED IN PLAY the same day
+
+Two Nexus reports, hours apart, describing one fault:
+
+> "North Oak estate objective doesn't update even after you get inside, by the
+> rocks or double jump doesn't matter it doesn't update and you cant kill
+> Hoshino."
+
+> "I don't know what to do; the marker is getting stuck at the gates in North
+> Oak."
+
+### Why every playtest here passed
+
+The North Oak leg is three waits in a row: reach the estate, find a way in,
+find Hoshino. The encounter tick samples the player's position every 1.5 s, and
+two of those three are satisfied by the SAME test, being inside the traced
+outline of the grounds.
+
+Driving to the gate hides that completely. The gate sits OUTSIDE the outline, so
+arriving there cannot also mean being inside, and the two facts land a walk
+apart. That is the route every test run here has ever taken, which is why the
+gig has been played end to end a dozen times without anyone meeting this.
+
+Come over the wall, or up the rocks, or double jump in, and both facts are
+written on ONE pass. The phase is parked on the first of them. It fires,
+completes the objective, raises the next one, and only then arms the wait on a
+fact that changed a moment ago. Nothing will change it again, so the phase
+stops there for the rest of the save.
+
+This is gotcha 54 arriving from the other direction. That entry is about a dev
+button setting a fact that is already set; this is the gig setting a fact before
+anything is listening. Same rule underneath: **a fact that does not CHANGE is
+not a change, and a pause node is armed when the token reaches it, not before.**
+
+### The fix
+
+One step per pass. Setting `cc_g01_estate_reached` marks the pass, and
+`cc_g01_wayin_reached` is held to the next one; the pair then marks the pass
+against `cc_g01_hoshino_met`, which sits behind the same shape one step further
+on and could bite a player who lands next to Hoshino.
+
+1.5 s is far longer than the phase needs to walk four nodes and arm a wait, and
+on the gate route it changes nothing at all, because the steps were already
+seconds apart.
+
+The flag is a field and not a fact, deliberately. It is written and read inside
+one pass, and a remembered value would skip a step after a load.
+
+**CONFIRMED IN PLAY 2026-08-24**, over the wall by double jump, without going
+near the gate: the objective moved through "find a way in" to "Find Hoshino"
+correctly. The gate route was unchanged.
+
+### The general rule, for gigs 02 to 04
+
+**Two consecutive waits in a quest phase must not be satisfiable by one sample
+of the world.** Either separate what they measure, or hold the second back a
+pass. Reaching a place and being inside it are the obvious pair, and the reason
+this was invisible is that the signposted route separates them by itself.
+
+
+## 27. Hoshino's lipsync plays on a body nobody can see. OPEN, and both routes are costed
+
+**The data is not the problem.** `gig01_hoshino/h01` and `h02` have animations
+picked and shipped like every other line in the gig, and the same machinery
+demonstrably moves Johnny's mouth on all seven of his beats and moved Nix's in
+close-up on the phone in 1.2.6 (2j, 3d). Hoshino's animations play. They play on
+the wrong body.
+
+### Why there are two of him
+
+A custom NPC who has to be found, spoken to and shot needs to exist for minutes
+before his conversation starts, so `Gig01_Encounter` spawns him at his captured
+position and the player meets that body. The conversation cannot use it. A scene
+acquires its own actors, and the only acquisition this project has working for a
+custom character is `spawnDespawn`, where the scene spawns a fresh copy.
+
+So the scene spawns a second Hoshino a kilometre out and a hundred metres down,
+which is where every voice-only actor in this gig stands, and buys the audio back
+by making his lines non-positional (`inner_vo`, and the 2026-08-17 playtest that
+separated `voExpression` from `visualStyle` is in `scene-playbook.md`). The
+lipsync rides the scene's speaker, so it rides the buried one.
+
+The visible Hoshino stands there with a closed mouth. Two Nexus-facing symptoms
+follow: his mouth does not move, and his name over the subtitle comes from an
+actor that is not him.
+
+### The bridge that was built for exactly this, and why it is switched off
+
+`questkit/scene.py` carries `add_body_double`, which adds a second actor to a
+scene that never speaks and receives the line's lipsync through
+`scnAdditionalSpeakerRole.OnlyLipsync`. Vanilla does this. Ours pointed at the
+script-spawned body with a `findInWorld` actor whose `actorRef.type` is `Tag`,
+matching the CName in the `DynamicEntitySpec`.
+
+**Tested at `gig01_arasaka` on 2026-08-14 and it failed both ways at once.**
+
+```
+ 96.7  cc_g01_dbg_johnny      = 1     script spawns him
+ 98.2  cc_g01_dbg_lip_johnny  = 2     the tag IS registered
+ 99.8  cc_g01_dbg_johnny_ws   = 4     he is in his workspot, visible
+102.2  cc_g01_call_done       = 1     the scene is entered
+       (line plays, mouth still)
+106.5  crash
+```
+
+The entity was present under our tag at the moment the scene ran, and the scene
+still did not animate it: the scene system's `findInWorld` resolver does not read
+the dynamic-entity tag registry. The crash was deterministic, 4.3 s after entry
+both times, which is scene TEARDOWN disposing of an additional speaker whose
+actor never acquired.
+
+**`gameEntityReferenceType.Tag` is unusable from a scene.** Zero of 7067 shipped
+scenes use it. The machinery stays, one constant away from usable
+(`BRIDGE_SCENES`), because the failure was in the acquisition and not in the
+double.
+
+### What has changed since, and it is why this is worth reopening
+
+Both of these landed AFTER the bridge was tested, and neither was available to it:
+
+- **A node this mod ships DOES register a global name**, in the long
+  `$/03_night_city/...` form (11, naming half, closed 2026-08-17).
+- **A map pin can anchor to one of our own nodes**, and a mod can ship an
+  always-loaded sector to keep it resolvable (20, 2026-08-18).
+
+So "the scene cannot address our body" was measured against the one addressing
+mode that does not work, and the mode that does work was not known yet.
+
+### Route A: give him a real body in the world
+
+Place Hoshino as an entity node in this mod's own sector, the way the shard
+container on the office desk is placed (6, and `shard-playbook.md`), instead of
+spawning him from script. He then has a NodeRef, and the scene acquires him as a
+first-class actor the way vanilla acquires Mama Welles (7d). Mouth, name and
+audio all come off the body the player is looking at, and the two-body
+arrangement stops being something gigs 02 to 04 inherit.
+
+**What it costs.** Everything `Gig01_Encounter` does to him is built on the
+script owning his `EntityID`: the neutral spawn, the god-mode shield before his
+conversation, the attitude flip when it ends, and the death detection. All of it
+would need to find him another way. There is precedent for that in this mod, in
+`Gig01_OfficeDoors` and `Gig01_OfficeComputer`, which both match their target by
+the position of its owner.
+
+**The residual unknown.** A mod sector streams by proximity. That is fatal for a
+map pin wanted from across the city, which is why pins anchor to base-game nodes,
+and it is harmless here: the scene only runs with V standing in front of him, so
+the sector is certainly streamed. Say that out loud before building, because it
+is the reason the same idea was rejected for pins.
+
+### Route B: swap the two for the length of the conversation
+
+Hide the script's Hoshino when the scene starts, let the scene place its own
+VISIBLE Hoshino on the same mark with a workspot, and swap back when it ends.
+This uses only proven machinery: every Johnny beat since 2026-08-17 places a
+visible scene actor at a computed offset and yaw and glitches him out before the
+scene ends (9), and `build_hoshino` itself shipped a visible duplicate for one
+playtest on 2026-08-12.
+
+Cheaper by an order of magnitude, fixes nothing structurally, and its risk is a
+visible pop at each end.
+
+### THE DECISION: route A. Taken 2026-08-24
+
+**A, not B.** B was offered first as a cheap measurement and was declined, and
+the reasoning holds up: B buys one answer and leaves the arrangement it measures
+in place, while the arrangement is the thing every later gig inherits. A custom
+NPC who has to be found, spoken to and shot is not a gig 01 peculiarity, it is
+the shape of a story gig.
+
+So the two-body arrangement is what gets fixed, and Hoshino is the first case
+rather than the only one.
+
+**What still has to be measured on the way, and B was the cheap way to do it.**
+Nothing has ever confirmed that our lipsync moves THIS character's mouth. Johnny
+and Nix prove the pipeline, not this record and not this animation pool. Under A
+that confirmation arrives at the end instead of at the start, so a result of "his
+mouth still does not move" will have two candidate causes at once, the
+acquisition and the pool. Separate them before reading it.
+
+**Count the pool before judging his mouth.** Hoshino draws from
+`civ_(high|mid)_m_\d+_jap_\d+` only, and that filter has never been counted. 3d
+is the finding that a small pool is what makes lipsync read as broken, measured
+on Nix at 386 ms of overshoot on an 880 ms line and fixed by widening him to all
+1192 male civilian sets. A bad result from a small pool looks exactly like a bad
+result from a wrong body.
+
+**The route, in the order the unknowns fall:**
+
+1. **Count Hoshino's animation pool.** Offline, minutes, and it decides whether
+   the widening from 3d has to happen at the same time.
+2. **Place him as an entity node in this mod's sector** and confirm he is there,
+   visible and named, before any scene work. The shard container is the worked
+   example (6, `shard-playbook.md`), and the naming form that resolves is the
+   long one (11).
+3. **Move what the script does to him off the spawned `EntityID`.** The neutral
+   spawn, the shield, the attitude flip and the death detection all have to find
+   the placed body instead. `Gig01_OfficeDoors` and `Gig01_OfficeComputer` are
+   the precedent, both matching by the position of the owner.
+4. **Then the scene takes him as a first-class actor**, and only then is the
+   mouth question askable.
+
+Steps 2 and 3 are each a bench with a visible result, so neither has to be
+believed on paper. Step 4 is the one that has failed before, by a different
+route, and it is deliberately last.
+---
+
+## 28. What binds a `.community` resource to the world. ANSWERED 2026-08-23, by reading. Nothing binds it, because it never ships
+
+**The open half of 11 is closed.** The question was wrong in its premise, which
+is why five sessions of looking for the reference never found one.
+
+**A `.community` file is an authoring artifact. It does not ship and nothing at
+runtime reads one.** At cook time its whole `communityCommunityTemplateData`,
+characters included, is copied into a `worldCommunityRegistryNode` that lives in
+an always-loaded sector. That node is what the community system reads.
+
+So the piece in the middle was never missing. It was a node type nobody here
+had looked at, in a sector this project had already read twice.
+
+### The four parts, and how they find each other
+
+| part | where it lives | what it holds |
+|---|---|---|
+| `worldAISpotNode` | an ordinary streaming sector | one spot: a position, a yaw, and a `.workspot` |
+| `worldCompiledCommunityAreaNode` | an always-loaded sector | which entry and phase uses which spot, spots named by hash |
+| `worldCommunityRegistryNode` | the same always-loaded sector | the characters, the phases, the quantities, and a record per spot |
+| `gameCommunityID` | both of the two above | the 64-bit key that joins them |
+
+The key is `worldCompiledCommunityAreaNode.sourceObjectId.hash` on one side and
+`worldCommunityRegistryItem.communityId.entityId.hash` on the other.
+
+**It is NOT opaque, and this section said it was until 29 was built.** It is
+FNV1a64 of the community's own NodeRef with the '#' characters removed, the same
+rule as a spot's, and the ref must be registered in its sector's `nodeRefs`.
+Measured: `always_loaded_0` registers
+`$/03_night_city/c_pacifica/coastview/#pcv_01/.../#mq025_com_fabiola` and the
+area node beside it carries exactly that hash. A quest node reaches the same
+community through the same string, so a mod that invents a key nothing is named
+after has a community nothing can address. Gotcha 62.
+
+**And a community has to be ACTIVATED from a quest node**, even an ambient
+open-world one: gotcha 63. `entryActiveOnStart` governs the entry inside a
+running community and does not start it.
+
+Spots are named rather than keyed: `spotNodeIds[].hash` is a
+`worldGlobalNodeID`, and
+
+```
+worldGlobalNodeID.hash = FNV1a64(the node's NodeRef with every '#' removed)
+```
+
+That is measured, not inferred. Hashing all 33506 NodeRefs in `always_loaded_0`
+and intersecting with the 5604 distinct spot ids its community nodes reference
+returns 3767 matches; the rest name spots in sectors that were not hashed.
+Reversing the map gives readable pairs, `{mq025_com_fabiola}` against
+`$/03_night_city/c_pacifica/coastview/#pcv_01/.../#mq025_ws_announcer_06_fight`.
+
+The refs are LONG-FORM paths, which is the same spelling 11 found to be the only
+one a mod node registers under, so the two findings agree.
+
+### Where vanilla keeps it
+
+`always_loaded_1` holds exactly one `worldCommunityRegistryNode`, `debugName`
+`community_registry`, and it is large:
+
+| | |
+|---|---|
+| `communitiesData` | 8540 `worldCommunityRegistryItem`, one per community |
+| `workspotsPersistentData` | 97359 `AISpotPersistentData`, one per spot |
+| `spawnSetNameToCommunityID` | 329 entries mapping a name to a community id |
+
+4853 of the 4854 spot references resolved out of `always_loaded_0` also carry an
+`AISpotPersistentData` record, so that array is part of the recipe rather than
+an optimisation. Its `worldPosition` is a `FixedPoint`: `Bits` is the metre
+value times 131072, checked against three axes of a spot whose node position is
+known.
+
+### `spawnSetNameToCommunityID`, which answers a different open question
+
+The names in it are `#padre_holo`, `#nix_holo`, `#mama_welles_holo`: 59 of the
+329 are the holocall studio spawn sets. That is the table a scene's
+`acquisitionPlan: spawnSet` resolves through, which means **a scene acquires an
+actor from a COMMUNITY, not from a node**. Open question 3 in
+`node-research.md` was asking whether a scene can bind to a node this mod names,
+and the answer is that it does not work that way for anyone.
+
+It also means the two-bodies problem has a route: a community we ship, plus a
+name in this table, is a body a scene can acquire.
+
+### What Phantom Liberty does, and why a mod cannot copy it
+
+EP1 ships its own `ep1/always_loaded_0.streamingsector` (4146 marker nodes and
+nothing else) and then **replaces** `always_loaded_1` wholesale with a bigger
+one: 10289 registry items against 8540, 122794 spot records against 97359, 404
+spawn-set names against 329. CDPR merged Dogtown into the single registry.
+
+A mod must not do that. It would carry 8540 communities it does not own and
+conflict with every other world mod. The mod route is a second registry node in
+a sector of its own.
+
+### The one thing still unmeasured
+
+**Does the game read more than one `worldCommunityRegistryNode`?** Vanilla ships
+exactly one and EP1 kept it that way, so the shipped data cannot answer it.
+
+The tooling says yes. World Builder (`CP77_entSpawner`) has a Community
+spawnable whose export writes a `worldCompiledCommunityAreaNode_Streamable` plus
+a separate `<project>_always_loaded` sector, category `AlwaysLoaded`, holding
+one `worldCommunityRegistryNode` with exactly the two arrays above, and hands
+that sector to ArchiveXL like any other. Its `sourceObjectId` is
+`FNV1a64(nodeRef minus '#')`, which is the same rule measured above and arrived
+at independently. The REDmodding wiki documents the workflow as working.
+
+That is other people's evidence. It is strong enough to build on and not strong
+enough to write into a playbook, so 29 is the bench.
+
+### Two claims elsewhere that this corrects
+
+- `architecture.md`: "Quest-graph `questSpawnSet` nodes only reference existing
+  community spawn phases and are unusable for custom NPCs." A community can hold
+  `Character.cc_g01_hoshino` as easily as a vanilla record.
+- `gotchas.md` 35 says the characters live in a `.community` resource. They live
+  in the registry node; the `.community` file is where an author edits them.
+
+### How it was found, which is the reusable part
+
+By asking whether anyone had done it before looking for the mechanism, which is
+the order `sources.md` sets and it was the right one. The REDmodding
+wiki has a page called "Creating Communities". It documents the UI and says
+nothing about node types, but it named the tool, and the tool is open source, so
+the export function is the specification. Twenty minutes of reading Lua replaced
+five sessions of guessing at a resource reference that does not exist.
+
+The confirmation then came from data already on this machine. Nothing in this
+section needed the game running.
+
+---
+
+## 29. Does the game read a `worldCommunityRegistryNode` a MOD ships? **SOLVED, YES. 2026-08-24, run 12.** A community this mod ships spawns our own character, unarmed, exactly as the wiki promised
+
+28 answers everything else about placing a community by reading. This is the
+one part shipped data cannot answer, because vanilla ships exactly one registry
+node and Phantom Liberty replaced it rather than adding a second.
+
+### Run 1, 2026-08-23. Clean controls, nobody spawned, and it proved less than it looked like
+
+```
+0 CAL 1    1 ours 0    2 vanl 0    3 mark 0    4 NEG 0    distance 0.0 m
+```
+
+Everything that could void the run behaved. The calibration NPC was found, the
+negative slot stayed empty, the player was standing on the line, ArchiveXL
+merged both streaming blocks with no error, and a round trip through WolvenKit
+showed every field arriving intact: the community id matching on both sides,
+all five hour bands, `entryActiveOnStart` 1 on all three entries, the spot refs
+and the persistent records.
+
+**It is not an answer, because three things in the chain were ours rather than
+the game's, and any one of them produces exactly this reading.**
+
+- The spot nodes were copied from a CROWD workspot in Heywood. A real quest
+  community spot at this same estate differs in five fields:
+  `isWorkspotInfinite`, `useCrowdBlacklist`, `useCrowdWhitelist`,
+  `snapToGround` and `MaxStreamingDistance`.
+- `crowdCreationRegistry` was written null where vanilla's registry node
+  carries an object.
+- Nothing in the run could separate "the registry node is not read" from "the
+  registry node is read and our SPOTS are wrong", because every spot in it was
+  ours. That is the same gap the pin lab's round 3 had, and it is the one that
+  costs a round every time.
+
+One suspect died for free: `spotDef` is null on the vanilla community spot too,
+so writing null was never a deviation.
+
+### Run 2, built the same day. The decisive slot
+
+Two slots added, both at vanilla workspots at the estate 44 and 46 m from the
+line, and the three deviations above removed.
+
+| slot | | |
+|---|---|---|
+| 5 | `#q113_ws_arasaka_estate_investigation_002`, driven by an entry of OURS | the game's own spot node and the game's own persistent record, copied whole, so the ONLY mod-authored thing left in that path is the registry node |
+| 6 | `..._001`, driven by nobody | the negative control for the pair |
+
+Neither spot is referenced by any of the 2510 communities in the three
+always-loaded sectors, checked rather than assumed, so both should be empty.
+
+**Slot 5 is what decides it.** Filling while 1 to 3 stay empty means a mod's
+registry node IS read and our spot nodes are the fault, which is a much smaller
+problem. Staying empty with clean controls means it is not read.
+
+### Run 2, 2026-08-23. Zero again, controls clean, and the vanilla spot did not change it
+
+```
+0 CAL 1   1 ours 0   2 vanl 0   3 mark 0   4 NEG 0   5 VSPOT 0   6 VCTL 0
+distance 0.7 m
+```
+
+The deployed archive was checked rather than trusted: unbundled back out of
+`archive\pc\mod`, it carried all four entries, `vanspot` pointing at
+`#q113_ws_arasaka_estate_investigation_002`, the crowd registry as an object,
+four persistent records, and the five spot fields matching the vanilla node.
+Gotcha 57's fault could not have been this one.
+
+So the game's own spot node, carrying the game's own persistent record, driven
+by an entry in a registry node of ours, put nobody on the ground.
+
+**That is a strong negative and it is still not the answer**, because ONE
+assumption underneath it has never been measured on this build: that our
+ALWAYS-LOADED SECTOR IS ACTUALLY LOADED. ArchiveXL merging a streaming block is
+not the same as the game loading the sector the block names, and a sector that
+silently never loads gives exactly this reading. Gotcha 39 measured a mod's
+always-loaded sector working on 2026-08-18, but that was a different sector
+built by a generator that no longer exists, and this one carries two node types
+nothing here has ever shipped.
+
+### Run 3, built the same day. The residency instrument
+
+One vanilla stool in each of the two sectors, at slots 7 and 8, asked for by
+name rather than counted:
+
+| | |
+|---|---|
+| 7 | a `worldEntityNode` in the ALWAYS-LOADED sector |
+| 8 | the same node in the Exterior sector |
+
+`ResolveNodeRef` reaches a live entity, code 4, only if the sector is loaded and
+the node instantiated. **Only 4 carries information**: an absolute `$/...` name
+is hashed rather than looked up, so any long string returns 3 including one
+nothing ships, which is backlog 11's warning.
+
+- **Slot 7 reads 4** and the always-loaded sector is live, the zeroes above are
+  real, and the answer to 29 is no.
+- **Slot 7 reads anything else** and two runs measured a sector that was never
+  there, and 29 is still open with a different question in front of it.
+
+Slot 8 is the comparison: the Exterior sector is the ordinary case this project
+has shipped since 1.2.0, so it should read 4 and says the probe works.
+
+### Run 3, 2026-08-23. The residency instrument said nothing, and it exposed two bench faults
+
+```
+0 CAL 1  1 ours 0  2 vanl 0  3 mark 0  4 NEG 0  5 VSPOT 0  6 VCTL 0
+7 PROP always-loaded 3   8 PROP exterior 3   distance 0.4 m
+```
+
+**Fault one: 3 is the uninformative value and the bench had no control for it.**
+Both stools read 3, "an entity id but nothing streamed", which is also exactly
+what a long-form name nothing ships returns, because an absolute `$/...` path is
+hashed rather than looked up. Backlog 11 says this in as many words and the
+instrument was built without the control anyway. The run cannot distinguish "our
+sectors are not loaded" from "this probe never reaches a live entity".
+
+**Fault two, and it reaches backwards into runs 1 and 2: the calibration slot
+was where the player stands.** The teleport put V on slot 0, so slot 0 counted
+whatever was within two metres of his own feet. It read 1 in all three runs and
+there is now no way to tell whether that was the spawned NPC or the player. The
+one thing the bench had that was supposed to make the zeroes believable is the
+one thing that cannot be believed.
+
+Playtest, run 3: *"spawn no longer works, previously it did."* A guard is
+visible beside V in run 2's screenshot and absent in run 3's, which fits a
+second, smaller problem with the same cause: the NPC was being spawned onto the
+exact spot the player was standing on, and 0.4 m of overlap is not the same as
+0.7 m.
+
+The old lab kept its calibration 70 m from its probes for precisely this reason.
+That file was read before this bench was designed.
+
+### Run 4, built the same day
+
+Four changes, three of them removing bench faults rather than testing anything:
+
+| | |
+|---|---|
+| the player stands 4 m SHORT of slot 0 | nothing he stands on is a slot, so slot 0 can only be the NPC, and the spawn has room |
+| probe 9, a BASE-GAME node 14 m away, same shape, long form | **MUST read 4.** If it does not, probes 7 and 8 say nothing and never did |
+| probe 10, a long-form name nothing ships | expected 3, which is the demonstration that 3 is not evidence |
+| one streaming block per sector, and float-max reach on both stools | the shipped shard carries exactly one descriptor per block; matching it stops the shape being a variable |
+
+### Run 4, 2026-08-23. THE INSTRUMENT WORKED, AND IT MOVED THE QUESTION
+
+```
+0 CAL 1   1..6 all 0
+7 PROP our always-loaded 3  not there    8 PROP our exterior 3  not there
+9 CTL base-game          4  LIVE        10 CTL never shipped   3
+distance from the stand point 0.8 m
+```
+
+Every control did its job for the first time. The calibration guard is visible
+in the screenshot and the player is 4 m off slot 0, so `0 CAL 1` is the NPC and
+not him. The base-game node reads 4, so a long-form name DOES reach a live
+entity. The never-shipped name reads 3, so **3 means NOT THERE** rather than
+"cannot tell".
+
+**Both of our stools read 3. Neither of this bench's two sectors is delivering
+a node at all, so runs 1 to 4 said nothing whatever about communities.** Three
+rounds of zeroes were the zeroes of a world file that never arrived.
+
+ArchiveXL merges all three streaming blocks with no error, and the Exterior
+sector's `rldGridCell` was checked by prediction against `all.streamingblock`:
+1074242, which is exactly what vanilla's `exterior_2_8_1_1` carries. So the
+block, the bucket and the descriptor are not the fault.
+
+### Run 5, built the same day. Two candidates, one variable apart
+
+The gig's own shard sector has worked since 1.2.0, so the difference is in this
+bench. Two things about it differ from every node this project has got to load.
+
+| | |
+|---|---|
+| **the instance flags** | the shard container and the base-game sprinkler that probe 7 resolves BOTH carry `Uk10 1056, Uk11 10762`. The stool copied for run 4 carries `Uk11 20490`. `gen_sector.py` already records a trigger area's flags as one of the two reasons the shard did not appear |
+| **the name path** | every named node this project has loaded is named for the district it stands in. These stand in North Oak and are named `#c_santo_domingo/arroyo`, because the prefix was copied rather than thought about |
+
+Six props, each one variable from its neighbour, plus three controls:
+
+| probe | sector | name | flags |
+|---|---|---|---|
+| 1 | Exterior | Arroyo | stool, `Uk11 20490` |
+| 2 | Exterior | Arroyo | **shard, `Uk11 10762`** |
+| 3 | Exterior | **North Oak** | stool |
+| 4 | Exterior | **North Oak** | **shard** |
+| 5 | always-loaded | Arroyo | shard |
+| 6 | always-loaded | **North Oak** | shard |
+| 7 | base-game sprinkler, MUST read 4 | | |
+| 8 | a name nothing ships, expected 3 | | |
+| 9 | **the gig's own shard container** | | |
+
+**Probe 9 is the one that matters if the matrix comes back empty.** It reads 3
+from the garden and must read 4 at the office, and it answers "do this mod's
+sectors work AT ALL in this build" without depending on anything the bench
+authored. Read it by pressing the office teleport at the end of the run.
+
+### Run 5, 2026-08-23. Both candidates dead, and the shard proves the machinery is fine
+
+At the bench, all six props read 3. At the office, `9 CTL the gig's own shard`
+reads **4 LIVE**, and the base-game sprinkler correctly falls to 3 at 2567 m.
+
+So the flags are not it, the name path is not it, and **this mod's world files
+work perfectly in this build**: the shard node is a live entity 2.5 km from the
+bench. Only the two sectors this bench ships deliver nothing.
+
+Four things were checked offline afterwards and all four came back clean:
+
+- **The grid cells.** Predicted 1074242 for the bench and 1055294 for the
+  shard; vanilla's `exterior_2_8_1_1` and `exterior_-2_-12_0_1` carry exactly
+  those. Both vanilla boxes contain our points.
+- **The blocks.** All three descriptors are identical in shape, and ArchiveXL's
+  `OnStreamingWorldLoad` appends every one to `blockRefs`, so "only the first
+  mod block counts" is not a rule.
+- **`variantIndices: [0]` with an empty `variantNodes`** is what vanilla writes
+  for `always_loaded_0` (5285 nodes) and for `exterior_4_15_3_0` (287), so
+  backlog 11's warning does not apply to it.
+- **Both prop templates exist** in `basegame_3_nightcity.archive`.
+
+### Run 6, built the same day. The pattern nobody had looked at
+
+Every node that has ever probed 4 in this project carries `instanceData`, a
+whole entity chunk: the shard container, and the base-game sprinkler probe 7
+resolves. Every node reading 3 has `instanceData: null`.
+
+`ResolveNodeRef` ends at `FindEntityByID`. **A node with no entity payload may
+stream in, render, and never register an entity at all**, in which case 3 is
+what it reads while standing in plain sight, and every "not there" in runs 4
+and 5 is an artefact rather than a finding.
+
+Probes 10 and 11 are a whole vanilla sprinkler node, entity chunk and all,
+lifted mechanically into each of the two sectors. Nothing about them is
+authored here except the debug name.
+
+| reading | meaning |
+|---|---|
+| 10 and 11 read 4 | our sectors DO load, the stools were never probeable, and the community question reopens with a bench that works |
+| 10 and 11 read 3 | our sectors really are dead, and the next question is why a sector built by this generator differs from one built by `gen_sector.py` |
+
+### Run 6, 2026-08-23. THE BENCH IS SOUND, and the answer is no
+
+At the bench, and then from the office 2567 m away:
+
+| probe | at the bench | at the office |
+|---|---|---|
+| 9, the gig's own shard | 3 | **4 LIVE** |
+| 10, our sprinkler, Exterior sector | **4 LIVE** | 3 |
+| 11, our sprinkler, ALWAYS-LOADED sector | **4 LIVE** | **4 LIVE** |
+| 1 to 6, the stools | 3 | 3 |
+
+**Both of this bench's sectors load and their nodes instantiate.** Probe 11 is a
+live entity from the far side of the city, which is what an always-loaded
+sector is for, and probe 10 correctly goes dark at range, which is what an
+Exterior one is for. The instrument now reads all four states.
+
+**The stools were never a measurement.** The only difference between them and
+the sprinklers is `instanceData`, and that decides whether a node registers an
+ENTITY at all. See gotcha 60.
+
+### So: a mod's `worldCommunityRegistryNode` does not put anyone on the ground
+
+Everything the community needed was present and proven present:
+
+- the registry node, resident everywhere, in a sector whose nodes are live
+- the community area node beside it in the same sector
+- three spots of ours in an Exterior sector that is loaded at the bench
+- a fourth entry pointing at a VANILLA spot, with the game's own persistent
+  record for it copied whole
+- four entries, `entryActiveOnStart` 1 on all four, all five named time bands,
+  quantity 1, `alwaysSpawned` at vanilla's default, the player standing 4 to
+  16 m away for minutes at a time
+
+Nobody spawned, at any slot, in any run. The negative slot stayed empty and the
+calibration NPC was found every time.
+
+**The configuration matched vanilla's majority**, which was read at the time as
+meaning no quest node was needed. Of vanilla's 8540 registry items, 4726 have
+`entryActiveOnStart` on for every entry, and 23077 of 26655 phases carry the
+same `alwaysSpawned` default ours does.
+
+**That inference was wrong and the next section is the correction.**
+`entryActiveOnStart` governs the entry inside a community that is already
+running. Vanilla activates the community itself from a quest phase, ambient
+open-world populations included.
+
+### Reading afterwards: the bench was wrong in two ways, and both are measured
+
+The six runs above are a negative about a bench that could not have worked. Both
+faults were found by reading shipped data, not by another playtest.
+
+#### 1. A community's identity is the hash of its own NodeRef
+
+`always_loaded_0` registers this in its `nodeRefs` table:
+
+```
+$/03_night_city/c_pacifica/coastview/#pcv_01/.../#mq025_com_fabiola
+```
+
+and the community area node beside it carries `sourceObjectId`
+12672209401641994660. **FNV1a64 of that ref with its '#' characters removed is
+12672209401641994660 exactly.** Same rule as a spot's `worldGlobalNodeID`, and
+the same rule World Builder uses from the other end: its community spawnable
+labels the field "CommunityID (NodeRef)", exports it as the node's own ref, and
+derives `sourceObjectId` from it.
+
+Runs 1 to 6 named the area node `#cc_g01_cl_area` and hashed
+`#cc_g01_cl_community` into the id. **Two different strings.** The id pointed at
+nothing, and no quest node could have addressed it either.
+
+Two more things fall out of the same reading, and both are needed:
+
+- **The name goes in the sector's `nodeRefs` table.** That table is not parallel
+  to anything: `always_loaded_0` registers 33506 names against 15024 instances,
+  so a name can be listed without being attached to a node. Vanilla's community
+  area node instances carry NO name at all, 785, 1265 and 460 of them, and the
+  community's name is a standalone entry. This bench now attaches it to the area
+  node as well, which is what World Builder does.
+- **The area's box must contain the spots it references.** The old box was 60 m
+  across and centred on slot 2; the vanilla spot at slot 5 was 50 m outside it.
+
+#### 2. A community has to be ACTIVATED, and `entryActiveOnStart` does not do it
+
+`base/open_world/community/city_centre/corpo_plaza/pop_cct_cpz_phase.questphase`
+is 2158 bytes and does exactly one thing:
+
+```
+questSpawnManagerNodeDefinition
+  actions[0].type = questCommunityTemplate_NodeType
+    action                  Activate
+    communityEntryName      None
+    communityEntryPhaseName None
+    spawnerReference        #cct_cpz_com
+```
+
+That is an AMBIENT open-world population community, the least quest-like thing
+in the game, and vanilla still switches it on from a quest phase. **52 such
+phases ship under `base/open_world/community/`.** So `entryActiveOnStart`
+governs the entry inside a running community; it does not start the community,
+and the 4726-of-8540 statistic above was being read as "no quest needed" when it
+means nothing of the kind.
+
+Across a 12-file sample of the 1394 questphases that use the node type:
+
+| | |
+|---|---|
+| `action` | Deactivate 97, Activate 41, Reactivate 18, ResetKillCount 3 |
+| `spawnerReference` | long form 105, short form 54 |
+| entry / phase | `None` / `None` in 112 of 133, meaning the whole community |
+
+`questSpawnManagerNodeDefinition` carries exactly `$type`, `actions`, `id`,
+`sockets` in all 158 occurrences, with the ordinary three sockets.
+
+### Run 7, built 2026-08-23. The first one that could work
+
+| | |
+|---|---|
+| one name for the community | the area node carries it, the sector registers it, `sourceObjectId` is its hash, the registry repeats that hash, and the quest node addresses the same string. Checked in the built archive: all three agree |
+| a quest phase | `gen_commlab_phase.py`. One press walks Activate whole, Reactivate whole, Activate entry `ours`, Activate entry `vanilla`, with a breadcrumb after each |
+| the area box | now derived from the spots it references, so every entry is inside it |
+| **a direct answer** | `GetGameObjectsFromSpawnerEntityID(id, entryNames, game, out objects)`. Asking the spawner system for the community's own id says whether the game KNOWS our community, whether or not a body is standing anywhere |
+| the stools are gone | gotcha 60 explains them and they only added rows |
+
+**`cc_g01_cl_known` is the row to read first, and it is what every previous run
+lacked.** Counting bodies cannot tell "the registry was never read" from "it was
+read and nobody spawned". This can.
+
+### Run 7, 2026-08-24. Everything correct, and still nobody
+
+At the bench, and then from the office 2567 m away:
+
+```
+the game knows it: 0 body/ies      community name resolves: YES
+quest phase step: 9 of 9
+0 CAL 1   1 ours 0  2 vanl 0  3 mark 0  4 NEG 0  5 VSPOT 0  6 VCTL 0
+1 our exterior sector      4 LIVE  (3 at the office, correctly)
+2 our always-loaded sector 4 LIVE  (4 at the office, correctly)
+3 CTL base-game            4 LIVE  (3 at the office, correctly)
+4 CTL never shipped        3
+```
+
+**Every prerequisite is now proven present, and that is what makes this run
+different from the six before it:**
+
+- the community's name RESOLVES, so the id link that was broken in runs 1 to 6
+  is fixed and the three identifiers agree
+- the quest phase reached step 9, so all four activations fired: Activate whole,
+  Reactivate whole, Activate entry `ours`, Activate entry `vanilla`
+- both sectors are live, at the bench and at range, in the pattern each is meant
+  to have
+- the negative control is empty and the calibration NPC is found
+- one entry drives a VANILLA spot with the game's own persistent record
+
+Nobody spawned at any of the four spots.
+
+### The instrument that did not do its job, and this is the fourth of these
+
+**`GetGameObjectsFromSpawnerEntityID` returns SPAWNED objects, so 0 means "no
+bodies" and not "the community is unknown."** It was added to separate "the
+registry was never read" from "it was read and nothing spawned", and it cannot:
+both give 0. That is the same class of miss as gotcha 60, made while writing the
+warning about gotcha 60.
+
+Two things would fix it and neither has been run:
+
+- **`GetFixedEntityIdsFromSpawnerEntityID`**, the sibling call. A community's
+  fixed entity ids are deterministic per entry and may exist before anything
+  spawns, so a non-empty answer would mean the registry was read.
+- **A VANILLA community as a control**, asked the same way with the player
+  standing in its crowd. Without it, a 0 from our own community cannot be told
+  from a call that returns 0 for everything.
+
+**Read the slot counts rather than that row.** With `4 NEG` empty and `0 CAL`
+found, the seven zeroes are a real "nobody spawned". What is not established is
+WHY, and the two candidates need different next steps.
+
+### Run 8, built 2026-08-24. The one deviation this bench made on purpose
+
+Playtest, on being told 7 was a clean negative: *"Have you read wolvenkit info
+... They work with communities and spawn NPCs ... it's possible."*
+
+Correct, and the answer was two steps away for the whole of 29. The REDmodding
+wiki names World Builder, World Builder is open source, and its exporter plus
+`import_object_spawner.wscript` are a complete statement of what a working
+community mod writes. Reading both found one difference:
+
+| runs 1 to 7, community A | World Builder, community B |
+|---|---|
+| `worldCompiledCommunityAreaNode` | `worldCompiledCommunityAreaNode_Streamable` |
+| in the ALWAYS-LOADED sector | in an ordinary streaming sector |
+| `MaxStreamingDistance` float-max, `UkFloat1` 1550, flags 32 / 512 | 200, 250, 1024 / 512 |
+
+`worldCompiledCommunityAreaNode_Streamable` is a real class, confirmed by round
+trip: the plain node plus one field, `streamingDistance`. **The plain one is what
+the game's COOKER emits into always_loaded. A mod does not cook.** Writing the
+cooked form may be writing something nothing reads.
+
+This bench chose the cooked form deliberately, and the reason is in the run 7
+generator header: it had been read field by field in vanilla. That is a good
+reason to trust what a field MEANS and a bad reason to ignore what a working
+example DOES. `docs/sources.md` now carries the rule and the sources.
+
+**Run 8 ships both communities, one variable apart, in one build.** A is
+unchanged. B is `_Streamable`, in the Exterior sector, with World Builder's
+instance values, its own name, id, registry item, two entries and two AI spots
+at slots 9 and 10. The quest phase activates both.
+
+| reading | meaning |
+|---|---|
+| slot 9 or 10 fills, 1 to 3 do not | **the node type and its sector are the answer.** A mod ships communities the World Builder way and this closes yes |
+| 1 to 3 fill and 9, 10 do not | the opposite, and surprising |
+| both fill | it never mattered and something else in run 7 did |
+| neither fills, controls clean | the deviation was not it either, and the next source to read is ArchiveXL's own sector handling |
+
+### Run 8, 2026-08-24. Both shapes, nobody
+
+```
+A bodies 0   B bodies 0      names resolve: A yes  B yes
+quest phase step: 99 (all done)
+0 CAL 1   1..3 A 0   4 NEG 0   5 A VSPOT 0   6 VCTL 0   9,10 B 0
+probes: our exterior 4 LIVE, our always-loaded 4 LIVE,
+        base-game 4 LIVE, never shipped 3
+```
+
+**World Builder's shape spawned nobody either.** The node type and the sector it
+sits in are not the answer. Every activation fired, both names resolve, both
+sectors are live, every control is clean.
+
+### What ArchiveXL's source says, and it changes the reading
+
+`src/App/Extensions/WorldStreaming/Extension.cpp` carries
+`OnRegisterSpots`, a hook on the game's `AIWorkspotManager::RegisterSpots` whose
+only job is to **MERGE** a mod's `AISpotPersistentData` into the existing array
+rather than replace it, growing the array and clearing its sorted flag first.
+
+That patch exists for exactly one reason: so that a mod's own sector can bring
+AI spots to the community system. **The route is supported by design.** So eight
+runs of nothing are far more likely to be something still wrong in this bench's
+data than proof the engine refuses.
+
+Codeware 1.20.3 is installed, above the 1.15.0 the wiki asks for, so the missing
+requirement is not that either.
+
+### The working examples, pulled apart 2026-08-24. NONE OF THEM SHIPS A COMMUNITY
+
+Three published quest mods are staged on this machine and all three place NPCs.
+Their sectors were extracted and read node by node:
+
+| mod | its sector | what is in it |
+|---|---|---|
+| Californication | `californication.streamingsector`, Quest, level 255 | 2 `worldAISpotNode`, 1 `worldStaticMarkerNode`, 1 `worldTriggerAreaNode` |
+| One More Light | `one_more_light.streamingsector`, AlwaysLoaded, level 255 | 2 trigger areas, 1 marker |
+| Deceptious Quest Core | AlwaysLoaded, level 0 | 1 trigger area |
+
+**Not one community node, not one registry node, between them.** The claim that
+modders place NPCs with communities is about World Builder, and no mod on this
+machine uses it.
+
+What they do instead, and Californication is the complete worked example:
+
+- **ship their own AI spots** for the workspot an NPC should use, named
+  long-form and nested under a real vanilla prefab path
+  (`.../loc_sq030_love_shack_prefabTPTXF5Q/.../#nq_cali_ws_judy_sit`)
+- **REACTIVATE ONE OF THE GAME'S OWN spawn sets** rather than creating one:
+
+```
+questSpawnSet_NodeType
+  action     Reactivate        action     Activate
+  entryName  judy              entryName  van
+  phaseName  dlc3_judy_sleep   phaseName  None
+  reference  #judy             reference  #judy_vehicle
+```
+
+- **spawn the speaking actor from the scene**, `acquisitionPlan: spawnDespawn`,
+  which is what this project already does
+
+Two things follow. Californication's Judy sitting on a cliff is a modded AI spot
+plus a vanilla community switched on, and that is the shipped precedent for 27's
+route A. And **`questSpawnSet_NodeType` is a node type this bench never emitted
+across eight runs**: same four fields as the community node under different
+names, `reference` where the other says `spawnerReference`, in 473 shipped
+questphases.
+
+### Run 9, built 2026-08-24
+
+The bench phase now drives both communities with `questSpawnSet_NodeType` as
+well, five more actions after the seven it already had, breadcrumbs throughout.
+Nothing else changed.
+
+If the spawn-set node is what reaches a mod's registry, that is the answer. If
+it is not, then eight runs plus two node types plus both area-node shapes have
+failed, no local mod contradicts it, and 29 should close negative with the
+Californication route written up as what to do instead.
+
+### Run 9, 2026-08-24. `questSpawnSet_NodeType` changed nothing
+
+Byte for byte the same reading as run 8:
+
+```
+A bodies 0   B bodies 0      names resolve: A yes  B yes
+quest phase step: 99 (all done)
+0 CAL 1   1..3 A 0   4 NEG 0   5 A VSPOT 0   6 VCTL 0   9,10 B 0
+probes: our exterior 4 LIVE, our always-loaded 4 LIVE,
+        base-game 4 LIVE, never shipped 3
+```
+
+### CLOSED NEGATIVE. What nine runs covered
+
+| | |
+|---|---|
+| identity | the community's id IS the hash of its own registered NodeRef, on all three sides, verified in the built archive |
+| area node | both `worldCompiledCommunityAreaNode` in an always-loaded sector and `worldCompiledCommunityAreaNode_Streamable` in a streaming one |
+| activation | `questCommunityTemplate_NodeType` Activate, Reactivate and per-entry, AND `questSpawnSet_NodeType` the same ways. Twelve actions, all fired |
+| spots | our AI spots, our marker, and a VANILLA workspot with the game's own persistent record |
+| residency | both sectors probe as live entities, one of them from 2567 m |
+| controls | negative slot empty and calibration NPC found in every run |
+| time | all five named hour bands |
+
+**No NPC ever appeared.** This project should not place NPCs with a community,
+and nothing further here is worth a playtest.
+
+**This is not "the engine refuses".** ArchiveXL carries a hook whose only job is
+to merge a mod's `AISpotPersistentData` into the game's array, so somebody built
+for this. The honest statement is that this bench could not do it, that no
+published mod on this machine does it, and that the cost has stopped being worth
+the answer.
+
+**The one thing never tried** is producing a community from World Builder itself,
+in game, and diffing its files against these. That is the only cheap move left
+and it needs the tool rather than more reasoning.
+
+### What to do instead, and it is better for 27 anyway
+
+Californication is a shipped mod that puts Judy sitting on a cliff at a spot it
+ships itself. Three parts, none of them a community:
+
+1. **Its own `worldAISpotNode`** for the workspot, named long-form and nested
+   under a real vanilla prefab path, in a `category: Quest` sector.
+2. **`questSpawnSet_NodeType` against one of the GAME'S OWN spawn sets**:
+   `Reactivate`, entry `judy`, phase `dlc3_judy_sleep`, reference `#judy`.
+3. **A scene actor** with `acquisitionPlan: spawnDespawn`, which is what this
+   project already emits for every speaking NPC.
+
+27 chose route A, a real body for Hoshino in this mod's own sector. That is the
+same shape as Judy on the cliff, and it has a worked example that ships. Start
+there rather than here.
+
+### Stop guessing and get a working example
+
+Every round since run 5 has been a hypothesis about what World Builder does
+differently, and two of the three were wrong. The reasoning has run out of
+cheap discriminators.
+
+**The next step is a real World Builder community to diff against**, either
+exported from the tool on this machine or extracted from a published mod that
+ships one. Field by field against ours, the way the shard container was lifted
+rather than retyped. That is offline work and it ends the guessing.
+
+Until that exists, this section should not be read as "communities do not work
+for mods". It should be read as "this bench has not managed one, and ArchiveXL
+contains a patch that only makes sense if they do".
+
+### The protocol
+
+Pre-gig save. The quest phase runs ONCE PER SAVE LOAD, so reload to arm it
+again (gotcha 54's sibling: a linear dev branch fires once and then sits).
+
+1. `TELEPORT: the community lab line`. You land 4 m short of slot 0.
+2. `ARM the quest phase`, and watch `quest phase step` reach **99**. It takes
+   about five seconds.
+3. `WATCH: on`, half a minute.
+4. `SPAWN the calibration NPC`.
+5. Read the panel, then the office teleport and read it again.
+
+Read it in this order:
+
+| row | meaning |
+|---|---|
+| **the game knows it** | anything but 0 and a mod's registry node IS read. THE ANSWER |
+| community name resolves | must be yes, or the id is wrong again and nothing else counts |
+| quest phase step | 9 means all four activations ran. Stuck below 9 is a phase parked mid-chain |
+| `4 NEG` | 0, or the garden is not empty and the run is void |
+| `0 CAL` | 1 after the spawn |
+| probe 3 | LIVE at the bench, or no probe means anything |
+| probe 4 | 3, which is what makes 3 mean "not there" |
+| probes 1 and 2 | LIVE, our two sectors. 2 stays LIVE at the office |
+
+**If `the game knows it` is above 0**, a mod can place a community NPC and the
+next question is scene acquisition through `spawnSetNameToCommunityID`, which
+the bench already registers as `#cc_g01_cl_spawnset`.
+
+**If it is 0 with the step at 9 and every control clean**, a mod's registry node
+is not read, the two-bodies arrangement is permanent, and this closes.
+
+### The bench
+
+Five positions in a line in the estate garden in North Oak, 4 m apart, on the
+teleport this mod already has. The garden is chosen because V has stood on that
+exact point, so the ground height is measured, and because a pre-gig save has
+nothing of ours there.
+
+| slot | what stands there | what it separates |
+|---|---|---|
+| 0 | a script-spawned NPC, put there by the bench | CALIBRATION. The detector, in the same shape as the thing under test |
+| 1 | our AI spot + `Character.cc_g01_hoshino` | the whole question, with our own character record |
+| 2 | our AI spot + a vanilla `Character` record | whether OUR record is the fault rather than the community |
+| 3 | our marker spot + the same vanilla record | whether the spot NODE TYPE is the fault |
+| 4 | nothing is shipped here at all | NEGATIVE CONTROL |
+| 5 | a VANILLA workspot + the same vanilla record | whether the registry node is read at all, with nothing of ours below it |
+| 6 | the vanilla workspot beside it, driven by nobody | NEGATIVE CONTROL for the pair |
+| 7 | a vanilla stool in the ALWAYS-LOADED sector, PROBED not counted | whether that sector is loaded at all |
+| 8 | the same stool in the Exterior sector | the comparison, and proof the probe works |
+
+Slots 1, 2 and 3 are three entries of one community, so the main question is
+asked once and the three differences read separately.
+
+`tools/gig01/gen_commlab.py` writes two sectors and a block,
+`Gig01_CommLab.reds` does the scanning, and the dev menu has the buttons. The
+generator's header is the authority on all three and on how to remove them.
+
+### The protocol
+
+Load a pre-gig save. Nothing needs setting up.
+
+1. `TELEPORT: the community lab line`.
+2. Read the **distance to slot 0** in the panel. Under 20 m or the run says
+   nothing.
+3. `WATCH: on`, and leave it running for half a minute while standing on the
+   line. A community entry waits for a player to be near, so a single scan
+   taken the instant after a teleport can read 0 for a community that works.
+4. Look along the line. Slots are 4 m apart in the order above.
+5. `SPAWN the calibration NPC`, and watch slot 0 go to 1.
+6. `REPORT to the log`, quit so CET flushes, and read `ArchiveXL.log` for the
+   two `cc_g01_commlab` sectors merging.
+
+### How to read it
+
+**Slot 4 first, then slot 0.** Both are controls and both can void the run.
+
+| reading | meaning |
+|---|---|
+| slot 4 is not 0 | VOID. Something is wandering the garden and every other count is suspect |
+| slot 0 stays 0 after the spawn | VOID. The detector is broken, not the community |
+| 1, 2 and 3 all 0, controls clean | a mod's registry node is not read. The two-bodies arrangement is permanent and gigs 02 to 04 inherit it |
+| 2 or 3 counts, 1 does not | the community works and `Character.cc_g01_hoshino` is the problem, which is a TweakXL question and a much smaller one |
+| 3 counts, 1 and 2 do not | the AI spot node is wrong, not the community. `spotDef` is written null here where vanilla carries an `AITrafficExternalWorkspotDefinition`, and that is the first suspect |
+| any of 1, 2, 3 counts | **the answer is yes**, and the next thing to test is scene acquisition through `spawnSetNameToCommunityID`, which the bench already registers as `#cc_g01_cl_spawnset` |
+
+### What was already spent, and on what
+
+One fault, and it was the one this project has written down twice.
+
+**HandleIds are file-wide within a sector.** Three AI spot nodes each numbering
+their inner `AIActionSpot` chunk 1 is three collisions, and WolvenKit refuses
+the file from inside the CName converter of the NEXT node, reporting that
+node's `$type` line. It reads as a wrong class name and is nothing of the sort.
+The generator now renumbers every handle in document order as a final pass.
+
+### Removing it
+
+`tools/gig01/gen_commlab.py` is untracked on purpose: `tools/gig[0-9]{2}/*.py`
+is on the public export allowlist, so committing it would ship it. Same reason
+`gen_pinlab.py` was never committed. The three deletes, the `.archive.xl` line
+and the `init.lua` block are listed in the generator's header, and no shipped
+generator is touched, so the rollback is a delete rather than a diff to read.
+
+---
+
+## 29-ADDENDUM, 2026-08-24. Three questions answered by reading, and run 10
+
+Asked after the close: the wiki says communities work, so how do THEY load one,
+why does ours not work, and do the docs agree with Californication?
+
+### How is a World Builder community loaded? By NOTHING. Shipping it is loading it
+
+The import script (`import_object_spawner.wscript`) writes the sectors, one
+`all.streamingblock`, and an `.xl` that registers that block. **That is the
+whole loading story, and it is the same mechanism this bench already uses.**
+There is no loader key, no quest requirement, no extra registration.
+
+And the wiki is explicit that **no activation is needed**: "Initial Phase Name
+and Active On Start are only of interest for quest modding, so ignore those for
+now." A plain World Builder community spawns from `entryActiveOnStart` alone.
+That corrects the inference behind runs 7 to 9's quest phase (gotcha 63 is
+amended): vanilla's 52 open-world activation phases exist to CONTROL ambient
+communities, not because a community cannot start without one.
+
+### Is ArchiveXL support real, and is it installed? Yes and yes
+
+Commit `833df3bc`, 2024-10-31, "Add community registrty merging": the
+`AIWorkspotManager::RegisterSpots` hook that merges a mod's spot records into
+the game's array instead of letting a second registry clobber it. That is the
+ONLY community-specific code in ArchiveXL, it exists precisely so World Builder
+communities can work, and it long predates the installed 1.27.1. Version is not
+the problem.
+
+### Do the docs agree with Californication? No. They are two different routes
+
+| | the wiki / World Builder | Californication |
+|---|---|---|
+| the community | CREATE your own, registry node and all | REUSE a vanilla spawn set (`#judy`), ship none |
+| the character | any record, yours included | whoever vanilla's entry names |
+| activation | none needed | `questSpawnSet_NodeType` Reactivate |
+| the spot | own `worldAISpotNode`, used BY the community | own `worldAISpotNode`, used by a SCENE workspot node |
+
+The docs never mention Californication's route; Californication never uses the
+docs' route. Both are real. The docs' route is the one that would give Hoshino
+his own record in a persistent body, which is why it kept being worth runs.
+
+### Why does ours not work then? Down to four differences, and run 10 ships them
+
+Runs 7 to 9 built the registry to VANILLA's cooked layout. A World Builder
+registry differs, and a WolvenKit round trip eliminated half the list: the
+export's missing keys (`initializers`, `spawnInView`, `alwaysSpawned`,
+`prefetchAppearance`, `crowdEntries`) deserialize to exactly the defaults
+vanilla writes explicitly, so they never reached the game as differences.
+
+What remains, all now matched byte for byte in run 10:
+
+| | runs 7 to 9 (vanilla layout) | run 10 (World Builder layout) |
+|---|---|---|
+| registry sector | level 255, float-max box | **level 1, +-99999 box** |
+| registry node | long-form NAME, in `nodeRefs` | **unnamed uint64 hash, registered nowhere** |
+| instance ranges | max float-max, ukfloat 17.32 | **max 17.32, ukfloat 99999999, inverted** |
+| `crowdCreationRegistry` | empty object | **null** |
+| `spawnSetNameToCommunityID` | two entries | **empty** |
+| B's spots | vanilla estate copy, finite | **WB minimal, `isWorkspotInfinite` 1** |
+
+The quest phase stays, as prodding, but per the wiki B should spawn WITHOUT it:
+walk to the line and look at slots 9 and 10 before arming anything.
+
+If run 10 also spawns nobody, the byte-level shape is exhausted and the residue
+is environmental: something World Builder's runtime half (it is a CET mod)
+does at spawn time that the files alone do not, which would itself be the
+finding, because the wiki's claim is that the FILES suffice.
+
+---
+
+## 29-ADDENDUM-2, 2026-08-24 evening. Run 10 failed, the wiki's promise is now in question, and the search for a runtime spawner came back empty
+
+### Run 10: World Builder's byte-exact shape, and still nobody
+
+Read before arming AND after: all zeros both times, step 99, every control
+clean. **Community B did not spawn on its own, which is what the wiki promises
+a World Builder community does.** So either the wiki's claim needs a piece the
+files do not show, or something environmental is missing.
+
+### The logs say NOTHING, and that is a finding
+
+Every log from the session was swept: red4ext, ArchiveXL, Codeware, TweakXL,
+redscript, CET. Not one line about communities, registries or spawning. **The
+game has no error path for a community it ignores.** The panel facts remain the
+only instrument, and the next-run upgrade is RedHotTools, which is already
+installed: its world inspector can show whether the registry node instance is
+actually attached, live.
+
+### There is no runtime spawner node to ship. Checked, not assumed
+
+The suspicion was that `sourceObjectId` being an ENTITY id meant a spawner
+node somewhere references the `.community` by path, and the bench never shipped
+one. Hunted properly:
+
+- `worldPopulationSpawnerNode` exists, but it is a SINGLE-NPC spawner
+  (`objectRecordId` one Character record, `spawnOnStart`, `alwaysSpawned`); no
+  community reference on it.
+- fabiola's community name appears in NO sector: not the 2356 quest sectors,
+  not the 175 grid sectors covering her spot, all binary-grepped raw (validated
+  against a sector with known strings). It exists ONLY in `always_loaded_0`'s
+  `nodeRefs` table and as the hash in her area node and registry item.
+
+**So a vanilla community's prefab compiles away entirely.** The area node plus
+the registry item ARE the whole compiled community, and that is exactly what
+this bench ships. There is no missing node type.
+
+One false positive caught on the way: `cct_cpz_com` greps into
+`cct_cpz_commemorative_park`. Substring matches on short names are gotcha 60's
+shape again; fabiola's conclusion stands because her name is long and exact.
+
+### The two moves left, and neither is another blind run
+
+1. **A real World Builder community mod's files.** "Personal Mechanics" (Nexus
+   26885) ships World Builder community NPCs by its own description. Nexus
+   downloads need the account, so this is a request to the design: download it
+   through Vortex, and the diff against our files is an hour of offline work
+   and decisive either way.
+2. **RedHotTools next run**: inspect `cc_g01_commlab_al` live, confirm the
+   registry node instance attaches, and look at what sits at the community's
+   coordinates. That turns "the game says nothing" into a reading.
+
+Until one of those lands, the honest status line is: ten byte-faithful runs,
+no spawn, no error, no local counter-example, and one Nexus mod page claiming
+the route works.
+
+---
+
+## 29-ADDENDUM-3, 2026-08-24. Personal Mechanics opened, and it disagrees with runs 1 to 10 in exactly two ways
+
+The design downloaded Personal Mechanics (Nexus 26885), the first WORKING World
+Builder community mod this bench has ever had in its hands. Pulled apart file by
+file. Its `pmp_vic_mec` sector is one community and one AI spot, the smallest
+possible worked example, and its community id was verified to the digit:
+`FNV1a64('$/mod/pmp_vic_mec/pmp_vic_mec_mec')`.
+
+### What it confirms
+
+- The registry is EXACTLY run 10's: AlwaysLoaded level 1, +-99999 box, unnamed
+  uint64 registry node, inverted ranges 17.32 / 1e8, uk10 32, null crowd
+  registry, empty spawn sets, debugName "registry". **The registry is retired
+  as a suspect.**
+- The id rule (gotcha 62) holds for a shipped mod.
+- Its entries carry the FULL key set with `entryActiveOnStart` 1, like runs
+  7 to 9.
+- **Its quest phase ACTIVATES the communities**: `questCommunityTemplate_NodeType`,
+  Activate, entry None, phase None, the long community ref, exactly the node
+  this bench has emitted since run 7. It even Deactivates a VANILLA community
+  (Kabuki open-world) to clear space, and pairs Deactivate/Activate per shop.
+  So shipped practice arms communities even though the wiki says it is
+  unnecessary; gotcha 63's amendment gets its own amendment.
+
+### The two things it does that no run ever tried
+
+| | runs 1 to 10 | Personal Mechanics |
+|---|---|---|
+| ref root | `$/03_night_city/...` | **`$/mod/<sector>/#<name>`** |
+| the community's sector | Exterior (or the registry's) | **AlwaysLoaded level 1, local ~300 m box, cell 0** |
+
+Every name this project has EVER shipped is rooted `$/03_night_city/`, because
+that is what vanilla writes and what backlog 11 measured resolving. World
+Builder roots everything under `$/mod/`, and the community system may well
+resolve through machinery that cares which root a name hangs from. And its
+community-plus-spots sectors are AlwaysLoaded with small local boxes, a
+combination nothing here ever shipped: spots always sat in the Exterior sector.
+
+Its instance values are 120 / 100 / 1024 / 512 on both the community node and
+the spot, minor against the two above.
+
+### Run 11, built and deployed 2026-08-24
+
+Community B moves into its own `cc_g01_commlab_b` sector that mirrors
+`pmp_vic_mec` exactly: AlwaysLoaded level 1, cell 0, a 300 m local box, the
+`_Streamable` area node and both AI spots inside it, every ref rooted
+`$/mod/cc_g01_commlab_b/#...`, Personal Mechanics' instance values throughout.
+The quest phase and the panel follow the new ref. Community A and all controls
+unchanged.
+
+If slots 9 and 10 fill, the root and the sector were the answer, ten runs of
+"no" become "yes with the right root", and 29 reopens as SOLVED. If they stay
+empty, the diff against a working mod is exhausted at the file level and the
+next stop is RedHotTools on the live world.
+
+---
+
+## 29-ADDENDUM-4, 2026-08-24. Run 11 fails, PM's Lua is innocent, and the A/B is now installed
+
+### Run 11: the exact mirror of a working mod, and still nobody
+
+Unarmed zeros, armed to step 99 zeros, calibration found. Community B was a
+field-for-field mirror of `pmp_vic_mec`: the `$/mod/` root, the AlwaysLoaded
+level-1 sector with a local box, their instance values, their activation node.
+
+### Personal Mechanics' Lua does NOT spawn its NPCs. Checked line by line
+
+Its `init.lua` is 85 lines: a settings page that writes two facts
+(`personalmechanics_h10_enabled`, `personalmechanics_viktor_enabled`) and
+nothing else. No spawn call anywhere. The Car Mod Shop Lua is vehicle-shop
+logic. **The mechanic NPCs are pure community files plus a quest phase**, so
+the mirror was of the right thing and the file-level comparison is genuinely
+exhausted.
+
+Their character records were read too: full standalone `gamedataCharacter_Record`
+entries with crowd `entityTemplatePath`s, `isBumpable: False`,
+`crowdMemberSettings`. Worth copying if a record-level difference ever becomes
+the suspect, but slot 2/10 always carried a vanilla record, so records alone
+cannot explain eleven empty runs.
+
+### The question that decides everything: does PM work on THIS machine?
+
+It has never been installed here; the zip was downloaded for dissection. If its
+own mechanics do not spawn on this machine either, then eleven runs were
+measuring the ENVIRONMENT, not the files, and every conclusion since run 1
+needs re-reading in that light.
+
+**Installed 2026-08-24, manually, not through Vortex:**
+
+- `archive/pc/mod/PersonalMechanics.archive`, `personalmechanics.xl`,
+  `personalmechanics_p.xl`
+- CET `mods/Personal Mechanics/` and `mods/Car Mod Shop/`
+- `r6/tweaks/Personal Mechanics/`
+
+Remove by deleting exactly those. The bench stays deployed beside it.
+
+**The test costs one trip.** Its Viktor's-garage mechanic (`pmp_vic_mec`) is at
+(-1572, 1260), the back alley by Viktor's clinic in Little China; the Miguel
+shop (`oficina_wat_miguel`) is 450 m east at (-1120, 1201).
+
+**Do not save during the test session.** PM's quest phase Deactivates a vanilla
+Kabuki community as part of its setup, and community state persists in a save.
+Load the pre-gig save, look, quit without saving.
+
+| PM's mechanic | meaning |
+|---|---|
+| spawns | communities DO work here, the difference is real and still in our data, and RedHotTools can diff the two live communities side by side |
+| does not spawn | the environment was the variable all along, eleven runs were sound negatives about nothing, and the suspect list is the installed loader stack |
+
+---
+
+## 29-ADDENDUM-5, 2026-08-24 evening. PERSONAL MECHANICS SPAWNS ON THIS MACHINE, and the diff names two suspects this bench never questioned
+
+### The A/B landed
+
+Playtest screenshot: Miguel's shop in Kabuki, and there he stands, service
+icons overhead, spawned by pure community files plus a quest phase, on this
+machine, in the same session where our community sits empty. (The Viktor spot
+was empty; his location is behind their settings toggle and their own notes
+say it applies on fast travel, so Miguel is the reading that counts.)
+
+**Communities work here. The environment is innocent. The difference is real
+and in our data.**
+
+### The mechanical diff, ours against their working item
+
+Field for field, defaults excluded, two structural differences survive, and
+every working example anywhere does the opposite of this bench:
+
+| | every run since 1 | fabiola, PM, the wiki's screenshots |
+|---|---|---|
+| `appearances` | EMPTY | at least one named appearance |
+| `timePeriods` per phase | five, all sharing one spot | ONE |
+
+Both were this bench's own inventions in run 1, and both survived eleven
+rebuilds unquestioned: the empty appearances because the wiki called the field
+optional, the five periods as "so time of day cannot be the fault". A
+constant carried from run 1 is invisible to every A/B built after it.
+
+### Run 12, built, deploy pending the game closing
+
+Community B's two entries become: `Character.miguel` with
+`citizen__aldecaldos_ma_mechanic_04`, THEIR exact proven pair, possible
+because their mod is now installed beside the bench; and
+`Character.cc_g01_hoshino` with `default`. One period, `Day`, one spot each.
+Everything else stays run 11's PM mirror.
+
+| slots 9 and 10 | meaning |
+|---|---|
+| both fill | the empty appearances or the five periods were the whole story since run 1 |
+| miguel only | our RECORD or its `default` appearance is the last difference, and their record yaml is the template to copy |
+| neither | the community DATA is exhausted and the difference is in how the two mods' sectors reach the game, which RedHotTools can now compare live |
+
+---
+
+## 29-ADDENDUM-6, 2026-08-24 night. RUN 12 SPAWNS. The answer is YES
+
+Three screenshots, one timeline, and the first one is the whole result:
+
+| time | state | slot 9 (`ours_b`, HOSHINO) | slot 10 (`miguel_b`) | spawner reports |
+|---|---|---|---|---|
+| 7:20 | UNARMED, step 0 | **1** | **1** | **B bodies 1** |
+| 7:22 | armed, step 99 | 1 | 0 | B bodies 1 |
+| 7:24 | after calibration | 1 | 0 | B bodies 1 |
+
+**Both entries spawned on save load with no quest node**, which is what the
+wiki promised all along. `GetGameObjectsFromSpawnerEntityID` went non-zero for
+the first time in twelve runs. And the arming sequence, whose per-entry
+Activate names only `ours_b`, visibly switched `miguel_b` OFF: the quest-node
+control half works too, demonstrated by accident.
+
+**Slot 9 is `Character.cc_g01_hoshino`.** Our own record, our own community,
+our own sector, standing in the world. The two-bodies arrangement has its
+replacement mechanism.
+
+### The recipe, the whole stack that run 12 shipped
+
+Relative to vanilla-copying, every one of these was necessary to reach here,
+and the last two were the final fix:
+
+1. ONE name for the community; its id is FNV1a64 of that name minus '#'
+   (gotcha 62), the name registered in the sector's `nodeRefs`.
+2. The registry node in an AlwaysLoaded sector: level 1, +-99999 box, unnamed
+   uint64 instance, ranges 17.32 / 1e8, uk10 32, uk11 512.
+3. The community area node (`_Streamable`) WITH its AI spots in their own
+   AlwaysLoaded level-1 sector, small local box, grid cell 0.
+4. Every ref rooted **`$/mod/<sector>/#<name>`**, not `$/03_night_city/`.
+5. **`appearances` NON-EMPTY** on every phase. `default` works for a record
+   that inherits one.
+6. **ONE time period** per phase, e.g. `Day`, one spot per entry.
+
+Points 5 and 6 were the run-12 change; 3 and 4 were run 11's. Which of the
+four is individually load-bearing is unisolated and OPTIONAL to isolate: the
+stack is cheap to ship whole, and it is what the working mod ships.
+
+Not required, measured across the runs: a quest phase (spawns unarmed), the
+`$/03_night_city` root, Exterior spot sectors, the five-period construction,
+crowd registries, spawn-set tables. Conflict with a second community mod: none,
+ours spawned with Personal Mechanics installed and its Miguel standing in
+Kabuki in the same session.
+
+### What is still open, small and cheap
+
+- `miguel_b` off after arming: the bench phase's Reactivate plus
+  entry-Activate deactivates unnamed entries. Understand before using the
+  nodes in a gig.
+- Which of the four stack layers is individually necessary, if anyone cares.
+- The payoff: 27's route A, Hoshino as ONE body from a community, with the
+  scene acquiring him. That is the next build.
+
+---
+
+## 29-ADDENDUM-7, 2026-08-24. RUN 13 IS BUILT: the scene half of route A
+
+Run 12 answered "can a community this mod ships stand our own character in the
+world". Run 13 asks the other half, and it is the payoff of the whole line:
+**can a SCENE take that body instead of spawning its own?** Built and deployed,
+not yet played.
+
+### How a scene finds a community, read rather than guessed
+
+`spawnSetNameToCommunityID` in vanilla's registry node holds 329 rows, each one
+a `CName` written WITH its '#' against a community id. The join a `spawnSet`
+actor walks is:
+
+```
+scnActorDef.spawnSetParams.reference  ->  a nameReference in that table
+-> communityId  ->  the community  ->  the entry named by entryName
+```
+
+`#mama_welles` maps to 5541929579920624075, and no NodeRef anywhere in the three
+always-loaded sectors hashes to it, so her community's area node lives in the El
+Coyote bar's own sector. The id is therefore the ordinary FNV1a64 of a community
+node's long ref (gotcha 62 again) and this table exists to turn a short readable
+name into it. Registering a name of ours in a registry node of ours is all a
+scene should need.
+
+Which SPELLING the scene must carry is not established, and it is the one thing
+the two sources disagree on. Vanilla's 329 names are short; a short form is
+exactly what a mod's own node names do not resolve under (gotcha 34). So the
+bench registers two names for one community and gives each bench scene one of
+them. Two names, two community entries, two bodies, one session.
+
+### What run 13 ships
+
+Community B, unchanged in every part gotcha 66 lists, plus:
+
+- a third entry `talk_b`, a second `Character.cc_g01_hoshino` at slot 11
+- `spawnSetNameToCommunityID` carrying `#cc_g01_cl_community_b` and
+  `$/mod/cc_g01_commlab_b/#cc_g01_cl_community_b`, both against B's id. **This
+  is the one deviation from the shape that worked**, so slots 9 and 10 are now
+  a regression check as well as a control: read them before reading anything
+  about the scenes.
+- an AI spot at slot 12 that no community owns, for the workspot question below
+
+Three bench scenes, three buttons off the armed quest phase, parallel rather
+than chained so a scene that stalls costs only its own reading:
+
+| button | scene | what it asks |
+|---|---|---|
+| PLAY 1 | `gig01_cl_short` | a `spawnSet` actor, entry `ours_b`, reference SHORT |
+| PLAY 2 | `gig01_cl_long` | a `spawnSet` actor, entry `talk_b`, reference LONG |
+| PLAY 3 | `gig01_cl_ws` | an ordinary spawned actor put into our own AI spot node, which is item 30 and is independent of the other two |
+
+Nothing is spawned by the first two: `specRecordId` is 0 on a `spawnSet` actor,
+so the body is found or the scene has no speaker at all.
+
+Every line points at a RECORDED VANILLA stringId, so no subtitle resource is
+written and no `.archive.xl` line changes. ArchiveXL takes one subtitle file per
+locale and the gig already uses it. The text on screen is Nix's "How's things,
+V?" coming out of Hoshino, which is the point: **a subtitle names its speaker**,
+so a line that appears at all is a line whose actor was acquired.
+
+### The reading, and it is one row against one slot
+
+`cc_g01_cl_near` counts bodies within 5 m of the player that are NOT standing in
+a bench slot. That exclusion is what makes it independent of where the player
+parks, and it is the only row on the panel that separates the two cases route A
+exists to separate:
+
+| slot 9 | unaccounted bodies | meaning |
+|---|---|---|
+| 1 | 0 | **HE WAS TAKEN. One body. This is the answer** |
+| 1 | 1 | a second body was spawned beside the player: today's arrangement |
+| 0 | 1 | taken AND moved, which is still one body and still a result |
+| 1 | 0, and `cc_g01_cl_sc1` stuck at 1 | the scene entered and never came out, which is what an actor that cannot be acquired looks like from outside |
+
+### The protocol
+
+Load a pre-gig save.
+
+1. `TELEPORT: the community lab line`, then `ARM the quest phase`. Wait for the
+   step to read 99.
+2. `TELEPORT: between the run-13 spots`. Slots 9 to 12 are within 10 m. **Check
+   slots 9, 10 and 11 first**: the spawn-set table is new and 9 and 10 spawning
+   is what says it did no harm.
+3. `WATCH: on`.
+4. `PLAY 1`. Watch slot 9. Read the panel.
+5. `PLAY 2`. Watch slot 11.
+6. `PLAY 3`. Watch slot 12: a body should appear there on the first line, or on
+   the second, or never. Which of the two says which spelling of a mod's own
+   node name a quest workspot node resolves.
+7. `REPORT to the log`, quit so CET flushes.
+
+Each button fires once per save load, like everything else in this phase.
+
+### RUN 16: the combination is clean too. EVERYTHING THE GIG NEEDS IS NOW PROVED
+
+2026-08-24, 22:40. `ARM -> QUEST OFF -> QUEST ON -> PLAY 1 -> REPORT`, nothing
+else touched:
+
+```
+quest control OFF ours_b   1        ON ours_b   1
+entry 9 across scene 1: before 1  after 1
+entry 9  ours_b  bodies 1  alive 1
+```
+
+and a panel shot taken between the two presses catches the half-way state:
+entry 9 at `0 bodies, 0 alive` with 10 and 11 still at 1, which is `Deactivate`
+doing exactly one thing.
+
+So an entry switched off, switched back on, and then acquired by a scene is
+still standing and still alive afterwards. **Run 14's vanishing body does not
+reproduce**, and the suspect named in run 15 is cleared.
+
+### What is left of run 14's anomaly, and why it is not being chased
+
+Run 14's order was OFF, ON, shoot slot 11, PLAY 1, PLAY 2, PLAY 3, REPORT. Runs
+15 and 16 have now cleared the scene on its own and the toggle-plus-scene
+combination. What remains unexplained is some part of: killing a DIFFERENT
+community member while the others stand around, or the two extra scenes, one of
+which acquires an actor that was dead by then.
+
+**The gig does none of that.** It has one community entry, and the only person
+shot is that same one. Chasing this would cost a test session on a case gig 01
+cannot reach. Logged here so it is a decision rather than an oversight; if a
+later gig has two community NPCs and shoots one, start from run 14.
+
+### The four things a gig needs, and where each was measured
+
+| what the gig needs | proved by |
+|---|---|
+| he appears when the story wants him | run 14, `Activate` on one entry |
+| he is not there before, and can be removed after | run 14, `Deactivate`, and it leaves the other entries alone |
+| he survives the conversation that speaks through him | runs 15 and 16, before 1 / after 1 |
+| he can be shot and killed, and the body stays | run 14, entry 11 at `bodies 1, alive 0` |
+
+Plus, from run 13c: the scene acquires him rather than spawning a double, and a
+scene can place an actor in an AI spot node this mod ships.
+
+`entryActiveOnStart: 0` is ignored (run 14), so the gig's phase has to Deactivate
+on entry rather than relying on the field. There is a window between save load
+and that node running in which he exists; it has not been measured, and it is the
+one thing worth checking early in the gig build rather than late.
+
+### RUN 15: the scene gives the body back. It is the quest toggle that does not
+
+2026-08-24, 22:35. One press, PLAY 1, with no quest control touched:
+
+```
+entry 9 across scene 1: before 1 after 1
+entry 9  ours_b  bodies 1  alive 1
+scene 1                  played and exited
+quest control ON / OFF / whole      0 / 0 / 0
+```
+
+**The acquiring scene returns what it borrowed.** He was there before it, there
+after it, and still alive at the report. So the scene half of route A is clean
+and nothing about it needs changing.
+
+That leaves the OFF/ON cycle as the cause of run 14's vanishing body, and it
+narrows further than that. Run 14's own sequence was OFF, ON, shoot slot 11, then
+all three scenes, and the playtest saw slot 9 filled immediately after the ON. So
+`Activate` does hand back a body; something later in that run took it away again,
+and PLAY 1 on its own now provably does not.
+
+**The remaining suspect is the combination: an entry activated BY A QUEST NODE
+and then acquired by a scene.** That is exactly what the gig would do, so it has
+to be pinned down before any of this ships.
+
+**It needs no build.** The bench already has the buttons and the latch:
+
+    ARM  ->  QUEST OFF  ->  QUEST ON  ->  PLAY 1  ->  REPORT
+
+`cc_g01_cl_b4` keeps overwriting while scene 1 has not started, so it holds the
+count from just after the ON, and `cc_g01_cl_af` is written once at the exit.
+"1 before, 0 after" names the combination. "1 before, 1 after" clears it and
+moves the suspicion to the shot, which would be a stranger result and a smaller
+problem.
+
+### RUN 14 RAN. Quest control works, a community body can be killed, and one new hole
+
+2026-08-24, 22:24. Final report, after OFF, then ON, then shooting slot 11, then
+all three scenes:
+
+```
+entry 9  ours_b  (ships OFF at start)  bodies 0  alive 0
+entry 10 miguel_b (ships on)           bodies 1  alive 1
+entry 11 talk_b  (ships on)            bodies 1  alive 0
+quest control ON  ours_b   1
+quest control OFF ours_b   1
+workspot short 1  long 1
+scene 1 / 2 / 3            all "played and exited"
+probes                     4 / 4 / 4 / 3
+```
+
+**1. `entryActiveOnStart: 0` IS IGNORED.** Slot 9 held a live body on a fresh
+load with the entry shipped off. Whatever that field governs, it is not whether
+a mod's community spawns the entry. The wiki calls it "only of interest for
+quest modding", which is exactly the case it fails in.
+
+**2. `Deactivate` on one entry WORKS, and it does not touch the others.**
+Playtest: *"9 is now 0, the 10/11 stay 1"*. That is the answer to the question
+run 12 raised by accident, and it is the good one: a per-entry action addresses
+that entry alone, so a gig's NPC does not switch off the rest of its own cast.
+Whatever run 12 saw was not this.
+
+**3. `Activate` on one entry WORKS.** *"9 is now 1"*. So the pair is a switch, and
+that is the shape a gig needs: ship the community, deactivate at quest start,
+activate at the beat.
+
+**4. A COMMUNITY BODY CAN BE SHOT AND KILLED.** Entry 11 after the shot: `bodies
+1, alive 0`. The story requires it and nothing had ever tested it.
+
+Note what would have happened without the per-entry probe: the positional count
+for slot 11 reads **0** in the same report, because a dead NPC drops out of the
+targeting query the slot counts use. Counting bodies would have said "he
+vanished". The spawner still holds him and `ScriptedPuppet.IsAlive` says he is
+dead. Gotcha 64's limit cuts the other way here, and this is the instrument that
+gets past it.
+
+**5. Both workspot spellings work.** `workspot short 1 long 1`, from the two
+"Work Started" breadcrumbs. The footnote from run 13c closes: a mod's own AI spot
+node can be addressed either way.
+
+### The new hole, and it is on the critical path
+
+**Entry 9 has NO BODY at the end of the run**, after being activated by the quest
+node and then used by scene 1. In run 13c the body survived its scene: slot 9
+read 1 with scene 1 at "played and exited". The difference is that this time he
+had been through a Deactivate/Activate cycle first.
+
+So one of two things removes him, and this run cannot separate them:
+
+- the acquiring scene releases or despawns the body when it ends, and 13c only
+  looked healthy because the entry had never been toggled
+- an entry activated BY A QUEST NODE holds its body differently from one that was
+  active at start
+
+**It matters more than any of the four results above**, because the gig's beat is
+talk to Hoshino and then shoot him. A Hoshino who evaporates when the
+conversation ends is not shootable.
+
+Cheap to settle and it does not need anyone to watch: the bench now latches entry
+9's body count when scene 1 is entered and again when it exits, into
+`cc_g01_cl_b4` and `cc_g01_cl_af`. Two numbers on the panel, and the run says
+which of the two causes it is.
+
+### RUN 14, BUILT: quest control, which is what actually blocks the gig
+
+Run 13c proved a scene takes a community body. It did not make gig 01 possible,
+because of what run 12 established and nobody had followed through: **a mod's
+community spawns on save load with no quest node.** For a bench that was the
+result. For a shipped gig it means Hoshino standing at the North Oak estate from
+the moment a player installs the mod, before Elena has called, and again after
+he is dead.
+
+Community state also persists in saves, so getting this wrong in a release is
+not a patch, it is something stuck in people's saves.
+
+So `ours_b` now ships `entryActiveOnStart: 0` and run 14 asks three things:
+
+| button | asks |
+|---|---|
+| `QUEST: switch ours_b ON` | can an entry held off at start be switched on when the story wants it |
+| `QUEST: switch ours_b OFF again` | and off afterwards, which the kill beat needs |
+| `QUEST: activate the WHOLE community` | what runs 1 to 13 did, kept as the control |
+
+`miguel_b` and `talk_b` ship ON, and they are the DETECTOR for the other half:
+run 12 saw a per-entry Activate switch the UNNAMED entries off, by accident and
+never explained. If activating `ours_b` alone empties 10 and 11, that is a gig
+whose NPC turns off the rest of its own cast, and it has to be understood before
+any of this ships.
+
+### The instrument changed too, and it is a better one
+
+`GetGameObjectsFromSpawnerEntityID` takes an ARRAY OF ENTRY NAMES, so it answers
+for ONE entry rather than for the whole community. That is better than counting
+bodies at a position for both of run 14's questions:
+
+- **is this entry spawned right now**, which is the quest-control question and
+  does not care where the body is standing
+- **is that body alive**, via `ScriptedPuppet.IsAlive` on what the spawner hands
+  back. A dead NPC may drop out of the targeting query the slot counts use, so a
+  slot going to 0 after a shot is ambiguous and this is not.
+
+The second one answers a question the gig's story requires and nothing has ever
+tested: **can a community body be shot?** Hoshino has to die at the end of that
+beat. Shoot slot 10 or 11 and the panel says whether the spawner still has him
+and whether he is alive.
+
+Not on this bench, deliberately: **lipsync.** Testing it here would mean giving a
+bench line its own recording and lipmap entry, and the lipmap is one file per
+locale that the shipped generator owns, so a bench that wanted one would have to
+edit shipped code. The real Hoshino's lines are recorded and already have
+lipsync casting, so an acquired body's mouth is a gig-build question. It is the
+one thing run 14 knowingly leaves open.
+
+### RUN 13c: IT WORKS. A SCENE TAKES A COMMUNITY BODY, AND A MOD'S OWN AI SPOT HOLDS A SCENE ACTOR
+
+2026-08-24, 21:40. Both questions answered yes in one session. The panel caught
+mid-run, with scene 3 still playing, is the whole result:
+
+```
+0 CAL   script-spawn                          1
+9 B ours_b   HOSHINO, short-name scene        1
+10 B miguel_b Personal Mechanics              1
+11 B talk_b   HOSHINO, long-name scene        1
+12 WS  spot no community owns                 1     <- OUR AI SPOT, OCCUPIED
+1 our exterior sector          4 LIVE
+2 our always-loaded sector     4 LIVE
+3 CTL base-game, MUST be LIVE  4 LIVE
+4 CTL never shipped, expect 3  3
+distance from the stand point: 0.8 m
+unaccounted bodies within 5 m of you: 0
+scene 1 SHORT name, takes slot 9    played and exited
+scene 2 LONG name,  takes slot 11   played and exited
+scene 3 workspot,   into slot 12    ENTERED, no exit yet
+```
+
+All four controls correct. All three scenes ran. **All three spoke** (playtest,
+2026-08-24).
+
+#### 1. A scene acquires a body a mod's community placed. 27 route A passes
+
+Slots 9 and 11 still hold their bodies AFTER their scenes played and exited, and
+`unaccounted bodies` never left 0. A `spawnSet` actor carries `specRecordId` 0,
+so nothing can be spawned: the scene either finds the body or has no speaker at
+all. Both scenes had one.
+
+**The subtitle is the proof, and it is why the lines matter.** These scenes write
+`visualStyle: regular`, and 10k measured that a regular line needs a speaker
+GameObject the subtitle system can reach or the line is resolved and then dropped
+on the floor. A line that appeared is a line whose actor was acquired.
+
+**Both spellings work**, which settles the question the two names were registered
+to answer: scene 1 asks for `#cc_g01_cl_community_b` and scene 2 for
+`$/mod/cc_g01_commlab_b/#cc_g01_cl_community_b`, both are rows in
+`spawnSetNameToCommunityID`, and both spoke. So the match is on the string as
+registered, and a mod may use whichever form it likes provided the same string is
+in the table. This is not the NodeRef resolution of gotcha 34 and does not
+contradict it.
+
+#### 2. A scene CAN put its actor into an AI spot node the mod ships. Item 30 passes
+
+Slot 12 reads 1 while scene 3 is running, and it is the instrument rather than an
+eyewitness that proves the move: scene 3 spawns its actor 2 m in front of the
+player, so a workspot node that did nothing would leave him there and
+`unaccounted bodies within 5 m` would read 1. It reads 0 while slot 12, nine
+metres away, reads 1. He was moved into
+`$/mod/cc_g01_commlab_b/#cc_g01_cl_spot_ws` by `questUseWorkspotParamsV1`.
+
+Slot 12 is back to 0 in the report fourteen seconds later, with scene 3 at
+"played and exited". That is correct: a `spawnDespawn` actor is removed when its
+scene ends, so this reading only exists while the scene runs.
+
+**`questkit/scene.py`'s `add_workspot_node()` docstring was wrong.** It said
+`questUseWorkspotParamsV1` points at a node in a streaming sector and is
+"unusable: a mod's own world nodes do not resolve". Californication was the
+evidence against it; this is the measurement.
+
+WHICH SPELLING moved him is NOT established. Scene 3 fires the same spot twice,
+short form on its first line and long on its second, and at the time the panel
+could not say which one landed: catching it meant watching a two-second event
+while reading a panel, and it was missed, which is a fair thing to ask of an
+instrument rather than of a person.
+
+**The bench now answers it by itself.** `questUseWorkspotNodeDefinition`
+declares a "Work Started" output, so each of the two nodes hangs a fact off its
+own: `cc_g01_cl_ws_short` and `cc_g01_cl_ws_long`, both on the panel and in the
+log. Nothing needs re-running for its own sake; the answer arrives free with
+whatever the bench is next used for. It matters only for style, since one of
+them works and the node can be addressed either way in a gig.
+
+#### What this does not yet say
+
+The counts prove a body was acquired and not duplicated. They say nothing about
+whether the scene took OWNERSHIP well enough for gig use: whether he turns to
+face the player, whether lipsync drives his mouth, whether his community
+behaviour stops while the scene owns him, and whether he can still be shot
+afterwards. Those are gig01's questions and they need eyes, not counters.
+
+### RUN 13a, the same night: THE BENCH WAS IN THE AIR, and it always had been
+
+First look at run 13 in game, and it did not get as far as pressing a button.
+Three NPCs and both residency sprinklers were hanging in the sky over the
+estate. The panel meanwhile read exactly what it was supposed to: B bodies 2,
+names resolve, step 99, slot 9 = 1, slot 11 = 1.
+
+**The sprinklers have not changed since run 6**, which dates the fault: every
+run of this bench from the sixth on has placed things past the end of the
+terrace, and no run could see it.
+
+Surveyed afterwards against the game's own node placements in the cached
+exterior sectors, median z of everything within 4 m:
+
+```
+x        332    340    348    356    364    372    380
+y 1042  225.9  225.9  225.9  223.1  221.4  224.0      .
+y 1034  225.9  225.9  225.9      .  221.3      .      .
+y 1026  226.0  226.0  227.0  214.6      .      .      .
+```
+
+`.` is no vanilla node within 4 m in any cached sector. The garden is x 328 to
+352 at z 225.9. The bench line ran from x 340 to x 380 at that same z, so slots
+7 to 12 were over a drop, and slot 4, the negative control, is just past the
+edge as well.
+
+**Why no probe caught it**, and this is the lesson rather than the bug: the scan
+counts a body within 2 m of its slot, and a body 20 m up is 0 m from a slot that
+is also 20 m up. Both numbers came from one wrong constant, so they agreed with
+each other perfectly. That is the same shape as the empty `appearances` that
+survived eleven runs. `gotchas.md` 67.
+
+Slots 7 to 12 are now a second row on the surveyed terrace, y 1027.924, x
+332.924 to 348.924, and the watching teleport lands in front of them instead of
+26 m past the end of the garden. Community A's slots 0 to 3 were always on it
+and did not move.
+
+**Run 12's result is unaffected.** The community did spawn our own character
+from a mod-shipped registry node; it spawned him in mid-air, which is a
+placement fault and not a community one. Nothing in `gotchas.md` 66 changes.
+
+What the run did NOT establish, because no button was pressed before the fault
+was spotted: anything at all about scene acquisition.
+
+### What run 13 DID bank, from the report CET flushed on quit
+
+The bench was in the air, but its readings were still good, and one of them is
+the check this run most needed. `negative_balance_dev.log`, 20:57:08:
+
+```
+commlab A 0/1  B 3/1  step 99
+commlab  9 B ours_b   HOSHINO, short-name scene  1
+commlab 10 B miguel_b Personal Mechanics         1
+commlab 11 B talk_b   HOSHINO, long-name scene   1
+commlab 12 WS  spot no community owns            0
+commlab bodies with the player                   0
+commlab probe 1 our exterior sector          4
+commlab probe 2 our always-loaded sector     4
+commlab probe 3 CTL base-game, MUST be LIVE  4
+commlab probe 4 CTL never shipped, expect 3  3
+```
+
+- **THREE entries, three bodies.** Adding `spawnSetNameToCommunityID` to the
+  registry node did not break the spawn, which was the one deviation from the
+  shape gotcha 66 proved. `GetGameObjectsFromSpawnerEntityID` returned 3.
+- **A third entry works**, so the community is not limited to what run 12
+  happened to ship.
+- Slot 12 reads 0, which is right: nothing is shipped into it and only a scene
+  can put anyone there.
+- All four probes correct, so the instrument was sound. It was the shared height
+  that was wrong, not the readings.
+- **The count is time-dependent.** A panel shot at 20:56:15 read slot 10 as 0 and
+  B bodies 2; forty seconds later both were full. Give it a moment before
+  reading, or a late entry looks like a dead one.
+
+All three scenes read 0, so nothing whatever was established about acquisition.
+
+### RUN 13b: the PLAY buttons were dead, and one body stood in a wall
+
+Second look in game. Two bodies on the lawn, one inside a wall, and nothing
+spoke. The panel read step 99 with all three scenes at "not played", which reads
+exactly like a tester who did not press the buttons. He did.
+
+**A quest phase's output node is `type: Terminating`, and reaching it takes the
+phase's armed pause nodes with it.** Run 13 hung the three scene waits off the
+same socket that fed the output, so the phase ended the instant the arming chain
+finished and all three buttons were dead before anyone touched one. The graph
+made it plain once it was dumped:
+
+```
+STEP-99 node 29  Out -> 4 connections
+   -> In on 30 Output          <- Terminating. This ends the phase.
+   -> In on 31 PauseCondition cc_g01_cl_play1
+   -> In on 35 PauseCondition cc_g01_cl_play2
+   -> In on 39 PauseCondition cc_g01_cl_play3
+```
+
+A bench phase has no reason to terminate at all; its job is to sit there holding
+armed waits. The output node stays so the resource keeps its `Out1` socket, and
+nothing reaches it.
+
+**The placement was wrong a second time, in the opposite direction.** 13a asked
+"is there ground here" and moved everything onto the terrace. It never asked "is
+there anything solid here", so one body ended up inside a wall. The survey now
+reads the game's own node DEBUG NAMES and separates them:
+
+- soft: `lawn_squ_*`, `lawn_rec_*`, `distr_water_sprinkler_*`, `light_*`,
+  `spotlight_*`. Open garden, and their z is the ground.
+- hard: `hedge_*`, `*_pillar_*`, `*_wall_*`, `*_floor_*`, `*walkway*`,
+  `cargo_crate_*`, `coverObject_*`, `*planter*`, `*_apartment_*`, `*_office_*`.
+
+A point qualifies with no hard node within 3 m and open garden within 4 m. The
+six spots now carry their own surveyed z rather than one shared constant. It is
+still evidence and not proof: a mesh's node position is its ORIGIN, so a 6 m wall
+is one point and this test can be fooled. The dev menu's CAPTURE HERE settles it
+in one press, and the panel now says so.
+
+**What the survey turned up unasked: community A's slots 2 and 3 are inside the
+house** (`int_nkt_jp_apartment_a_pillar_*`, `int_mlt_office_floor_*`, z 228.4)
+and slot 4 is over the drop. A has never spawned anybody in twelve runs and
+three of its five spots were never viable, so those runs say less about A than
+they appear to.
+
+Also added: the generator now compares its slot table against the redscript
+scan's copy and refuses to write if they differ by more than 2 mm. Two tables,
+one truth, and a scan measuring against a different point than the one a body
+was placed at is a bench that lies. Proved to bite by injecting a 1 m drift.
+
+### Two things this run is knowingly gambling on
+
+- **The new positions are surveyed, not captured.** They come from the game's
+  own node placements rather than from a position the player has stood on, so
+  they are much better evidence than run 13's first attempt and still not proof.
+  If the bodies are on the ground but sunk or floating by a metre, that is what
+  the dev menu's position capture is for.
+- **Personal Mechanics is still installed and `miguel_b` still uses its
+  `Character.miguel`.** Removing that mod means removing the entry first.
+
+---
+
+## 30. Reusing a VANILLA community, and a mod-owned workspot node. 2026-08-24
+
+Asked after 29 closed: can we test the Californication framework, and would
+reusing one of the game's communities break it?
+
+### Would it break the community? YES, and persistently. But we do not need it
+
+`#judy` is ONE community with ONE entry, `entryActiveOnStart` 0, and **129
+phases**: `default`, `q004_02_judy_at_the_bar`, `q105_judys_bed`,
+`sq026_08_judys_kitchen`, `sq030_09_hut_pier_sit` and so on, one per story beat.
+`#judy_vehicle` is the same shape with 15 phases for her van.
+
+**That is how the base game moves a story character around**, so activating an
+entry or setting a phase MOVES THAT CHARACTER, and community state is saved. Get
+it wrong and Judy stands somewhere for the rest of the save, or appears before
+her quest wants her.
+
+Californication mitigates it the careful way: it picks `dlc3_judy_sleep`, a
+phase that exists in her list and that the base game's own quests do not appear
+to drive. That is the pattern if it is ever done: **a phase vanilla never
+activates**, and never one named for a quest.
+
+**But this project does not want that half at all.** `characterRecordId` lives
+in the vanilla registry entry, which a mod cannot edit, so reusing `#judy` gives
+you Judy. For Hoshino we need our own record, so the community half is both
+risky and useless here.
+
+### The half that matters, and a fourth stale claim
+
+Californication's scene puts its actor into **a workspot node the MOD ships**:
+
+```
+questUseWorkspotParamsV1
+  function        UseWorkspot
+  instant         1     jumpToEntry 1    teleport 1
+  changeWorkspot  1     enableIdleMode 1  isWorkspotInfinite 1
+  workspotNode    #nq_cali_ws_judy_sit        <- ITS OWN AI SPOT NODE
+```
+
+The node is `worldAISpotNode` in Californication's own `category: Quest` sector,
+named long-form and referenced SHORT here.
+
+**`questkit/scene.py`'s `add_workspot_node()` says this is impossible.** Its
+docstring reads: *"questUseWorkspotParamsV1 points at a `workspotNode` NodeRef
+in a streaming sector. Unusable - a mod's own world nodes do not resolve."* That
+is the same stale claim as gotchas 2 and 35 and `find_pin_anchors.py`, written
+before 34, 39 and 61, and **a shipped mod disproves it**.
+
+This project therefore uses `scnUseSceneWorkspotParamsV1` with
+`playAtActorLocation: 1`, which plays the workspot wherever the actor happens to
+have spawned. That is why a playtest reported Hoshino *"half-way in a pillar"*.
+
+### What is worth testing, and it touches nothing vanilla
+
+**Can a scene put its own actor into an AI spot node this mod ships?** A
+mod-owned spot, our own character, our own scene. No vanilla community, no
+persistent change to anything of the game's, no risk.
+
+If it works it does not remove the second body, and that should not be oversold:
+27's route A still needs a persistent one. What it does fix is WHERE the scene
+body stands and what pose it holds, which is a real reported bug and which every
+gig from 02 on inherits.
+
+**CLOSED 2026-08-24, and the answer is YES.** Run 13c: a scene spawned its actor
+2 m in front of the player, `questUseWorkspotParamsV1` with `workspotNode`
+naming our own spot moved him nine metres into it, and the bench read slot 12 at
+1 with nothing left beside the player. 29-ADDENDUM-7 has the readings and
+`gotchas.md` 69 the recipe.
+
+`questkit/scene.py` now carries `Scene.add_world_workspot_node()` and its
+`add_workspot_node()` docstring no longer claims a mod's own world nodes cannot
+be used. Both shapes are valid and the choice is what the beat needs: the scene
+instance holds the pose where the actor already stands, the world node puts him
+somewhere specific.
+
+WHICH SPELLING landed is not established: the bench fires the same spot twice,
+short then long, and the counter cannot say which one moved him. It matters only
+for style.
+
+---
+
+## 31. THE GUARDS, by community. Asked 2026-08-24, BUILT AND SHIPPED 2026-08-25
+
+**Read the close at the end of this item first.** What follows it is the working
+in order, including two features that were built, measured and taken back out.
+Two of the sections below are written in the present tense about things that no
+longer exist, and both are marked.
+
+Hoshino is one body now, placed by a community this mod ships. The obvious next
+question is whether the compound and estate guards should be too, and this
+project's own notes already argue that they should.
+
+### Why it is more than tidiness
+
+The guards are placed by `Gig01_Encounter` through `DynamicEntitySystem`, and 17
+recorded what that costs:
+
+> an entity created through `DynamicEntitySystem` arrives without the senses,
+> role and security area a community-placed guard gets for free
+
+**A community-placed guard gets that for free.** If that is true, converting
+them would fix the two things 17 accepted as-is and blamed on placement:
+
+- **the huddle.** Three of five office squads stand within 15 m of each other
+  because a navmesh query puts them there. A community places each entry at an
+  authored spot, with a facing, which is what a post is.
+- **the warning phase.** There is none, because there is no security area: no
+  "you shouldn't be here", no call-out, no walk over to look, just a meter
+  filling. That was called the same wall as the community question, and it is
+  not any more: what blocked communities was whether the game reads authored
+  world data a mod ships, and the answer is yes (`gotchas.md` 66 and 69).
+
+That is not a measurement. A security area is a different system from a
+community and nothing here has shipped one. What HAS changed is that the reason
+it was called impossible no longer holds.
+
+### BUILT 2026-08-25, not yet played
+
+One entry, `guard_test`, in Hoshino's own community:
+`Character.arasaka_guard2_melee1_baton_wa` at (298.251, 1021.907, 224.952) with
+yaw -120.89. That is a VANILLA workspot position at this estate, one of the two
+`q113_ws_arasaka_estate_investigation_*` spots read out of `exterior_4_15_3_0`
+and referenced by no community, so the ground, the facing and the sightlines are
+the game's own rather than anything inferred. The record is one of the three the
+encounter already spawns, so nothing about him is ours except where he stands.
+
+The quest phase switches him with Hoshino, as a SECOND per-entry action rather
+than one action on the whole community: a per-entry action leaves the others
+alone (run 14) and the gig should not learn a habit that only works while it
+owns every entry.
+
+`cc_g01_dbg_guard` reports 0 not there, 1 standing, 2 dead, on the dev panel and
+in the log, with a teleport to his post. **That row only says he EXISTS.**
+Whether he BEHAVES is the question, and no counter can answer it: walk up to
+him, then to a script-spawned one a short distance away, and see whether either
+challenges, looks, or reacts.
+
+`GUARD_TEST = True` in `gen_community.py` is the switch, and it must be False
+before any release.
+
+### THE SECURITY AREA IS AUTHORABLE, and the wiki documents it. 2026-08-25
+
+The claim this item inherited was that a security area "is authored into the
+level around the guards, not set on a character we spawn", and that it was the
+same wall as the community question. **The wiki has a page on building one**:
+`modding-guides/world-editing/devices/creating-security-areas`. Two device
+entities and a connection:
+
+| | |
+|---|---|
+| the system | `base\gameplay\devices\security_systems\security_system.ent`, spawned as a Device, unique NodeRef |
+| the area | `base\gameplay\devices\security_systems\security_area\security_area_1.ent`, unique NodeRef, and **no rotation at all**: roll, pitch and yaw must be 0 |
+| its shape | `Entity Instance Data -> area -> outline`, copied from a Dummy Area's outline |
+| its type | `controller -> persistentState -> securityAreaType`, default Hostile |
+| the link to the area | device connection, class `SecurityAreaControllerPS`, pointing at the system |
+| **the link to OUR NPCs** | device connection on the security area, class **`CommunityProxyPS`**, pointing at the COMMUNITY's NodeRef |
+
+and the constraint: the community, the security area and the security system
+must all be in the same group.
+
+`CommunityProxyPS` is the piece that matters here. It is described as the link
+to add "when your security area should alert NPCs in your custom community" -
+which is exactly the shape this project now has: a community it ships, with its
+own NodeRef, and no alerting attached to it.
+
+**What the wiki does NOT say** is whether a security area is REQUIRED for a
+community NPC to notice the player at all. Asked directly, it answers that the
+behaviour of a community with no linked security area is undocumented. So this
+is a documented route to the warning phase, not yet an explanation of why the
+bench guards are inert.
+
+### What the guard bench has actually shown, and what it has not
+
+Playtest 2026-08-25, and the first two readings were not about guards at all:
+
+- **"Provoke does nothing"** and **"none of the 3 guards do anything"** were the
+  same fault, and it was mine. Every lab watcher and the whole Hoshino tick
+  block sit inside `if accepted && ...`, which is "the player has taken this
+  job". The
+  lab exists to run with NO GIG RUNNING, so none of it ever executed. The
+  comment fifteen lines above that gate states the rule it broke: a diagnostic
+  must not be gated on anything downstream of what it measures (`gotchas.md`
+  17). Hoshino still appeared and spoke because the community places him and the
+  scene acquires him; neither needs the script.
+- So **the earlier "he saw me and challenged me" reading is now doubtful too**.
+  It was taken at the estate with the gig NOT accepted, so our script was not
+  running then either, and the estate carries vanilla NPCs. It may have been one
+  of theirs.
+
+The lab now runs outside that gate and reports Hoshino's find code and whether
+the provoke actually applied, so the next run says which of those it is.
+
+### THE GUARD QUESTION IS ANSWERED, 2026-08-25, and the answer is the ATTITUDE
+
+Three variants, one post, one at a time, with no gig running so the estate is
+empty of the encounter's own guards:
+
+| | | |
+|---|---|---|
+| guard 1 | `arasaka_guard2_melee1_baton_wa`, record default | stands there |
+| guard 2 | the SAME record, `CCSharedAttitude.Hostile` applied when found | **works** |
+| guard 3 | `sts_std_arr_12_security_guard1_ranged1_nue_ma`, record default | stands there |
+
+1 and 3 differ only in which vanilla record they use, and both are inert. 2 is 1
+plus one line of script. **So it is the attitude, and the record decides
+nothing.**
+
+And what "works" looks like, playtest: *"if I approach the meter fills a bit,
+slowly as I approach then faster until they become aggressive and switches to
+combat"*. That is the ordinary base-game detection ramp, at base-game rates: a
+community-placed guard perceives exactly like one of the game's own.
+
+It also confirms from the other end what was written up in August:
+`senseComponent.ShouldStartDetectingPlayer` treats a hostile attitude as "start
+filling the meter". No attitude, no meter, no reaction, which is precisely what
+guards 1 and 3 do.
+
+### The trespass warning is a DIFFERENT system, and it is not missing by accident
+
+The thing this item was really after ("you shouldn't be here", the call-out, the
+walk over, and only then a fight) does not come from the community and never
+would have. It happens to somebody who is **not** an enemy yet, and being an
+enemy is exactly what makes guard 2 work. The two are alternatives:
+
+- hostile attitude -> detection ramp -> combat. An ENEMY being spotted.
+- security area -> trespass warning. A STRANGER being told to leave.
+
+So the security area above is a real feature to build if the compound should
+feel like somewhere V is trespassing, and it is not needed to make guards fight.
+
+### What this means for converting the gig's guards
+
+Less than it looked. The guards were never short of senses; what a
+`DynamicEntitySystem` NPC was short of is a reliably applied attitude, and
+`CCShared_Attitude.reds` could not see a community body at all until 2026-08-25
+(gotcha 71), which is a bug in the same area that was fixed the same day.
+
+**Check whether the existing script-spawned guards behave before converting
+twenty of them.** If they do, this item is a feel question about posts and
+facing rather than a behaviour one.
+
+### THE BLOCKER IS POSITIONS, AND THEY DO NOT EXIST. Measured 2026-08-25
+
+Converting the guards is not mechanical work waiting to be done. It is blocked
+on something nobody has authored.
+
+Searched the cached sectors for `worldAISpotNode` within 120 m of
+`CCGig01Places.OfficeGuardPost()` (-245.680, -1452.315, 14.600): **five spots,
+all 53 to 87 m away, all belonging to q112's infiltration setup.** The compound
+has no authored guard posts at all.
+
+**That is also the huddle's cause, stated properly.** The encounter asks the
+navmesh for "somewhere near this anchor" and the navmesh obliges with nearly the
+same answer each time, because there is nothing else to go on. Three of five
+office squads landing within 15 m of each other is not a bug in the query; it is
+what happens when a query stands in for a level designer.
+
+So a community conversion needs roughly twenty decisions about WHERE A GUARD
+SHOULD STAND (sightlines, cover, who watches the gate, who watches the yard)
+and a survey for flat walkable ground cannot make them. It would produce twenty
+men in a grid.
+
+**The route is a capture pass.** Walk the compound, stand where each guard
+belongs, face the way he should face, and press CAPTURE HERE with a name. The
+dev menu already writes `name = { x, y, z, yaw }` to
+`captured_positions.txt`, and the conversion after that IS mechanical: one
+community entry per captured post, exactly the shape Hoshino already uses.
+
+### The shape of it, and why it is not the next build
+
+**Test ONE guard first.** One community entry beside Hoshino's, at an authored
+post, and then stand in front of him: does he challenge, does he look, does he
+react differently from the spawned ones two metres away. That is a small build
+against a bench that already exists, and it answers the whole question before
+anything is committed to.
+
+Converting all of them is a much bigger thing than Hoshino was:
+
+- Hoshino is ONE entry. The compound and estate run to twenty-odd, each needing
+  a captured position and facing.
+- Every one of them puts community state in players' saves.
+- The quest phase has to switch them the way it switches Hoshino, and the
+  window that does not matter for one man at an empty estate may matter for a
+  compound the player drives past.
+- `securityAreaType` on a character record is discarded by 2.31 (13), so
+  whatever produces the warning phase is not that field.
+
+### What run 14 already says about it
+
+A per-entry `Activate`/`Deactivate` addresses that entry alone and leaves the
+others untouched, measured. So a squad can be a community with one entry per
+guard and be switched as a group or one at a time, which is the shape this
+would need.
+
+### THE POSTS EXIST, AND THE ESTATE IS CONVERTED. 2026-08-25, not yet played
+
+The capture pass happened. Thirty-five points were walked at the North Oak
+residence and thirty are in use: five were dropped on the tester's own
+instruction, four of them superseded by a later pass over the same ground and
+one sitting 2.7 m from the couch Hoshino waits on.
+
+They cover ground the old spawn could not reach at all. Two of them are on the
+ROOF, which a navmesh query around a ground anchor never produces.
+
+| where | posts |
+|---|---|
+| the front gate, outside | 3 |
+| just inside the gate | 3 |
+| the grounds and the drive | 8 |
+| the terrace, 225 m | 6 |
+| the first floor, 229.9 m | 4 |
+| the roof, 233.9 m | 2 |
+| the office end, 224.9 m | 4 |
+
+`tools/gig01/gen_estate_guards.py` ships them as `cc_g01_estate`, a SECOND
+community, built by `questkit/community.py` which is gotcha 66 lifted out of
+`gen_community.py` unchanged. Hoshino's two sectors are byte-identical after
+that lift, which is the check that says the shared recipe did not disturb the
+community that already worked.
+
+**Its own community rather than thirty more entries in Hoshino's**, for two
+reasons. A whole-community quest action switches all thirty in one node, where
+naming entries one at a time would be thirty nodes at each of three beats and
+one node carrying thirty actions is a shape nothing here has read off a working
+example. And the security area below links to ONE community, which must not be
+the one holding the man V is there to talk to.
+
+**They stand with their arms crossed, not browsing a shelf.** The idle Hoshino
+used before he sat down is `generic__stand_ground__look_at_products__03`, a shop
+browser: fine for one man waiting on a terrace, wrong for thirty armed guards.
+`generic__stand_ground_arms_crossed__stand_around__02` is on the same
+`common\ground\` shelf, which is the part gotcha 72 found to matter, and it is
+one of the 64 workspots the cached sectors attach to their own AI spots. If the
+pose does not take at all the loss is small, because a community places the body
+and does not reliably pose it: a guard who is merely standing is still at his
+post facing the right way.
+
+The records are the same five the encounter has always used at this site, and
+that is deliberate: the estate detail reads as an elite Arasaka detail and the
+compound as ordinary security, entirely through which records each uses.
+Changing the roster and the placement in one build would leave a playtest unable
+to say which of the two it was reacting to.
+
+What went with the spawn chain: the stagger, the retry budget, the per-anchor
+mask and the navmesh query. What replaced it is one `ResolveNodeRef` and one
+`GetGameObjectsFromSpawnerEntityID`, then `CCSharedAttitude.Hostile` per body,
+because a community NPC arrives with no quarrel with the player and an NPC with
+no quarrel never starts looking (gotcha 74).
+
+**The thirty entry names are written out twice**, in the generator and in
+`Gig01_Encounter.EstateEntries()`, because redscript cannot import Python. The
+generator READS the redscript and refuses to write when the two lists differ,
+proved to bite by renaming one post. That is the same guard the bench put on its
+slot table, and gotcha 73 is why it is worth the trouble: a lookup naming an
+entry that does not exist returns fewer bodies and says nothing.
+
+Not played. The dev panel reports it: `detail:` is whether the lookup worked and
+`posts turned: N of 30` is how many are hostile. **The count rising as V walks
+in is correct rather than a fault**: a post 90 m away has not streamed in yet,
+exactly as the old spawn's far anchors had not.
+
+### THE SECURITY AREA, READ OFF SHIPPED DATA. 2026-08-25
+
+The wiki recipe copied into this item above was written from the World Builder
+UI. The cached sectors hold working examples, and they settle the shape.
+
+**Eighteen `worldDeviceNode`s in the cached sectors carry a `CommunityProxyPS`
+connection.** Nine of them are `security_system.ent` and four are
+`security_area_1.ent`, so both placements ship. The commonest single shape, 7 of
+the 18, is the SYSTEM carrying both links:
+
+```
+worldDeviceNode  {cs_dragnet_sec_system}
+  entityTemplate    base\gameplay\devices\security_systems\security_system.ent
+  deviceConnections
+    CommunityProxyPS            -> the community's NodeRef
+    SecurityAreaControllerPS    -> the area's NodeRef
+```
+
+and the AREA carries no connections at all:
+
+```
+worldDeviceNode  {cs_dragnet_sec_area}
+  entityTemplate    base\gameplay\devices\security_systems\security_area\security_area_1.ent
+  deviceConnections []
+  instanceData -> buffer -> Chunks
+    gameStaticTriggerAreaComponent
+      includeMask 1, isEnabled 1, identity localTransform
+      outline: AreaShapeOutline, height 9.78, SEVEN Vector3 points, all Z 0
+    SecurityAreaController
+      persistentState: SecurityAreaControllerPS
+        securityAreaType  RESTRICTED
+        deviceState       ON
+```
+
+**This corrects the wiki reading above**, which put the `CommunityProxyPS` link
+on the area. It is on the system in twice as many shipped cases, and the pairing
+that makes a whole working unit puts both links there.
+
+`securityAreaType` is **RESTRICTED** on this example, not the Hostile the wiki
+gives as the default. Restricted is the trespass case: somebody who is not an
+enemy being told to leave, which is the behaviour this item is after.
+
+The outline is a polygon in the node's LOCAL space with a height, so the area is
+a prism. The points are the estate's walls in our case, and capturing them is the
+same walk that produced the posts.
+
+**What is not yet established**, and it is the thing to settle before building:
+whether the trigger area, which is an `entEntityInstanceData` RedPackage buffer
+inside a `worldDeviceNode`, can be written by this project's generators at all.
+Nothing here has emitted an embedded entity instance buffer. The community
+sectors write plain nodes. That is the first question, not the last.
+
+**And it ships behind a flag, off.** The estate conversion above is thirty new
+bodies in one build; a security area on top of it would mean a playthrough with
+two new things in it, and this project has already paid for stacking once.
+
+### THE CAMERAS. Asked 2026-08-25, and both sites already have them
+
+Playtest asked whether the cameras could be part of the detection, at either
+site, because they do not react to V now.
+
+**They are there.** The cached sectors carry 26 camera nodes within 140 m of the
+compound and 13 within 140 m of the residence.
+
+**They belong to other quests.** Every one of the compound's is
+`q112_infiltration_surveillance_camera_*` and every one of the residence's is
+`q113_dvc_arasaka_estate_camera_*`. They are not ignoring V by accident: they
+are another quest's security network, and that quest controls their state.
+
+The same two quests own security areas at both sites, which is also why the
+residence's minimap already reads AREA: HOSTILE while V stands in it.
+
+**How a camera alerts a community, read off shipped data.** One device node
+carries both links, and `{ma_hey_gle_09_ap}` in `exterior_-20_-15_0_0` is the
+worked example: an `accesspoint.ent` with
+
+```
+SurveillanceCameraControllerPS  -> the camera's NodeRef
+CommunityProxyPS                -> the community's NodeRef
+```
+
+alongside seven other controller classes for the rest of that room's devices. So
+a camera is wired to NPCs exactly the way a security area is, through the same
+`CommunityProxyPS` link, and this mod now has two communities with their own
+NodeRefs for one to point at.
+
+### AND THE BLOCKER ON ALL OF IT IS GONE
+
+The open question above was whether these generators can write an
+`entEntityInstanceData` RedPackage buffer, because the security AREA needs one
+for its trigger polygon and nothing here has ever emitted one.
+
+**The node that carries the community link does not need a buffer.** Of the 18
+device nodes in the cache with a `CommunityProxyPS` connection, three have
+`instanceData: null`, and one of them is
+`{q112_infiltration_security_system}` in `exterior_-5_-24_0_0`: a plain
+`worldDeviceNode` with an entityTemplate and a list of `deviceConnections`, which
+is a shape these generators already write for every other node they ship.
+
+So the wiring is cheap. What still needs the buffer is the polygon that says
+WHERE the restricted area is, and only that.
+
+That splits the feature into two, and the cheap half may be the useful one:
+
+  - **Wire an alerting device to our community.** A plain node, no buffer. The
+    unknown is whether a mod's device node can name a base-game camera, whose
+    NodeRefs in the shipped data are prefab-relative (`~/../name`) rather than
+    the absolute form a mod must use (gotcha 34, 39).
+  - **Ship our own trigger area.** Needs the buffer, and needs the outline
+    captured the way the guard posts were.
+
+**Depending on another quest's cameras is a choice with a cost**, and it should
+be made deliberately: q112 and q113 own those devices' state, so a player at a
+different point in those quests may find them powered down, already hacked, or
+disabled. Shipping our own cameras avoids that and costs a device node per
+camera.
+
+### THE SECURITY AREA IS BUILT. 2026-08-25, not yet played
+
+> **SUPERSEDED.** It was played, it did nothing, and it is not in the archive.
+> The section below is kept as the working. See the close at the end of this
+> item and `gotchas.md` 80.
+
+Playtest asked for it in as many words: *"the whole reason why we did this was
+to have this behave like a vanilla gig, and cameras are an important part."*
+
+**The blocker was not one.** This item said for two days that the open question
+was whether these generators can write an `entEntityInstanceData` RedPackage
+buffer, which is what holds the trigger polygon. Answered by asking the smallest
+version: the vanilla node was taken whole, given our names and refs, put in a
+sector of our own and handed to the converter the build already uses. It
+converted, and a round trip back to JSON returned the buffer intact, down to all
+122 fields of the controller state. Gotcha 79.
+
+**And it is ONE node, not the two this item described.** The worked example is
+`{q112_infiltration_security_area_civilian_restricted}`, which is at this very
+site, and it carries both links itself:
+
+| | |
+|---|---|
+| `CommunityProxyPS` | the communities it alerts. Vanilla 3, ours 1 |
+| `SurveillanceCameraControllerPS` | the cameras that feed it. Vanilla 9, ours 18 |
+| `gameStaticTriggerAreaComponent` | outline points in LOCAL space, plus a height |
+| `SecurityAreaController` | `securityAreaType: RESTRICTED` |
+
+That corrects the earlier note twice over: the community link does not have to
+sit on a security SYSTEM, and there need be no system node at all. Gotcha 80.
+
+`tools/gig01/gen_security.py` builds it, and it rides in the compound
+community's own sector so the community and the area are in one group. The
+outline is the four corners already walked for `CCGig01Places.InsideCompound`,
+so "inside the compound" means the same thing to the objectives and to the
+restricted area.
+
+**What is not settled, and only a playthrough answers it:** whether a MOD's
+security area alerts a MOD's community at all. Every part is copied from
+something that works and no mod here has run one. The test is the warning: walk
+in and be told to leave rather than shot.
+
+Also unsettled: whether the prism runs up from the node or is centred on it
+(placed low with 40 m of height so it covers the site either way), and whether
+one area over the whole compound is the right shape where vanilla uses several
+small ones.
+
+### THE SCRIPT ALARM WAS TRIED FIRST AND WITHDRAWN
+
+Worth keeping because it is a good example of a plausible tool being the wrong
+shape. The alarm was: watch the cameras, and when one reports `IsDetecting`,
+broadcast a combat stimulus at the player.
+
+Playtest within minutes: *"the police also marks me as enemy even if I haven't
+done anything"*. A stim broadcast is addressed to nobody. It announces combat at
+the player's position to EVERY NPC in range, and it fed itself, because the
+fight it started made the cameras legitimately detect the player. A second
+report, "the cameras spot me when I am far away", was the same loop from the
+other end and sent one debugging session after a distance problem that did not
+exist. Gotcha 81.
+
+The camera half of it survives: `IsDetecting()` is the one question a camera
+answers about what it can see, and the gig still reports it on the dev panel.
+
+### THE CAMERAS ARE SWITCHED BACK ON, and the reason is other quests
+
+> **SUPERSEDED.** No camera is touched. The pass and the alarm it served were
+> both removed at playtest's request. The section below is kept as the working.
+
+Playtest: *"I didn't want people to kill cameras and then break future quests in
+the same [way]"*. While the gig is at the compound, all eighteen are walked back
+up to ON, one action per camera per pass, using the ladder `Gig01_OfficeDoors`
+established. A shot one is left shot on purpose.
+
+The refs come from the shipped data rather than from clicking on cameras: a
+device's runtime entity id is the FNV1a64 of its full NodeRef, predicted and
+confirmed against one captured in game. Gotcha 82.
+
+**Two risks stated rather than discovered later.** These are q112's cameras, so
+a player who does this gig before Gimme Danger arrives at that mission with them
+already on; and if both quests are open at the compound at once, our pass would
+switch back on what Gimme Danger had just switched off. The mitigation, if it is
+ever wanted, is to gate the pass on Gimme Danger's journal state, which the dev
+menu can already read.
+
+### THE CLOSE. What shipped, what did not, and what it cost
+
+**SHIPPED.** Both sites are communities. `cc_g01_estate` stands twenty-nine
+guards at the residence and `cc_g01_compound` stands thirty at the industrial
+park, each at a post somebody walked to and captured, facing the way he was
+captured facing. Sixteen of the compound's are off the ground floor and two of
+the residence's are on the roof, which the navmesh query this replaced could not
+produce at all. The recipe is `gotchas.md` 66, the implementation is
+`tools/questkit/community.py`, and each site's generator holds only its roster.
+
+The behaviour question is closed and the answer is two things, not one. A
+community entry arrives with no quarrel with the player AND with its senses
+switched off as far as the player is concerned, so the encounter applies both on
+a tick. Gotchas 74 and 77, and 77 is there because the attitude was applied alone
+first and thirty guards stood at their posts ignoring the player.
+
+**NOT SHIPPED: the security area.** It was built whole and every part of it
+measured correct in game: found, resolved, ON, attached, not disabled, typed
+RESTRICTED exactly as vanilla's is, linked to our community, fed by eighteen
+cameras, with its security system present, and reporting the player INSIDE it.
+The guards did nothing. Setting its type between RESTRICTED, DANGEROUS and SAFE
+at runtime changed nothing either, which is what an area with nothing on the
+other end of its wire looks like.
+
+What survived elimination is not proof, it is what is left: every vanilla
+community a security area alerts, all 21 that resolve in the cached sectors,
+sits in the GAME'S OWN `always_loaded` sectors, and a mod cannot add nodes to
+those. The node class was eliminated on the way. The compound shipped the
+plain `worldCompiledCommunityAreaNode` that all 21 of those use, rather than the
+`_Streamable` class this project had always written, and the area still did
+nothing. That run did settle something else worth having: a mod's own sector
+spawns from either class.
+
+So the trespass warning is not available to a mod, and what a mod has instead is
+a hostile attitude and the base game's own detection ramp. `gen_security.py`
+keeps the whole build so it is a one-line change if the picture ever changes.
+
+**NOT SHIPPED: the cameras, and the alarm.** The alarm was a stim broadcast and
+it was the wrong shape rather than the wrong size: it announced combat at the
+player's position to every NPC in range, so the police turned hostile within
+minutes of a playtest. Gotcha 81. Once the alarm was gone the restore pass had
+no purpose either, because it was only ever insurance for a player who shot the
+cameras out, and paying for that with a permanent change to another quest's
+devices is the wrong trade. Two findings from the camera work are kept and are
+worth more than the feature: gotcha 82, that any base-game device can be
+addressed offline from the FNV1a64 of its NodeRef, and gotcha 83, the full menu
+of what a camera will accept.
+
+**NOT SHIPPED: patrol beats.** Four were tried at the compound and none
+of them walked. The mechanism is real in the game's own data, 1780 of 32669
+cached time periods carry more than one spot, but how a MOD gets it is not
+established. Not chased: the cheap version of the question is answered and the
+expensive version is a research line the gig does not need.

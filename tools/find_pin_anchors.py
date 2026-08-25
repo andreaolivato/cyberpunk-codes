@@ -29,10 +29,17 @@ copy of the game's cooked mappin tables, where the anchor was only a gate and
 its coordinates were irrelevant. That patch is gone (see
 docs/map-pins-playbook.md), so the rules changed underneath it.
 
-Do NOT "fix" a missing pin by shipping a marker node of your own. Tried twice on
-2026-08-14: a node in a MOD sector never registers its global name
-(`Can't resolve ... reference`), and playtesting confirmed Californication and
-OneMoreLight, which both do that, have broken pins in game too.
+A pin CAN anchor to a marker node the mod ships, on two conditions measured
+2026-08-18: the NodeRef is written in the long `$/03_night_city/...` form, and
+the sector is declared AlwaysLoaded. See docs/gotchas.md 39.
+
+The header used to say the opposite, on two attempts from 2026-08-14 that both
+wrote the SHORT form, which is not a name at all. Californication and
+OneMoreLight do have broken pins in game, and the same spelling is why.
+
+This tool still scans only the always-loaded sectors, because a base-game
+anchor needs nothing shipped and is the cheaper answer whenever one is near
+enough.
 
 First run extracts and serializes ~90 MB of sector JSON into tools/_anchor_cache
 and takes a couple of minutes; after that it is fast.

@@ -134,6 +134,7 @@ python .\tools\gig01\gen_sector.py               # the world sector + streaming 
 python .\tools\gig01\gen_questphase.py           # quest graph (objective + PIN activation
                                                  #  + scene nodes)
 .\tools\build-archive.ps1 gig-01                 # JSON sources -> resources -> packed archive
+                                                 # about 15 s; see "A build should take seconds"
 .\tools\deploy-dev.ps1 gig-01                    # copy scripts+lua+archive into game dir
 .\tools\deploy-dev.ps1 gig-01 -NoDevMenu         # ...as a PLAYER gets it: no CET dev
                                                  #  menu, and it DELETES an already-
@@ -227,6 +228,12 @@ with `-gp` is the working wem -> Ogg path.
 
 ## Reference material
 
+**`docs/sources.md` FIRST.** It lists the REDmodding wiki, the open-source
+tools whose exporters are the real specification, the decompiled scripts and the
+shipped data, in the order to try them. This project has twice measured
+something across a whole session that was already written down.
+
+
 - **Other mods, for structure.** Deceptious's Californication and OneMoreLight
   are the best worked examples of journal + questphase + scene + streamingsector
   together. Re-extract them from `archive\pc\mod\*.archive` with WolvenKit.
@@ -256,3 +263,25 @@ mods/
       cet-dev/  the CET dev menu - never shipped to players
       wkit/raw/ generated resources, packed into the .archive
 ```
+
+## A build should take seconds, not minutes
+
+`build-archive.ps1` hands the WHOLE raw tree to the converter in ONE call.
+
+That is worth protecting, because the obvious way to write it is a loop with one
+converter call per file, and that is what it used to do. The conversion itself is
+quick; starting the tool is not. Measured on this mod, 2026-08-25:
+
+| | |
+|---|---|
+| one file, one call | 7.9 s |
+| 35 files, one call each | about 4.6 minutes of startup alone |
+| the whole tree, one call | 8.1 s |
+| the full build, end to end | 15.5 s |
+
+Same 35 resources either way, and the per-file CHECK stayed: the loop still
+confirms every expected output exists and fails loudly on a missing one, so a
+conversion that quietly produced nothing cannot slip through. It was the
+per-file CALL that was waste, not the per-file check.
+
+If a build ever takes minutes again, look here first.

@@ -22,20 +22,12 @@ module CyberpunkCodes.Gig01
 // module name; see CCShared_World.reds for why that rename is mandatory.
 import CyberpunkCodes.Shared.*
 
-public struct CCSpawnPoint {
-    public let record: TweakDBID;
-    public let pos: Vector4;
-    public let yaw: Float;
-}
-
 public abstract class CCGig01Places {
     // --- Arasaka Industrial Park (Arroyo) ---
     public static func CompoundEntry() -> Vector4 { return new Vector4(-189.371, -1464.500, 7.596, 1.0); }
     public static func InnerEntry() -> Vector4 { return new Vector4(-219.737, -1424.075, 14.604, 1.0); }
     public static func OfficeEntry() -> Vector4 { return new Vector4(-241.498, -1449.012, 14.600, 1.0); }
-    public static func TerminalRoomEntry() -> Vector4 { return new Vector4(-255.481, -1451.869, 14.600, 1.0); }
     public static func OfficeTerminal() -> Vector4 { return new Vector4(-251.915, -1456.364, 14.600, 1.0); }
-    public static func OfficeGuardPost() -> Vector4 { return new Vector4(-245.680, -1452.315, 14.600, 1.0); }
 
     // Is V standing inside the Arasaka Industrial Park, by any route at all?
     //
@@ -47,8 +39,8 @@ public abstract class CCGig01Places {
     //
     // FOUR CORNERS, WALKED AND CAPTURED in playtest 2026-08-17 (`compound_1`
     // to `compound_4` in captured_positions.txt). Convex, ~38,500 m2, and it
-    // contains every anchor this gig uses here: all five doors, all five guard
-    // posts, the terminal, the shard and the map pin.
+    // contains every post and every door this gig uses here, the terminal,
+    // the shard and the map pin.
     //
     // The Z band is the same asymmetric rule as Near(): the captures span
     // 7.65 to 22.6, the office floor is at 14.6 and the ground floor at 8.6,
@@ -94,10 +86,6 @@ public abstract class CCGig01Places {
     // the grounds spot sits between the side entrance and Hoshino - so the walk
     // from gate to target is now covered end to end instead of having a quiet
     // stretch in the middle.
-    public static func EstateApproach() -> Vector4 { return new Vector4(373.462, 1139.073, 220.932, 1.0); }
-    public static func EstateGrounds() -> Vector4 { return new Vector4(321.122, 1077.105, 225.933, 1.0); }
-    public static func EstateGarden() -> Vector4 { return new Vector4(340.924, 1033.924, 225.956, 1.0); }
-    public static func EstateSideEntry() -> Vector4 { return new Vector4(312.434, 1042.762, 229.939, 1.0); }
     // ================================================== THE ROUTE IN, IN SIX
     // it was walked on 2026-08-15 and captured a point at every turn
     // (`entry-1` .. `entry-6` in captured_positions.txt). These are his feet;
@@ -229,7 +217,25 @@ public abstract class CCGig01Places {
     // floor low enough to include it would complete the objective for a player
     // driving past underneath.
     public static func InsideEstate(pos: Vector4) -> Bool {
-        if pos.Z < 213.7 || pos.Z > 235.9 {
+        // THE CEILING WAS 235.9 AND IT COST THE WHOLE ESTATE LEG. Two separate
+        // player reports, 2026-08-25: they walked in, reached Hoshino, and the
+        // journal still read "Get to the Arasaka estate in North Oak".
+        //
+        // Everything at the estate hangs off this one test. `cc_g01_estate_reached`
+        // gates the guards, the Hoshino lookup, the greeting and every objective
+        // after it, so a player standing somewhere this returns false for gets no
+        // gig at all, silently, with no way to recover but to walk back out.
+        //
+        // 235.9 came from the captures that existed when it was written, which
+        // topped out at 229.9, and it is only 2 m above the roof post captured
+        // later. The estate's upper terraces are above it.
+        //
+        // THE FLOOR IS THE HALF THAT NEEDED TO BE TIGHT and it has not moved:
+        // the road tunnels UNDER this hill, so a floor that reached down to it
+        // would hand the estate to somebody driving past underneath. There is
+        // nothing above the estate but sky, so the ceiling costs nothing and is
+        // now well clear of anything anybody can stand on.
+        if pos.Z < 213.7 || pos.Z > 280.0 {
             return false;
         }
         // Cheap rejection first: the tick runs everywhere in the city and the
@@ -275,40 +281,42 @@ public abstract class CCGig01Places {
 
 public class NegativeBalanceEncounter extends ScriptableSystem {
 
-    // WHICH ANCHORS AT EACH SITE HAVE BEEN POPULATED, one bit per squad.
-    //
-    // A single "the site is done" Bool is what made the estate half-empty when
-    // approached from behind, and the explanation is worth keeping: Hoshino is
-    // placed straight at his captured position, while every GUARD has to pass
-    // FindPointInSphereOnlyHumanNavmesh first. That query only answers where
-    // the navmesh is streamed in. Come over the back wall and the gate, the
-    // approach and the grounds are far away and unstreamed, so those squads
-    // were dropped - and the site latched anyway on the two that did land.
-    //
-    // Per anchor, so an anchor that failed is asked again as the player moves
-    // and its sector streams in. An anchor is only ever populated once, so
-    // clearing a compound and standing in it cannot spawn a second wave.
-    //
-    // A mask rather than an array: redscript arrays on a ScriptableSystem come
-    // back from an old save at the wrong length, which is the trap written up
-    // at the top of Gig01_Holocall. An Int32 cannot be the wrong length. Bit()
-    // is a table because redscript has no `<<` (it has `&` and `|`).
-    private let m_officeMask: Int32;
-    private let m_estateMask: Int32;
-    // A staggered spawn chain is running for that site. Separate from the mask
-    // because the chain takes seconds and the tick is 1.5 s, so without this a
-    // second chain would start on top of the first.
-    private let m_officeBusy: Bool;
-    private let m_estateBusy: Bool;
-    // Ticks until the next audit of the site's unpopulated anchors. Starts at
-    // 0, so the first tick inside the region acts immediately.
+    // Ticks until the next audit of a site's detail. Starts at 0, so the first
+    // tick inside the region acts immediately.
     private let m_officeAudit: Int32;
     private let m_estateAudit: Int32;
-    // Squad attempts made at this site this session. Bounded: an anchor whose
-    // navmesh never answers is one we cannot populate, and asking every six
-    // seconds for the rest of the visit buys nothing.
-    private let m_officeTries: Int32;
-    private let m_estateTries: Int32;
+    // True on a pass that moved the North Oak objective chain on by one step.
+    // Not persisted, and it must not be: it is only ever read later in the SAME
+    // pass that wrote it, and a remembered value would skip a step after a load.
+    private let m_estateStepTaken: Bool;
+    // THE ESTATE DETAIL IS FOUND, NOT SPAWNED, as of 2026-08-25. Thirty guards
+    // stand at thirty authored posts placed by `cc_g01_estate`, the second
+    // community this mod ships (tools/gig01/gen_estate_guards.py). What is left
+    // here is finding them and making them enemies of V, which is the one thing
+    // a community does NOT bring with it: a community NPC arrives with no
+    // quarrel with the player, and an NPC with no quarrel never starts looking
+    // (gotcha 74).
+    //
+    // How many have been found and turned so far, and whether the whole detail
+    // is accounted for. The count is what the dev panel reads; the Bool is what
+    // stops the tick asking again.
+    // AND NEITHER OF THESE SURVIVES A RELOAD, which is correct rather than a
+    // limitation. A field on this system does not persist (see the estate audit
+    // in the tick, which relies on the same thing), so after a load the detail
+    // is looked up and turned hostile again from scratch.
+    //
+    // That is exactly what is needed. The community re-places its bodies on
+    // load and they come back with their records' own attitude, which is not
+    // hostile to anybody: measured in August, twenty-two estate guards within
+    // 200 m of the gate and zero of them enemies of V. Persisting "already
+    // done" would remember a job whose result had been thrown away, and the
+    // symptom would be guards who ignore the player only on a reloaded save.
+    private let m_compoundFound: Int32;
+    private let m_compoundAnnounced: Bool;
+    private let m_estateFound: Int32;
+    // The banner has been shown this session. NOT "the work is finished": see
+    // the note where it is set.
+    private let m_estateAnnounced: Bool;
     private let m_hoshinoId: EntityID;
     private let m_hoshinoSpawned: Bool;
     private let m_hoshinoSeenAlive: Bool;   // only then can we call him dead
@@ -406,330 +414,36 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
         GameInstance.GetDelaySystem(this.GetGameInstance()).DelayCallback(cb, delay, false);
     }
 
-    // ---------------------------------------------------------------- spawning
-    // Scatters a squad around a point so it reads as a patrol, not a lineup.
-    //
-    // RETURNS HOW MANY WERE ACTUALLY PLACED, and the caller has to read it.
-    //
-    // Every guard below is dropped when the navmesh query fails, which is
-    // correct on its own. What was wrong is that nothing counted: the latch
-    // saying the site was populated was set BEFORE any of this ran, so a
-    // navmesh that was not ready yet binned all twenty guards and the gig
-    // recorded the job as done. The player then walks into an empty compound
-    // and there is no second chance for the rest of the save. This is the same
-    // shape as docs/gotchas.md #21: a latch set on intent rather than on
-    // outcome.
-    private func SpawnSquad(center: Vector4, count: Int32, tag: CName, estate: Bool) -> Int32 {
-        let records: array<TweakDBID>;
-        if estate {
-            records = [
-                t"Character.nok_security_security2_ranged2_ajax_wa",
-                t"Character.arasaka_agent_fshotgun2_tactician_wa_rare",
-                t"Character.arasaka_ranger1_ranged2_shingen_ma",
-                t"Character.nok_arasaka_fast_sniper_long_range_m_medium",
-                t"Character.arasaka_netrunner_netrunner2_yukimura_ma_rare"
-            ];
-        } else {
-            records = [
-                t"Character.sts_std_arr_12_security_guard1_ranged1_nue_ma",
-                t"Character.sts_std_arr_10_security_shotgun_mb",
-                t"Character.arasaka_guard2_melee1_baton_wa",
-                t"Character.arr_arasaka_ranger1_melee2_knife_ma",
-                t"Character.arasaka_2020guard_ranged1_2020nue_ma"
-            ];
-        }
-
-        // The scatter, the navmesh snap and the "drop anyone who cannot stand
-        // there" rule are CCSharedWorld.Scatter, along with the playtest that
-        // produced them. What stays here is the ring, because how tight it
-        // should be is a property of the room: 1.8 m out in 1.4 m steps is
-        // tighter than the 2.5-6.5 m this shipped with first, and most of the
-        // guards-inside-a-wall cases were the outer ring reaching through one.
-        let placed: array<EntityID> = CCSharedWorld.Scatter(
-            this.GetGameInstance(), records, center, count, tag, 1.8, 1.4);
-
-        // COMPOUND GUARDS ONLY. playtest, 2026-08-13: inside the Arasaka
-        // compound he could walk among the guards and they never challenged
-        // him, while the estate detail behaves correctly.
-        //
-        // Both squads take the identical spawn path and nothing here ever set an
-        // attitude, so each guard inherited whatever his record defaults to - and
-        // the two record lists are the only difference. The compound list is
-        // mostly `sts_*`, i.e. street-story security guards staged by their own
-        // quests, which default to an affiliation that does not treat V as an
-        // enemy. The estate list is Arasaka combat archetypes, which do.
-        //
-        // Fixed by asserting the attitude rather than by swapping records:
-        // ordinary compound security and an elite estate detail are meant to look
-        // different, and trading that away to fix an attitude bug would flatten
-        // the two tiers into one.
-        //
-        // BOTH SQUADS NOW, AND THE `if !estate` THAT USED TO BE HERE WAS WRONG.
-        //
-        // The paragraph above reads the estate records as ones that "do" treat V
-        // as an enemy, off a 2026-08-13 playtest, and asserted the attitude only
-        // where the default was believed wrong. Measured on 2026-08-21 with the
-        // estate readout, that belief is false: standing at the gate with the
-        // site fully populated, TWENTY-TWO estate guards were within 200 m and
-        // ZERO of them read back hostile to V. None was Alerted and none was in
-        // Combat. Walking in among them changed nothing.
-        //
-        // The same reading also shows what happens once a fight starts by other
-        // means: every one of them flips to hostile and in-combat together. So
-        // the records do carry the reaction, they simply never initiate, and the
-        // 2026-08-13 reading was of a squad that had already been provoked.
-        //
-        // docs/backlog.md 17.
-        let i: Int32 = 0;
-        while i < ArraySize(placed) {
-            CCSharedAttitude.Hostile(this.GetGameInstance(), placed[i]);
-            i += 1;
-        }
-        return ArraySize(placed);
-    }
-
-    // ------------------------------------------------- ONE SQUAD PER CALLBACK
-    //
-    // TWENTY ENTITIES IN ONE TICK IS THE BUG A REPORTER DESCRIBED: *"when I
-    // reached the area where the NPCs should have been, they simply weren't
-    // there. I checked the emails on the computer, turned around, and the NPCs
-    // suddenly spawned directly in front of me."*
-    //
-    // `CreateEntity` queues rather than creates - this file already knows that,
-    // which is why MakeHostile retries for ten seconds waiting for a body to
-    // resolve - so asking for twenty at the moment the player arrives means
-    // twenty bodies resolving somewhere behind him while he walks on. The estate
-    // asked for twenty-six.
-    //
-    // So the squads are spread over a callback chain instead, and the trigger
-    // moved further out (see the tick) so the walk in absorbs the work. Nothing
-    // else about the placement changed: same anchors, same sizes, same order.
-    //
-    // The table is written out rather than passed in, because the chain has to
-    // be resumable from a step index and a callback cannot carry an array.
-    private func SquadSteps(estate: Bool) -> Int32 {
-        if estate { return 6; }
-        return 5;
-    }
-
-    private func SquadCenter(estate: Bool, step: Int32) -> Vector4 {
-        if estate {
-            switch step {
-                case 0: return CCGig01Places.EstateGate();
-                case 1: return CCGig01Places.EstateApproach();
-                case 2: return CCGig01Places.EstateGrounds();
-                case 3: return CCGig01Places.EstateGarden();
-                case 4: return CCGig01Places.EstateSideEntry();
-                default: return CCGig01Places.EstateTerminal();
-            }
-        }
-        switch step {
-            case 0: return CCGig01Places.CompoundEntry();
-            case 1: return CCGig01Places.InnerEntry();
-            case 2: return CCGig01Places.OfficeEntry();
-            case 3: return CCGig01Places.OfficeGuardPost();
-            default: return CCGig01Places.TerminalRoomEntry();
-        }
-    }
-
-    private func SquadSize(estate: Bool, step: Int32) -> Int32 {
-        if estate {
-            switch step {
-                case 0: return 4;
-                case 1: return 4;
-                case 2: return 4;
-                case 3: return 6;
-                case 4: return 4;
-                default: return 3;
-            }
-        }
-        switch step {
-            case 0: return 4;
-            case 1: return 4;
-            case 2: return 4;
-            case 3: return 5;
-            default: return 3;
-        }
-    }
-
-    // A second between squads: five office squads take four seconds, six estate
-    // squads five. Both are comfortably inside the walk the widened trigger now
-    // buys, and neither asks the engine for more than six bodies at once.
-    private func SquadGap() -> Float { return 1.0; }
-
-    // How many times one squad may be asked for again WITHIN ONE PASS when the
-    // navmesh answered nothing at all. Five seconds, then the pass moves on
-    // rather than stalling the whole site on one anchor; the audit below comes
-    // back to it.
-    private func MaxSquadTries() -> Int32 { return 5; }
-
     // Ticks between audits of a site's unpopulated anchors. Four ticks is 6 s,
     // which is roughly how long it takes to walk far enough for another sector
     // to have streamed in.
     private func AuditTicks() -> Int32 { return 4; }
 
-    // Squad attempts allowed at one site per session, across all audits. The
-    // stop that makes an unpopulatable anchor cost a bounded amount rather than
-    // one attempt a second for as long as the player stands there.
-    private func MaxSquadAttempts() -> Int32 { return 60; }
-
-    // One bit per squad anchor. A table, because redscript has no `<<`. Six
-    // entries covers both sites; SquadSteps is 5 and 6.
-    private func Bit(i: Int32) -> Int32 {
-        switch i {
-            case 0: return 1;
-            case 1: return 2;
-            case 2: return 4;
-            case 3: return 8;
-            case 4: return 16;
-            default: return 32;
-        }
-    }
-
-    // Every anchor at this site has been populated at least once.
-    private func SiteFull(estate: Bool) -> Bool {
-        let mask: Int32 = estate ? this.m_estateMask : this.m_officeMask;
-        let i: Int32 = 0;
-        while i < this.SquadSteps(estate) {
-            if (mask & this.Bit(i)) == 0 {
-                return false;
-            }
-            i += 1;
-        }
-        return true;
-    }
-
-    private func MarkAnchor(estate: Bool, step: Int32) -> Void {
-        if estate {
-            this.m_estateMask = this.m_estateMask | this.Bit(step);
-        } else {
-            this.m_officeMask = this.m_officeMask | this.Bit(step);
-        }
-    }
-
-    private func AnchorDone(estate: Bool, step: Int32) -> Bool {
-        let mask: Int32 = estate ? this.m_estateMask : this.m_officeMask;
-        return (mask & this.Bit(step)) != 0;
-    }
-
-    public func SpawnStep(estate: Bool, step: Int32, tries: Int32, placed: Int32) -> Void {
-        // Skip anchors already populated. Done here rather than by the caller
-        // so an audit can start at 0 every time and still cost nothing for the
-        // anchors that are already dealt with.
-        let s: Int32 = step;
-        while s < this.SquadSteps(estate) && this.AnchorDone(estate, s) {
-            s += 1;
-        }
-        if s >= this.SquadSteps(estate) {
-            this.FinishSpawn(estate, placed);
-            return;
-        }
-        let budget: Int32 = estate ? this.m_estateTries : this.m_officeTries;
-        if budget >= this.MaxSquadAttempts() {
-            this.FinishSpawn(estate, placed);
-            return;
-        }
-        if estate {
-            this.m_estateTries += 1;
-        } else {
-            this.m_officeTries += 1;
-        }
-
-        let n: Int32 = this.SpawnSquad(this.SquadCenter(estate, s),
-                                       this.SquadSize(estate, s),
-                                       n"cc_g01_guard", estate);
-        // An empty squad means the navmesh was not ready at that anchor, not
-        // that the anchor is bad: every one of them was walked and captured.
-        // Ask again a few times, then leave the bit CLEAR and move on, so the
-        // audit picks it up once the player has walked closer.
-        let nextStep: Int32 = s + 1;
-        let nextTries: Int32 = 0;
-        if n > 0 {
-            this.MarkAnchor(estate, s);
-        } else {
-            if tries < this.MaxSquadTries() && s == step {
-                nextStep = s;
-                nextTries = tries + 1;
-            }
-        }
-        let cb: ref<CCGig01SpawnStep> = new CCGig01SpawnStep();
-        cb.system = this;
-        cb.estate = estate;
-        cb.step = nextStep;
-        cb.tries = nextTries;
-        cb.placed = placed + n;
-        GameInstance.GetDelaySystem(this.GetGameInstance())
-            .DelayCallback(cb, this.SquadGap(), false);
-    }
-
-    // THE BANNER GOES HERE, at the end, and that is the other half of the fix.
-    // It used to be the last line of SpawnOfficeSecurity, which ran in the tick
-    // the entities were merely REQUESTED in - so "Arasaka security on site"
-    // announced a compound that was still empty.
-    //
-    // The latch is set here too, and only on a real placement. A chain that
-    // placed nobody leaves it clear, so the tick starts another one.
-    public func FinishSpawn(estate: Bool, placed: Int32) -> Void {
-        // The chain runs on delayed callbacks, so its last link can land after
-        // the player has quit to the menu. Gig01_Start's header is the reason
-        // this is checked rather than assumed: dereferencing a system that is
-        // not there yet flatlined the game once already.
-        let qs: ref<QuestsSystem> = GameInstance.GetQuestsSystem(this.GetGameInstance());
-        if !IsDefined(qs) {
-            this.m_officeBusy = false;
-            this.m_estateBusy = false;
-            return;
-        }
-        // The fact ACCUMULATES across audits, because a site can be filled in
-        // more than one pass now: enter the estate over the back wall and the
-        // near anchors populate at once while the gate fills in as you walk
-        // back down to it. A per-pass value would read as the site emptying.
-        let key: String = estate ? "cc_g01_dbg_estate_guards" : "cc_g01_dbg_office_guards";
-        if estate {
-            this.m_estateBusy = false;
-        } else {
-            this.m_officeBusy = false;
-        }
-        if placed <= 0 {
-            return;
-        }
-        qs.SetFactStr(key, qs.GetFactStr(key) + placed);
-        if estate {
-            CCSharedHud.Notify(this.GetGameInstance(), "Estate security on site");
-        } else {
-            CCSharedHud.Notify(this.GetGameInstance(), "Arasaka security on site");
-        }
-    }
-
     // Called from the tick on every pass the player is inside a site's region.
     //
-    // Cheap when there is nothing to do: one Bool, one loop over at most six
-    // bits, and a counter. It only starts a chain when an anchor is still
-    // unpopulated, no chain is running, and the audit countdown has run out.
-    //
-    // This replaces a single "the site is done" latch, which is what left the
-    // estate half-empty when entered from behind. See m_estateMask.
+    // Cheap when there is nothing to do: a countdown, then one resolve and one
+    // lookup, both of which return in the same tick. It is idempotent, so it
+    // runs while V is on site rather than latching when it believes the job is
+    // finished. A post that has not streamed in yet is simply asked for again.
     private func AuditSite(estate: Bool) -> Void {
-        if this.SiteFull(estate) {
-            return;
-        }
         if estate {
-            if this.m_estateBusy {
-                return;
-            }
             this.m_estateAudit -= 1;
             if this.m_estateAudit > 0 {
                 return;
             }
             this.m_estateAudit = this.AuditTicks();
-            if this.m_estateTries >= this.MaxSquadAttempts() {
-                return;
-            }
-            this.m_estateBusy = true;
+            // NO BUSY FLAG AND NO ATTEMPT BUDGET on this branch, and both
+            // absences are deliberate. They belong to the spawn chain: it takes
+            // seconds to run and it asks the navmesh for ground that may never
+            // be streamed in, so a second chain on top of the first is a real
+            // hazard and an anchor that never answers is a real dead end.
+            //
+            // Finding a community's bodies is neither. It is one resolve and
+            // one query, it returns in the same tick, and a post that has not
+            // streamed in yet WILL stream in as the player walks towards it.
+            // Asking again every six seconds until the detail is complete is
+            // the correct behaviour rather than a cost to be bounded.
             this.SpawnEstateSecurity();
-            return;
-        }
-        if this.m_officeBusy {
             return;
         }
         this.m_officeAudit -= 1;
@@ -737,40 +451,578 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
             return;
         }
         this.m_officeAudit = this.AuditTicks();
-        if this.m_officeTries >= this.MaxSquadAttempts() {
-            return;
-        }
-        this.m_officeBusy = true;
+        // Same as the estate branch above: no busy flag and no attempt budget,
+        // because both belong to a spawn chain and this is a lookup.
         this.SpawnOfficeSecurity();
     }
 
+    // FOUND RATHER THAN SPAWNED, 2026-08-25, exactly as the estate is.
+    //
+    // Five anchors and twenty guards used to be placed by a navmesh query each.
+    // Three of those five anchors sit within fifteen metres of each other, so a
+    // third of the site's guards were asked for in one corner of one building
+    // while the yard, the second gate and every interior floor had nobody at
+    // all.
+    //
+    // Thirty posts were walked and captured instead, sixteen of them off the
+    // ground floor. The name is left alone because the tick, the proximity
+    // tests and the dev menu all use it, and renaming it would be a sweep
+    // across a working file for no gain.
     private func SpawnOfficeSecurity() -> Void {
-        this.SpawnStep(false, 0, 0, 0);
+        this.FindCompoundGuards();
     }
 
     private func SpawnEstateSecurity() -> Void {
-        // HOSHINO FIRST, and outside the chain. He is the objective, he is one
-        // entity, and a guard arriving a second later costs nothing while a
-        // Hoshino arriving late is the beat. Guarded by his own latch so a
-        // retried chain cannot put a second one on the terrace.
+        // HOSHINO FIRST, and separately. He is the objective, he is one entity,
+        // and a guard arriving a second later costs nothing while a Hoshino
+        // arriving late is the beat. Guarded by his own latch so a repeated pass
+        // cannot put a second one on the terrace.
         //
         // Our own record (suit, armed, named).
         // YAW 140.8 = the captured 50.8 turned 90 degrees ANTICLOCKWISE.
         // playtest, 2026-08-14, from a screenshot: he delivered "Mmm? You lost,
         // merc?" with his back to V, facing out over the terrace. Yaw is
         // counter-clockwise seen from above, so anticlockwise is +90.
-        // Same spot - only the facing changed.
-        if !this.m_hoshinoSpawned {
-            this.m_hoshinoId = CCSharedWorld.Spawn(t"Character.cc_g01_hoshino",
-                CCGig01Places.Hoshino(), 140.8, n"cc_g01_hoshino");
-            this.m_hoshinoSpawned = true;
-            CCSharedAttitude.Neutral(this.GetGameInstance(), this.m_hoshinoId);
-        }
-        this.SpawnStep(true, 0, 0, 0);
+        // Same spot, and only the facing changed.
+        // NOT ANY MORE. A COMMUNITY PLACES HIM.
+        //
+        // `gen_community.py` ships a community that stands him at this exact
+        // position, and `gig01.questphase` switches its entry on when the
+        // estate objective goes up. That replaced the two-bodies arrangement:
+        // this spawn plus an invisible scene actor a kilometre away carrying
+        // the voice, which is what the "half-way in a pillar" report was.
+        //
+        // Everything below still needs his EntityID for the attitude flip, the
+        // death detection and the greeting, so the id is now FOUND rather than
+        // returned by a spawn. FindHoshino() does that, and it is deliberately
+        // retried on the tick rather than done once: the community places him
+        // asynchronously and a single look on the frame the objective changed
+        // would find nothing.
+        //
+        // The Neutral call moved with him: an administrator does not open fire
+        // during his own conversation (playtest, 2026-08-12). See below.
+        this.FindHoshino();
+        // AND THE DETAIL, WHICH IS FOUND RATHER THAN SPAWNED, 2026-08-25.
+        //
+        // Six anchors and twenty-five guards used to be dropped onto whatever
+        // walkable ground the navmesh offered within a couple of metres. The
+        // huddle came from that query: nobody had ever said where a guard
+        // should stand, so it answered "somewhere near here" and kept giving
+        // nearly the same answer. Twenty-nine posts were walked and captured in
+        // game instead, and a community stands a man on each of them facing the
+        // way he was captured facing.
+        //
+        // What replaces the whole spawn chain is one resolve and one lookup,
+        // below. `backlog.md` 31 is what the two sites used to be.
+        this.FindEstateGuards();
     }
 
-    // WHY HOSHINO IS SPAWNED NEUTRAL, which is the CCSharedAttitude.Neutral
-    // call above.
+    // THE ESTATE DETAIL'S COMMUNITY, and the entries in it.
+    //
+    // These names must match tools/gig01/gen_estate_guards.py exactly. Redscript
+    // cannot import Python, so the list is restated here, and because a restated
+    // list is a list that drifts, THE GENERATOR READS THIS FILE AND REFUSES TO
+    // WRITE IF THE TWO DISAGREE. That is the same guard the bench put on its
+    // slot table after a scan measured against different coordinates than the
+    // bodies had been placed at.
+    //
+    // Gotcha 73 is why it earns the trouble: a quest node or a lookup naming a
+    // community entry that does not exist fails silently, and on 2026-08-25 a
+    // renamed entry of exactly this kind loaded without a warning and then
+    // crashed the game.
+    public static func EstateCommunityRef() -> String {
+        return "$/mod/cc_g01_estate/#cc_g01_estate_com";
+    }
+
+    // THE INDUSTRIAL PARK'S COMMUNITY, and the thirty posts in it.
+    //
+    // Same arrangement as the estate's above and cross-checked the same way:
+    // `gen_compound_guards.py` parses this list and refuses to write when the
+    // two disagree (gotcha 76).
+    //
+    // ALL THIRTY STAND STILL. Four of them walked a beat for one build on
+    // 2026-08-25 and the beats did not work; see the note in
+    // `gen_compound_guards.py` for what was tried and why it is not chased.
+    //
+    // The site had FIVE anchors and twenty men, and three of those anchors sat
+    // within fifteen metres of each other, so a third of the guards were asked
+    // for in one corner of one building and the yard, the second gate and every
+    // interior floor had nobody. Sixteen of these thirty are off the ground
+    // floor, which a navmesh query around a ground anchor could not produce at
+    // all. Forty-six posts were captured and thinned to thirty for stealth;
+    // `gen_compound_guards.py` has which went and why.
+    public static func CompoundCommunityRef() -> String {
+        return "$/mod/cc_g01_compound/#cc_g01_compound_com";
+    }
+
+    public static func CompoundEntries() -> array<CName> {
+        return [
+            n"gate03",
+            n"gate2_01", n"gate2_02", n"gate2_03",
+            n"inner02", n"inner03", n"inner04", n"inner05",
+            n"inner06", n"inner07", n"inner08", n"inner09", n"inner10",
+            n"inner11", n"inner12",
+            n"deck02", n"deck03", n"deck04",
+            n"inside10", n"inside11", n"inside12", n"inside14",
+            n"inside15", n"inside16", n"inside17", n"inside18",
+            n"office01", n"office02", n"office03", n"office04"
+        ];
+    }
+
+    public static func EstateEntries() -> array<CName> {
+        return [
+            n"gate01", n"gate02", n"gate03",
+            n"inner01", n"inner02", n"inner03", n"inner04", n"inner05",
+            n"inner06", n"inner07", n"inner08", n"inner09", n"inner10",
+            n"inner11", n"inner12", n"inner13", n"inner14", n"inner15",
+            n"inner16", n"inner17",
+            n"floor02", n"floor03", n"floor04", n"floor05",
+            n"roof02",
+            n"office01", n"office02", n"office03", n"office04"
+        ];
+    }
+
+    // FIND THE BODIES THE COMMUNITY PLACED, AND MAKE THEM ENEMIES OF V.
+    //
+    // The attitude is the whole job. Measured 2026-08-25, three guards at one
+    // post one at a time: two vanilla records at their default attitude stood
+    // there and did nothing, and the same record with a hostile attitude applied
+    // detected V on the ordinary ramp, slowly at distance and faster on
+    // approach, and went to combat. `senseComponent.ShouldStartDetectingPlayer`
+    // treats a hostile attitude as "start filling the meter", so with no
+    // attitude there is no meter and no reaction (gotcha 74).
+    //
+    // The same reading was taken from the other end in August with the OLD
+    // spawn: twenty-two estate guards within 200 m of the gate, and zero of them
+    // hostile to V. These records do not initiate on their own.
+    //
+    // `CCSharedAttitude.Hostile` is pairwise, an enemy of THIS player and of
+    // nobody else, and it retries for sixty seconds while a body streams in. It
+    // asks `FindEntityByID` rather than the dynamic entity system, which it has
+    // to: a community body is invisible to every DynamicEntitySystem lookup, and
+    // that was silently costing every retry until 2026-08-25 (gotcha 71).
+    //
+    // Called from the audit on the tick, so a post that has not streamed in yet
+    // is asked for again on the next pass. Idempotent: a guard who is already an
+    // enemy of V is made one again, which costs a pairwise set.
+    // BOTH DETAILS ARE MADE HOSTILE, and the alternative was tried and failed.
+    //
+    // The two ways an NPC can come at the player are alternatives, not a pair:
+    //
+    //   hostile attitude  -> detection ramp -> combat.  An ENEMY being spotted.
+    //   security area     -> trespass warning.  A STRANGER being told to leave.
+    //
+    // The gig wanted the second at the industrial park: a call-out, somebody
+    // walking over, and a fight only if V stays. THE SECURITY AREA WAS BUILT
+    // AND IT DOES NOT DRIVE A MOD'S COMMUNITY. Every part of it was measured
+    // correct in game on 2026-08-25: found, ON, attached, not disabled, typed
+    // RESTRICTED exactly as vanilla's is, linked to the community, fed by
+    // eighteen cameras, with its security system present, and reporting that
+    // the player was INSIDE it, and the guards did nothing at all.
+    //
+    // Left neutral without it they are not inert, they are just NEUTRAL: they
+    // notice somebody standing on top of them and eventually react, which is
+    // what any neutral NPC in the game does. Playtest: *"I need to be like
+    // touching it. If I stand like 1m out nothing happens"*.
+    //
+    // So hostile it is, at both sites, which is the behaviour that was working
+    // before any of this and is not un-vanilla here: Gimme Danger's own guards
+    // at this compound are hostile and attack on sight. `backlog.md` 31 has the
+    // whole dead end and what was eliminated on the way.
+    private func FindEstateGuards() -> Void {
+        this.FindDetail(NegativeBalanceEncounter.EstateCommunityRef(),
+                        NegativeBalanceEncounter.EstateEntries(), true);
+    }
+
+    // THE SAME JOB AT THE INDUSTRIAL PARK, and it is the same function.
+    //
+    // The two sites differ in which community they name and in which facts they
+    // report through, and in nothing else. Writing it twice would be two copies
+    // of the senses fix, two copies of the readback and two places for the next
+    // finding to be applied to only one of them.
+    private func FindCompoundGuards() -> Void {
+        this.FindDetail(NegativeBalanceEncounter.CompoundCommunityRef(),
+                        NegativeBalanceEncounter.CompoundEntries(), false);
+    }
+
+    // THE CAMERAS ARE NOT TOUCHED AT ALL, and that is a decision, 2026-08-25.
+    //
+    // This file briefly walked the site's eighteen cameras back up to ON while
+    // the gig was here, and raised a banner when one of them saw V. Both are
+    // gone at playtest's request, and the reasons are different for each.
+    //
+    // THE ALARM was dishonest. It said "a camera has eyes on you" and nothing
+    // followed, because alerting our own community is exactly the thing that
+    // does not work. A banner announcing a consequence that never arrives is
+    // worse than no banner.
+    //
+    // THE RESTORE went with it because, once the alarm was gone, switching
+    // another quest's devices on bought this gig nothing. It was only ever
+    // insurance for a player who shot them out, and paying for that with a
+    // permanent change to Gimme Danger's cameras is the wrong trade when our
+    // own guards no longer depend on them.
+    //
+    // What was learned doing it is not lost: `backlog.md` 31 has the whole
+    // camera investigation, and gotchas 82 and 83 have the two findings worth
+    // keeping: that any base-game device can be addressed offline from its
+    // NodeRef, and the full menu of what a camera will accept.
+
+    private func FindDetail(reference: String, names: array<CName>,
+                            estate: Bool) -> Void {
+        let game: GameInstance = this.GetGameInstance();
+        let nref: NodeRef = CreateNodeRef(reference);
+        let root: GlobalNodeRef;
+        let g: GlobalNodeRef = ResolveNodeRef(nref, root);
+        if !GlobalNodeRef.IsDefined(g) {
+            // The name did not resolve, so its sector is not loading and nothing
+            // below can work. Worth telling apart from "resolved but empty": one
+            // is a broken build, the other is a quest phase that has not
+            // switched the community on yet.
+            this.NoteGuards(game, estate, 1, 0, ArraySize(names));
+            return;
+        }
+        let objects: array<ref<GameObject>>;
+        GetGameObjectsFromSpawnerEntityID(Cast<EntityID>(g), names, game,
+                                          objects);
+        let found: Int32 = 0;
+        let i: Int32 = 0;
+        while i < ArraySize(objects) {
+            let puppet: ref<ScriptedPuppet> = objects[i] as ScriptedPuppet;
+            if IsDefined(puppet) && ScriptedPuppet.IsAlive(puppet) {
+                CCSharedAttitude.Hostile(game, puppet.GetEntityID());
+                // AND THE EYES ON, WHICH THE ATTITUDE DOES NOT DO.
+                //
+                // Playtest 2026-08-25: all thirty stood at their posts and none
+                // of them ever noticed V. They fought when shot, and they joined
+                // in when one of the estate's own NPCs raised the alarm, so they
+                // were not inert. They simply never STARTED looking.
+                //
+                // That is the shape of a missing sense component rather than a
+                // missing attitude. `ShouldStartDetectingPlayer` treats a hostile
+                // attitude as "start filling the meter", and a meter on a
+                // component that is switched off never fills however hostile the
+                // NPC is. Hoshino's own TurnOnPlayer has done both since August
+                // for exactly this reason; the guards were only given the first.
+                //
+                // Cheap, idempotent, and correct whether or not it is the cause.
+                let senses: ref<SenseComponent> = puppet.GetSensesComponent();
+                if IsDefined(senses) {
+                    senses.Toggle(true);
+                }
+                found += 1;
+            }
+            i += 1;
+        }
+        // AND NOW READ BACK WHAT ACTUALLY TOOK, which is the whole point.
+        //
+        // `posts turned` counted the guards we ASKED about. It said 30 while not
+        // one of them was reacting, because asking and landing are different
+        // things and nothing here could tell them apart. Every wrong diagnosis
+        // this project has made in the last week has had that shape.
+        //
+        // So: of the bodies standing there, how many are actually enemies of V,
+        // and how many can actually see. Read off the puppets themselves rather
+        // than off what we intended.
+        this.ReadBackDetail(game, objects, estate);
+        if found <= 0 {
+            // NOBODY ALIVE THERE RIGHT NOW, which is not the same as nobody
+            // ever having been there. The count keeps its high-water mark so
+            // that a detail V has fought through does not read as a community
+            // that never placed anybody: the code says what is true now, the
+            // count says what was turned.
+            this.NoteGuards(game, estate, 2, this.HighWater(estate),
+                            ArraySize(names));
+            return;
+        }
+        // ONLY THE BANNER IS LATCHED, and only on the full detail.
+        //
+        // A partial answer is the normal case rather than a fault: come in over
+        // the back wall and the posts down at the gate are 90 m away and not
+        // streamed, exactly as the old spawn's far anchors were not. So the
+        // audit keeps asking until every post is accounted for, and the count
+        // it reports is the highest it has seen rather than this pass's.
+        if found > this.HighWater(estate) {
+            this.SetHighWater(estate, found);
+        }
+        this.NoteGuards(game, estate, 3, this.HighWater(estate),
+                        ArraySize(names));
+        if !this.Announced(estate)
+            && this.HighWater(estate) >= ArraySize(names) {
+            // THE BANNER LATCHES, THE PASS DOES NOT.
+            //
+            // `m_estateDetailDone` used to stop the audit here, and that was
+            // wrong for two reasons that only showed up in play. A guard who
+            // streams in after the thirtieth was counted never gets his attitude
+            // or his senses, and a guard whose state is reset by anything else
+            // never gets them back. The pass is one resolve and one lookup, so
+            // running it every few seconds while V is on the estate costs less
+            // than the bug it prevents.
+            this.SetAnnounced(estate);
+            CCSharedHud.Notify(game, estate ? "Estate security on site"
+                                            : "Arasaka security on site");
+        }
+    }
+
+    // Per-site state, so one function can serve both. Small accessors rather
+    // than an array: redscript arrays on a ScriptableSystem come back from an
+    // old save at the wrong length, which is the trap at the top of
+    // Gig01_Holocall.
+    private func HighWater(estate: Bool) -> Int32 {
+        if estate { return this.m_estateFound; }
+        return this.m_compoundFound;
+    }
+
+    private func SetHighWater(estate: Bool, n: Int32) -> Void {
+        if estate { this.m_estateFound = n; } else { this.m_compoundFound = n; }
+    }
+
+    private func Announced(estate: Bool) -> Bool {
+        if estate { return this.m_estateAnnounced; }
+        return this.m_compoundAnnounced;
+    }
+
+    private func SetAnnounced(estate: Bool) -> Void {
+        if estate {
+            this.m_estateAnnounced = true;
+        } else {
+            this.m_compoundAnnounced = true;
+        }
+    }
+
+    // WHAT STATE ARE THEY ACTUALLY IN, measured on the bodies themselves.
+    //
+    // Three numbers, because there are three ways a guard who is standing at his
+    // post can still ignore the player, and in game they look identical:
+    //
+    //   hostile   the pairwise attitude towards V actually landed. If this is
+    //             low, `CCSharedAttitude` is not reaching these bodies at all.
+    //   senses    the sense component exists and is enabled. If this is low,
+    //             they are enemies who cannot see, which is precisely "they
+    //             only react when I shoot one".
+    //   working   they are inside a workspot. An NPC held in an infinite idle
+    //             may not run perception at all, and the pose is the one thing
+    //             that changed between the guard that WORKED on the bench and
+    //             these thirty (the bench guard used a different idle, and
+    //             gotcha 72 says a community does not reliably apply one, so he
+    //             may simply have been standing free).
+    //
+    // Whichever of the three is the odd one out is the answer, and it costs one
+    // pass rather than one playthrough per hypothesis.
+    private func ReadBackDetail(game: GameInstance,
+                                objects: array<ref<GameObject>>,
+                                estate: Bool) -> Void {
+        let qs: ref<QuestsSystem> = GameInstance.GetQuestsSystem(game);
+        if !IsDefined(qs) {
+            return;
+        }
+        let player: ref<PlayerPuppet> = GameInstance.GetPlayerSystem(game)
+            .GetLocalPlayerMainGameObject() as PlayerPuppet;
+        if !IsDefined(player) {
+            return;
+        }
+        let hostile: Int32 = 0;
+        let seeing: Int32 = 0;
+        let working: Int32 = 0;
+        let i: Int32 = 0;
+        while i < ArraySize(objects) {
+            let puppet: ref<ScriptedPuppet> = objects[i] as ScriptedPuppet;
+            if IsDefined(puppet) && ScriptedPuppet.IsAlive(puppet) {
+                let agent: ref<AttitudeAgent> = puppet.GetAttitudeAgent();
+                if IsDefined(agent)
+                    && Equals(agent.GetAttitudeTowards(player.GetAttitudeAgent()),
+                              EAIAttitude.AIA_Hostile) {
+                    hostile += 1;
+                }
+                let senses: ref<SenseComponent> = puppet.GetSensesComponent();
+                if IsDefined(senses) && senses.IsEnabled() {
+                    seeing += 1;
+                }
+                if GameInstance.GetWorkspotSystem(game).IsActorInWorkspot(puppet) {
+                    working += 1;
+                }
+            }
+            i += 1;
+        }
+        let key: String = estate ? "cc_g01_dbg_estate" : "cc_g01_dbg_compound";
+        if qs.GetFactStr(key + "_hostile") != hostile {
+            qs.SetFactStr(key + "_hostile", hostile);
+        }
+        if qs.GetFactStr(key + "_senses") != seeing {
+            qs.SetFactStr(key + "_senses", seeing);
+        }
+        if qs.GetFactStr(key + "_workspot") != working {
+            qs.SetFactStr(key + "_workspot", working);
+        }
+    }
+
+    // HOW FAR CAN A GUARD SEE? NOT READABLE, and not guessed at.
+    //
+    // Playtest 2026-08-25, and it is the most useful thing said about this all
+    // day: *"if I stand right in front of a guard, but like attached to it, it
+    // does the warning... but I need to be like touching it. If I stand like 1m
+    // out nothing happens"*.
+    //
+    // So THE WARNING EXISTS. The guards are not inert and the machinery is not
+    // missing; what is wrong is the DISTANCE at which they notice anybody. That
+    // is a smaller and different problem from every one chased before it.
+    //
+    // AND THE POSE IS NOT THE CAUSE. The lab's button 3 takes all of them out
+    // of their idle animation live, and playtest ran it: *"nothing changed with
+    // press 3"*. That is the second time the workspot has been suspected and
+    // cleared, and it should not be suspected a third time.
+    //
+    // `SenseComponent` has neither `GetMaxDistance` nor `IsPlayerCloseToNPC`,
+    // so the range is not readable from here and no number is invented for it.
+    // Two attempts at guessing a method name were made and both were caught by
+    // the compiler, which is the only reason they cost nothing.
+
+    // The readout, and it exists because every failure in this path is SILENT in
+    // game: a post nobody is standing at looks exactly like a post the game has
+    // not got round to placing yet.
+    //
+    //   0  nothing has looked yet
+    //   1  the community name did not resolve. The sector is not loading
+    //   2  resolved, but the spawner has no bodies. Either the quest phase has
+    //      not activated the community, or nothing has streamed in yet
+    //   3  found, and made hostile. cc_g01_dbg_estate_guards is how many
+    private func NoteGuards(game: GameInstance, estate: Bool, code: Int32,
+                            found: Int32, total: Int32) -> Void {
+        let qs: ref<QuestsSystem> = GameInstance.GetQuestsSystem(game);
+        if !IsDefined(qs) {
+            return;
+        }
+        // THE EXPECTED TOTAL IS PUBLISHED, NOT TYPED INTO THE PANEL.
+        //
+        // The panel said "of 30" as a literal, and the post count had just
+        // changed from 30 to 29 because one of them landed a metre from a
+        // base-game sniper. A hand-copied total is the same drift the entry-name
+        // cross-check exists to stop (gotcha 76), one screen further out.
+        let key: String = estate ? "cc_g01_dbg_estate" : "cc_g01_dbg_compound";
+        if qs.GetFactStr(key + "_total") != total {
+            qs.SetFactStr(key + "_total", total);
+        }
+        if qs.GetFactStr(key) != code {
+            qs.SetFactStr(key, code);
+        }
+        if qs.GetFactStr(key + "_guards") != found {
+            qs.SetFactStr(key + "_guards", found);
+        }
+    }
+
+    // FIND THE BODY THE COMMUNITY PLACED, and keep looking until it is there.
+    //
+    // `GetGameObjectsFromSpawnerEntityID` asks the spawner system for one
+    // entry's objects, which is exactly the question and does not care where he
+    // is standing or whether anything else is nearby. The community NodeRef
+    // resolves to the community's id; gotcha 69 is the whole join.
+    //
+    // Returns quietly when he is not there yet. The caller is a tick.
+    // Hoshino's community, and the one diagnostic this beat needs.
+    //
+    // The names must match tools/gig01/gen_community.py exactly: the community
+    // reference is what resolves to the id the spawner is asked about, and the
+    // entry name is which of its entries to ask for. Both are stated in one
+    // place there and repeated here because redscript cannot import Python.
+    //
+    // cc_g01_dbg_hoshino is the readout, and it exists because every failure in
+    // this path is SILENT in game. A man who is not there looks exactly like a
+    // man the game has not got round to placing yet:
+    //
+    //   0  nothing has looked yet
+    //   1  the community name did not resolve. The sector is not loading, and
+    //      nothing below this line can work
+    //   2  resolved, but the spawner has no body for the entry. Either the
+    //      quest phase has not activated it, or it is still being placed
+    //   3  FOUND, and set neutral. This is the good one
+    //   4  found, and dead
+    public static func CommunityRef() -> String {
+        return "$/mod/cc_g01_hoshino/#cc_g01_hoshino_com";
+    }
+
+    public static func Entry() -> CName { return n"hoshino"; }
+
+    // MAKE HIM AN ENEMY OF V, and it is TWO things rather than one.
+    //
+    // Extracted 2026-08-25 so the dev lab drives the shipped path instead of a
+    // copy of it. A bench that reimplements the thing it is testing measures its
+    // own copy.
+    //
+    // OUT OF THE FRIENDLY GROUP FIRST. He is put in it while he is protected, to
+    // keep the reticle off him, and an NPC left there is one the player still
+    // cannot shoot, which would make the shield permanent by another route.
+    // Back to `neutral`, his record's own `baseAttitudeGroup`, rather than to
+    // n"hostile": the pairwise line is what makes him an enemy of V, and the
+    // hostile GROUP would set him against the Arasaka guards as well.
+    //
+    // AND HIS EYES ON, which the attitude does not do. `enableSensesOnStart:
+    // false` is the third peaceful field on his record, and an NPC who cannot
+    // perceive V cannot shoot at him however hostile he is.
+    public static func TurnOnPlayer(npc: ref<ScriptedPuppet>,
+                                    player: ref<PlayerPuppet>) -> Void {
+        if !IsDefined(npc) || !IsDefined(player) {
+            return;
+        }
+        let agent: ref<AttitudeAgent> = npc.GetAttitudeAgent();
+        if IsDefined(agent) {
+            agent.SetAttitudeGroup(n"neutral");
+            agent.SetAttitudeTowards(player.GetAttitudeAgent(),
+                                     EAIAttitude.AIA_Hostile);
+        }
+        let senses: ref<SenseComponent> = npc.GetSensesComponent();
+        if IsDefined(senses) {
+            senses.Toggle(true);
+        }
+    }
+
+    public static func Note(game: GameInstance, code: Int32) -> Void {
+        let qs: ref<QuestsSystem> = GameInstance.GetQuestsSystem(game);
+        if IsDefined(qs) && qs.GetFactStr("cc_g01_dbg_hoshino") != code {
+            qs.SetFactStr("cc_g01_dbg_hoshino", code);
+        }
+    }
+
+    // FIND THE BODY THE COMMUNITY PLACED, and keep looking until it is there.
+    //
+    // `GetGameObjectsFromSpawnerEntityID` asks the spawner system for one
+    // entry's objects, which is exactly the question and does not care where he
+    // is standing or whether anything else is nearby. Gotcha 69 is the join.
+    //
+    // Returns quietly when he is not there yet. The caller is a tick, because
+    // the community places him asynchronously and a single look on the frame the
+    // objective changed would find nothing.
+    private func FindHoshino() -> Void {
+        if this.m_hoshinoSpawned {
+            return;
+        }
+        let game: GameInstance = this.GetGameInstance();
+        let nref: NodeRef = CreateNodeRef(NegativeBalanceEncounter.CommunityRef());
+        let root: GlobalNodeRef;
+        let g: GlobalNodeRef = ResolveNodeRef(nref, root);
+        if !GlobalNodeRef.IsDefined(g) {
+            NegativeBalanceEncounter.Note(game, 1);
+            return;
+        }
+        let objects: array<ref<GameObject>>;
+        GetGameObjectsFromSpawnerEntityID(Cast<EntityID>(g),
+                                          [NegativeBalanceEncounter.Entry()],
+                                          game, objects);
+        let i: Int32 = 0;
+        while i < ArraySize(objects) {
+            let puppet: ref<ScriptedPuppet> = objects[i] as ScriptedPuppet;
+            if IsDefined(puppet) && ScriptedPuppet.IsAlive(puppet) {
+                this.m_hoshinoId = puppet.GetEntityID();
+                this.m_hoshinoSpawned = true;
+                CCSharedAttitude.Neutral(game, this.m_hoshinoId);
+                NegativeBalanceEncounter.Note(game, 3);
+                return;
+            }
+            i += 1;
+        }
+        NegativeBalanceEncounter.Note(game, 2);
+    }
+
+    // WHY HOSHINO IS NEUTRAL, which is the CCSharedAttitude.Neutral call in
+    // FindHoshino above.
     //
     // He spawned hostile like the guards, so he opened fire during his own
     // conversation (playtest, 2026-08-12). That is wrong for the scene and
@@ -1198,6 +1450,32 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
             let pos: Vector4 = player.GetWorldPosition();
             let accepted: Bool = qs.GetFactStr("cc_g01_accepted") == 1;
 
+            // WHERE AM I, AND DOES THE ESTATE THINK I AM INSIDE IT?
+            //
+            // Deliberately outside every gate, including `accepted`. The whole
+            // estate leg hangs off one boundary test, and when that test is
+            // wrong the symptom is that NOTHING happens: no guards, no Hoshino,
+            // no objective, and nothing on screen to say why. Two player reports
+            // on 2026-08-25 were exactly that, and the ceiling that caused it
+            // could not be read off any file because the ground it was wrong
+            // about is the base game's.
+            //
+            // A diagnostic gated on the thing it measures is gotcha 17, and this
+            // project has paid for it four times, so this one is gated on
+            // nothing at all.
+            //
+            //   _pz         the player's height, whole metres
+            //   _estate_in  1 if the traced outline accepts this spot
+            //   _at_estate  1 if ANY arm of the arrival test accepts it, which
+            //               is the condition the whole leg actually waits on
+            let inOutline: Bool = CCGig01Places.InsideEstate(pos);
+            let atEstateNow: Bool = inOutline
+                || CCSharedWorld.Near(pos, CCGig01Places.EstateGate(), 45.0, 12.0, 25.0)
+                || CCSharedWorld.Near(pos, CCGig01Places.Hoshino(), 70.0, 12.0, 60.0);
+            qs.SetFactStr("cc_g01_dbg_pz", Cast<Int32>(pos.Z));
+            qs.SetFactStr("cc_g01_dbg_estate_in", inOutline ? 1 : 0);
+            qs.SetFactStr("cc_g01_dbg_at_estate", atEstateNow ? 1 : 0);
+
             // RELEASE MAMA WELLES EVEN WHEN THE GIG IS NO LONGER RUNNING.
             //
             // Everything that takes something from her lives inside the
@@ -1256,23 +1534,17 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
             // docs/backlog.md 9.
 
             if accepted && qs.GetFactStr("cc_g01_done") == 0 {
-                // Arrive at the compound: mark the objective, populate the site.
+                // Arrive at the compound: mark the objective, look for the
+                // detail.
                 //
-                // TWO TESTS, NOT ONE, AND THE SPAWN ONE IS THE WIDER OF THEM.
+                // TWO TESTS, NOT ONE, AND THE LOOKUP ONE IS THE WIDER OF THEM.
                 //
                 // It used to be a single 60 m sphere on CompoundEntry, and the
                 // site does not fit inside it: the office terminal is 63.5 m
                 // from that anchor and the terminal room door 67.7 m. A player
                 // who reached the computer without crossing the bubble found an
-                // empty building, which is half of the report quoted on
-                // SpawnStep. So the office is measured from the BUILDING as
-                // well as from the gate.
+                // empty building.
                 //
-                // The spawn test is wider again, because the squads are now
-                // spread over a callback chain and that chain needs runway. 100 m
-                // on the gate is roughly 85 m out from the map pin: far enough
-                // that the walk in absorbs the work, close enough that nothing
-                // populates a compound the player is only driving past.
                 // THE OUTLINE, NOT A SPHERE. InsideCompound is the four walked
                 // corners; being anywhere in the industrial park counts, by
                 // whatever route. The 60 m sphere on the gate stays as well,
@@ -1283,8 +1555,8 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
                 if atOffice && qs.GetFactStr("cc_g01_office_reached") == 0 {
                     qs.SetFactStr("cc_g01_office_reached", 1);
                 }
-                // Spawning starts EARLIER than arriving, because the squads are
-                // spread over a callback chain and that chain needs runway.
+                // THE LOOKUP STARTS EARLIER THAN ARRIVING, so the posts nearest
+                // the gate have streamed in by the time V reaches them.
                 //
                 // AND IT STOPS WHEN THE COMPOUND LEG IS OVER, which is what
                 // `cc_g01_left_compound` means and what this had no test for.
@@ -1293,18 +1565,13 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
                 // compound, and the whole office detail spawned again, banner
                 // and all.
                 //
-                // WHY THE EXISTING LATCH DID NOT STOP IT, and this is the part
-                // worth carrying to the next site of this shape. The site is
-                // guarded by `m_officeMask`, a per-anchor bitmask that records
-                // which anchors are populated, and it does its job perfectly
-                // within a session. It is a plain field on a ScriptableSystem,
-                // so it is empty again after a load, and every anchor reads as
-                // unpopulated. docs/gotchas.md 21 is the same lesson: state that
-                // has to outlive a reload belongs in a fact.
-                //
-                // So the mask stays for what it is good at, deciding which
-                // anchors still need filling during a visit, and a fact decides
-                // whether there should be a visit at all.
+                // WHY NO IN-SESSION LATCH STOPS IT, and this is the part worth
+                // carrying to the next site of this shape. Anything this system
+                // remembers is a plain field on a ScriptableSystem, so it is
+                // empty again after a load and the site reads as untouched.
+                // docs/gotchas.md 21 is the same lesson: state that has to
+                // outlive a reload belongs in a fact. So a fact decides whether
+                // there should be a visit at all.
                 if qs.GetFactStr("cc_g01_left_compound") == 0
                     && (atOffice
                         || Vector4.Distance(pos, CCGig01Places.CompoundEntry()) < 100.0) {
@@ -1558,13 +1825,38 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
                     // car covers about 30 m in one, so a smaller sphere could be
                     // stepped over between two samples. The outline below is the
                     // backstop for that.
+                    //
+                    // THE HOSHINO SPHERE'S CEILING WENT 25 -> 60 for the same
+                    // reason as the outline's above: 25 m over his floor stops
+                    // short of the upper terraces, and this arm is the backstop
+                    // for anybody the outline misses. Being within 70 m of the
+                    // man is being at the estate whatever floor you are on.
                     let atEstate: Bool =
                         CCSharedWorld.Near(pos, CCGig01Places.EstateGate(), 45.0, 12.0, 25.0)
-                        || CCSharedWorld.Near(pos, CCGig01Places.Hoshino(), 70.0, 12.0, 25.0)
+                        || CCSharedWorld.Near(pos, CCGig01Places.Hoshino(), 70.0, 12.0, 60.0)
                         || CCGig01Places.InsideEstate(pos);
+                    //
+                    // ONE STEP PER PASS, AND THE FLAG BELOW IS WHY.
+                    //
+                    // The quest phase waits on this fact, then raises the
+                    // way-in objective, then waits on the NEXT fact. Both of
+                    // those facts are satisfied by the same test, being inside
+                    // the grounds, so a player who arrives by any route other
+                    // than the gate sets both on this one pass. The second wait
+                    // is armed a moment after the fact it is waiting for has
+                    // already changed, and a fact that does not change again is
+                    // a wait that never completes (gotchas.md 54).
+                    //
+                    // Driving to the gate hides it completely: the gate is
+                    // OUTSIDE the traced outline, so arriving there cannot also
+                    // mean being inside, and the two facts are a walk apart.
+                    // That is the only route this has ever been tested on here,
+                    // which is why it took two player reports to surface.
+                    let justArrived: Bool = false;
                     if atEstate {
                         if qs.GetFactStr("cc_g01_estate_reached") == 0 {
                             qs.SetFactStr("cc_g01_estate_reached", 1);
+                            justArrived = true;
                         }
                     }
 
@@ -1618,12 +1910,37 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
                     // 6 m on the point: generous enough that arriving at it
                     // counts, tight enough that it is not satisfied from the
                     // garden - and the boundary test covers the garden anyway.
-                    if qs.GetFactStr("cc_g01_estate_reached") > 0
+                    //
+                    // `!justArrived` holds this back to the NEXT pass when both
+                    // conditions came true together. 1.5 s is far longer than
+                    // the quest phase needs to walk four nodes and arm the wait,
+                    // and on the gate route it changes nothing, because the two
+                    // are already a walk apart.
+                    let justFoundWayIn: Bool = false;
+                    //
+                    // AND A THIRD WAY: STANDING AT HOSHINO. Whatever route got
+                    // somebody to the man, they are inside, and the objective
+                    // telling them to find a way in is behind them.
+                    //
+                    // This is the arm that makes the ladder finish for a player
+                    // who skipped everything: arriving sets `estate_reached` on
+                    // one pass, this sets `wayin_reached` on the next, and the
+                    // greeting fires on the one after that, so the phase walks
+                    // its objectives in order at 1.5 s a step instead of parking
+                    // on a wait that was armed after its fact had already changed
+                    // (gotchas.md 54, which is what the one-step-per-pass rule
+                    // above exists for).
+                    if !justArrived
+                        && qs.GetFactStr("cc_g01_estate_reached") > 0
                         && qs.GetFactStr("cc_g01_wayin_reached") == 0
                         && (CCSharedWorld.Near(pos, CCGig01Places.EstateWayIn(), 6.0, 4.0, 4.0)
-                            || CCGig01Places.InsideEstate(pos)) {
+                            || CCGig01Places.InsideEstate(pos)
+                            || CCSharedWorld.Near(pos, CCGig01Places.Hoshino(),
+                                                  25.0, 12.0, 60.0)) {
                         qs.SetFactStr("cc_g01_wayin_reached", 1);
+                        justFoundWayIn = true;
                     }
+                    this.m_estateStepTaken = justArrived || justFoundWayIn;
 
                     // ...and the route there, ONE MARKER AT A TIME.
                     //
@@ -1685,9 +2002,25 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
                 // only call him dead after we have actually seen him alive - 
                 // otherwise a streamed-out NPC (e.g. driving past) reads as a
                 // corpse and skips half the mission.
+                // KEEP LOOKING UNTIL THE COMMUNITY HAS PLACED HIM. The
+                // quest phase activates the entry when the estate objective
+                // goes up, and placement is asynchronous, so one look on the
+                // frame the objective changed would find nothing and this beat
+                // would wait for ever.
+                if !this.m_hoshinoSpawned
+                   && qs.GetFactStr("cc_g01_estate_reached") > 0 {
+                    this.FindHoshino();
+                }
                 if this.m_hoshinoSpawned && qs.GetFactStr("cc_g01_hoshino_dead") == 0 {
-                    let des: ref<DynamicEntitySystem> = GameInstance.GetDynamicEntitySystem();
-                    let hoshino: ref<ScriptedPuppet> = des.GetEntity(this.m_hoshinoId) as ScriptedPuppet;
+                    // FindEntityByID, NOT DynamicEntitySystem.GetEntity.
+                    //
+                    // That system only knows entities IT spawned, and he is
+                    // placed by a community now. The old call returned null for
+                    // a body standing in plain sight, which would have read as
+                    // "streamed out" and skipped half the mission.
+                    let hoshino: ref<ScriptedPuppet> =
+                        GameInstance.FindEntityByID(this.GetGameInstance(),
+                                                    this.m_hoshinoId) as ScriptedPuppet;
 
                     if IsDefined(hoshino) && ScriptedPuppet.IsAlive(hoshino) {
                         this.m_hoshinoSeenAlive = true;
@@ -1912,31 +2245,7 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
 
                         if hostileNow && !this.m_hoshinoProvoked {
                             this.m_hoshinoProvoked = true;
-                            let agent: ref<AttitudeAgent> = hoshino.GetAttitudeAgent();
-                            if IsDefined(agent) {
-                                // OUT OF THE FRIENDLY GROUP FIRST. He was put in
-                                // it to keep the reticle off him while he was
-                                // protected, and an NPC left there is one the
-                                // player still cannot shoot, which would turn the
-                                // shield into a permanent one by another route.
-                                //
-                                // Back to `neutral`, his record's own
-                                // `baseAttitudeGroup`, rather than to n"hostile":
-                                // the pairwise line below is what makes him an
-                                // enemy of V, and the hostile GROUP would set him
-                                // against the Arasaka guards as well.
-                                agent.SetAttitudeGroup(n"neutral");
-                                agent.SetAttitudeTowards(player.GetAttitudeAgent(),
-                                                         EAIAttitude.AIA_Hostile);
-                            }
-                            // AND HIS EYES ON, which the attitude does not do.
-                            // `enableSensesOnStart: false` is the third peaceful
-                            // field, and an NPC who cannot perceive V cannot
-                            // shoot at him however hostile he is.
-                            let senses: ref<SenseComponent> = hoshino.GetSensesComponent();
-                            if IsDefined(senses) {
-                                senses.Toggle(true);
-                            }
+                            NegativeBalanceEncounter.TurnOnPlayer(hoshino, player);
                         }
                         // His exchange is a real scene now (gig01_hoshino.scene,
                         // run by the quest phase). All this does is say "V is
@@ -1974,14 +2283,55 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
                         // Missing it does not strand the gig. Killing him sets
                         // cc_g01_hoshino_met itself, in the branch below, so the
                         // quest phase moves on; what is lost is the scene.
-                        if !this.m_hoshinoGreeted
-                            && Vector4.Distance(pos, hoshino.GetWorldPosition()) < 8.0 {
+                        //
+                        // `m_estateStepTaken` is the same one-step-per-pass rule
+                        // as the two facts above, for the same reason: the wait
+                        // on cc_g01_hoshino_met is armed straight after the
+                        // way-in wait completes, and a player who lands next to
+                        // Hoshino can satisfy both on one pass.
+                        // AND ON HIS OWN FLOOR, which the radius alone cannot
+                        // say. Reported 2026-08-25: standing on the floor BELOW
+                        // him started his conversation, with V nowhere near him
+                        // and unable to see him.
+                        //
+                        // `Vector4.Distance` is 3D, so a player one floor down
+                        // is inside an 8 m sphere with room to spare. The estate
+                        // is stacked at 4 m intervals, read off the captured
+                        // posts: the grounds at 220.9, the office level at
+                        // 225.9, HIS floor at 229.9, and the roof at 233.9. Two
+                        // of those sit within 8 m of him vertically.
+                        //
+                        // So the test is horizontal with an altitude band, which
+                        // is what `Near` is for and what the estate region test
+                        // above already uses. 2.0 m below and 2.0 m above his
+                        // own floor: a player standing in front of him is 0 to
+                        // 0.5 m down, because his spot is at floor height and
+                        // the sitting animation lifts him onto the cushion, and
+                        // the floors above and below are excluded with 1.5 m to
+                        // spare at the roof and 2.0 m at the floor below.
+                        //
+                        // Above is deliberately as generous as below rather than
+                        // tighter: standing on a step or a piece of furniture on
+                        // his own floor should still count, and the roof is far
+                        // enough away that it costs nothing.
+                        if !this.m_estateStepTaken
+                            && !this.m_hoshinoGreeted
+                            && CCSharedWorld.Near(pos, hoshino.GetWorldPosition(),
+                                                  8.0, 2.0, 2.0) {
                             this.m_hoshinoGreeted = true;
                             qs.SetFactStr("cc_g01_hoshino_met", 1);
                         }
 
                     } else {
-                        if this.m_hoshinoSeenAlive && des.IsSpawned(this.m_hoshinoId)
+                        // IsDefined, NOT DynamicEntitySystem.IsSpawned: he is
+                        // community-placed now and that system never knew him.
+                        // The entity survives death as a corpse, which is what
+                        // makes this the right test: it separates "he is dead"
+                        // from "he streamed out", which is the distinction this
+                        // whole branch exists for.
+                        if this.m_hoshinoSeenAlive
+                            && IsDefined(GameInstance.FindEntityByID(
+                                this.GetGameInstance(), this.m_hoshinoId))
                             && Vector4.Distance(pos, CCGig01Places.Hoshino()) < 120.0 {
                             // Anti-stall: the quest phase waits on
                             // cc_g01_hoshino_met before the scene, so a kill
@@ -2410,19 +2760,6 @@ public class CCGig01EncounterTick extends DelayCallback {
 // CCGig01MakeNeutral, CCGig01MakeHostile and CCGig01UploadBarStep were here.
 // Their work moved into shared/scripts (CCShared_Attitude, CCShared_Hud), and
 // those modules carry their own callbacks, so a gig never sees them.
-
-public class CCGig01SpawnStep extends DelayCallback {
-    public let system: wref<NegativeBalanceEncounter>;
-    public let estate: Bool;
-    public let step: Int32;
-    public let tries: Int32;
-    public let placed: Int32;
-    public func Call() -> Void {
-        if IsDefined(this.system) {
-            this.system.SpawnStep(this.estate, this.step, this.tries, this.placed);
-        }
-    }
-}
 
 public class CCGig01SendStep extends DelayCallback {
     public let system: wref<NegativeBalanceEncounter>;
