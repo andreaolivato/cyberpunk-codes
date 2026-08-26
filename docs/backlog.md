@@ -99,6 +99,7 @@ residents rather than anything this mod places.
 | 18 | El Coyote Cojo is shut until Heroes is finished, measured across three saves. The gig waits for it and says so |
 | 19 | The Mama Welles stand-in, and the whole fallback path behind it, deleted |
 | 10 | The 1.2.0 bug pass: a fast-travel lock bound to the wrong state, a gig that never switched itself off, the guard spawn, a decline that answered, and (10k) a voice-only actor buried into the room below. 10i is the one still open |
+| 32 | The gig is absent from every New Game Plus save: a phase parented to a file path is not in the graph an NG+ session runs. One line in the manifest |
 
 `architecture.md` holds the same findings organised by subsystem rather than by
 the question that produced them, and is the better read if you are looking for
@@ -8344,3 +8345,127 @@ of them walked. The mechanism is real in the game's own data, 1780 of 32669
 cached time periods carry more than one spot, but how a MOD gets it is not
 established. Not chased: the cheap version of the question is answered and the
 expensive version is a research line the gig does not need.
+
+## 32. The gig is absent from every New Game Plus save. Cause found, FIXED 2026-08-26
+
+Reported against 1.3.0: on a New Game Plus playthrough the gig never starts. The
+useful half of the report was the comparison, "if I started a fresh game your mod
+would trigger", plus the note that another quest mod had the same problem and
+cured it in an update.
+
+Nothing in the mod is broken on such a save. The quest phase is not there.
+
+### New Game Plus runs its own root quest
+
+New Game Plus is a mod, not a game feature. It does not continue a finished save:
+it reads one and starts a fresh playthrough with the gear, from the prologue or
+from just after the heist.
+
+To do that it ships three root quests of its own,
+`mod\quest\newgameplus.quest`, `mod\quest\newgameplus_q001.quest` and
+`mod\quest\newgameplus_standalone.quest`. Each runs its own copy of the base
+game's root phase, `mod\quest\changedquests\newgameplus_cyberpunk2077.questphase`,
+and none of them references `base\quest\cyberpunk2077.quest` at all.
+
+This gig's manifest named that file, and `ep1\quest\ep1_standalone.quest`, as the
+two parents of its phase. Both are correct and both are unused in an NG+ session,
+so the phase holding the whole gig was never part of the graph being run.
+
+The failure has nothing to read. The mod's sectors stream, its guards stand where
+they were put, its redscript arms itself and sets `cc_g01_start` on schedule.
+Nothing is waiting on that fact, so nothing happens, and from the player's side
+that is identical to a broken install.
+
+### Scopes, which are what makes this a one-line fix
+
+ArchiveXL resolves a phase's `parent:` through a table of named scopes before it
+patches anything. It ships the base table itself, in `Bundle\QuestBaseScope.xl`:
+`cyberpunk2077.quest` expands to `cyberpunk2077_main.quest` and
+`cyberpunk2077_ep1.quest`, and those expand to the two real roots. So on a vanilla
+install the scope name and the pair of paths mean the same thing.
+
+The difference is that a mod can add to a scope. New Game Plus registers all three
+of its roots into `cyberpunk2077_main.quest` and `cyberpunk2077_ep1.quest`, which
+is a compatibility shim offered to every quest mod that uses the name. Nested
+scopes are flattened until stable, so declaration order does not matter.
+
+The manifest now carries one entry, `parent: cyberpunk2077.quest`, and the gig
+follows every root a session can run, including any registered by a mod written
+later. Quest scopes arrived in ArchiveXL 1.22 (2025-04-30), which is the floor
+this sets. Full mechanism in `gotchas.md` #84.
+
+### Where the evidence came from
+
+Read on disk rather than inferred, 2026-08-26:
+
+- the New Game Plus 1.3.1 archive and its `.archive.xl`, which declares the three
+  roots and registers them into the two base scopes;
+- ArchiveXL's shipped `Bundle\QuestBaseScope.xl`;
+- ArchiveXL's source, `QuestPhase/Extension.cpp` (a parent is expanded through the
+  scope table, then patched) and `ResourceMeta/Extension.cpp` (nested scopes
+  flatten until stable);
+- the NG+ root quest itself, unbundled and serialised, which names its four
+  phases and its own copy of the base root phase.
+
+### The four start conditions were suspected first, and all four survive NG+
+
+`Gig01_Start` holds the trigger behind four conditions, and the first guess was
+that one of them reads differently on an NG+ save. None of them does:
+
+- `q101_enable_side_content` is set in an NG+ run. New Game Plus carries its own
+  fix that caps it back to 1 when its start sequence pushes it to 2.
+- `q115_point_of_no_return` is 0, because an NG+ playthrough is a fresh one and
+  not a continuation of the finished save.
+- *Heroes* is a real requirement rather than a bug. A post-heist start has not
+  done it, El Coyote Cojo is shut for the same reason it is shut in any young
+  save (item 18), and the gig says so on screen. It becomes available in the
+  normal course of that playthrough.
+- The phone and fast-travel conditions are about the moment, not the save.
+
+So no condition changes. Recorded for any future gate that does need to know:
+New Game Plus publishes plain quest facts, `ngplus_active`, `ngplus_q001_start`,
+`ngplus_standalone_q101_start`, `ngplus_fresh_start_on`,
+`ngplus_in_johnny_intro_sequence` and `ngplus_use_new_q101`. Reading
+`ngplus_active` is the cheap test for "this is an NG+ save" and costs no
+dependency: it is 0 when the mod is not installed. Its scripts also expose
+`NewGamePlusSystem` with `IsInNewGamePlusSave()`, `IsInNewGamePlusPrologue()` and
+`IsInNewGamePlusHeistOrStandalone()`, but naming that class binds the mod to it
+at compile time, and a fact does not.
+
+### CONFIRMED IN GAME 2026-08-26, both halves, with a control group
+
+New Game Plus was installed here and a post-heist run started twice, once on the
+released 1.3.0 and once on the fix. The evidence is three lines of ArchiveXL's
+own log, written the moment the session loads its quest graph, so neither run
+needed a minute of story.
+
+On 1.3.0:
+
+    [QuestPhase] Patching phase "mod\quest\newgameplus.quest"...
+    [QuestPhase] Merged phase "base\quest\pride_morgan_blackhand_quest.questphase" ...
+    [QuestPhase] Merged phase "mod\quest\phases\pride_david_quest.questphase" ...
+
+Two other quest mods attach to the New Game Plus root and this gig does not
+appear at all. Everything else of this mod merged normally in the same session,
+the journal, the strings and the voice map, which is why nothing looked wrong.
+
+On the fix, same run, same log:
+
+    [QuestPhase] Patching phase "mod\quest\newgameplus.quest"...
+    [QuestPhase] Merged phase "mod\negative_balance\quest\gig01.questphase" from "gig01_negative_balance.archive.xl".
+    [QuestPhase] Merged phase "base\quest\pride_morgan_blackhand_quest.questphase" ...
+    [QuestPhase] Merged phase "mod\quest\phases\pride_david_quest.questphase" ...
+
+**The two mods in those lines are the independent confirmation.** Both ship a
+`.xl` that parents its phase to `cyberpunk2077.quest`, the scope name, which is
+the change made here. They were working in New Game Plus before anyone looked at
+why this one was not.
+
+Two limits on what this proves. It shows the phase is attached to the session,
+not that the gig plays end to end in an NG+ run, which still needs a playthrough
+that has finished *Heroes*. And the base-game path was not re-measured in the
+same sitting, though it is the same expansion and the same log line.
+
+### Still to do
+
+- The fix is in the manifest only, so it ships with the next release.

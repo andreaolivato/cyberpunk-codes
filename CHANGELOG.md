@@ -5,6 +5,11 @@ Negative Balance releases, newest first. The same changelog is on the mod's
 
 ---
 
+## 1.3.1 (2026-08-26)
+
+- **Fixed: New Game Plus compatibility.** The gig can now be played in a
+  playthrough started with New Game Plus - Native. Reported by ukg3no.
+
 ## 1.3.0 (2026-08-25)
 
 Install before starting the gig. A save already inside either Arasaka location

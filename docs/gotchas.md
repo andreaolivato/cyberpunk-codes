@@ -1916,3 +1916,34 @@ Never renumber. Append.
     (`ps:ActionQuestForceON()`) does not execute it, so constructing each one is
     a free way to enumerate the menu. That one probe replaced a queue of
     one-theory-per-playthrough.
+
+84. **Parent a quest phase to the SCOPE `cyberpunk2077.quest`, not to the file
+    `base\quest\cyberpunk2077.quest`. The literal path is absent from a New
+    Game Plus playthrough, and the failure is silent.**
+
+    ArchiveXL ships `Bundle\QuestBaseScope.xl`, which defines three names:
+    `cyberpunk2077.quest` expands to `cyberpunk2077_main.quest` and
+    `cyberpunk2077_ep1.quest`, and those two expand to the real roots,
+    `base\quest\cyberpunk2077.quest` and `ep1\quest\ep1_standalone.quest`. A
+    `parent:` value is run through that table before anything is patched
+    (`ExpandList`, in ArchiveXL's quest phase extension), so on a vanilla
+    install the scope name and the two paths do the same thing.
+
+    The difference is that another mod can ADD to a scope. New Game Plus does:
+    it ships three roots of its own, `mod\quest\newgameplus.quest`,
+    `newgameplus_q001.quest` and `newgameplus_standalone.quest`, each running an
+    edited copy of the base root phase
+    (`mod\quest\changedquests\newgameplus_cyberpunk2077.questphase`), and its
+    `.xl` registers all three into `cyberpunk2077_main.quest` and
+    `cyberpunk2077_ep1.quest`. An NG+ session runs one of those three, never the
+    base root, so a phase attached to the literal path is not in the graph the
+    session is running.
+
+    Nothing announces it. The mod's sectors still stream, its redscript still
+    runs, its facts still set. Only the phase is missing, so a fact that nothing
+    is waiting on does nothing, which from the player's side is identical to a
+    broken install. It reached players as "your mod never triggers in NG+".
+
+    Quest scopes arrived in ArchiveXL 1.22 (2025-04-30). An undefined scope name
+    is treated as a path, and a path that does not exist is skipped with a
+    warning, so using the name sets 1.22 as the floor.

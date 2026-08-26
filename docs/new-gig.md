@@ -170,9 +170,13 @@ Four things learned the hard way:
    working dialogue and audio, and raw LocKeys for the title and objectives. It
    looks perfect in testing, because testing happens in English.
 2. `onscreens` takes a list per locale. Its three siblings take a scalar.
-3. Parent the quest phase twice, to `base\quest\cyberpunk2077.quest` and
-   `ep1\quest\ep1_standalone.quest`. Otherwise it does not exist for players who
-   start from Phantom Liberty.
+3. Parent the quest phase to the SCOPE `cyberpunk2077.quest`, not to a file
+   path. ArchiveXL expands that name to every root quest a session can run,
+   which covers the base game, a Phantom Liberty standalone start, and the
+   three roots the New Game Plus mod registers into the same scope. Name the
+   two base paths one by one instead and the gig does not exist in an NG+
+   playthrough, with no symptom other than nothing happening. Needs ArchiveXL
+   1.22 or newer. See `gotchas.md` #84.
 4. Anchor a map pin to a base-game node rather than to a marker node of your
    own. A node you ship CAN be named, but only in the long
    `$/03_night_city/#district/area/#node` form, and whether a pin resolves

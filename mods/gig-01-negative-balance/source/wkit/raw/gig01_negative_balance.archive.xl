@@ -258,7 +258,26 @@ streaming:
           type: worldEntityNode
 quest:
   phases:
+    # THE PARENT IS A SCOPE NAME, NOT A FILE PATH. That is the whole of New
+    # Game Plus compatibility, and it is why this used to be two entries.
+    #
+    # ArchiveXL ships `Bundle\QuestBaseScope.xl`, which defines the scope
+    # `cyberpunk2077.quest` as every root quest a session can run. Out of the
+    # box it expands to `base\quest\cyberpunk2077.quest` and
+    # `ep1\quest\ep1_standalone.quest`, the two paths this file used to name
+    # one by one, so on a vanilla install the two spellings do the same thing.
+    #
+    # The difference is that another mod can ADD to a scope, and the New Game
+    # Plus mod does. A NG+ session does not run the base game's root quest at
+    # all: it runs one of three of its own, holding an edited copy of the base
+    # root phase, and its .xl registers all three into this same scope. So a
+    # phase parented to the literal path is simply not in the graph an NG+
+    # session is running, and the gig cannot exist there however healthy the
+    # rest of the mod is. That was the 1.3.0 report: the world edits loaded,
+    # the trigger script set `cc_g01_start`, and nothing was listening.
+    #
+    # Named rather than pathed, the gig follows every root, including the
+    # three NG+ ones and anything a future mod registers. Quest scopes arrived
+    # in ArchiveXL 1.22, which is the floor this line sets.
     - path: mod\negative_balance\quest\gig01.questphase
-      parent: base\quest\cyberpunk2077.quest
-    - path: mod\negative_balance\quest\gig01.questphase
-      parent: ep1\quest\ep1_standalone.quest
+      parent: cyberpunk2077.quest
