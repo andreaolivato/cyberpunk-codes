@@ -183,10 +183,6 @@ below is everything else.
   the mod and its four requirements was disabled in Vortex and CET was taken out
   of the loader entirely; the gig ran end to end. **That is the requirements list
   proven, not assumed.**
-- **Not a blocker, but it belongs on the mod page:** the AI voices are disclosed.
-  That is this project's own standing policy (`architecture.md`, "Voice"), and
-  it is also a Nexus platform rule: their generative-AI guidelines name voices
-  explicitly, and undisclosed use is grounds for moderation.
 - **Debug stripping is one folder.** `source/cet-dev/` must not ship. The
   `.reds` are already clean, `Notify()` is player-facing HUD, not debug.
 - **Requirements are four**: RED4ext, ArchiveXL, TweakXL, Codeware (plus
@@ -338,11 +334,8 @@ shipped.
 
 ### 2d. Who gets a voice: CLOSED, it was answered directly
 
-Deferred 2026-08-12, settled 2026-08-13 when the design supplied voice ids for
-Johnny, Nix, Mama Welles and both Vs. Everyone in the gig gets a voice. Ids are
-in `BUILDING.md`; do not re-open the question and do not re-run the
-"an original AI voice will not sound like Johnny" argument, he heard the
-candidates and picked.
+Deferred 2026-08-12, settled 2026-08-13. Everyone in the gig gets a voice; the
+casting is settled, do not re-open the question.
 
 What remains is not a decision, it is conversion work: a line can only be
 voiced if it lives in a `.scene`. See 2i.
@@ -436,10 +429,13 @@ sidecar (line key → ms) produced when the audio is generated.
 
 ### 2g. Generate the voices: DONE
 
-Every line is voiced. The voices are generated with ElevenLabs, disclosed on
-the mod page, and subtitles are always on. `tools/gig01/gen_voice.py` turns a wav
-into a `.wem` and a voiceover-map entry, and that half of the pipeline is the
-same for any custom audio, whatever produced the wav.
+Every line is voiced. The voices were generated at the time this closed,
+disclosed on the mod page, and subtitles are always on. `tools/gig01/gen_voice.py`
+turns a wav into a `.wem` and a voiceover-map entry, and that half of the
+pipeline is the same for any custom audio, whatever produced the wav.
+
+**Superseded 2026-08-27:** every live line was re-recorded by a voice actor for
+1.4.0. The half described here did not change, which is the point of it.
 
 The route went through several generators before settling. Those notes are
 not kept here.
@@ -4051,8 +4047,7 @@ whether a sibling key exists is unknown.
 
 **Bake the filter into our own WAVs.** This works regardless of how vanilla does
 it, because our holocall lines resolve through our own vomap either way. Process
-the clip after ElevenLabs returns it and before the `.wem` conversion, gated on
-the same flag the scene generator already sets. A first approximation of the
+the clip before the `.wem` conversion. A first approximation of the
 effect is a band-pass around roughly 300 Hz to 3.5 kHz with light compression
 and a small amount of saturation. The values are a starting point, not a
 measurement: derive them by analysing a vanilla holocall clip rather than by

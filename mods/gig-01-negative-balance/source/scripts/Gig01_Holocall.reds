@@ -27,9 +27,12 @@
 //      (GetPhoneCallFactName: "phonecall_" + caller + "_with_" + addressee,
 //      both lowercased) with questPhoneTalkingState: Ended 0, Initializing 1,
 //      Talking 2, Rejected 3
-//   3. on Talking we queue StartCall - the chrome only becomes a holocall on
-//      that phase, answering alone does not do it - and set cc_g01_call_talking,
-//      which is what the quest phase waits on before entering the scene
+//   3. on Talking we queue StartCall: the chrome only becomes a holocall on
+//      that phase, answering alone does not do it. StartCall also makes the
+//      game write the fact back to Initializing (phoneSystem.swift:113), and
+//      the chrome writes Talking again once its call widget is actually up.
+//      We wait for that second Talking, then set cc_g01_call_talking, which
+//      is what the quest phase waits on before entering the scene
 //   4. scene ends -> quest phase sets cc_g01_call_end -> we queue EndCall and
 //      set cc_g01_call_done
 //
@@ -297,6 +300,9 @@ public class NegativeBalanceHolocall extends ScriptableSystem {
     // have re-rung a ringing phone after 2.4 s and cut V's dial tone to 0.2 s.
     // Whenever the cadence moves, these move with it.
     private func DialToneTicks() -> Int32 { return 10; }     // ~2 s
+    // How long state 2 waits for the call chrome to report ready before
+    // proceeding anyway. A safety net, not the mechanism; see case 2.
+    private func ChromeWaitTicks() -> Int32 { return 15; }   // ~3 s
 
     // HOW LONG THE PHONE ACTUALLY RINGS, which is not how long state 1 lasts.
     //
@@ -952,6 +958,9 @@ public class NegativeBalanceHolocall extends ScriptableSystem {
                     qs.SetFactStr(p + "_answered", 1);
                     this.Call(call, questPhoneCallPhase.StartCall);
                     this.m_state[call] = 2;
+                    // m_waited becomes state 2's timeout counter; it still
+                    // holds the ring count from this state.
+                    this.m_waited[call] = 0;
                 } else {
                     if qs.GetFactStr(this.PhoneFact(call))
                         == EnumInt(questPhoneTalkingState.Rejected) {
@@ -1035,17 +1044,51 @@ public class NegativeBalanceHolocall extends ScriptableSystem {
                     qs.SetFactStr(p + "_answered", 1);
                     this.Call(call, questPhoneCallPhase.StartCall);
                     this.m_state[call] = 2;
+                    // m_waited becomes state 2's timeout counter; it just
+                    // finished counting the dial tone.
+                    this.m_waited[call] = 0;
                 }
                 break;
             case 2:
-                // The call UI has survived a whole tick (0.2 s now, not 2 s).
-                // Only now let the quest phase into the scene. cc_g01_no_scene
-                // is the other half of the bisect: set it from the dev menu to
-                // answer the phone with no scene behind it at all.
-                if qs.GetFactStr("cc_g01_no_scene") <= 0 {
-                    qs.SetFactStr(p + "_talking", 1);
+                // WAIT FOR THE CALL CHROME TO SAY IT IS UP, not a fixed beat.
+                //
+                // Our StartCall makes PhoneSystem.TriggerCall write the game's
+                // call fact back to Initializing (phoneSystem.swift:113). The
+                // hud controller writes it to Talking again, and only from
+                // UpdateHoloAudioCall's StartCall branch
+                // (newHudPhoneGameController.swift:1014), which cannot run
+                // before the call widget exists: it is reached either from the
+                // widget's own spawn callback or through a controller
+                // reference that callback sets. So Talking read HERE, after
+                // our StartCall, is the chrome reporting itself ready. The
+                // pickup writes Talking too (OnPickupPhone), but that value is
+                // gone by now: our StartCall overwrote it.
+                //
+                // This state used to hold for one blind tick instead, and the
+                // scene's first line could fire into a UI still coming up.
+                // Recorded-voice test, 2026-08-28: "The first Elena line
+                // didn't seem to trigger. it just had a long blank space and
+                // then played the second line." The widget normally spawns
+                // while the phone is still RINGING (HandleCall runs on
+                // IncomingCall too), so this wait usually costs nothing; it
+                // only holds on a machine where the spawn is still in flight.
+                //
+                // The timeout is a safety net, not the mechanism. If the fact
+                // never comes back, proceed anyway, which is exactly the old
+                // behaviour; a stranded gig is the one outcome this file is
+                // never allowed to produce.
+                //
+                // cc_g01_no_scene is the other half of the bisect: set it from
+                // the dev menu to answer the phone with no scene behind it.
+                this.m_waited[call] += 1;
+                if qs.GetFactStr(this.PhoneFact(call))
+                    == EnumInt(questPhoneTalkingState.Talking)
+                    || this.m_waited[call] >= this.ChromeWaitTicks() {
+                    if qs.GetFactStr("cc_g01_no_scene") <= 0 {
+                        qs.SetFactStr(p + "_talking", 1);
+                    }
+                    this.m_state[call] = 3;
                 }
-                this.m_state[call] = 3;
                 break;
             case 3:
                 if qs.GetFactStr(p + "_end") > 0 {

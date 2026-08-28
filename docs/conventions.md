@@ -51,6 +51,8 @@ value any two generators share belongs there rather than in both.
 Per-mod journal entries under our own path, never editing base game journal files in place.
 
 ## Voice
-Voices are generated with ElevenLabs and disclosed on the mod page. Subtitles
+Voices are performed by human voice actors and modulated with custom trained
+RVC models to resemble original NPCs (performed and edited by @fronterawave).
+Subtitles
 always. Audio resolves through a mod-supplied `locVoiceoverMap`, so Audioware is
 not a dependency. See `architecture.md`, "Voice".

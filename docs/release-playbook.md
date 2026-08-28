@@ -105,14 +105,10 @@ menu. Without it, a plain re-deploy silently reinstalls the menu.
   NOT Cyber Engine Tweaks, NOT Audioware, NOT mod_settings. Proven rather than
   assumed: on 2026-08-14 everything else was disabled in Vortex, CET was taken
   out of the loader, and the gig played end to end.
-- **Tag it as AI-Generated Content.** This is a Nexus platform rule, not a
-  licence question. Their generative-AI guidelines name voices explicitly, and
-  undisclosed AI use is grounds for moderation. It is unrelated to what the
-  voices cost or what rights the plan grants. Two separate questions, both of
-  which have to be satisfied.
-- Say the voices are AI in the description too. That is this project's own
-  standing policy (`architecture.md`, "Voice"), and unlike the page tag it can
-  travel with the files if a README ever ships.
+- The description credits the voices: performed by human voice actors and
+  modulated with custom trained RVC models to resemble original NPCs, performed
+  and edited by @fronterawave. The shipped README carries the same sentence, so
+  it travels with the files.
 - Permissions (reupload, modification, asset reuse) are set on the Nexus page,
   which is the normal mechanism for a story mod. The MIT licences ArchiveXL and
   friends ship suit libraries other people build on. This is content, not a

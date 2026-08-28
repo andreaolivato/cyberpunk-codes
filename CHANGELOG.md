@@ -5,6 +5,17 @@ Negative Balance releases, newest first. The same changelog is on the mod's
 
 ---
 
+## 1.4.0 (2026-08-28)
+
+- **Changed: every voice line is a new recording.** Voices are performed by
+  human voice actors and modulated with custom trained RVC models to resemble
+  original NPCs. Voices performed and edited by @fronterawave.
+- **Changed: subtitles follow the new recordings**, which reword many lines.
+- **Added: Nix explains the malware he is sending** during his callback, before
+  V asks where Hoshino is.
+- **Fixed: the first line of a call could play as silence** when the call was
+  answered before its screen had finished loading. Reported by fronterawave.
+
 ## 1.3.1 (2026-08-26)
 
 - **Fixed: New Game Plus compatibility.** The gig can now be played in a

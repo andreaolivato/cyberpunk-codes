@@ -121,11 +121,11 @@ stops you re-voicing lines; it doesn't stop you building.
 
 ## Voices
 
-Generated with ElevenLabs. Every line subtitled.
+Voices are performed by human voice actors and modulated with custom trained RVC models to resemble original NPCs. Voices performed and edited by @fronterawave. Every line subtitled.
 
 The pipeline does not care where a WAV came from: `tools/gig01/gen_voice.py` turns any
 WAV into a `.wem` through Wwise and builds the `locVoiceoverMap` the game
-resolves audio through, so recording real voice actors uses the same steps.
+resolves audio through.
 Audioware isn't required; players install nothing extra.
 
 ## Licence

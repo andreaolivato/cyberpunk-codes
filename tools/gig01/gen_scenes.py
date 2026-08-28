@@ -18,6 +18,22 @@ the list; gen_voice reads it too, so it is the one place scenes are enumerated.
   gig01_epilogue    Mama Welles in El Coyote Cojo
   gig01_bar         the last two lines of the comic (p63)
 
+RECORDINGS ARE THE SOURCE NOW (2026-08-19)
+
+The comic used to be the authority on wording, and several comments below still
+explain a decision in those terms. That changed when the lines were re-recorded
+by a voice actor: 19 of the 59 spoken lines were reworded in the booth, and a
+subtitle that disagrees with the audio is a bug the player can hear. So the
+order of authority is the recording first, then the comic for order, beats and
+intent.
+
+Three lines are recorded differently for each body and carry a separate male
+subtitle through `add_line(male=...)`: elena_call v05, hoshino vh1 and terminal
+t10. Mama Welles' mija/mijo used the same mechanism first.
+
+Do not "restore" a line to its comic wording without listening to the clip. The
+transcripts that drove this pass are not in the repo; the audio is.
+
 WHY SCENES AT ALL - and the answer got much bigger on 2026-08-13.
 
 The original reason was dialogue CHOICES: a choice hub is written natively into
@@ -291,8 +307,9 @@ def build_elena():
     The cause was structural, not a taste failure. Every V line in the gig was a
     hub OPTION, because no scene had a player actor and options need no actor.
     So the hub count was pinned to V's line count and could not come down
-    without cutting his dialogue, which is not on the table - the comic is the
-    source and it is verbatim.
+    without cutting his dialogue, which is not on the table. The comic was the
+    source and the wording was verbatim; see RECORDINGS ARE THE SOURCE NOW at
+    the top of this file for what replaced that rule.
 
     THE FIX IS THE PLAYER ACTOR (see add_player, which explains why the reason it
     was avoided turned out not to exist). V's lines become spoken sections. Two
@@ -317,38 +334,50 @@ def build_elena():
         return s.add_line(v, text, key=key)
 
     start = s.start('elena_call_in')
-    # COMIC pp. 3-11, in order. Nothing is cut and nothing is reworded.
+    # COMIC pp. 3-11, in order. Nothing is cut. The wording follows the
+    # recordings, which reworded eight of these lines; the comic is still the
+    # order, the beats and the intent.
     s1 = s.section([
-        E("V? Sorry. I didn't know if you'd answer. My name's Elena Ortega.", 'e01'),
+        E("V? Sorry, I... I didn't know if you'd answer. "
+          "My name's Elena Ortega.", 'e01'),
     ], holocall=True)
     # The comic's "Wrong hour for a friendly call." is V thinking out loud as the
     # phone rings, NOT an answer to a stranger introducing herself - offering it
     # as a reply read wrong (playtest, 2026-08-12). It belongs to the ring, which
     # the scene does not cover, so it is gone rather than forced.
     s2 = s.section([
-        E("I'm from Heywood. Jackie Welles used to help my family.", 'e02'),
+        E("I'm from Heywood. My mom and Mama Welles grew up together. "
+          "Jackie Welles used to help my family sometimes.", 'e02'),
     ], holocall=True)
     # She has had two turns; now he answers. V's lines are NOT holocall - he is
     # the one holding the phone, not the voice coming out of it, so his audio
     # plays from his own position and his expression is Vo_Expression_Spoken.
-    v2 = s.section([V("Ortega... yeah. Mama Welles mentioned you.", 'v02')])
+    v2 = s.section([V("Ortega? Yeah, Mama Welles mentioned you.", 'v02')])
     s3 = s.section([
-        E("I didn't know who else to call. Jackie said you don't turn your back "
-          "on people.", 'e03'),
+        E("V, I think I'm in big trouble, and I didn't know who else to "
+          "call. I remember Jackie saying that you don't turn your back on "
+          "people.", 'e03'),
     ], holocall=True)
     # HUB 1 of 2. He is deciding to take this seriously.
     c3 = s.choice([s.add_option("Start from the top.", 'o03')])
     v3 = s.section([V("Alright. Start from the top.", 'v03')])
     s4 = s.section([
-        E("I work with community accounts. People's debts are just zeroing out. "
-          "No disputes. No appeals.", 'e04'),
-        E("When a debtor dies, their account should freeze. Instead, it clears. "
-          "Immediately. I thought it was a glitch. It's not. Too many times.", 'e05'),
-        E("I wasn't authorized to see this. I only noticed because I handle "
-          "reconciliations. My access was revoked afterward.", 'e06'),
+        E("I work in finance with community accounts and I noticed "
+          "something. People's debts are just zeroing out. They're not "
+          "filing disputes or appeals. It's just gone.", 'e04'),
+        E("When a debtor dies, their account should freeze, but instead "
+          "it's clearing, like, immediately. I thought it was a glitch, but "
+          "it's not. It's just happened too many times.", 'e05'),
+        E("I wasn't authorized to see it. I only noticed because I handle "
+          "reconciliations. When I told my boss, my access was revoked and "
+          "security walked me out of the building. I just think something's "
+          "going on.", 'e06'),
     ], holocall=True)
     v4 = s.section([V("Hold on. Are you safe right now?", 'v04')])
-    s5 = s.section([E("I... don't know.", 'e07')], holocall=True)
+    s5 = s.section([
+        E("I... I don't know. Should I be worried that they're after me or "
+          "something?", 'e07'),
+    ], holocall=True)
     # HUB 2 of 2. Her answer is the hinge of the scene and this is where he stops
     # listening and starts running it.
     # THE BUTTON IS A PARAPHRASE, NOT THE LINE. See _beat's note and the survey
@@ -356,10 +385,19 @@ def build_elena():
     # playtest, 2026-08-13: "the choice on which I need to press F is very long
     # because it contains the whole string that is then said by V".
     c5 = s.choice([s.add_option("Go to Mama Welles.", 'o05')])
-    v5 = s.section([V(
-        "Okay. Listen to me. Go to El Coyote. Stay with Mama Welles. "
-        "I'll check what I can. Where do you work?", 'v05')])
-    s6 = s.section([E("Sending you the location.", 'e08')], holocall=True)
+    # V's two takes were reworded differently in the booth, so this is one of
+    # three lines carrying a separate male subtitle. Same mechanism as Mama
+    # Welles' mija/mijo, and the reason it exists: one recording per body.
+    v5 = s.section([s.add_line(
+        v,
+        "Okay, listen to me. Go to El Coyote and stay with Mama Welles. "
+        "I'll check what I can. Where do you work?",
+        male="Okay, listen to me. I want you to go to El Coyote. Stay with "
+             "Mama Welles. I'll check what I can. Where do you work?",
+        key='v05')])
+    s6 = s.section([
+        E("Thank you, V. Sending you the location of my office.", 'e08'),
+    ], holocall=True)
     # V's "Got it. Wait. That's-" USED TO BE HERE and has MOVED to
     # gig01_arasaka - see build_arasaka. It is the same line, the same take and
     # the same words; only which scene owns it changed, because it is the line
@@ -516,9 +554,24 @@ def build_nix(holo=False):
         N("One exec signs off on all of it. Hoshino.", 'n06'),
         N("Nothing pays without his sign-off. Ever.", 'n03'),
     ], holocall=True)
+    # THE MALWARE HANDOVER, recorded and added 2026-08-27. It sits here, before
+    # V asks where, because Nix mentions Hoshino's TERMINAL and the question
+    # follows from it: V is asking where the man with that terminal is.
+    #
+    # This reverses the 2026-08-14 decision recorded below, and deliberately.
+    # The line cut then was INVENTED and the comic does not motivate the malware
+    # objective; this one is recorded, so the objection that closed the question
+    # ("it was invented") no longer applies. Read the note at the end of this
+    # builder with that in mind: what it says about the comic is still true, and
+    # what it concludes about the objective needing no setup is now overruled.
+    s2a = s.section([
+        N("Oh, sending you some malware to upload to Hoshino's terminal. "
+          "Should wipe that kill ledger clean and liberate a few extra eddies "
+          "at the same time.", 'n07'),
+    ], holocall=True)
     c1 = s.section([s.add_line(v, "Where.", key='on1')])
     s2 = s.section([
-        N("North Oak. Private Arasaka residence.", 'n04'),
+        N("He's in North Oak. Private Arasaka residence.", 'n04'),
     ], holocall=True)
     # p30's OTHER two lines, restored 2026-08-13. The gig cut from the address
     # straight to the objective, which landed flat - and "On my way." had been
@@ -550,14 +603,18 @@ def build_nix(holo=False):
     #   "Nothing pays without his sign-off." + "Ever." /
     #   "North Oak. Private Arasaka residence."                  (pp. 29-30)
     #
-    # It was there to motivate the malware objective, and that turned out not to
-    # need motivating: the comic has V do it anyway (pp. 49-51), and p51's
-    # "No more payouts." is already the last line of UploadStep. The objective
-    # text carries the rest.
+    # It was there to motivate the malware objective. That was judged unnecessary
+    # at the time, because the comic has V do it anyway (pp. 49-51) and p51's
+    # "No more payouts." is already the last line of UploadStep.
+    #
+    # SUPERSEDED 2026-08-27 by n07 above, which is a RECORDED line doing the
+    # same job. The reasoning here was never that the setup was unwanted, it was
+    # that an invented line was too high a price for it. A recorded one is not.
     out = s.end('nix_call_out')
 
     s.link(start, s1)
-    s.link_section(s1, c1)
+    s.link_section(s1, s2a)
+    s.link_section(s2a, c1)
     s.link_section(c1, s2)
     s.link_section(s2, out)
     return s
@@ -598,7 +655,9 @@ def build_graves():
 
 
 def build_nix_brief(holo=False):
-    """V hands Nix the ledger and hires him. Comic pp. 26-27, verbatim.
+    """V hands Nix the ledger and hires him. Comic pp. 26-27.
+
+    Wording follows the recordings, the comic the order and the beats.
 
     THIS CALL WAS MISSING and its absence was a real hole: the gig had V read a
     kill ledger and then receive a callback about it from a netrunner he had
@@ -676,7 +735,7 @@ def build_nix_brief(holo=False):
         # also what his conversation title ("That ledger you sent me.") and vb5
         # already say. The "names" claim was the one thing in V's side of this
         # call that the gig never showed him getting.
-        V("Cracked the logs. Downloaded the ledger.", 'vb2'),
+        V("I cracked the logs, downloaded the ledger.", 'vb2'),
         V("Someone's signing off on every one of these.", 'vb5'),
         # playtest, 2026-08-14: *"remove 'and how we make it stop'"*. The second
         # half was doing no work - the line before it already states the
@@ -884,7 +943,7 @@ def build_hoshino():
     # IF HE IS SUDDENLY QUIET, this is the line to put back. `inner_vo=True` on
     # both sections restores exactly the previous behaviour and costs only the
     # spatial audio.
-    s1 = s.section([s.add_line(hoshino, "Mmm? You lost, merc?", key='h01')])
+    s1 = s.section([s.add_line(hoshino, "Hmm? Are you lost, merc?", key='h01')])
     # NOT the comic's wording. p45 reads "You know who I am." - a flat
     # assertion - and playtest, 2026-08-14: "Hoshino's phrasing is weird". It is,
     # and the cause is structural rather than lexical: the comic has a page turn
@@ -902,14 +961,16 @@ def build_hoshino():
     #
     # DO NOT change this string without generating the audio in the same pass.
     # Nothing downstream compares subtitle text to the clip, so a desync here
-    # would be silent - this line is why Hoshino was moved to ElevenLabs.
+    # would be silent.
     s2 = s.section([s.add_line(hoshino, "Do you know who I am?", key='h02')])
     c1 = s.choice([s.add_option("Name what he signed.", 'oh1')])
     # ...and then V SAYS it. playtest, 2026-08-13: "V reply to hoshino is silent".
     # It was a hub option and nothing else - the player pressed a line nobody
     # spoke. Same fix as Elena's two kept hubs: press it, then hear it.
-    v1 = s.section([s.add_line(v, "I know what you signed. I know who paid "
-                               "for it.", key='vh1')])
+    v1 = s.section([s.add_line(v, "I know what you signed and I know who paid "
+                               "for it.",
+                               male="I know what you signed and who paid for it.",
+                               key='vh1')])
     out = s.end('hoshino_out')
 
     s.link(start, s1)
@@ -1190,7 +1251,7 @@ def build_terminal():
     start = s.start('terminal_in')
     s1 = s.section([V("That's not debt collection.", 't01')])
     s2 = s.section([J("It's a production line.", 't02')], inner=True)
-    s3 = s.section([V("Insure them. Flatline them. Get the eddies.", 't03')])
+    s3 = s.section([V("Insure 'em, flatline 'em, get the eddies.", 't03')])
     s4 = s.section([J("Welcome to corporate efficiency.", 't04')], inner=True)
     # p22 ends here; p25 is the pair working out what to do with it, which is
     # what makes the sequence close properly - names with no addresses is why a
@@ -1215,8 +1276,15 @@ def build_terminal():
     # reads the shard, and Johnny REAPPEARS for "Figures." as gig01_shard_read.
     # That is a genuine gap with player action in it and it stays a separate
     # scene.
-    s6 = s.section([V("We need a netrunner to find who's responsible.", 't10')])
-    s7 = s.section([J("We know one.", 't09')], inner=True, tail_ms=800)
+    # Separate male subtitle, as gig01_elena_call v05 explains.
+    s6 = s.section([s.add_line(
+        v,
+        "We're gonna need a netrunner to find out who's responsible.",
+        male="If we want to find who's responsible, we're gonna need the "
+             "netrunner.",
+        key='t10')])
+    s7 = s.section([J("Good thing we know one. Give Nix a call.", 't09')],
+                   inner=True, tail_ms=800)
     out = s.end('terminal_out')
 
     s.link(start, s1)
@@ -1284,10 +1352,15 @@ def build_shard_read():
     # and sets up two later beats: the mercs are why V and Johnny are implicated
     # at all, and it is the claim Nix confirms on the callback.
     #
-    # "We do the killing." is UNTOUCHED and still verbatim - it is the half that
-    # lands, and its clip is unchanged.
+    # "We do the killing." is UNTOUCHED: it is the half that lands, and its
+    # clip is unchanged.
     s1 = s.section([
-        s.add_line(v, "They're not sending their own. They're paying mercs.",
+        # The two takes name Arasaka's people differently, so this is a
+        # fourth line with a separate male subtitle.
+        s.add_line(v, "They're not sending corporate assassins. They're "
+                   "paying mercs to do these executions.",
+                   male="They're not sending Arasaka muscle. They're paying "
+                        "mercs to do these executions.",
                    key='sr3'),
         s.add_line(v, "We do the killing.", key='sr2'),
     ])
@@ -1332,11 +1405,13 @@ def build_legend():
     # question about what he is being paid to do, which is the one the gig is
     # actually about.
     s1 = s.section([
-        s.add_line(v, "Is this how a merc becomes a legend in Night City?", key='l05'),
+        s.add_line(v, "Is this what a merc has to do to become a legend?",
+                   key='l05'),
         s.add_line(v, "Killing to pad Arasaka's books?", key='l02'),
     ])
     s2 = s.section([s.add_line(johnny, "No.", key='l03')], inner=True)
-    s3 = s.section([s.add_line(johnny, "A legend picks who pays", key='l04')],
+    s3 = s.section([s.add_line(johnny, "A real legend always picks who pays",
+                               key='l04')],
                    inner=True, tail_ms=800)
     out = s.end('legend_out')
     s.link(start, s1)
@@ -1358,8 +1433,8 @@ def build_kill():
     s, johnny, v = _beat('gig01_kill', visible_johnny=True)
     start = s.start('kill_in')
     s1 = s.section([s.add_line(v, "Ledger's closed.", key='k01')])
-    s2 = s.section([s.add_line(johnny, "They always think names beat bullets.",
-                               key='k02')], inner=True, tail_ms=800)
+    s2 = s.section([s.add_line(johnny, "Corpo-rats always think names beat "
+                               "bullets.", key='k02')], inner=True, tail_ms=800)
     out = s.end('kill_out')
     s.link(start, s1)
     s.link_section(s1, s2)
@@ -1545,11 +1620,11 @@ def _epilogue(name):
     s1 = s.section([s.add_line(mama, "You look tired, mija.",
                                male="You look tired, mijo.", key='m01')],
                    lead_ms=2600)
-    c1 = s.choice([s.add_option("Long night. She okay?", 'oe1')])
+    c1 = s.choice([s.add_option("Long night. Is she okay?", 'oe1')])
     # ...and V says it. playtest, 2026-08-13: "Missing V replies to Mama Welles as
     # audio". Both of his lines here were hub options - UI text that nobody
     # speaks - which is the same gap that left him silent to Hoshino.
-    v1 = s.section([s.add_line(v, "Long night. She okay?", key='ve1')])
+    v1 = s.section([s.add_line(v, "Long night. Is she okay?", key='ve1')])
     s2 = s.section([s.add_line(mama, "She's in the back.", key='m02')])
     # "Nova. I'll get a drink." now ENDS this scene, and it is a cue rather than
     # a sign-off: the gig hands V a new objective to walk to the bar.
@@ -1683,7 +1758,8 @@ def build_bar():
     # the comic. It should land in silence, not under a completion banner. The
     # phase adds a further delay on top; both are cheap and neither gates
     # anything (never gate quest completion on presentation).
-    s2 = s.section([s.add_line(johnny, "Good. Let her sleep.", key='j01')],
+    s2 = s.section([s.add_line(johnny, "Let her sleep. You did good, V.",
+                               key='j01')],
                    inner=True, tail_ms=1200)
     out = s.end('bar_out')
 

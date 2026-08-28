@@ -128,13 +128,14 @@ CAST = {
     # the comic-verbatim exception to Nix - n05/n06 replace it. Its .wem stays
     # in source/audio, unreferenced; the key is not reused.
     'nix':     {'gig01_nix_brief': ['b02', 'b03', 'b04', 'b05'],
-                'gig01_nix_call': ['n01', 'n05', 'n06', 'n03', 'n04'],
+                'gig01_nix_call': ['n01', 'n05', 'n06', 'n03', 'n07', 'n04'],
                 # THE VIDEO TWINS of Nix's two calls. Same words in the same
                 # order; audio is keyed by (scene, key), so a second scene needs
                 # its own takes and they are md5-identical copies of the ones
                 # above. Nothing was regenerated and no voice work is involved.
                 'gig01_nix_brief_holo': ['b02', 'b03', 'b04', 'b05'],
-                'gig01_nix_call_holo': ['n01', 'n05', 'n06', 'n03', 'n04']},
+                'gig01_nix_call_holo': ['n01', 'n05', 'n06', 'n03', 'n07',
+                                        'n04']},
     'mama':    {'gig01_epilogue': ['m01', 'm02']},
     # Johnny and V arrived 2026-08-13, when the bar ending stopped being a pair
     # of scripted captions and became a real scene, and when V's hub options
@@ -238,6 +239,43 @@ configure(wem_out=WEM_OUT, vomap_out=VOMAP_OUT, depot_vo=DEPOT_VO,
           audio_src=AUDIO_SRC)
 
 
+def check_holo_twins():
+    """A video-call take must be the same recording as its voice-call twin.
+
+    The two Nix calls exist twice, `<scene>` and `<scene>_holo`, because a scene
+    is what carries audio and the video route needs its own. Same words, same
+    order, and the audio is meant to be a straight copy: see CAST above.
+
+    NOTHING ENFORCED THAT, and it broke silently. The voice-actor takes were
+    installed under the voice-call names only, so for weeks Nix and V spoke in
+    the actor's voice everywhere in the gig EXCEPT during his two calls, which
+    are the route the quest tries first. 21 of 22 twins had diverged before
+    anyone looked, and the give-away was a comment claiming they were identical.
+
+    Fatal rather than a warning, because the symptom is a voice change mid-gig
+    that a build reports as success. If a video take is ever meant to differ,
+    change this function and say why.
+    """
+    holo = [f for f in os.listdir(AUDIO_SRC)
+            if f.endswith('.wav') and '_holo__' in f]
+    drifted = []
+    for f in sorted(holo):
+        twin = os.path.join(AUDIO_SRC, f.replace('_holo__', '__'))
+        if not os.path.exists(twin):
+            continue
+        with open(os.path.join(AUDIO_SRC, f), 'rb') as a, open(twin, 'rb') as b:
+            if a.read() != b.read():
+                drifted.append(f)
+    if drifted:
+        lines = ['These video-call takes are not copies of their voice-call twin:']
+        lines += ['  ' + f for f in drifted]
+        lines += ['',
+                  'A new take was installed under one name and not the other, so',
+                  'the two Nix calls would use different voices. Copy each one',
+                  'over from the name without `_holo`.']
+        raise SystemExit(chr(10).join(lines))
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--placeholder', action='store_true',
@@ -248,6 +286,7 @@ def main():
     texts = line_texts(gs.ALL_BUILDERS)
     holocall = holocall_lines(gs.ALL_BUILDERS)
     os.makedirs(AUDIO_SRC, exist_ok=True)
+    check_holo_twins()
 
     wavs, durations, vomap = [], {}, []
     phoned = 0

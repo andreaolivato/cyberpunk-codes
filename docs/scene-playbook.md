@@ -130,8 +130,11 @@ handshake:
    `PhoneSystem.GetPhoneCallFactName`) with a `questPhoneTalkingState`:
    **Ended 0, Initializing 1, Talking 2, Rejected 3**
 3. on `Talking` the script queues `StartCall`. **Answering alone does not turn
-   the chrome into a holocall**. Only the `StartCall` phase does, and sets the
-   fact the quest phase waits on before entering the scene
+   the chrome into a holocall**. Only the `StartCall` phase does. `StartCall`
+   also makes the game rewrite the fact to `Initializing`; the hud controller
+   writes `Talking` again once the call widget is actually up. **Wait for that
+   second `Talking`** before setting the fact the quest phase waits on, or the
+   scene's first line can play into a UI that is still loading (gotchas.md 86)
 4. the scene ends → quest phase sets a fact → script queues `EndCall`
 
 ### Audio, not Video: a script-issued Video holocall CRASHES the game

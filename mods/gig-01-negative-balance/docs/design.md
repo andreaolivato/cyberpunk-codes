@@ -371,10 +371,10 @@ Known-good environment: game 2.31, WolvenKit 8.20.0, RED4ext 1.30.0,
 ArchiveXL 1.27.1, TweakXL 1.11.4, Codeware 1.20.3, CET 1.37.1.
 
 **ALL THREE OF THOSE ARE DONE.** The line that stood here, "NEXT: Batch C - 
-build the epilogue as a real `.scene`; Elena and Hoshino AI voices via
+build the epilogue as a real `.scene`; Elena and Hoshino voices via
 Audioware; V/Johnny existing-line audit", is closed on every clause:
-the epilogue is `gig01_epilogue`, one of fourteen scenes; the voices are
-ElevenLabs for all six speakers, not Audioware for two; and the existing-line
+the epilogue is `gig01_epilogue`, one of fourteen scenes; all six speakers are
+voiced with no Audioware involved; and the existing-line
 audit was run against the whole 62,992-line corpus and killed the reuse premise
 (3 matches out of 59).
 

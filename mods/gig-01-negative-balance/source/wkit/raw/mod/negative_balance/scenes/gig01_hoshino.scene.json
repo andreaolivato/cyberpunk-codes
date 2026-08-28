@@ -195,7 +195,7 @@
           },
           "voicetagId": {
             "$type": "scnVoicetagId",
-            "id": "1624173162010259592"
+            "id": "1624173162010259600"
           }
         }
       ],
@@ -451,7 +451,7 @@
         "vpEntries": [
           {
             "$type": "scnlocLocStoreEmbeddedVariantPayloadEntry",
-            "content": "Mmm? You lost, merc?",
+            "content": "Hmm? Are you lost, merc?",
             "variantId": {
               "$type": "scnlocVariantId",
               "ruid": "2445439723238494045"
@@ -459,7 +459,7 @@
           },
           {
             "$type": "scnlocLocStoreEmbeddedVariantPayloadEntry",
-            "content": "Mmm? You lost, merc?",
+            "content": "Hmm? Are you lost, merc?",
             "variantId": {
               "$type": "scnlocVariantId",
               "ruid": "3056403331922543428"
@@ -499,7 +499,7 @@
           },
           {
             "$type": "scnlocLocStoreEmbeddedVariantPayloadEntry",
-            "content": "I know what you signed. I know who paid for it.",
+            "content": "I know what you signed and I know who paid for it.",
             "variantId": {
               "$type": "scnlocVariantId",
               "ruid": "2336285339657752715"
@@ -507,7 +507,7 @@
           },
           {
             "$type": "scnlocLocStoreEmbeddedVariantPayloadEntry",
-            "content": "I know what you signed. I know who paid for it.",
+            "content": "I know what you signed and I know who paid for it.",
             "variantId": {
               "$type": "scnlocVariantId",
               "ruid": "3278006718174340162"
@@ -598,7 +598,7 @@
               "DepotPath": {
                 "$type": "ResourcePath",
                 "$storage": "string",
-                "$value": "base\\localization\\en-us\\lipsync\\base\\open_world\\voicesets\\civilian_high_no_rep\\civ_high_m_19_jap_30\\civ_high_m_19_jap_30.anims"
+                "$value": "base\\localization\\en-us\\lipsync\\base\\open_world\\voicesets\\civilian_high_no_rep\\civ_high_m_21_jap_50\\civ_high_m_21_jap_50.anims"
               },
               "Flags": "Soft"
             },
@@ -677,7 +677,7 @@
                         "role": "Full",
                         "speakers": []
                       },
-                      "duration": 2350,
+                      "duration": 4152,
                       "executionTagFlags": 0,
                       "id": {
                         "$type": "scnSceneEventId",
@@ -749,7 +749,7 @@
                 ],
                 "sectionDuration": {
                   "$type": "scnSceneTime",
-                  "stu": 3050
+                  "stu": 4852
                 }
               }
             },
@@ -1249,7 +1249,7 @@
             "femaleLipsyncAnimationName": {
               "$type": "CName",
               "$storage": "string",
-              "$value": "f_1A1048302D582004"
+              "$value": "f_1A104FC759582004"
             },
             "itemId": {
               "$type": "scnscreenplayItemId",
@@ -1262,7 +1262,7 @@
             "maleLipsyncAnimationName": {
               "$type": "CName",
               "$storage": "string",
-              "$value": "f_1A1048302D582004"
+              "$value": "f_1A104FC759582004"
             },
             "speaker": {
               "$type": "scnActorId",
@@ -1285,7 +1285,7 @@
             "femaleLipsyncAnimationName": {
               "$type": "CName",
               "$storage": "string",
-              "$value": "f_1A1048302C582004"
+              "$value": "f_1A104FC75B582004"
             },
             "itemId": {
               "$type": "scnscreenplayItemId",
@@ -1298,7 +1298,7 @@
             "maleLipsyncAnimationName": {
               "$type": "CName",
               "$storage": "string",
-              "$value": "f_1A1048302C582004"
+              "$value": "f_1A104FC75B582004"
             },
             "speaker": {
               "$type": "scnActorId",

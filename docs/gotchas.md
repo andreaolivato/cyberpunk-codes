@@ -1947,3 +1947,58 @@ Never renumber. Append.
     Quest scopes arrived in ArchiveXL 1.22 (2025-04-30). An undefined scope name
     is treated as a path, and a path that does not exist is skipped with a
     warning, so using the name sets 1.22 as the floor.
+
+85. A second copy of a scene needs its own copies of the audio, and nothing
+    keeps the two in step.
+
+    A scene is what carries audio, so a variant of a conversation is a second
+    `.scene` with its own RUIDs, and a RUID resolves its `.wem` by name. Gig 01
+    has this twice: `gig01_nix_brief` and `gig01_nix_call` each have a `_holo`
+    twin for the video-call route, and the twin's audio lives under
+    `<scene>_holo__<key>.wem` rather than being shared.
+
+    So installing a new take under one name leaves the other on the old
+    recording, and the only symptom is a voice changing partway through a
+    playthrough. Nothing fails, nothing logs, and the build reports success.
+
+    It ran for weeks here. Voice-actor takes were installed under the plain
+    names, the video twins kept the generated ones, and 21 of 22 pairs had
+    diverged before anyone compared them. The give-away was a code comment
+    claiming they were identical copies, which had stopped being true.
+
+    Worse, the SUBTITLES do not diverge, because both scenes are built from one
+    builder and share the text. So the variant showed the new wording over audio
+    that had never been updated, and a check on incoming audio cannot catch it:
+    the divergence is between two files already in the tree.
+
+    `gen_voice.py` now compares every `_holo__` master against its twin and
+    refuses to build when they differ. Any future scene variant should be added
+    to that check rather than trusted.
+
+86. The phone call fact says Talking twice, and only the second one means the
+    call screen is up.
+
+    `phonecall_<caller>_with_<addressee>` is written to Talking (2) by the
+    pickup press itself (`PhoneSystem.OnPickupPhone`), which is the write a
+    scripted call handler naturally reacts to by queueing `StartCall`. It says
+    nothing about the call UI.
+
+    Queueing `StartCall` then makes `TriggerCall` rewrite the fact to
+    Initializing (phoneSystem.swift:113), and the hud controller writes Talking
+    again from `UpdateHoloAudioCall`'s StartCall branch
+    (newHudPhoneGameController.swift:1014). That method cannot run before the
+    call widget exists: it is reached from the widget's own spawn callback, or
+    through a controller reference that callback sets. So after `StartCall` the
+    fact is Initializing until the chrome is ready, and its return to
+    Talking is a readiness event, delivered on the fact the handler is already
+    polling.
+
+    Let a scene into the call the moment the pickup lands and its first line
+    can fire into a UI that is still loading: the line's slot passes in silence
+    and the conversation continues from the second line. The widget normally
+    spawns while the phone is still ringing (`HandleCall` runs on the
+    IncomingCall phase too), so the failure needs a fast answer or a slow
+    machine, which is why it survives playtesting on one machine and appears on
+    another. `Gig01_Holocall.reds` state 2 is the worked example: wait for the
+    second Talking, bounded by a timeout that proceeds anyway, so a call can
+    never strand a quest.

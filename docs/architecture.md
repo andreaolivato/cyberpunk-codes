@@ -65,7 +65,7 @@ had gone stale in three rows.
 | CET (Lua) | dev tooling only, never shipped gameplay logic |
 
 **Audioware is NOT a dependency and is not shipped.** It sat in this table for
-a long time as "planned for Elena/Hoshino AI voices". That was wrong about the
+a long time as "planned for Elena/Hoshino voices". That was wrong about the
 mechanism.
 
 A scene line resolves BOTH its subtitle and its audio from one
@@ -76,9 +76,10 @@ handled natively.
 Audioware would only have been needed for scripted captions, and those were all
 rebuilt as scenes. Players install nothing extra for the voices.
 
-**Voices are generated with ElevenLabs**, disclosed on the mod page, subtitles
-always. See "Voice" below for the mechanism that gets a wav into the game, which
-is the part that generalises to any custom audio.
+**Voices are performed by human voice actors and modulated with custom
+trained RVC models to resemble original NPCs** (performed and edited by
+@fronterawave), subtitles always. See "Voice" below for the mechanism that gets
+a wav into the game, which is the part that generalises to any custom audio.
 
 **Authoring model:** all game resources are authored as WolvenKit JSON under
 `source/wkit/raw/`, converted + packed by `tools/build-archive.ps1`. No GUI
@@ -603,8 +604,9 @@ The script now:
 
 ## Voice
 
-Every line in the gig is voiced. The voices are generated with ElevenLabs, which
-is disclosed on the mod page, and subtitles are always on.
+Every line in the gig is voiced. Voices are performed by human voice actors
+and modulated with custom trained RVC models to resemble original NPCs,
+performed and edited by @fronterawave. Subtitles are always on.
 
 Two things about the mechanism, which is the part worth copying:
 

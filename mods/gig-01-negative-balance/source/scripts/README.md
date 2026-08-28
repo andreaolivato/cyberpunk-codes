@@ -20,9 +20,9 @@ Cyber Engine Tweaks is NOT required. Neither is Audioware or mod_settings.
 
 ## Voices
 
-Every character is voiced with AI-generated speech (ElevenLabs). No performance
-by any real actor was cloned or reused, except one line of Nix's that points at
-his own shipped recording. Subtitles are on every line.
+Voices are performed by human voice actors and modulated with custom trained RVC models to resemble original NPCs. Voices performed and edited by @fronterawave.
+One line of Nix's points at the game's own shipped recording rather than
+shipping audio. Subtitles are on every line.
 
 ## Good to know
 

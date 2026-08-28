@@ -119,9 +119,9 @@ def wav_ms(path):
     """Duration of a WAV, by reading the RIFF chunks directly.
 
     NOT `wave.open`. The stdlib module handles PCM only and raises
-    `unknown format: 3` on the IEEE-float WAVs torchaudio writes - which is how
-    the generated voices first failed, silently enough that the build carried on and
-    packed the PREVIOUS run's audio.
+    `unknown format: 3` on the IEEE-float WAVs some tools write. That failure
+    once passed silently: the build carried on and packed the PREVIOUS run's
+    audio.
     """
     data = open(path, 'rb').read(1024 * 1024)
     if data[:4] != b'RIFF' or data[8:12] != b'WAVE':

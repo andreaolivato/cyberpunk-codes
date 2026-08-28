@@ -464,7 +464,7 @@
         "vpEntries": [
           {
             "$type": "scnlocLocStoreEmbeddedVariantPayloadEntry",
-            "content": "Is this how a merc becomes a legend in Night City?",
+            "content": "Is this what a merc has to do to become a legend?",
             "variantId": {
               "$type": "scnlocVariantId",
               "ruid": "2461968877697678886"
@@ -472,7 +472,7 @@
           },
           {
             "$type": "scnlocLocStoreEmbeddedVariantPayloadEntry",
-            "content": "Is this how a merc becomes a legend in Night City?",
+            "content": "Is this what a merc has to do to become a legend?",
             "variantId": {
               "$type": "scnlocVariantId",
               "ruid": "2455138623052318351"
@@ -512,7 +512,7 @@
           },
           {
             "$type": "scnlocLocStoreEmbeddedVariantPayloadEntry",
-            "content": "A legend picks who pays",
+            "content": "A real legend always picks who pays",
             "variantId": {
               "$type": "scnlocVariantId",
               "ruid": "2631220018195047889"
@@ -520,7 +520,7 @@
           },
           {
             "$type": "scnlocLocStoreEmbeddedVariantPayloadEntry",
-            "content": "A legend picks who pays",
+            "content": "A real legend always picks who pays",
             "variantId": {
               "$type": "scnlocVariantId",
               "ruid": "2624141944319089296"
@@ -611,7 +611,7 @@
               "DepotPath": {
                 "$type": "ResourcePath",
                 "$storage": "string",
-                "$value": "base\\localization\\en-us\\lipsync\\base\\open_world\\passenger\\scenes\\thepassenger\\johnny.anims"
+                "$value": "base\\localization\\en-us\\lipsync\\base\\quest\\primary_characters\\vsets\\vset_johnny\\johnny.anims"
               },
               "Flags": "Soft"
             },
@@ -710,7 +710,7 @@
                         "role": "Full",
                         "speakers": []
                       },
-                      "duration": 3230,
+                      "duration": 2810,
                       "executionTagFlags": 0,
                       "id": {
                         "$type": "scnSceneEventId",
@@ -750,7 +750,7 @@
                         "role": "Full",
                         "speakers": []
                       },
-                      "duration": 2990,
+                      "duration": 2650,
                       "executionTagFlags": 0,
                       "id": {
                         "$type": "scnSceneEventId",
@@ -761,7 +761,7 @@
                         "$type": "scnscreenplayItemId",
                         "id": 257
                       },
-                      "startTime": 3930,
+                      "startTime": 3510,
                       "type": "0",
                       "visualStyle": "regular",
                       "voParams": {
@@ -844,7 +844,7 @@
                 ],
                 "sectionDuration": {
                   "$type": "scnSceneTime",
-                  "stu": 6920
+                  "stu": 6160
                 }
               }
             },
@@ -864,7 +864,7 @@
                         "role": "Full",
                         "speakers": []
                       },
-                      "duration": 750,
+                      "duration": 1210,
                       "executionTagFlags": 0,
                       "id": {
                         "$type": "scnSceneEventId",
@@ -936,7 +936,7 @@
                 ],
                 "sectionDuration": {
                   "$type": "scnSceneTime",
-                  "stu": 1450
+                  "stu": 1910
                 }
               }
             },
@@ -956,7 +956,7 @@
                         "role": "Full",
                         "speakers": []
                       },
-                      "duration": 1870,
+                      "duration": 3070,
                       "executionTagFlags": 0,
                       "id": {
                         "$type": "scnSceneEventId",
@@ -1011,7 +1011,7 @@
                       "executionTagFlags": 0,
                       "id": {
                         "$type": "scnSceneEventId",
-                        "id": "3341364275088850522"
+                        "id": "2720738378484215671"
                       },
                       "muteSound": 0,
                       "nodeRef": {
@@ -1025,7 +1025,7 @@
                       },
                       "scalingData": null,
                       "sequenceShift": 0,
-                      "startTime": 3120,
+                      "startTime": 4320,
                       "type": "0"
                     }
                   },
@@ -1045,7 +1045,7 @@
                         "ordinal": 0
                       },
                       "scalingData": null,
-                      "startTime": 3120,
+                      "startTime": 4320,
                       "type": "0"
                     }
                   }
@@ -1113,7 +1113,7 @@
                 ],
                 "sectionDuration": {
                   "$type": "scnSceneTime",
-                  "stu": 3370
+                  "stu": 4570
                 }
               }
             },
@@ -1548,7 +1548,7 @@
             "femaleLipsyncAnimationName": {
               "$type": "CName",
               "$storage": "string",
-              "$value": "f_3F282AC7C63E7000"
+              "$value": "f_1F453D780743E008"
             },
             "itemId": {
               "$type": "scnscreenplayItemId",
@@ -1561,7 +1561,7 @@
             "maleLipsyncAnimationName": {
               "$type": "CName",
               "$storage": "string",
-              "$value": "f_3F282AC7C63E7000"
+              "$value": "f_1F453D780743E008"
             },
             "speaker": {
               "$type": "scnActorId",
@@ -1584,7 +1584,7 @@
             "femaleLipsyncAnimationName": {
               "$type": "CName",
               "$storage": "string",
-              "$value": "f_3EE013570E3E7000"
+              "$value": "f_1F4516C62843E008"
             },
             "itemId": {
               "$type": "scnscreenplayItemId",
@@ -1597,7 +1597,7 @@
             "maleLipsyncAnimationName": {
               "$type": "CName",
               "$storage": "string",
-              "$value": "f_3EE013570E3E7000"
+              "$value": "f_1F4516C62843E008"
             },
             "speaker": {
               "$type": "scnActorId",
