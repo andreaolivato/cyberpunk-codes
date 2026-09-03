@@ -3,8 +3,9 @@ r"""The vanilla voice-over corpus: index it, search it, extract clips from it.
 WHAT IT IS
 
 Every spoken line in Cyberpunk 2077, joined to its speaker, its text and its
-audio file. 61,724 of them. Two facts make this possible and neither is
-documented anywhere:
+audio file: roughly 63,000 in the base game, plus Phantom Liberty's when the
+expansion is installed (the index prints its count when built). Two facts make
+this possible and neither is documented anywhere:
 
 1. A VO filename IS the index:
        base\localization\en-us\vo\johnny_sq031_f_1a589ce2ca2c5000.wem
@@ -22,10 +23,12 @@ WHAT IT IS FOR
   own recording for free (gen_scenes' `add_line(vanilla_sid=...)`). `search`
   finds candidates; `extract` gets you something to listen to.
 
-  Do not plan around reuse: it does not scale. Measured across
-  the whole corpus, exactly 3 of this gig's 59 lines had a verbatim match from
-  the right speaker. Writing dialogue in a bark-compatible style and matching it
-  afterwards sounds workable and is not.
+  PLAN AROUND REUSE FROM THE START, or not at all. Measured across the whole
+  corpus, exactly 3 of an earlier draft's 59 lines had a verbatim match from
+  the right speaker: writing the dialogue first and hunting for audio to fit
+  it afterwards does not work. Writing the scene out of what `search` returns
+  does, and it is how every V, Johnny, Mama Welles and Nix line in gig 01 is
+  voiced. `docs/new-gig.md` section 6 has the method and what it costs.
 
 - **Finding a voice by accent, age and gender.** VANILLA NPC VOICE TAGS ENCODE
   ALL THREE, which is not documented anywhere else:
@@ -77,6 +80,12 @@ CLI = os.path.expandvars(r'%LOCALAPPDATA%\Programs\WolvenKit.CLI\WolvenKit.CLI.e
 GAME = r'C:\Program Files (x86)\Steam\steamapps\common\Cyberpunk 2077'
 TEXT_ARCHIVE = os.path.join(GAME, r'archive\pc\content\lang_en_text.archive')
 VOICE_ARCHIVE = os.path.join(GAME, r'archive\pc\content\lang_en_voice.archive')
+# Phantom Liberty ships its own pair under ep1, with the same layout. Both are
+# optional: everything below skips them when the expansion is not installed.
+# The index was base-only until 2026-08-29, which silently hid roughly ten
+# thousand spoken lines from every search over the corpus.
+EP1_TEXT_ARCHIVE = os.path.join(GAME, r'archive\pc\ep1\lang_en_text.archive')
+EP1_VOICE_ARCHIVE = os.path.join(GAME, r'archive\pc\ep1\lang_en_voice.archive')
 
 WEM_RE = re.compile(r'^(.*)_([fm])_([0-9a-f]{16})$')
 
@@ -94,38 +103,50 @@ def build_index():
     os.makedirs(CACHE, exist_ok=True)
     raw = os.path.join(CACHE, 'text_raw')
     js = os.path.join(CACHE, 'text_json')
-    listing = os.path.join(CACHE, 'voice_files.txt')
 
-    if not os.path.isdir(raw):
-        print('extracting subtitle resources...')
-        run([CLI, 'unbundle', TEXT_ARCHIVE, '-o', raw, '-v', 'Quiet'])
-    if not os.path.isdir(js):
-        print('converting them to json (a few minutes)...')
-        os.makedirs(js, exist_ok=True)
-        run([CLI, 'convert', 'serialize',
-             os.path.join(raw, 'base', 'localization', 'en-us', 'subtitles'),
-             '-o', js, '-v', 'Quiet'])
-    if not os.path.exists(listing):
-        print('listing the voice archive...')
-        r = run([CLI, 'archiveinfo', VOICE_ARCHIVE, '-l', '-v', 'Quiet'])
-        with open(listing, 'w', encoding='utf-8', newline='\n') as fh:
-            fh.write(r.stdout)
+    # (text archive, subtitle subdir inside it, json dir, voice archive, listing)
+    sources = [(TEXT_ARCHIVE, 'base', js, VOICE_ARCHIVE,
+                os.path.join(CACHE, 'voice_files.txt'))]
+    if os.path.exists(EP1_TEXT_ARCHIVE):
+        sources.append((EP1_TEXT_ARCHIVE, 'ep1', os.path.join(CACHE, 'text_json_ep1'),
+                        EP1_VOICE_ARCHIVE, os.path.join(CACHE, 'voice_files_ep1.txt')))
+
+    for text_arc, top, jdir, voice_arc, listing in sources:
+        if not os.path.isdir(os.path.join(raw, top)):
+            print('extracting subtitle resources (%s)...' % top)
+            run([CLI, 'unbundle', text_arc, '-o', raw, '-v', 'Quiet'])
+        if not os.path.isdir(jdir):
+            print('converting them to json (%s, a few minutes)...' % top)
+            os.makedirs(jdir, exist_ok=True)
+            run([CLI, 'convert', 'serialize',
+                 os.path.join(raw, top, 'localization', 'en-us', 'subtitles'),
+                 '-o', jdir, '-v', 'Quiet'])
+        if not os.path.exists(listing):
+            print('listing the voice archive (%s)...' % top)
+            r = run([CLI, 'archiveinfo', voice_arc, '-l', '-v', 'Quiet'])
+            with open(listing, 'w', encoding='utf-8', newline='\n') as fh:
+                fh.write(r.stdout)
 
     # wem side: stringId hex -> [(dir, speaker+scene, gender, depot path)]
     wems = collections.defaultdict(list)
-    with open(listing, encoding='utf-8-sig') as fh:
-        for line in fh:
-            line = line.strip()
-            if not line.endswith('.wem'):
-                continue
-            parts = line.split(chr(92))
-            m = WEM_RE.match(parts[-1][:-4])
-            if m:
-                wems[m.group(3)].append([parts[-2], m.group(1), m.group(2), line])
+    for _ta, _top, _jd, _va, listing in sources:
+        with open(listing, encoding='utf-8-sig') as fh:
+            for line in fh:
+                line = line.strip()
+                if not line.endswith('.wem'):
+                    continue
+                parts = line.split(chr(92))
+                m = WEM_RE.match(parts[-1][:-4])
+                if m:
+                    wems[m.group(3)].append([parts[-2], m.group(1), m.group(2), line])
 
-    # subtitle side
+    # subtitle side. A stringId can appear in more than one resource (and the
+    # expansion re-states a few of the base game's), so the first sighting wins.
     rows = []
-    for dirpath, _dirs, files in os.walk(js):
+    seen_sids = set()
+    json_dirs = [s[2] for s in sources]
+    for dirpath, _dirs, files in ((d, x, f) for jd in json_dirs
+                                  for d, x, f in os.walk(jd)):
         for fn in files:
             if not fn.endswith('.json'):
                 continue
@@ -139,10 +160,13 @@ def build_index():
                 if 'stringId' not in e:
                     continue
                 sid = int(e['stringId'])
+                if sid in seen_sids:
+                    continue
                 h = '%016x' % sid
                 audio = wems.get(h)
                 if not audio:
                     continue          # subtitle with no recording; not useful here
+                seen_sids.add(sid)
                 rows.append({
                     'sid': str(sid), 'hex': h,
                     'f': e.get('femaleVariant', ''), 'm': e.get('maleVariant', ''),
@@ -170,7 +194,8 @@ def load():
 #
 # This is how you find "a Japanese-accented English-speaking man in his thirties
 # who sounds like he works for Arasaka" without listening to 62,992 clips - and
-# it is the answer to accents, which no English TTS voice will give you. The
+# it is the answer to accents, which the corpus has and a studio would
+# have to cast for. The
 # accent codes present, by line count: enus 10023, afam 3013, mex 2633, jap 2361,
 # bra 1246, rus 1245, chn 1171, nat 973, car 761, arb 529, ind 255, engb 222,
 # afr 82.
@@ -248,12 +273,18 @@ def export(hexes, outdir, gender='f'):
     """
     os.makedirs(outdir, exist_ok=True)
     made = []
+    archives = [VOICE_ARCHIVE]
+    if os.path.exists(EP1_VOICE_ARCHIVE):
+        archives.append(EP1_VOICE_ARCHIVE)
     with tempfile.TemporaryDirectory() as tmp:
         # One regex per batch; a 60k-character alternation is not a good idea.
+        # A hash matches in exactly one archive, so unbundling the same batch
+        # from both just leaves the misses empty.
         for i in range(0, len(hexes), 60):
             batch = hexes[i:i + 60]
-            run([CLI, 'unbundle', VOICE_ARCHIVE, '-o', tmp,
-                 '-r', '(' + '|'.join(batch) + ')', '-v', 'Quiet'])
+            for arc in archives:
+                run([CLI, 'unbundle', arc, '-o', tmp,
+                     '-r', '(' + '|'.join(batch) + ')', '-v', 'Quiet'])
         run([CLI, 'export', tmp, '-o', outdir, '-gp', GAME, '-v', 'Quiet'])
     # DROP EVERYTHING THAT IS NOT PLAIN `vo`.
     #

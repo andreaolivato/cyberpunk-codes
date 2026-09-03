@@ -114,7 +114,7 @@ python .\tools\gig01\gen_lipsync.py              # casts a VANILLA lipsync anima
                                                  #  Between gen_voice (durations) and
                                                  #  gen_scenes (which reads the picks).
                                                  #  `--rebuild` re-extracts its catalogue
-python .\tools\gig01\gen_scenes.py               # FOURTEEN .scene conversations - EVERY line
+python .\tools\gig01\gen_scenes.py               # TEN .scene conversations - EVERY line
                                                  #  in the gig is a scene line, because a
                                                  #  scene line is the only kind that can
                                                  #  carry audio. Their text lives INSIDE
@@ -199,6 +199,12 @@ order right anyway. See `docs/gotchas.md` #12.
 
 Only needed if you are adding or replacing voice lines.
 
+Where the audio comes from is a separate question from how it gets packed.
+This repo answers it one way: if the base game already voices a character, use
+the game's own voice lines for them, whole or cut short at a pause. New
+characters get recorded by real people. `docs/new-gig.md` section 6 has the
+rule and the tools, and `docs/architecture.md` "Voice" has what it costs.
+
 **Wwise 2019.2.15** - CLI at `Authoring\x64\Release\bin\WwiseConsole.exe`. This
 is the ONLY way to produce a `.wem`:
 
@@ -225,6 +231,24 @@ $WK = "$env:LOCALAPPDATA\Programs\WolvenKit.CLI\WolvenKit.CLI.exe"
 **Do not use `WolvenKit.CLI wwise -w`** - it is broken in 8.20.0 and dies with
 `Type System.IO.FileInfo cannot be created without a custom binder`. `export`
 with `-gp` is the working wem -> Ogg path.
+
+### Finding something in the world by name
+
+`tools/sector_scan.py` searches every streaming sector in the game for a name
+and reports where the matches are, with coordinates. It is how to answer "is
+there an Arasaka office anywhere in this city", which nothing else answers.
+
+```powershell
+python .\tools\sector_scan.py extract          # once: unbundle every sector
+python .\tools\sector_scan.py scan arasaka     # which sectors mention it
+python .\tools\sector_scan.py index arasaka    # every hit, with coordinates
+```
+
+`index` writes `index_<needle>.json` and a matching `.csv` into
+`tools\_sector_cache`, one row per object: position, name, sector, and whether
+that sector is an interior. The extraction is gigabytes of game data, is
+rebuildable at any time, and is kept outside the repo. `docs/new-gig.md` has
+the same recipe in the context of choosing where a gig happens.
 
 ## Reference material
 

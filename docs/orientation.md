@@ -26,6 +26,12 @@ Making one means six subsystems agreeing with each other:
 
 Most of the playbooks are about getting those six to agree.
 
+One of the six comes with a rule rather than a technique. **If the base game
+already voices a character, use the game's own voice lines for them**, whole
+or cut short at a pause. New characters you invent get recorded by real
+people. That decides how the dialogue gets written long before it decides
+anything technical: `docs/new-gig.md` section 6 has the rule and the tools.
+
 ## The tools
 
 None are made by CD Projekt Red. All are community projects. The player installs
@@ -114,6 +120,7 @@ Two consequences:
 | voiceover map | `stringId -> .wem`. Flat and global, so a mod can supply its own |
 | lipmap | which lipsync animation set belongs to which actor of which scene |
 | `.wem` | the game's audio format. Made from WAV by Wwise |
+| corpus | the index of all 62,992 lines the base game speaks, searchable by text and speaker |
 | holocall | an in-fiction phone call. 2D audio, so speaker position is irrelevant |
 | shard | a readable text item |
 | mappin | the engine's word for a map marker |

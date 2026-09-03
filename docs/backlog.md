@@ -31,7 +31,13 @@ being given it.
 | § | Item |
 |---|---|
 | 10i | Reload crashes on heavily modded installs. Two reporters, same symptom. No mechanism found; the A/B test is now deterministic, see 14 |
-| 27 | Hoshino's mouth does not move. His lipsync is generated and correct, and it plays on the invisible actor that carries his voice rather than on the body the player is looking at. Route A is the design call, 2026-08-24: give him a real body in this mod's own sector, which retires the two-body arrangement for gigs 02 to 04 as well |
+
+**27 closed on 2026-08-25 and shipped in 1.3.0.** Route A was built and it
+worked: Hoshino has a real body in this mod's own sector, the script finds it
+instead of a spawned copy, the scene takes him as a first-class actor, and his
+mouth moves. That retires the two-body arrangement for gigs 02 to 04 as well.
+This table and 27's own heading both still said OPEN on 2026-09-05, eleven days
+and two releases after the fix.
 
 **29 closed NEGATIVE on 2026-08-24** after nine runs. A community this mod
 ships spawns nobody, with both area-node shapes, both quest node types, the
@@ -3585,7 +3591,7 @@ five times.
 
 ---
 
-## 11. Two questions under one number. The NAMING one is closed; the COMMUNITY one is open
+## 11. Two questions under one number. Both are now closed
 
 **Read this first, because the number covers two things and only one of them
 is finished.**
@@ -3593,7 +3599,7 @@ is finished.**
 | | |
 |---|---|
 | **Can a node this mod ships be addressed by name?** | **CLOSED.** Yes, measured 2026-08-17, in the LONG form only. 20 then confirmed a map pin anchors to one. |
-| **What binds a `.community` resource to the world?** | **OPEN.** Nothing has been tried since 2026-08-17. It is the entry in the open-items table at the top of this file. |
+| **What binds a `.community` resource to the world?** | **CLOSED.** Answered in 28 on 2026-08-23: nothing binds it, because a `.community` resource never ships. The guards at both sites are placed this way from 1.3.0. |
 
 They arrived together because the first was asked in order to answer the
 second, and the heading said "fully closed" for months while the table above
@@ -5881,7 +5887,15 @@ pass. Reaching a place and being inside it are the obvious pair, and the reason
 this was invisible is that the signposted route separates them by itself.
 
 
-## 27. Hoshino's lipsync plays on a body nobody can see. OPEN, and both routes are costed
+## 27. Hoshino's lipsync plays on a body nobody can see. CLOSED 2026-08-25, confirmed in play, shipped in 1.3.0
+
+**Closing note, added 2026-09-05.** Route A was taken and it worked: Hoshino is
+placed in this mod's sector, the script finds the placed body instead of a
+spawned one, the scene takes him as a first-class actor, and his mouth moves.
+Confirmed in playtest on 2026-08-25 and shipped the same release, which also
+sat him on the couch. The title said OPEN for eleven days and two releases
+after the fact; everything below is the reasoning as it stood before the fix,
+kept because the two-body problem is what every later gig inherits.
 
 **The data is not the problem.** `gig01_hoshino/h01` and `h02` have animations
 picked and shipped like every other line in the gig, and the same machinery

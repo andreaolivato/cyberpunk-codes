@@ -100,6 +100,32 @@ you are adding a gig to this repo: the tooling here matches on it.
 Name it `gig-NN-something`. The deploy reads the redscript module name from that
 number.
 
+### Finding a place to set it
+
+Night City is enormous and almost none of it is labelled. If your gig needs a
+corporate office, a warehouse or a bar, the question "where is there one" has no
+answer in any wiki, and walking the map looking for it costs days.
+
+`tools/sector_scan.py` answers it from the shipped data instead. The world is
+built out of streaming sectors, and the objects inside them carry names.
+
+```powershell
+python .\tools\sector_scan.py extract          # once: unbundle every sector
+python .\tools\sector_scan.py scan arasaka     # which sectors mention it
+python .\tools\sector_scan.py index arasaka    # every hit, with coordinates
+```
+
+`index` writes a JSON file and a spreadsheet listing every matching object with
+its x, y, z, the sector it lives in, and whether that sector is an interior. Fly
+to a coordinate with the console and look at it. Gig 01's two Arasaka locations
+were both found this way after an afternoon of guessing failed.
+
+Two things the header of that file explains and which cost real time to learn: a
+sector's positions are plain floats rather than the fixed-point encoding used
+elsewhere in the same files, and the converter is slow to start, so sectors are
+converted in one batch rather than one at a time. The first extraction is
+gigabytes and lands outside the repo.
+
 ## 2. Claim a namespace first
 
 Read `docs/conventions.md` and pick your prefixes before writing anything. They
@@ -265,11 +291,41 @@ and its audio from that one number. Text pushed from redscript is a caption with
 no RUID, so no voiceover map can ever key on it. A beat that needs a voice has
 to be built as a scene rather than as a script that prints text.
 
-Nothing in the pipeline cares what produced the WAV. A microphone, a hired actor
-and a text-to-speech model all enter at step 3.
+Nothing in the pipeline cares where the WAV came from. A microphone, a hired
+actor and a clip cut out of the game's own audio all enter at step 3.
 
 Players install nothing extra for any of it. Audio resolves natively through a
 `locVoiceoverMap` your mod supplies, so Audioware is not a dependency.
+
+### Casting: the rule this repo works to
+
+**If the base game already voices a character, use the game's own voice lines
+for them.** V, Johnny, Mama Welles and Nix say whole vanilla lines, or one
+line cut short at a pause, pointed at by `stringId`. New characters you invent
+get recorded by real people. Nobody's voice is imitated.
+
+This is a writing rule before it is a technical one, and it is the expensive
+part. Your scene can only say what the game already recorded, so write the
+scene FROM what the search returns rather than searching for a script you have
+already written. Gig 01 measured that the hard way: of an earlier
+draft's 59 lines, 3 had a verbatim match. Rewritten the other way round, all
+four returning characters are on vanilla audio.
+
+What it costs is exposition, because no recording of V explains your plot. Put
+that on a terminal screen, in a journal briefing or in a fixer's text message,
+which is where the base game puts it too.
+
+- `tools/vo_corpus.py` indexes all 62,992 vanilla spoken lines and searches
+  them by text, speaker, accent, age and gender.
+- `tools/gig01/splice_takes.py` makes the cuts. Listen to every one before you
+  use it: a cut point taken off a silence map can land one pause early and the
+  waveform gives nothing away.
+- Expect a poor hit rate and budget for it. Finding one usable line for a beat
+  meant reading about thirty candidates, and some beats have no answer at all,
+  which is when the beat gets rewritten rather than the search widened.
+- Reusing a line by `stringId` also returns its own lipsync animation, which is
+  better than the length match a clip of yours gets. `docs/scene-playbook.md`
+  has both, and `docs/gotchas.md` 59 has the trap.
 
 ### What you need first
 
@@ -298,7 +354,7 @@ variable if it is set, and otherwise looks in the default install location.
    .\tools\deploy-dev.ps1 gig-02
    ```
 
-   That synthesises a tone for every line at the length the estimate would have
+   That writes a tone for every line at the length the estimate would have
    given it, pitched by a hash of the line key so lines are distinguishable by
    ear. In game you hear a beep where each line goes. Every failure after this
    point is about one recording rather than about the pipeline.
@@ -341,7 +397,7 @@ variable if it is set, and otherwise looks in the default install location.
    it finishes.
 
 6. **Register the map.** `localization: vomaps:` in your `.archive.xl` points at
-   the generated voiceover map, and `lipmaps:` at the lipsync map. Both take a
+   the voiceover map it wrote, and `lipmaps:` at the lipsync map. Both take a
    scalar per locale. Section 3 has the rest of the manifest.
 
 7. **Build and deploy.** `build-archive.ps1` refuses to pack when any WAV is

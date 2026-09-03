@@ -76,10 +76,10 @@ handled natively.
 Audioware would only have been needed for scripted captions, and those were all
 rebuilt as scenes. Players install nothing extra for the voices.
 
-**Voices are performed by human voice actors and modulated with custom
-trained RVC models to resemble original NPCs** (performed and edited by
-@fronterawave), subtitles always. See "Voice" below for the mechanism that gets
-a wav into the game, which is the part that generalises to any custom audio.
+**The game's own characters use the game's own voice lines**, and the two new
+characters were recorded by real people. Subtitles always. See "Voice" below
+for both halves: the casting rule, and how a wav gets into the game, which is
+the part that works for any custom audio.
 
 **Authoring model:** all game resources are authored as WolvenKit JSON under
 `source/wkit/raw/`, converted + packed by `tools/build-archive.ps1`. No GUI
@@ -460,7 +460,7 @@ nothing to route it to.
   is better and costs nothing structural:** a line's `scnlocLocstringId` RUID
   resolves its subtitle AND its `.wem` through a mod-supplied `locVoiceoverMap`,
   natively, with gender variants picked by the engine. Timings then come from
-  `durations.json` instead of a character-count estimate. All 54 lines in gig 01
+  `durations.json` instead of a character-count estimate. All 60 lines in gig 01
   are voiced this way.
 - **A scene line is the ONLY line that can carry audio.** Text pushed from
   redscript is a caption with no RUID, so no voiceover map can reach it. Six
@@ -604,9 +604,18 @@ The script now:
 
 ## Voice
 
-Every line in the gig is voiced. Voices are performed by human voice actors
-and modulated with custom trained RVC models to resemble original NPCs,
-performed and edited by @fronterawave. Subtitles are always on.
+Every line in the gig is voiced, and the casting rule decides everything else
+about how it is written.
+
+**If the base game already voices a character, use the game's own voice lines
+for them.** V, Johnny, Mama Welles and Nix say whole vanilla lines, or lines
+cut short at a pause, pointed at by stringId. Nothing imitates them. Elena and
+Hoshino are new characters, so real people recorded them, with only the pitch
+and tone adjusted.
+
+This is a writing rule before it is a technical one. A scene can only say what
+the game already recorded, which is why this gig moved its explaining onto a
+terminal screen and into the journal. Subtitles are always on.
 
 Two things about the mechanism, which is the part worth copying:
 
@@ -614,19 +623,32 @@ Two things about the mechanism, which is the part worth copying:
   its RUID through a mod-supplied `locVoiceoverMap`, natively, with no script
   driver behind it. Players install nothing extra to hear the gig. The wav to
   wem step is in `BUILDING.md`; the map is built by `tools/gig01/gen_voice.py`.
-- **Reusing vanilla takes instead of recording does not scale.** Measured
-  against a full index of all 62,992 vanilla spoken lines, exactly 3 of this
-  gig's 59 have a verbatim match from the right speaker. Writing dialogue in a
-  bark-compatible style and matching it to existing audio afterwards sounds
-  workable and is not. Exactly one vanilla take ships, Nix's "How's things, V?",
-  which points at vanilla's own `stringId` and so costs nothing.
+- **Reusing vanilla takes works, but only if the corpus comes first.** Measured
+  against a full index of all 62,992 vanilla spoken lines, exactly 3 of an
+  earlier draft's 59 had a verbatim match from the right speaker, and that
+  number was read as a verdict for months: write the dialogue, then hunt for
+  audio to fit it, and almost nothing fits.
+
+  The recast of 2026-09-03 inverted the order instead of accepting the verdict.
+  The scene is written FROM what the game already has, so V, Johnny, Mama
+  Welles and Nix say whole vanilla lines, or one line cut short at a pause,
+  pointed at by `stringId`. A reused line costs nothing at all: the text, the
+  audio, both V bodies and the line's own lipsync animation all come with it.
+
+  What it costs is exposition. No recording of V explains an insurance-kill
+  scheme, so the scheme moved onto the terminal screen, into the journal
+  briefing and into a fixer's text message, which is what the base game does
+  with its own gigs anyway. `tools/vo_corpus.py` indexes and searches the
+  corpus; `tools/gig01/splice_takes.py` makes the cuts.
 
 - **A line that arrives on V's phone is a different asset, not the same asset
   played differently.** The base game ships four processed takes of a voiced
   line, `vo`, `vo_holocall`, `vo_helmet` and `vo_rewinded`, sharing one
   stringId, and ArchiveXL can register only the main map. So the treatment has
   to be baked into the clip a mod ships, which `tools/questkit/phone.py` does
-  for the 17 lines Elena and Nix speak on the phone.
+  for the 13 clips this gig ships that are heard down a phone. 17 lines are
+  spoken during a call, but four of them are V's, and V is the one holding the
+  handset rather than the one on the far end of it.
 
   The treatment is not an EQ. Vanilla keeps the line's short-time magnitude
   spectrum and discards its phase, and two builds that fitted the magnitude

@@ -20,9 +20,12 @@ Cyber Engine Tweaks is NOT required. Neither is Audioware or mod_settings.
 
 ## Voices
 
-Voices are performed by human voice actors and modulated with custom trained RVC models to resemble original NPCs. Voices performed and edited by @fronterawave.
-One line of Nix's points at the game's own shipped recording rather than
-shipping audio. Subtitles are on every line.
+V, Johnny, Mama Welles and Nix use the game's own voice lines and nothing
+else: a whole line, or a line cut short at a pause. Nothing was generated and
+nothing new was recorded for them. Elena and Hoshino are new
+characters, so real people recorded them, with only the pitch and tone
+adjusted. Most of the game's own lines are played from the game's own files,
+so this mod ships no copy of them. Every line is subtitled.
 
 ## Good to know
 

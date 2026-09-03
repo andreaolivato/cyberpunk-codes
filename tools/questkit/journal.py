@@ -84,7 +84,8 @@ def vec3(x=0.0, y=0.0, z=0.5):
     return {'$type': 'Vector3', 'X': x, 'Y': y, 'Z': z}
 
 
-def contact(cid, conv_id, conv_title, avatar, name_key=None):
+def contact(cid, conv_id, conv_title, avatar, name_key=None,
+            conv_entries=None):
     # name_key exists because the default derives the LocKey from the id, and
     # cc_g01_nix would derive 'cc-g01-cc-g01-nix-name'. See the note by that
     # contact for why its id is prefixed at all.
@@ -93,7 +94,10 @@ def contact(cid, conv_id, conv_title, avatar, name_key=None):
         'avatarID': tweak(avatar),
         'entries': [wrap({
             '$type': 'gameJournalPhoneConversation',
-            'entries': [],
+            # A thread, when the contact has one. Empty is the norm here: a
+            # contact that only ever CALLS exists so the phone can resolve it
+            # as an addressee (HudPhoneGameController walks GetContacts).
+            'entries': conv_entries or [],
             'id': conv_id,
             'journalEntryOverrideDataList': [],
             'title': lockey(conv_title),
@@ -104,6 +108,67 @@ def contact(cid, conv_id, conv_title, avatar, name_key=None):
         'name': lockey(name_key or (cid.replace('_', '-') + '-name')),
         'type': 'Texter',
         'useFlatMessageLayout': 1,
+    })
+
+
+def description(did, suffix):
+    """The quest's briefing text, the paragraph the journal shows above the
+    objectives.
+
+    Vanilla street stories carry exactly one, as a SIBLING of the phase inside
+    the quest, id `<quest>_briefing` (surveyed across the 360 quests in
+    `base\journal\cooked_journal.journal`: 106 put it after the phase, 86
+    before, and 69 ship none at all). The quest phase activates it like any
+    other entry.
+    """
+    return wrap({
+        '$type': 'gameJournalQuestDescription',
+        'description': lockey(suffix),
+        'id': did,
+        'journalEntryOverrideDataList': [],
+    })
+
+
+def message(mid, suffix, delay=3.0, sender='NPC', important=0):
+    """One SMS in a phone conversation.
+
+    `delay` is SECONDS BEFORE IT ARRIVES, and it is the only correct way to
+    pace a thread: a graph timer stalls while a menu is open and the phone IS
+    a menu, so a graph-paced thread stops advancing exactly while it is being
+    read (gotchas 3). Shape is vanilla's `mq030_01_msg_thanks`.
+    """
+    return wrap({
+        '$type': 'gameJournalPhoneMessage',
+        'attachment': None,
+        'delay': delay,
+        'id': mid,
+        'imageId': tweak(None),
+        'isQuestImportant': important,
+        'journalEntryOverrideDataList': [],
+        'sender': sender,
+        'text': lockey(suffix),
+    })
+
+
+def choice_group(gid, entries):
+    """A set of player replies. The quest phase waits on an ENTRY, not on the
+    group: the group going Active only means the buttons are on screen."""
+    return wrap({
+        '$type': 'gameJournalPhoneChoiceGroup',
+        'entries': entries,
+        'id': gid,
+        'journalEntryOverrideDataList': [],
+    })
+
+
+def choice(cid, suffix, important=1):
+    return wrap({
+        '$type': 'gameJournalPhoneChoiceEntry',
+        'id': cid,
+        'isQuestImportant': important,
+        'journalEntryOverrideDataList': [],
+        'questCondition': None,
+        'text': lockey(suffix),
     })
 
 

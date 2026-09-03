@@ -1143,12 +1143,12 @@ Never renumber. Append.
     some other reason, and gotcha 54 is the only thing that tells them apart.
 
 59. **A line that reuses a vanilla recording gets no lipsync, because the
-    casting is driven by the lines you generated audio FOR.**
+    casting is driven by the lines you ship audio FOR.**
 
     Pointing a line at vanilla's own `stringId` gets the text and the voiceover
     for nothing, and it is the right thing to do when the script quotes a line
     the game already has. It also takes that line out of every list built from
-    "what did we synthesise": it has no `.wav`, so no entry in the duration
+    "what audio do we ship": it has no `.wav`, so no entry in the duration
     sidecar, so no entry in the lipsync casting, so
     `scnscreenplayDialogLine.maleLipsyncAnimationName` ships empty.
 

@@ -1113,22 +1113,13 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
             case 1: key = "cc-g01-hud-send-02"; break;
             case 2:
                 key = "cc-g01-hud-send-03";
-                // V pays Nix up front - the comic puts the transfer on screen,
-                // so it happens for real rather than being implied. Same
-                // TransactionSystem the payout uses, in the other direction.
-                let player: ref<PlayerPuppet> = GetPlayer(this.GetGameInstance()) as PlayerPuppet;
-                if IsDefined(player) {
-                    GameInstance.GetTransactionSystem(this.GetGameInstance())
-                        .RemoveItemByTDBID(player, t"Items.money", 15000);
-                }
-                CCSharedHud.NotifyTyped(this.GetGameInstance(), GetLocalizedTextByKey(n"cc-g01-hud-paid"),
-                                 SimpleMessageType.Money, 4.0);
+                // THE MONEY DOES NOT MOVE HERE ANY MORE (2026-09-03). V used
+                // to pay Nix during the send, i.e. before Nix had done a
+                // thing; the design call is that he pays on delivery, after
+                // the message with the location lands and V has thanked him.
+                // PayNix() below does it, on a fact the quest phase sets.
                 GameInstance.GetQuestsSystem(this.GetGameInstance())
                     .SetFactStr("cc_g01_ledger_sent", 1);
-                // Johnny's p28 beat follows while Nix works, so the wait is
-                // not dead air - but the quest phase drives it now
-                // (gig01_legend.scene, gated on the fact set just above)
-                // rather than a delayed callback chaining captions.
                 break;
             default: return;
         }
@@ -1143,9 +1134,11 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
         }
     }
 
-    // StartLegendTalk() used to live here (comic p28, the crosswalk). Removed
-    // 2026-08-13: it is gig01_legend.scene now, entered by the quest phase on
-    // cc_g01_ledger_sent, which SendStep still sets exactly as before.
+    // StartLegendTalk() used to live here (comic p28, the crosswalk). It became
+    // gig01_legend.scene on 2026-08-13, and that scene was deleted on
+    // 2026-09-05: the recast could not cast it out of vanilla recordings.
+    // SendStep still sets cc_g01_ledger_sent, which is now read only by the
+    // Nix call.
     //
     // Stage Johnny at the office desk, then run the comic's p22 exchange.
     //
@@ -1427,12 +1420,53 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
     //
     // Guarded by a FACT, not a script field: script fields reset on load, and a
     // reward that re-grants every time the save is reloaded is a money printer.
+    // SPLIT IN TWO, 2026-09-03, because the eddies were arriving in the wrong
+    // scene. They used to land with the Street Cred at the end of the gig, in
+    // El Coyote, where nothing on screen explains a payment; the money is
+    // skimmed off Hoshino's network by the malware Nix attached, so it now
+    // arrives the moment the upload finishes at his terminal. That is also
+    // where the vanilla currency animation reads as an event rather than as
+    // an afterthought.
+    //
+    // No banner over either half. Changing the player's money drives the
+    // game's own eddies counter, and Street Cred draws its own popup; the
+    // 'reward' string is retired with the notification it carried.
+    // TWELVE AND A HALF THOUSAND, raised from 2500 on 2026-09-03. The number is
+    // set against what V pays Nix, not chosen on its own: PayNix takes 15000 on
+    // delivery, so the gig nets the player 2500 DOWN. That is deliberate and it
+    // is kept small. No vanilla gig ends with the player poorer, so a large
+    // loss reads as a bug; a small one reads as V eating the cost of a job he
+    // took for nothing, which is where the ending already sits. Change either
+    // number and the other has to be reconsidered.
+    private func GiveSkim(player: ref<PlayerPuppet>, qs: ref<QuestsSystem>) -> Void {
+        qs.SetFactStr("cc_g01_skimmed", 1);
+        CCSharedRewards.Pay(this.GetGameInstance(), player, 12500, 0);
+    }
+
     private func GiveReward(player: ref<PlayerPuppet>, qs: ref<QuestsSystem>) -> Void {
         qs.SetFactStr("cc_g01_rewarded", 1);
+        CCSharedRewards.Pay(this.GetGameInstance(), player, 0, 300);
+    }
 
-        CCSharedRewards.Pay(this.GetGameInstance(), player, 2500, 300);
-
-        CCSharedHud.NotifyTyped(this.GetGameInstance(), GetLocalizedTextByKey(n"cc-g01-reward"), SimpleMessageType.Money, 4.0);
+    // ------------------------------------------------------- paying the fixer
+    // V's fee to Nix, moved here 2026-09-03. It used to come out during the
+    // send, before Nix had read a line of the ledger; the design call is that
+    // V pays on DELIVERY, after the message with Hoshino's name and the
+    // estate lands and V has thanked him.
+    //
+    // NOTHING IS DRAWN BY THIS FUNCTION, and that is the point. It used to
+    // raise a banner of our own ("Transferred to Nix. Fifteen thousand, up
+    // front."), which is a mod's text over a moment the game already
+    // animates: changing the player's money is what drives the eddies
+    // counter, so the transaction alone gives the vanilla currency update.
+    //
+    // Guarded by a FACT, not a script field, for the reason GiveReward gives
+    // above: a field resets on load, and a charge that re-applies on every
+    // reload empties the player's account.
+    private func PayNix(player: ref<PlayerPuppet>, qs: ref<QuestsSystem>) -> Void {
+        qs.SetFactStr("cc_g01_nix_paid", 1);
+        GameInstance.GetTransactionSystem(this.GetGameInstance())
+            .RemoveItemByTDBID(player, t"Items.money", 15000);
     }
 
     // ------------------------------------------------------------------ tick
@@ -1771,11 +1805,27 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
                 // The ledger goes to Nix, in the street, once he has agreed to
                 // dig and asked who is paying. This is the handover the gig used
                 // to do off-screen - see gen_scenes.build_nix_brief.
-                if qs.GetFactStr("cc_g01_nixbrief_done") > 0
+                // cc_g01_ledger_send IS SET FROM INSIDE THE CALL as of
+                // 2026-09-03, by a fact node in gig01_nix_brief.scene right
+                // after V says he is sending the files. It used to be
+                // cc_g01_nixbrief_done, i.e. the call HANGING UP, so V
+                // announced a transfer and then made it to nobody; the scene
+                // now holds on cc_g01_ledger_sent (set by the last send beat
+                // below) and Nix answers once it lands.
+                if qs.GetFactStr("cc_g01_ledger_send") > 0
                     && qs.GetFactStr("cc_g01_ledger_sent") == 0
                     && !this.m_sendBusy {
                     this.m_sendBusy = true;
                     this.SendStep(0);
+                }
+
+                // ...AND THE FEE GOES OUT WHEN HIS FINDINGS LAND. The quest
+                // phase sets cc_g01_pay_nix once the player has opened the
+                // message thread and tapped the reply, so the money leaves
+                // V's account as a thank-you rather than as a deposit.
+                if qs.GetFactStr("cc_g01_pay_nix") > 0
+                    && qs.GetFactStr("cc_g01_nix_paid") == 0 {
+                    this.PayNix(player, qs);
                 }
 
                 // Arrive at the estate. Horizontal radius + altitude band, NOT a
@@ -2112,7 +2162,28 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
                             // line. See gen_questphase.py, which carries why the
                             // 2026-08-14 attempt at this failed and why the same
                             // thing works now.
-                            hostileNow = hp < 99.0
+                            // `hp > 0.0` GUARDS A READING, NOT A STATE, and
+                            // it is the fix for 2026-09-03: *"hoshino no
+                            // longer attacks after V talks... he's killable
+                            // but doesn't react"*.
+                            //
+                            // GetStatPoolValue on a body that is still
+                            // resolving answers 0, which is indistinguishable
+                            // from "shot to pieces" to a `< 99.0` test. On a
+                            // tick where that happened he was marked provoked
+                            // before anyone had touched him, TurnOnPlayer
+                            // fired while the shield was still up, and the
+                            // friendly attitude this block re-asserts every
+                            // tick immediately overwrote it. After the
+                            // conversation the shield lifts, so he becomes
+                            // killable - and nothing ever makes him hostile
+                            // again, because the flip below was a one-shot
+                            // that had already been spent.
+                            //
+                            // A dead man reads 0 too, and this block does not
+                            // run for one: the enclosing test is
+                            // cc_g01_hoshino_dead == 0 and IsAlive().
+                            hostileNow = (hp > 0.0 && hp < 99.0)
                                 || qs.GetFactStr("cc_g01_hoshino_talked") > 0
                                 || qs.GetFactStr("cc_g01_dbg_hoshino_fight") > 0;
                         }
@@ -2243,7 +2314,15 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
                             }
                         }
 
-                        if hostileNow && !this.m_hoshinoProvoked {
+                        // RE-ASSERTED EVERY TICK, exactly like the friendly
+                        // attitude above and for the same reason: an attitude
+                        // set on an entity that is still resolving silently
+                        // does nothing. It was a one-shot until 2026-09-03,
+                        // which meant a single early or lost call left him
+                        // permanently peaceful with no way back. Two calls a
+                        // second on one NPC, and only while he is alive and
+                        // the gig is at the estate.
+                        if hostileNow {
                             this.m_hoshinoProvoked = true;
                             NegativeBalanceEncounter.TurnOnPlayer(hoshino, player);
                         }
@@ -2699,6 +2778,14 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
                 // voiced). No SpawnJohnny here any more: two Johnnys at the bar
                 // is the one way this beat could look worse than it did.
                 qs.SetFactStr("cc_g01_bar_reached", 1);
+            }
+
+            // THE SKIM, the moment the malware is in. Same fact the quest
+            // phase completes the upload objective on, so the money and the
+            // objective land together.
+            if qs.GetFactStr("cc_g01_malware_done") > 0
+                && qs.GetFactStr("cc_g01_skimmed") <= 0 {
+                this.GiveSkim(player, qs);
             }
 
             // Outside the guard above, which only runs while the gig is open:

@@ -12,7 +12,11 @@ of freezing. Immediately, no disputes, no appeals, too many times. Her access wa
 revoked after she saw it. She lost no one: **she is the witness, and possibly the
 next name on the list.** V hides her at El Coyote Cojo with Mama Welles, then
 dismantles the scheme at its point of execution: the Arasaka office where she
-worked, run by an exec named Hoshino who signs the contracts.
+worked, run by an exec named Hoshino who signs the contracts. Hoshino runs it
+off the books, his own operation inside Arasaka's paperwork rather than
+corporate policy, which is why the trail is a stamp and a middleman rather
+than a memo (decided 2026-08-31: a rogue exec is the more canon read, and it
+keeps the scheme killable by killing one man).
 
 Timeline: during the main game, post-relic (Johnny present throughout).
 Source material: the Negative Balance comic (63 pages, not part of this repo),
@@ -26,9 +30,10 @@ which doubles as the visual/staging reference for every beat.
 | 2 | Location received | Elena sends workplace location; journal gig "Negative Balance" + map pin; V/Johnny recognize it as Arasaka-run | `cc_g01_accepted` |
 | 2b | Daytime recon (optional beat) | Approach by day: goons + mech out front make the front door a non-option; establishes night entry | `cc_g01_recon_done` |
 | 3 | Infiltration, LOCATION 1 | Arasaka compound, Arroyo/Santo Domingo. Street approach x=-177.761, y=-1472.829, z=7.477 (pin anchor `#std_arr_parking_spwn_179`). Guards inside (stealth-viable), hackable cameras | `cc_g01_office_reached` |
-| 4 | The terminal | Interactable terminal inside the office → connect/upload sequence. This is where V learns the scheme AND that Hoshino is at the estate | `cc_g01_malware_done` |
-| 4b | **Nix holocall** | V sends the terminal data to Nix (existing game netrunner, contact `contacts/nix`, merge a new conversation into his contact like Elena's). He decrypts it, names Hoshino and sends the estate location | `cc_g01_nix_done` |
-| 5 | Travel, LOCATION 2 | **Arasaka residence on the hill (North Oak estate)**, objective + map pin appear only after Nix's call | `cc_g01_estate_reached` |
+| 4 | The terminal | Interactable terminal inside the office. The ledger is readable and meaningless to a merc: closed accounts, a policy series, routing codes. V and Johnny react, they do not explain; Johnny says take it to Nix | `cc_g01_terminal_done` |
+| 4b | **Nix call** | V rings Nix and sends the data. Nix says it will take him four, five hours. Every line on the call is a real recording of theirs | `cc_g01_nix_done` |
+| 4c | **Nix's message** | Four in-game hours later a text thread arrives: the insurance-kill scheme in plain words, Hoshino's name, the North Oak estate. The player taps one reply, which is how the gig knows it was read | `cc_g01_nixmsg_sent`, `cc_g01_nix_done` |
+| 5 | Travel, LOCATION 2 | **Arasaka residence on the hill (North Oak estate)**, objective + map pin appear only once Nix's message has been read | `cc_g01_estate_reached` |
 | 6 | Hoshino | At the estate: short exchange, combat-or-execute branch (both → dead) | `cc_g01_hoshino_dead` |
 | 7 | Escape | Security responds; clear the way and leave | `cc_g01_escaped` |
 | 8 | Epilogue, LOCATION 3 | El Coyote Cojo (pin anchor `#loc_sq022_el_coyote_cojo_bar_marker`): Mama Welles line, drink with Pepe, closing V/Johnny beat | `cc_g01_done` |
@@ -39,18 +44,41 @@ the intel; Hoshino lives at the **Arasaka estate on the hill in North Oak** -
 the luxury interior seen in the comic panels. The estate pin must appear only
 after Nix's call, so the reveal drives the travel.
 
-**Nix as the bridge:** V can't read what the terminal gives up, so the data goes
-to Nix (Afterlife's netrunner). He's an existing character with an existing
-journal contact, so his conversation merges into `contacts/nix`: no new contact
-needed, and it grounds the gig in the game's world. His holocall is what turns
-"something is wrong at Arasaka" into "Hoshino, at the estate on the hill".
+**Nix is the bridge, and he explains it in writing.** V can't read what the
+terminal gives up, so the data goes to Nix (Afterlife's netrunner). He is an
+existing character with an existing journal contact, and his findings come
+back as a TEXT THREAD rather than a second holocall.
+
+That is the whole answer to the problem the week was spent on. V, Johnny and
+Nix speak only in recordings the game already shipped, and no recording of any
+of them explains an insurance-kill scheme; every attempt to assemble one out
+of fragments was rejected as unlistenable or unintelligible, and an invented
+character built to say it out loud made the plot worse, not better. So
+the explanation moved to the three channels that need no voice at all and that
+the base game uses for exactly this: the file on the terminal screen, the
+quest briefing in the journal, and a fixer's text message. Elena still briefs
+the pattern up front in her own voice, because she is invented and ours to
+cast.
 
 Reward: **revised 2026-08-11 in playtest. The gig now pays.** It is still not
 Elena's money (she never learns it was V); it is framed as what V skims on the
 way through Hoshino's payment network, so the ending's silence is intact.
-2500 eddies + 300 Street Cred, granted by `NegativeBalanceEncounter.GiveReward`
-when `cc_g01_done` flips, guarded by the `cc_g01_rewarded` FACT, a script field
-would reset on load and re-pay every time the save is loaded.
+The money moves three times, and the total is deliberate. V pays Nix 15,000
+when the message naming Hoshino and the estate lands (`PayNix`, guarded by
+`cc_g01_nix_paid`). The malware skims 12,500 back the moment the upload
+finishes at Hoshino's terminal (`GiveSkim`, guarded by `cc_g01_skimmed`). The
+gig closes with 300 Street Cred and no eddies (`GiveReward`, guarded by
+`cc_g01_rewarded`). Each is guarded by a FACT rather than a script field,
+because a script field resets on load and would re-pay, or re-charge, on every
+reload.
+
+So the gig leaves the player 2500 down, and that is on purpose. No vanilla gig
+does: a gig is paid work and the fixer wires eddies on completion. The nearest
+base-game shape is "Paid in Full", Viktor's 21,000 debt, which is optional and
+rewards nothing but the scene. The loss here is kept small for the same reason
+that one works. A large loss reads as a bug, particularly since nothing on
+screen names either figure; a small one reads as V eating the cost of a job he
+took for nothing, which is where the ending already sits.
 
 Previous decision, kept for context: no eddies at all, quest XP and in-building
 loot only, on the grounds that the point of the ending is the silence.
@@ -59,7 +87,9 @@ loot only, on the grounds that the point of the ending is the silence.
 
 **The lines that ship are `docs/dialogue.txt`.** It is generated from the scenes
 themselves by `tools/gig01/dump_dialogue.py`, so it cannot disagree with what
-plays. Fourteen scenes, 60 spoken lines. The reasoning behind each one, the comic
+plays. Ten scenes, 53 spoken lines, of which 46 are reachable: the Nix call is
+built twice, voice and video, and only one of the pair ever plays. 46 is the
+number the mod page quotes, because it is what a player hears. The reasoning behind each one, the comic
 page it came from and any departure from it are in `tools/gig01/gen_scenes.py`,
 one `build_*()` per scene.
 
@@ -391,6 +421,49 @@ speed. `backlog.md` 16 has the reasoning, including why moving him or delaying
 him were both wrong.
 What is still open is in `docs/backlog.md`; it is short, and none of it blocks a
 release.
+
+## The spliced-voices restructure (branch `spliced-voices`, finished 2026-09-03)
+
+Built and deployed, not yet playtested or released. The rule the whole branch
+comes down to: **V, Johnny, Nix and Mama Welles speak only in recordings the
+game already shipped.** Elena and Hoshino were recorded by real people, because
+they are new characters with nobody to imitate and nothing to match.
+
+What that cost and how it was paid:
+
+- **Whole takes wherever possible, one cut where not, never a join.** Five
+  produced clips remain in the entire gig, each a single trim inside one
+  recording, each listened to on its own and checked against the
+  wanted words before promotion: three V lines in Elena's call, Nix's "should take
+  me, I dunno... four, five hours?", and Mama's "She's a nice girl."
+- **The exposition left the dialogue.** No recording of V, Johnny or Nix can
+  explain an insurance-kill scheme, so the scheme is stated by the terminal
+  file, the new journal briefing, and Nix's text message. The base game does
+  the same thing with every fixer gig.
+- **Nix's callback became an SMS thread** (four messages, one reply). The
+  reply is the read receipt: a delivered message is not a read one, and the
+  estate stays locked until the player opens the phone.
+- **The journal briefing is new** and overdue: vanilla street stories all
+  carry one and this gig shipped without through six releases.
+- **Mama Welles is her own voice**, which retires the last imitation in the
+  gig. Her Misty report reads as Elena without naming her, and the ending is
+  V starting a sentence and being cut off by "It's OK, V. You don't need to."
+
+Deleted with the branch: the second holocall and its video twin, and the four
+scenes nothing entered any more. `gig01_legend` and `gig01_graves` were
+Johnny beats whose lines no vanilla recording covers; `gig01_shard_find` and
+`gig01_shard_read` were the reactions to a shard that stopped being an
+objective. The shard itself is still in the world and still readable. Their
+29 caption strings went with them, along with the caption route itself: no
+beat in the gig is a printed line any more, so `Line()` is gone.
+
+Every scene that remains is entered by something, which is the standard to
+hold: a scene nothing plays is a resource in the download and a line in the
+generator that a reader has to work out is dead.
+
+Open: the whole branch is unplayed. The two trims want an ear, and the SMS
+thread wants a run on a real save (pacing, whether the reply button reads as
+the way to close it).
 
 ## History
 

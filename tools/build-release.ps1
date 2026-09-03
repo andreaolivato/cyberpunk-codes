@@ -76,6 +76,19 @@ New-Item -ItemType Directory -Force $OutDir | Out-Null
 
 Write-Host "Release: $shipName $Version"
 
+# ------------------------------------------------------- 0) the writing gate
+# The changelog and the mod page are the two things every downloader reads, and
+# they are where the writing rules keep slipping. On 2026-09-05 one convoluted
+# sentence reached fourteen files before anyone read it aloud. So the zip does
+# not get built until check-writing.py passes on the player-facing text.
+#
+# It checks strings, not sense: passing is the floor, not the standard.
+Write-Host "  checking the player-facing writing"
+& python (Join-Path $PSScriptRoot "check-writing.py") --player
+if ($LASTEXITCODE -ne 0) {
+    throw "The changelog or the mod page failed the writing check above. Fix it, or run it yourself with tools\check-writing.py --player"
+}
+
 # ---------------------------------------------------------------- 1) build
 if ($Rebuild) {
     Write-Host "  -Rebuild: packing fresh (will NOT be byte-identical to the tested archive)"
@@ -270,5 +283,5 @@ Write-Host "  Requirements for the mod page:"
 Write-Host "    RED4ext, ArchiveXL, TweakXL, Codeware, redscript"
 Write-Host "    NOT Cyber Engine Tweaks, NOT Audioware, NOT mod_settings"
 Write-Host ""
-Write-Host "  Voices: say on the mod page how they were made, and check the"
-Write-Host "  platform's AI-content rules before picking tags. Both changed at 1.4.0."
+Write-Host "  Voices: the Good to know section says how the gig is cast."
+Write-Host "  Nothing is synthesised from 2.0.0, so no content tag applies."

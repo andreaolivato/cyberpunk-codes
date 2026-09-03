@@ -420,18 +420,25 @@ def resref(v=None, flags='Soft'):
             'Flags': flags}
 
 
-def entity_ref(unique_name=None, node_ref=None):
+def entity_ref(unique_name=None, node_ref=None, tag=None):
     """gameEntityReference - how a quest node names the thing it acts on.
 
     A scene-spawned actor is addressed by the `dynamicEntityUniqueName` it was
     given in spawnDespawnParams. That handle is the correction to the old "a
     scene actor cannot be bound to a spawned entity" note: it does not work in
     the direction script -> scene, but it works perfectly scene -> quest node.
+
+    `tag=` addresses a SCRIPT-spawned entity instead: `names` plus type Tag,
+    the same reference shape add_body_double acquires the body with, so the
+    node acts on the body the player is looking at. Vanilla's counterpart
+    (sts_std_rcr_01_scene, its receptionist workspots) addresses a community
+    entry with `names` plus a reference the same way.
     """
     return {'$type': 'gameEntityReference',
-            'dynamicEntityUniqueName': cname(unique_name), 'names': [],
+            'dynamicEntityUniqueName': cname(unique_name),
+            'names': [cname(tag)] if tag else [],
             'reference': noderef(node_ref), 'sceneActorContextName': cname(None),
-            'slotName': cname(None), 'type': 'EntityRef'}
+            'slotName': cname(None), 'type': 'Tag' if tag else 'EntityRef'}
 
 
 def quest_socket(name, kind):
@@ -1385,7 +1392,7 @@ class Scene:
         return did
 
     def add_workspot_node(self, unique_name, path=WORKSPOT_JOHNNY,
-                          entry=WORKSPOT_ENTRY):
+                          entry=WORKSPOT_ENTRY, tag=None):
         """A node that puts a scene-spawned actor into a workspot IN PLACE.
 
         Vanilla ships two shapes and this is the one that needs no world node:
@@ -1460,7 +1467,8 @@ class Scene:
             'outputSockets': [osock(0, 0, []), osock(0, 1, [])],
             'questNode': {'HandleId': '@qn', 'Data': {
                 '$type': 'questUseWorkspotNodeDefinition',
-                'entityReference': entity_ref(unique_name=unique_name),
+                'entityReference': (entity_ref(tag=tag) if tag
+                                    else entity_ref(unique_name=unique_name)),
                 'id': nid,
                 'paramsV1': {'HandleId': '@qp', 'Data': {
                     '$type': 'scnUseSceneWorkspotParamsV1',
@@ -1643,6 +1651,30 @@ class Scene:
         node['outputSockets'].append(osock(0, 0, [(dst, 0)]))
         node['outputSockets'].append(osock(1, 0, []))
 
+    def link_quest(self, src, dst):
+        """One scnQuestNode's Out into another's "In".
+
+        Both ends need care and neither is what a plain link() does. A quest
+        node is created WITH its single output socket already present and
+        empty, so appending another would leave two sockets carrying the same
+        stamp; this fills in the one that is there. And the destination is
+        input ordinal 1, because ordinal 0 on a quest node is CutDestination,
+        the cutscene-skip path, which accepts the wiring and does nothing.
+        """
+        node = self._node(src)
+        node['outputSockets'] = [osock(0, 0, [(dst, 1)])]
+
+    def link_section_quest(self, src, dst):
+        """Section flow into a scnQuestNode's "In", which is input ORDINAL 1.
+
+        link_section targets ordinal 0, and on a quest node that is
+        CutDestination: the wiring parses, validates and does nothing. Same
+        socket trap as add_workspot_node documents, seen from the other side.
+        """
+        node = self._node(src)
+        node['outputSockets'].append(osock(0, 0, [(dst, 1)]))
+        node['outputSockets'].append(osock(1, 0, []))
+
     def add_fact_node(self, fact, value=1):
         """A node that sets a quest fact from INSIDE the scene.
 
@@ -1676,6 +1708,46 @@ class Scene:
                     'setExactValue': 0,
                     'value': value,
                 }},
+            }},
+        })
+        return nid
+
+    def add_wait_fact_node(self, fact, value=0, cmp='Greater'):
+        """Hold the scene's flow until a fact clears a comparison.
+
+        The in-scene counterpart to the quest graph's add_pause_fact, and the
+        piece that lets one scene span a stretch of free gameplay: seat an
+        actor, wait for the script to say the fight is over, then talk. Shape
+        is node 701 of sts_std_rcr_01_scene.scene (a questPauseConditionNode
+        wrapped in scnQuestNode), which is also where the socket order comes
+        from. The base gig's office scene carries six of these.
+
+        Link INTO it with in_ordinal 1 ("In" - ordinal 0 is CutDestination,
+        same trap as every scnQuestNode), and link its single Out onward.
+        """
+        nid = self._nid()
+        self.nodes.append({
+            '$type': 'scnQuestNode',
+            'ffStrategy': 'automatic',
+            'isockMappings': [cname('CutDestination'), cname('In')],
+            'nodeId': node_id(nid),
+            'osockMappings': [cname('Out')],
+            'outputSockets': [],
+            'questNode': {'HandleId': '@qn', 'Data': {
+                '$type': 'questPauseConditionNodeDefinition',
+                'condition': {'HandleId': '@qc', 'Data': {
+                    '$type': 'questFactsDBCondition',
+                    'type': {'HandleId': '@qt', 'Data': {
+                        '$type': 'questVarComparison_ConditionType',
+                        'comparisonType': cmp,
+                        'factName': fact,
+                        'value': value,
+                    }},
+                }},
+                'id': nid,
+                'sockets': [quest_socket('CutDestination', 'CutDestination'),
+                            quest_socket('In', 'Input'),
+                            quest_socket('Out', 'Output')],
             }},
         })
         return nid
@@ -2044,8 +2116,20 @@ class Scene:
                 raise SystemExit('%s: workspot node %d references missing '
                                  'instance %d' % (self.name, n['nodeId']['id'],
                                                   p['workspotInstanceId']['id']))
-            uniq = n['questNode']['Data']['entityReference'][
-                'dynamicEntityUniqueName']['$value']
+            eref = n['questNode']['Data']['entityReference']
+            if eref['type'] == 'Tag':
+                # A tag-addressed node acts on a SCRIPT-spawned body, not on
+                # a scene actor, so there is nothing in this file to check it
+                # against: the tag is a contract with the DynamicEntitySpec
+                # the spawning script fills in (Gig01_Mori.reds for the one
+                # user so far). All the scene side can verify is that a tag
+                # was actually written.
+                if not eref['names']:
+                    raise SystemExit('%s: workspot node %d is Tag-addressed '
+                                     'with no tag' % (self.name,
+                                                      n['nodeId']['id']))
+                continue
+            uniq = eref['dynamicEntityUniqueName']['$value']
             names = {a['spawnDespawnParams']['dynamicEntityUniqueName']['$value']
                      for a in self.actors}
             if uniq not in names:

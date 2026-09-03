@@ -7,7 +7,7 @@
 Run it AFTER gen_voice.py (it needs durations.json) and BEFORE gen_scenes.py
 (which reads the picks file this writes). The dev-loop order is therefore
 
-    text-to-speech -> gen_voice -> gen_lipsync -> gen_scenes -> build -> deploy
+    recorded wav -> gen_voice -> gen_lipsync -> gen_scenes -> build -> deploy
 
 ============================================================================
 HOW LIPSYNC WORKS IN THIS GAME - all of it verified against shipped data on
@@ -258,12 +258,21 @@ def _reused(catalogue):
     The same line has been mouthless behind a contact portrait since 1.2.0,
     where there was nothing to see.
 
-    A reused line CANNOT be given its own perfect animation, tempting as it is:
-    one `.anims` set serves a whole scene, and the set holding `f_<stringId>`
-    is the contact's own conversation set, which is the tiny pool that made
-    everything else bad (backlog 2j). It is cast by length like any other line.
-    If the picker ever does choose that set, the exact animation wins on its
-    own merit, because its length error is zero.
+    A REUSED LINE NOW GETS ITS OWN PERFECT ANIMATION WHERE IT CAN, 2026-09-03,
+    and the paragraph that stood here saying it could not was right only while
+    reuse was rare. It read: one `.anims` set serves a whole scene, the set
+    holding `f_<stringId>` is the contact's own conversation set, and that
+    tiny pool made everything else bad (backlog 2j), so the line was cast by
+    length like any other.
+
+    The recast inverted the arithmetic. Most lines are vanilla reuse now, so
+    the set that holds one line's own animation usually holds the others' too,
+    and questkit.lipsync._exact ranks sets by how many of them it can serve
+    exactly before it looks at length at all. 11 of 21 picks are the line's
+    own animation as of this writing; the rest are trims (whose clip is
+    shorter than the animation vanilla baked), the invented characters (who
+    have no vanilla animation to be exact about), and lines whose source scene
+    lost the tie to a set that served more of their scene-mates.
     """
     out = []
     for build in gs.ALL_BUILDERS:
@@ -279,6 +288,43 @@ def _reused(catalogue):
                       % (scene.name, key, string_id))
                 ms = gs.estimate_ms(text)
             out.append((scene.name, scene.actors[speaker]['actorName'], key, ms))
+    return out
+
+
+def _exact_names():
+    """(character, scene) -> {key: 'f_<stringId>'} for every line reused WHOLE.
+
+    Vanilla baked a lipsync animation for each of its own recordings, named
+    after the line's stringId, so a line this gig reuses whole already HAS a
+    perfect animation. See questkit.lipsync._exact for the one condition (an
+    actor gets one set per scene, so they must all come from the same vanilla
+    scene) and what happens when it is not met.
+
+    TRIMS ARE DELIBERATELY EXCLUDED. A cut clip is shorter than the recording
+    the animation was baked for, so the exact animation would outrun it - the
+    mouth still moving after the words stop, which is the exact failure the
+    length casting exists to avoid. Those keys are in CAST (they ship audio of
+    ours) and are cast by length like any other produced clip.
+    """
+    produced = {'%s/%s' % (sc, k)
+                for _c, scenes in gv.CAST.items()
+                for sc, keys in scenes.items() for k in keys}
+    out = {}
+    for build in gs.ALL_BUILDERS:
+        scene = build()
+        for key, string_id, _text in scene.reused:
+            if '%s/%s' % (scene.name, key) in produced:
+                continue
+            speaker = scene.reused_actor.get(key)
+            if speaker is None or speaker >= len(scene.actors):
+                continue
+            actor = scene.actors[speaker]['actorName']
+            char = next((c for c, cfg in CHARACTERS.items()
+                         if cfg['actor'] == actor), None)
+            if char is None:
+                continue
+            out.setdefault((char, scene.name), {})[key] = (
+                'f_%016X' % int(string_id))
     return out
 
 
@@ -360,7 +406,8 @@ def main():
     if args.rebuild:
         rebuild_cache()
     catalogue = load_catalogue()
-    sets, lines, report = pick(catalogue, _wanted(catalogue), verbose=args.report)
+    sets, lines, report = pick(catalogue, _wanted(catalogue),
+                           verbose=args.report, exact=_exact_names())
     _check_actor_names(sets, gs.ALL_BUILDERS)
 
     doc = {

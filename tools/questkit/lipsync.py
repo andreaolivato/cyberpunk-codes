@@ -251,7 +251,85 @@ def _check_actor_names(sets, builders):
                                  % (actor, scene, sorted(have[scene])))
 
 
-def pick(catalogue, wanted_lines, verbose=False):
+def _exact(catalogue, rx, wanted, exact_names):
+    """The set that gets the most lines their REAL animation, then the best
+    lengths for the rest.
+
+    THE BEST LIPSYNC IS THE ONE VANILLA BAKED FOR THE LINE. A line this gig
+    reuses whole plays vanilla's own recording, and vanilla baked a lipsync
+    animation for that recording, named `f_<stringId>` inside the anim set of
+    the scene it was recorded for. Length matching puts a mouth of the right
+    duration on the words; this puts the RIGHT MOUTH on them, visemes and all.
+
+    The constraint that makes it partial: `scnActorDef.lipsyncAnimSet` is ONE
+    id, so an actor gets one set for a whole scene. All of their reused lines
+    coming from one vanilla scene is the happy case and gives a fully exact
+    scene. Where they come from two - our terminal borrows Johnny from two
+    different conversations - the best available answer is the set that
+    covers the most of them exactly and casts the others by length, which is
+    what this returns.
+
+    This used to be impossible in practice and the note that said so was
+    right at the time: one reused line among generated ones meant choosing
+    between the exact animation for it and decent lengths for the others.
+    The recast inverted that. Most lines are reused now.
+
+    TRIMS ARE NOT IN `exact_names` (see the caller): a cut clip is shorter
+    than the recording its animation was baked for, so the exact animation
+    would outrun it.
+
+    Returns (depot, {key: name}, entry, err, hits) or None.
+    """
+    if not exact_names:
+        return None
+    best = None
+    for depot, entry in catalogue.items():
+        if not rx.search(depot):
+            continue
+        have = {n.upper(): sec for n, sec in entry['anims']}
+        names = {k: n for k, n in exact_names.items() if n.upper() in have}
+        if not names:
+            continue
+        spare = [(n, sec) for n, sec in entry['anims']
+                 if n.upper() not in {v.upper() for v in names.values()}]
+        rest = [(k, ms) for k, ms in wanted if k not in names]
+        if len(spare) < len(rest):
+            continue
+        err, ok = 0.0, True
+        cast = {}
+        for key, ms in sorted(rest, key=lambda kv: -kv[1]):
+            pick_i, pick_cost = None, None
+            for i, (_n, sec) in enumerate(spare):
+                delta = sec * 1000.0 - ms
+                cost = delta * 1.5 if delta > 0 else -delta
+                if pick_cost is None or cost < pick_cost:
+                    pick_i, pick_cost = i, cost
+            if pick_i is None:
+                ok = False
+                break
+            cast[key] = spare.pop(pick_i)[0]
+            err += pick_cost
+        if not ok:
+            continue
+        # COUNT THE HITS BEFORE MERGING THE CAST ONES IN. A reused line this
+        # set does NOT hold falls through to length casting and lands in
+        # `names` too, so counting after the merge counted it as exact: every
+        # set then scored the same and the ranking collapsed to length alone,
+        # which is the thing this function exists to outrank.
+        hits = len(names)
+        names.update(cast)
+        # Most exact hits wins; ties go to the smaller length error on the
+        # lines that had to be cast.
+        rank = (-hits, err)
+        if best is None or rank < best[0]:
+            best = (rank, depot, names, entry, err, hits)
+    if best is None:
+        return None
+    _rank, depot, names, entry, err, hits = best
+    return depot, names, entry, err, hits
+
+
+def pick(catalogue, wanted_lines, verbose=False, exact=None):
     """Cast a vanilla lipsync set for every line that wants a mouth.
 
     `wanted_lines` is the gig's own list of (character, scene, [(key, ms), ...]).
@@ -266,6 +344,25 @@ def pick(catalogue, wanted_lines, verbose=False):
     for char, scene, wanted in wanted_lines:
         actor = CHARACTERS[char]['actor']
         rx = re.compile(CHARACTERS[char]['regex'])
+        # EXACT FIRST. See _exact: if one set holds vanilla's own animation
+        # for every reused line in this scene, that is not an approximation
+        # of the lipsync, it IS the lipsync.
+        hit = _exact(catalogue, rx, wanted,
+                     (exact or {}).get((char, scene), {}))
+        if hit is not None:
+            depot, names, entry, err, hits = hit
+            if entry['voicetag'] in (None, '0'):
+                raise SystemExit('%s: exact set %s has no voicetag' % (char, depot))
+            sets.setdefault(scene, {})[actor] = {
+                'anims': depot, 'voicetag': entry['voicetag']}
+            for key, name in names.items():
+                lines['%s/%s' % (scene, key)] = name
+            report.append((scene, actor, depot, err, names, wanted))
+            if verbose:
+                print('%-20s %-12s %d exact, err %5.0f ms  %s'
+                      % (scene, actor, hits, err,
+                         depot.rsplit(chr(92), 2)[-2]))
+            continue
         best = None
         for depot, entry in catalogue.items():
             if not rx.search(depot):

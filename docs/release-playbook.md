@@ -105,10 +105,14 @@ menu. Without it, a plain re-deploy silently reinstalls the menu.
   NOT Cyber Engine Tweaks, NOT Audioware, NOT mod_settings. Proven rather than
   assumed: on 2026-08-14 everything else was disabled in Vortex, CET was taken
   out of the loader, and the gig played end to end.
-- The description credits the voices: performed by human voice actors and
-  modulated with custom trained RVC models to resemble original NPCs, performed
-  and edited by @fronterawave. The shipped README carries the same sentence, so
-  it travels with the files.
+- **The writing check has to pass before the zip builds.**
+  `python tools\check-writing.py --player` reads the changelog and the mod page
+  and fails on jargon a player would have to look up, on sentences over 35
+  words, and on the constructions this project keeps reaching for.
+  `build-release.ps1` runs it first and stops if it fails.
+- The description says where the voices come from: the game's own characters
+  use the game's own lines, and the new ones were recorded by real people. The
+  shipped README says the same, so it travels with the files.
 - Permissions (reupload, modification, asset reuse) are set on the Nexus page,
   which is the normal mechanism for a story mod. The MIT licences ArchiveXL and
   friends ship suit libraries other people build on. This is content, not a

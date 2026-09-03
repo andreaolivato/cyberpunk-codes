@@ -23,6 +23,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from questkit.journal import (                                      # noqa: F401
     configure, h, wrap, cname, tweak, noderef, lockey, vec3,
     contact, pin_offset, map_pin, objective, folder,
+    description, message, choice_group, choice,
 )
 
 # Paths and prefixes are gig01_config.py, the file a second gig re-points.
@@ -68,7 +69,6 @@ OUT = os.path.join(RAW_MOD, 'journal', 'gig01.journal.json')
 # looked like. See docs/architecture.md.
 ANCHOR_OFFICE = '#q112_mp_truck_drive_inside'
 ANCHOR_TERMINAL = '#q112_05_sm_infiltration'
-ANCHOR_SHARD = '#q112_06_sm_warehouse'
 ANCHOR_ESTATE = '#q113_03a_sm_haru_kasai_drive_gate'
 ANCHOR_ESTATE_MECH = '#q113_estate_mech_movement'
 ANCHOR_HANAKO_AV = '#q113_spwn_estate_hanako_av'
@@ -80,7 +80,6 @@ ANCHOR_VICTOR = '#sq018_03b_sm_victor'
 ANCHOR_POS = {
     ANCHOR_OFFICE: (-209.256683, -1454.215090, 7.599944),
     ANCHOR_TERMINAL: (-258.917847, -1484.295040, 7.800000),
-    ANCHOR_SHARD: (-264.817932, -1427.495120, 10.300000),
     ANCHOR_ESTATE: (381.207214, 1161.728150, 220.800018),
     ANCHOR_ESTATE_MECH: (320.575073, 1062.156860, 225.929230),
     ANCHOR_HANAKO_AV: (286.031494, 1019.350890, 224.945816),
@@ -92,10 +91,6 @@ ANCHOR_POS = {
 PIN_POS = {
     'pin_office': (-189.371, -1464.500, 7.596),     # compound entry
     'pin_terminal': (-251.915, -1456.364, 14.600),  # office terminal (ledger)
-    # The shard on the office desk (comic p23), placed by tools/gig01/gen_sector.py.
-    # NOTE a pre-existing 0.9 m disagreement with gen_sector's SHARD_POS
-    # (-245.654, -1454.667, 15.400); this is the value that has been shipping.
-    'pin_shard': (-244.931, -1454.178, 15.400),
     'pin_estate': (384.181, 1164.724, 220.643),     # Arasaka estate gate
     # THE WAY IN HAS NO JOURNAL PIN AT ALL, WHICH IS THE FIX.
     #
@@ -126,20 +121,11 @@ OBJECTIVES = [
     # a real marker after the terminal soft-lock: it is what the game is
     # actually waiting on before Johnny appears.
     ('obj_disconnect','obj-disconnect', None),
-    # Comic pp. 23-24: the shard in the office desk, and the note that says what
-    # the ledger is FOR. Restored 2026-08-13 (playtest: "they make sense"). No
-    # IT DOES GET A PIN. The first cut gave it none, on the reasoning that V is
-    # standing at the desk when it appears - and it was playtested and could not
-    # find the shard: "it's not clearly marked. It should appear as an
-    # interactive item, and it should have an objective mark on top so we can
-    # identify it." A 20 cm chip on a desk in a dark office is not findable
-    # without one. See SHARD_PATH below for the shard itself.
-    ('obj_shard',    'obj-shard',    ANCHOR_SHARD),
-    # READING IT IS A SECOND OBJECTIVE, and it carries NO PIN on purpose.
-    # obj_shard's pin marks where the shard lies; once it has been found the
-    # player may have taken it into the inventory, and a world marker on an
-    # empty desk would be pointing at nothing.
-    ('obj_shard_read', 'obj-shard-read', None),
+    # The shard's two objectives, its anchor and its pin were deleted on
+    # 2026-09-05 with the scenes that reacted to it: the quest stopped
+    # entering that chain and nothing activated them. The shard is still on
+    # the desk and still readable, as optional background. SHARD_PATH below
+    # is its journal entry and stays.
     ('obj_nix',      'obj-nix',      None),
     # Being clear of the compound and having talked to Nix are two different
     # things, and one objective covering both left the journal saying "keep
@@ -149,6 +135,10 @@ OBJECTIVES = [
     # goes blank while the player waits, which reads as a broken quest - the
     # same failure mode as obj_nix outliving what it described.
     ('obj_nixwait',  'obj-nixwait',  None),
+    # Reading Nix's message is its own step: it arrives while V is
+    # anywhere in the city, and the gig must not move on until it has
+    # been opened - it is where the plot is now.
+    ('obj_nixread',  'obj-nixread',  None),
     ('obj_estate',   'obj-estate',   ANCHOR_ESTATE),
     # Reaching the estate and finding a door into the house are two problems.
     # "Find Hoshino" with no way in is a player standing outside a wall.
@@ -260,16 +250,49 @@ SHARD_ID = 'cc_g01_shard_note'
 SHARD_PATH = ('onscreens/emails/quests/street_stories/' + QUEST_ID
               + '/onscreens/' + SHARD_ID)
 
-# A CONTACT CARRIES NO MESSAGES. Both opening conversations are holocalls, so
-# each contact exists only so the phone can resolve it as a call addressee
-# (HudPhoneGameController walks JournalManager.GetContacts), and its
-# conversation is an empty shell that supplies the title.
+# ELENA'S CONTACT CARRIES NO MESSAGES; NIX'S CARRIES THE PLOT.
 #
-# Until 2026-08-15 this file also built two SMS threads: 16 phone messages, 5
-# choice groups and 5 choice entries, all shipped in the archive and all inert,
-# because the quest phase stopped activating them when the calls replaced them
-# in v0.2.0. The technique is written up in docs/journal-research.md under
-# "Phone messages and reply choices"; git history has the working code.
+# Her conversation is an empty shell that supplies a title, because her beat is
+# a holocall and a contact only has to EXIST for the phone to resolve it as an
+# addressee (HudPhoneGameController walks JournalManager.GetContacts).
+#
+# His is a real thread again, restored 2026-09-03 after the SMS route was
+# removed on 2026-08-15 (16 messages, 5 choice groups, all shipped inert once
+# the calls replaced them). What brought it back is the voice route: V, Johnny
+# and Nix now speak only in recordings the game already shipped, so the one
+# thing nobody can say out loud is the explanation of the scheme. In the base
+# game a fixer's findings arrive as text and V's replies are unvoiced, which
+# is exactly the shape this needs, so the callback holocall became these four
+# messages and one reply.
+#
+# The recipe is docs/journal-research.md, "Phone messages and reply choices",
+# and the two traps it names both apply here: pace with each message's own
+# `delay` (a graph timer stalls while the phone menu is open), and wait on the
+# choice ENTRY rather than the group, because the group only means the buttons
+# are on screen.
+NIX_CONV = 'cc_g01_nixconv'
+NIX_MSGS = [
+    ('cc_g01_nixmsg_1', 'nix-msg-1', 2.0),
+    ('cc_g01_nixmsg_2', 'nix-msg-2', 6.0),
+    ('cc_g01_nixmsg_3', 'nix-msg-3', 6.0),
+    ('cc_g01_nixmsg_4', 'nix-msg-4', 5.0),
+]
+NIX_REPLY_GROUP = 'cc_g01_nixreply'
+NIX_REPLY = 'cc_g01_nixreply_ok'
+# ...and the one that arrives AFTER the reply, once V has paid: the malware
+# and the skim. Separate from NIX_MSGS because the phase pushes it later.
+NIX_MSG_LAST = ('cc_g01_nixmsg_5', 'nix-msg-5', 3.0)
+# The paths the quest phase activates and waits on.
+NIX_CONV_PATH = 'contacts/cc_g01_nix/' + NIX_CONV
+NIX_MSG_PATHS = [NIX_CONV_PATH + '/' + mid for mid, _s, _d in NIX_MSGS]
+NIX_MSG_LAST_PATH = NIX_CONV_PATH + '/' + NIX_MSG_LAST[0]
+NIX_REPLY_PATH = (NIX_CONV_PATH + '/' + NIX_REPLY_GROUP + '/' + NIX_REPLY)
+
+# The briefing paragraph, and it is new in this gig. Vanilla street stories
+# all carry one; ours shipped without through six releases. It is where the
+# scheme is stated in plain words for a player who skimmed the dialogue.
+BRIEF_ID = 'cc_g01_briefing'
+BRIEF_PATH = 'quests/street_stories/' + QUEST_ID + '/' + BRIEF_ID
 
 
 configure(lockey_prefix=LOCKEY_PREFIX, anchor_pos=ANCHOR_POS, pin_pos=PIN_POS,
@@ -325,8 +348,15 @@ def build():
             # Cost, accepted: V ends up with two "Nix" entries in his contacts if
             # the base one is already active. A duplicate in a list beats a call
             # that cannot be ended in character.
-            contact('cc_g01_nix', 'cc_g01_nixconv', 'nix-conv-title',
-                    'PhoneAvatars.Avatar_Nix', name_key='nix-name'),
+            contact('cc_g01_nix', NIX_CONV, 'nix-conv-title',
+                    'PhoneAvatars.Avatar_Nix', name_key='nix-name',
+                    conv_entries=(
+                        [message(mid, suffix, delay=d)
+                         for mid, suffix, d in NIX_MSGS]
+                        + [choice_group(NIX_REPLY_GROUP,
+                                        [choice(NIX_REPLY, 'nix-reply')]),
+                           message(*NIX_MSG_LAST[:2],
+                                   delay=NIX_MSG_LAST[2])])),
         ],
         'id': 'contacts',
         'journalEntryOverrideDataList': [],
@@ -341,7 +371,7 @@ def build():
             'id': 'phase_main',
             'journalEntryOverrideDataList': [],
             'locationPrefabRef': noderef(None),
-        })],
+        }), description(BRIEF_ID, 'gig-brief')],
         'id': QUEST_ID,
         'journalEntryOverrideDataList': [],
         'recommendedLevelID': tweak(None),

@@ -275,14 +275,14 @@
         "workspotsDebugSymbols": [
           {
             "$type": "scnWorkspotSymbol",
-            "wsEditorEventId": "268435461",
+            "wsEditorEventId": "268435460",
             "wsInstance": {
               "$type": "scnSceneWorkspotInstanceId",
-              "id": 5
+              "id": 4
             },
             "wsNodeId": {
               "$type": "scnNodeId",
-              "id": 5
+              "id": 4
             }
           }
         ]
@@ -315,7 +315,7 @@
           },
           "nodeId": {
             "$type": "scnNodeId",
-            "id": 4
+            "id": 3
           }
         }
       ],
@@ -323,110 +323,8 @@
       "localMarkers": [],
       "locStore": {
         "$type": "scnlocLocStoreEmbedded",
-        "vdEntries": [
-          {
-            "$type": "scnlocLocStoreEmbeddedVariantDescriptorEntry",
-            "localeId": "en_us",
-            "locstringId": {
-              "$type": "scnlocLocstringId",
-              "ruid": "2587598248123592664"
-            },
-            "signature": {
-              "$type": "scnlocSignature",
-              "val": "3"
-            },
-            "variantId": {
-              "$type": "scnlocVariantId",
-              "ruid": "2510225379587171274"
-            },
-            "vpeIndex": 0
-          },
-          {
-            "$type": "scnlocLocStoreEmbeddedVariantDescriptorEntry",
-            "localeId": "db_db",
-            "locstringId": {
-              "$type": "scnlocLocstringId",
-              "ruid": "2587598248123592664"
-            },
-            "signature": {
-              "$type": "scnlocSignature",
-              "val": "3"
-            },
-            "variantId": {
-              "$type": "scnlocVariantId",
-              "ruid": "2890018309871213931"
-            },
-            "vpeIndex": 1
-          },
-          {
-            "$type": "scnlocLocStoreEmbeddedVariantDescriptorEntry",
-            "localeId": "en_us",
-            "locstringId": {
-              "$type": "scnlocLocstringId",
-              "ruid": "2587601546658477297"
-            },
-            "signature": {
-              "$type": "scnlocSignature",
-              "val": "3"
-            },
-            "variantId": {
-              "$type": "scnlocVariantId",
-              "ruid": "3060859140472470175"
-            },
-            "vpeIndex": 2
-          },
-          {
-            "$type": "scnlocLocStoreEmbeddedVariantDescriptorEntry",
-            "localeId": "db_db",
-            "locstringId": {
-              "$type": "scnlocLocstringId",
-              "ruid": "2587601546658477297"
-            },
-            "signature": {
-              "$type": "scnlocSignature",
-              "val": "3"
-            },
-            "variantId": {
-              "$type": "scnlocVariantId",
-              "ruid": "2952018469774972510"
-            },
-            "vpeIndex": 3
-          }
-        ],
-        "vpEntries": [
-          {
-            "$type": "scnlocLocStoreEmbeddedVariantPayloadEntry",
-            "content": "Ledger's closed.",
-            "variantId": {
-              "$type": "scnlocVariantId",
-              "ruid": "2510225379587171274"
-            }
-          },
-          {
-            "$type": "scnlocLocStoreEmbeddedVariantPayloadEntry",
-            "content": "Ledger's closed.",
-            "variantId": {
-              "$type": "scnlocVariantId",
-              "ruid": "2890018309871213931"
-            }
-          },
-          {
-            "$type": "scnlocLocStoreEmbeddedVariantPayloadEntry",
-            "content": "Corpo-rats always think names beat bullets.",
-            "variantId": {
-              "$type": "scnlocVariantId",
-              "ruid": "3060859140472470175"
-            }
-          },
-          {
-            "$type": "scnlocLocStoreEmbeddedVariantPayloadEntry",
-            "content": "Corpo-rats always think names beat bullets.",
-            "variantId": {
-              "$type": "scnlocVariantId",
-              "ruid": "2952018469774972510"
-            }
-          }
-        ]
+        "vdEntries": [],
+        "vpEntries": []
       },
       "notablePoints": [],
       "playerActors": [
@@ -511,7 +409,7 @@
               "DepotPath": {
                 "$type": "ResourcePath",
                 "$storage": "string",
-                "$value": "base\\localization\\en-us\\lipsync\\base\\open_world\\passenger\\scenes\\thepassenger\\johnny.anims"
+                "$value": "base\\localization\\en-us\\lipsync\\base\\quest\\main_quests\\part1\\q112\\scenes\\q112_11_shotgun\\johnny.anims"
               },
               "Flags": "Soft"
             },
@@ -529,13 +427,13 @@
       "ridResources": [],
       "sceneCategoryTag": "dialoguesQuests",
       "sceneGraph": {
-        "HandleId": "23",
+        "HandleId": "21",
         "Data": {
           "$type": "scnSceneGraph",
           "endNodes": [
             {
               "$type": "scnNodeId",
-              "id": 4
+              "id": 3
             }
           ],
           "graph": [
@@ -610,7 +508,7 @@
                         "role": "Full",
                         "speakers": []
                       },
-                      "duration": 1930,
+                      "duration": 2465,
                       "executionTagFlags": 0,
                       "id": {
                         "$type": "scnSceneEventId",
@@ -623,7 +521,7 @@
                       },
                       "startTime": 700,
                       "type": "0",
-                      "visualStyle": "regular",
+                      "visualStyle": "innerDialog",
                       "voParams": {
                         "$type": "scnDialogLineVoParams",
                         "alwaysUseBrainGender": 0,
@@ -636,8 +534,71 @@
                         "ignoreSpeakerIncapacitation": 1,
                         "isHolocallSpeaker": 0,
                         "voContext": "Vo_Context_Quest",
-                        "voExpression": "Vo_Expression_Spoken"
+                        "voExpression": "Vo_Expression_InnerDialog"
                       }
+                    }
+                  },
+                  {
+                    "HandleId": "5",
+                    "Data": {
+                      "$type": "scneventsVFXEvent",
+                      "action": "Play",
+                      "duration": 0,
+                      "effectEntry": {
+                        "$type": "scnEffectEntry",
+                        "effectInstanceId": {
+                          "$type": "scnEffectInstanceId",
+                          "effectId": {
+                            "$type": "scnEffectId",
+                            "id": 4294967295
+                          },
+                          "id": 4294967295
+                        },
+                        "effectName": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "johnny_teleport_start"
+                        }
+                      },
+                      "executionTagFlags": 0,
+                      "id": {
+                        "$type": "scnSceneEventId",
+                        "id": "2662540108821921069"
+                      },
+                      "muteSound": 0,
+                      "nodeRef": {
+                        "$type": "NodeRef",
+                        "$storage": "uint64",
+                        "$value": "0"
+                      },
+                      "performerId": {
+                        "$type": "scnPerformerId",
+                        "id": 1
+                      },
+                      "scalingData": null,
+                      "sequenceShift": 0,
+                      "startTime": 3715,
+                      "type": "0"
+                    }
+                  },
+                  {
+                    "HandleId": "6",
+                    "Data": {
+                      "$type": "scneventsSocket",
+                      "duration": 0,
+                      "executionTagFlags": 0,
+                      "id": {
+                        "$type": "scnSceneEventId",
+                        "id": "2862961941112918258"
+                      },
+                      "osockStamp": {
+                        "$type": "scnOutputSocketStamp",
+                        "name": 3,
+                        "ordinal": 0
+                      },
+                      "scalingData": null,
+                      "startTime": 3715,
+                      "type": "0"
                     }
                   }
                 ],
@@ -691,168 +652,13 @@
                         },
                         "nodeId": {
                           "$type": "scnNodeId",
-                          "id": 5
-                        }
-                      }
-                    ],
-                    "stamp": {
-                      "$type": "scnOutputSocketStamp",
-                      "name": 2,
-                      "ordinal": 0
-                    }
-                  }
-                ],
-                "sectionDuration": {
-                  "$type": "scnSceneTime",
-                  "stu": 2630
-                }
-              }
-            },
-            {
-              "HandleId": "5",
-              "Data": {
-                "$type": "scnSectionNode",
-                "actorBehaviors": [],
-                "events": [
-                  {
-                    "HandleId": "6",
-                    "Data": {
-                      "$type": "scnDialogLineEvent",
-                      "additionalSpeakers": {
-                        "$type": "scnAdditionalSpeakers",
-                        "executionTag": 0,
-                        "role": "Full",
-                        "speakers": []
-                      },
-                      "duration": 4050,
-                      "executionTagFlags": 0,
-                      "id": {
-                        "$type": "scnSceneEventId",
-                        "id": "2650126835204131909"
-                      },
-                      "scalingData": null,
-                      "screenplayLineId": {
-                        "$type": "scnscreenplayItemId",
-                        "id": 257
-                      },
-                      "startTime": 700,
-                      "type": "0",
-                      "visualStyle": "innerDialog",
-                      "voParams": {
-                        "$type": "scnDialogLineVoParams",
-                        "alwaysUseBrainGender": 0,
-                        "customVoEvent": {
-                          "$type": "CName",
-                          "$storage": "string",
-                          "$value": "None"
-                        },
-                        "disableHeadMovement": 0,
-                        "ignoreSpeakerIncapacitation": 1,
-                        "isHolocallSpeaker": 0,
-                        "voContext": "Vo_Context_Quest",
-                        "voExpression": "Vo_Expression_InnerDialog"
-                      }
-                    }
-                  },
-                  {
-                    "HandleId": "7",
-                    "Data": {
-                      "$type": "scneventsVFXEvent",
-                      "action": "Play",
-                      "duration": 0,
-                      "effectEntry": {
-                        "$type": "scnEffectEntry",
-                        "effectInstanceId": {
-                          "$type": "scnEffectInstanceId",
-                          "effectId": {
-                            "$type": "scnEffectId",
-                            "id": 4294967295
-                          },
-                          "id": 4294967295
-                        },
-                        "effectName": {
-                          "$type": "CName",
-                          "$storage": "string",
-                          "$value": "johnny_teleport_start"
-                        }
-                      },
-                      "executionTagFlags": 0,
-                      "id": {
-                        "$type": "scnSceneEventId",
-                        "id": "2908877057266847672"
-                      },
-                      "muteSound": 0,
-                      "nodeRef": {
-                        "$type": "NodeRef",
-                        "$storage": "uint64",
-                        "$value": "0"
-                      },
-                      "performerId": {
-                        "$type": "scnPerformerId",
-                        "id": 1
-                      },
-                      "scalingData": null,
-                      "sequenceShift": 0,
-                      "startTime": 5300,
-                      "type": "0"
-                    }
-                  },
-                  {
-                    "HandleId": "8",
-                    "Data": {
-                      "$type": "scneventsSocket",
-                      "duration": 0,
-                      "executionTagFlags": 0,
-                      "id": {
-                        "$type": "scnSceneEventId",
-                        "id": "2328502533071729850"
-                      },
-                      "osockStamp": {
-                        "$type": "scnOutputSocketStamp",
-                        "name": 2,
-                        "ordinal": 0
-                      },
-                      "scalingData": null,
-                      "startTime": 5300,
-                      "type": "0"
-                    }
-                  }
-                ],
-                "ffStrategy": "automatic",
-                "isFocusClue": 0,
-                "nodeId": {
-                  "$type": "scnNodeId",
-                  "id": 3
-                },
-                "outputSockets": [
-                  {
-                    "$type": "scnOutputSocket",
-                    "destinations": [
-                      {
-                        "$type": "scnInputSocketId",
-                        "isockStamp": {
-                          "$type": "scnInputSocketStamp",
-                          "name": 0,
-                          "ordinal": 0
-                        },
-                        "nodeId": {
-                          "$type": "scnNodeId",
                           "id": 4
                         }
                       }
                     ],
                     "stamp": {
                       "$type": "scnOutputSocketStamp",
-                      "name": 0,
-                      "ordinal": 0
-                    }
-                  },
-                  {
-                    "$type": "scnOutputSocket",
-                    "destinations": [],
-                    "stamp": {
-                      "$type": "scnOutputSocketStamp",
-                      "name": 1,
+                      "name": 2,
                       "ordinal": 0
                     }
                   },
@@ -868,38 +674,38 @@
                         },
                         "nodeId": {
                           "$type": "scnNodeId",
-                          "id": 6
+                          "id": 5
                         }
                       }
                     ],
                     "stamp": {
                       "$type": "scnOutputSocketStamp",
-                      "name": 2,
+                      "name": 3,
                       "ordinal": 0
                     }
                   }
                 ],
                 "sectionDuration": {
                   "$type": "scnSceneTime",
-                  "stu": 5550
+                  "stu": 3965
                 }
               }
             },
             {
-              "HandleId": "9",
+              "HandleId": "7",
               "Data": {
                 "$type": "scnEndNode",
                 "ffStrategy": "automatic",
                 "nodeId": {
                   "$type": "scnNodeId",
-                  "id": 4
+                  "id": 3
                 },
                 "outputSockets": [],
                 "type": "Terminating"
               }
             },
             {
-              "HandleId": "10",
+              "HandleId": "8",
               "Data": {
                 "$type": "scnQuestNode",
                 "ffStrategy": "automatic",
@@ -917,7 +723,7 @@
                 ],
                 "nodeId": {
                   "$type": "scnNodeId",
-                  "id": 5
+                  "id": 4
                 },
                 "osockMappings": [
                   {
@@ -952,7 +758,7 @@
                   }
                 ],
                 "questNode": {
-                  "HandleId": "11",
+                  "HandleId": "9",
                   "Data": {
                     "$type": "questUseWorkspotNodeDefinition",
                     "entityReference": {
@@ -980,9 +786,9 @@
                       },
                       "type": "EntityRef"
                     },
-                    "id": 5,
+                    "id": 4,
                     "paramsV1": {
-                      "HandleId": "12",
+                      "HandleId": "10",
                       "Data": {
                         "$type": "scnUseSceneWorkspotParamsV1",
                         "changeWorkspot": 1,
@@ -1051,7 +857,7 @@
                         "workExcludedGestures": [],
                         "workspotInstanceId": {
                           "$type": "scnSceneWorkspotInstanceId",
-                          "id": 5
+                          "id": 4
                         },
                         "workspotNode": {
                           "$type": "NodeRef",
@@ -1062,7 +868,7 @@
                     },
                     "sockets": [
                       {
-                        "HandleId": "13",
+                        "HandleId": "11",
                         "Data": {
                           "$type": "questSocketDefinition",
                           "connections": [],
@@ -1075,7 +881,7 @@
                         }
                       },
                       {
-                        "HandleId": "14",
+                        "HandleId": "12",
                         "Data": {
                           "$type": "questSocketDefinition",
                           "connections": [],
@@ -1088,7 +894,7 @@
                         }
                       },
                       {
-                        "HandleId": "15",
+                        "HandleId": "13",
                         "Data": {
                           "$type": "questSocketDefinition",
                           "connections": [],
@@ -1101,7 +907,7 @@
                         }
                       },
                       {
-                        "HandleId": "16",
+                        "HandleId": "14",
                         "Data": {
                           "$type": "questSocketDefinition",
                           "connections": [],
@@ -1119,7 +925,7 @@
               }
             },
             {
-              "HandleId": "17",
+              "HandleId": "15",
               "Data": {
                 "$type": "scnQuestNode",
                 "ffStrategy": "automatic",
@@ -1137,7 +943,7 @@
                 ],
                 "nodeId": {
                   "$type": "scnNodeId",
-                  "id": 6
+                  "id": 5
                 },
                 "osockMappings": [
                   {
@@ -1158,13 +964,13 @@
                   }
                 ],
                 "questNode": {
-                  "HandleId": "18",
+                  "HandleId": "16",
                   "Data": {
                     "$type": "questFactsDBManagerNodeDefinition",
-                    "id": 6,
+                    "id": 5,
                     "sockets": [
                       {
-                        "HandleId": "19",
+                        "HandleId": "17",
                         "Data": {
                           "$type": "questSocketDefinition",
                           "connections": [],
@@ -1177,7 +983,7 @@
                         }
                       },
                       {
-                        "HandleId": "20",
+                        "HandleId": "18",
                         "Data": {
                           "$type": "questSocketDefinition",
                           "connections": [],
@@ -1190,7 +996,7 @@
                         }
                       },
                       {
-                        "HandleId": "21",
+                        "HandleId": "19",
                         "Data": {
                           "$type": "questSocketDefinition",
                           "connections": [],
@@ -1204,7 +1010,7 @@
                       }
                     ],
                     "type": {
-                      "HandleId": "22",
+                      "HandleId": "20",
                       "Data": {
                         "$type": "questSetVar_NodeType",
                         "factName": "cc_g01_johnny_exit",
@@ -1239,61 +1045,25 @@
             "$type": "scnscreenplayDialogLine",
             "addressee": {
               "$type": "scnActorId",
-              "id": 1
-            },
-            "femaleLipsyncAnimationName": {
-              "$type": "CName",
-              "$storage": "string",
-              "$value": "None"
-            },
-            "itemId": {
-              "$type": "scnscreenplayItemId",
-              "id": 1
-            },
-            "locstringId": {
-              "$type": "scnlocLocstringId",
-              "ruid": "2587598248123592664"
-            },
-            "maleLipsyncAnimationName": {
-              "$type": "CName",
-              "$storage": "string",
-              "$value": "None"
-            },
-            "speaker": {
-              "$type": "scnActorId",
-              "id": 1
-            },
-            "usage": {
-              "$type": "scnscreenplayLineUsage",
-              "playerGenderMask": {
-                "$type": "scnGenderMask",
-                "mask": 3
-              }
-            }
-          },
-          {
-            "$type": "scnscreenplayDialogLine",
-            "addressee": {
-              "$type": "scnActorId",
               "id": 0
             },
             "femaleLipsyncAnimationName": {
               "$type": "CName",
               "$storage": "string",
-              "$value": "f_3E887416D53E7000"
+              "$value": "f_17BA4062BF4E1000"
             },
             "itemId": {
               "$type": "scnscreenplayItemId",
-              "id": 257
+              "id": 1
             },
             "locstringId": {
               "$type": "scnlocLocstringId",
-              "ruid": "2587601546658477297"
+              "ruid": "1709749801401061376"
             },
             "maleLipsyncAnimationName": {
               "$type": "CName",
               "$storage": "string",
-              "$value": "f_3E887416D53E7000"
+              "$value": "f_17BA4062BF4E1000"
             },
             "speaker": {
               "$type": "scnActorId",
@@ -1384,13 +1154,13 @@
           "playAtActorLocation": 1,
           "workspotInstanceId": {
             "$type": "scnSceneWorkspotInstanceId",
-            "id": 5
+            "id": 4
           }
         }
       ],
       "workspots": [
         {
-          "HandleId": "24",
+          "HandleId": "22",
           "Data": {
             "$type": "scnWorkspotData_ExternalWorkspotResource",
             "dataId": {

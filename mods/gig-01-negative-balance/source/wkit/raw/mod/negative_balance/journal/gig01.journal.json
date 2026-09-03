@@ -13,12 +13,12 @@
       "$type": "gameJournalResource",
       "cookingPlatform": "PLATFORM_PC",
       "entry": {
-        "HandleId": "47",
+        "HandleId": "53",
         "Data": {
           "$type": "gameJournalRootFolderEntry",
           "entries": [
             {
-              "HandleId": "5",
+              "HandleId": "12",
               "Data": {
                 "$type": "gameJournalPrimaryFolderEntry",
                 "entries": [
@@ -58,7 +58,7 @@
                     }
                   },
                   {
-                    "HandleId": "4",
+                    "HandleId": "11",
                     "Data": {
                       "$type": "gameJournalContact",
                       "avatarID": {
@@ -68,10 +68,140 @@
                       },
                       "entries": [
                         {
-                          "HandleId": "3",
+                          "HandleId": "10",
                           "Data": {
                             "$type": "gameJournalPhoneConversation",
-                            "entries": [],
+                            "entries": [
+                              {
+                                "HandleId": "3",
+                                "Data": {
+                                  "$type": "gameJournalPhoneMessage",
+                                  "attachment": null,
+                                  "delay": 2.0,
+                                  "id": "cc_g01_nixmsg_1",
+                                  "imageId": {
+                                    "$type": "TweakDBID",
+                                    "$storage": "uint64",
+                                    "$value": "0"
+                                  },
+                                  "isQuestImportant": 0,
+                                  "journalEntryOverrideDataList": [],
+                                  "sender": "NPC",
+                                  "text": {
+                                    "unk1": "0",
+                                    "value": "cc-g01-nix-msg-1"
+                                  }
+                                }
+                              },
+                              {
+                                "HandleId": "4",
+                                "Data": {
+                                  "$type": "gameJournalPhoneMessage",
+                                  "attachment": null,
+                                  "delay": 6.0,
+                                  "id": "cc_g01_nixmsg_2",
+                                  "imageId": {
+                                    "$type": "TweakDBID",
+                                    "$storage": "uint64",
+                                    "$value": "0"
+                                  },
+                                  "isQuestImportant": 0,
+                                  "journalEntryOverrideDataList": [],
+                                  "sender": "NPC",
+                                  "text": {
+                                    "unk1": "0",
+                                    "value": "cc-g01-nix-msg-2"
+                                  }
+                                }
+                              },
+                              {
+                                "HandleId": "5",
+                                "Data": {
+                                  "$type": "gameJournalPhoneMessage",
+                                  "attachment": null,
+                                  "delay": 6.0,
+                                  "id": "cc_g01_nixmsg_3",
+                                  "imageId": {
+                                    "$type": "TweakDBID",
+                                    "$storage": "uint64",
+                                    "$value": "0"
+                                  },
+                                  "isQuestImportant": 0,
+                                  "journalEntryOverrideDataList": [],
+                                  "sender": "NPC",
+                                  "text": {
+                                    "unk1": "0",
+                                    "value": "cc-g01-nix-msg-3"
+                                  }
+                                }
+                              },
+                              {
+                                "HandleId": "6",
+                                "Data": {
+                                  "$type": "gameJournalPhoneMessage",
+                                  "attachment": null,
+                                  "delay": 5.0,
+                                  "id": "cc_g01_nixmsg_4",
+                                  "imageId": {
+                                    "$type": "TweakDBID",
+                                    "$storage": "uint64",
+                                    "$value": "0"
+                                  },
+                                  "isQuestImportant": 0,
+                                  "journalEntryOverrideDataList": [],
+                                  "sender": "NPC",
+                                  "text": {
+                                    "unk1": "0",
+                                    "value": "cc-g01-nix-msg-4"
+                                  }
+                                }
+                              },
+                              {
+                                "HandleId": "8",
+                                "Data": {
+                                  "$type": "gameJournalPhoneChoiceGroup",
+                                  "entries": [
+                                    {
+                                      "HandleId": "7",
+                                      "Data": {
+                                        "$type": "gameJournalPhoneChoiceEntry",
+                                        "id": "cc_g01_nixreply_ok",
+                                        "isQuestImportant": 1,
+                                        "journalEntryOverrideDataList": [],
+                                        "questCondition": null,
+                                        "text": {
+                                          "unk1": "0",
+                                          "value": "cc-g01-nix-reply"
+                                        }
+                                      }
+                                    }
+                                  ],
+                                  "id": "cc_g01_nixreply",
+                                  "journalEntryOverrideDataList": []
+                                }
+                              },
+                              {
+                                "HandleId": "9",
+                                "Data": {
+                                  "$type": "gameJournalPhoneMessage",
+                                  "attachment": null,
+                                  "delay": 3.0,
+                                  "id": "cc_g01_nixmsg_5",
+                                  "imageId": {
+                                    "$type": "TweakDBID",
+                                    "$storage": "uint64",
+                                    "$value": "0"
+                                  },
+                                  "isQuestImportant": 0,
+                                  "journalEntryOverrideDataList": [],
+                                  "sender": "NPC",
+                                  "text": {
+                                    "unk1": "0",
+                                    "value": "cc-g01-nix-msg-5"
+                                  }
+                                }
+                              }
+                            ],
                             "id": "cc_g01_nixconv",
                             "journalEntryOverrideDataList": [],
                             "title": {
@@ -98,28 +228,28 @@
               }
             },
             {
-              "HandleId": "34",
+              "HandleId": "40",
               "Data": {
                 "$type": "gameJournalPrimaryFolderEntry",
                 "entries": [
                   {
-                    "HandleId": "33",
+                    "HandleId": "39",
                     "Data": {
                       "$type": "gameJournalFolderEntry",
                       "entries": [
                         {
-                          "HandleId": "32",
+                          "HandleId": "38",
                           "Data": {
                             "$type": "gameJournalQuest",
                             "districtID": "Districts.SantoDomingo",
                             "entries": [
                               {
-                                "HandleId": "31",
+                                "HandleId": "36",
                                 "Data": {
                                   "$type": "gameJournalQuestPhase",
                                   "entries": [
                                     {
-                                      "HandleId": "7",
+                                      "HandleId": "14",
                                       "Data": {
                                         "$type": "gameJournalQuestObjective",
                                         "counter": 0,
@@ -130,7 +260,7 @@
                                         "districtID": "",
                                         "entries": [
                                           {
-                                            "HandleId": "6",
+                                            "HandleId": "13",
                                             "Data": {
                                               "$type": "gameJournalQuestMapPin",
                                               "enableGPS": 1,
@@ -214,7 +344,7 @@
                                       }
                                     },
                                     {
-                                      "HandleId": "9",
+                                      "HandleId": "16",
                                       "Data": {
                                         "$type": "gameJournalQuestObjective",
                                         "counter": 0,
@@ -225,7 +355,7 @@
                                         "districtID": "",
                                         "entries": [
                                           {
-                                            "HandleId": "8",
+                                            "HandleId": "15",
                                             "Data": {
                                               "$type": "gameJournalQuestMapPin",
                                               "enableGPS": 1,
@@ -309,7 +439,7 @@
                                       }
                                     },
                                     {
-                                      "HandleId": "10",
+                                      "HandleId": "17",
                                       "Data": {
                                         "$type": "gameJournalQuestObjective",
                                         "counter": 0,
@@ -335,128 +465,7 @@
                                       }
                                     },
                                     {
-                                      "HandleId": "12",
-                                      "Data": {
-                                        "$type": "gameJournalQuestObjective",
-                                        "counter": 0,
-                                        "description": {
-                                          "unk1": "0",
-                                          "value": "cc-g01-obj-shard"
-                                        },
-                                        "districtID": "",
-                                        "entries": [
-                                          {
-                                            "HandleId": "11",
-                                            "Data": {
-                                              "$type": "gameJournalQuestMapPin",
-                                              "enableGPS": 1,
-                                              "entries": [],
-                                              "id": "pin_shard",
-                                              "journalEntryOverrideDataList": [],
-                                              "mappinData": {
-                                                "$type": "gamemappinsMappinData",
-                                                "active": 1,
-                                                "debugCaption": "",
-                                                "localizedCaption": {
-                                                  "unk1": "0",
-                                                  "value": "cc-g01-pin-pin-shard"
-                                                },
-                                                "mappinType": {
-                                                  "$type": "TweakDBID",
-                                                  "$storage": "string",
-                                                  "$value": "Mappins.QuestStaticMappinDefinition"
-                                                },
-                                                "scriptData": null,
-                                                "variant": "QuestGiverVariant",
-                                                "visibleThroughWalls": 1
-                                              },
-                                              "offset": {
-                                                "$type": "Vector3",
-                                                "X": 19.8869,
-                                                "Y": -26.6829,
-                                                "Z": 5.1
-                                              },
-                                              "reference": {
-                                                "$type": "gameEntityReference",
-                                                "dynamicEntityUniqueName": {
-                                                  "$type": "CName",
-                                                  "$storage": "string",
-                                                  "$value": "None"
-                                                },
-                                                "names": [],
-                                                "reference": {
-                                                  "$type": "NodeRef",
-                                                  "$storage": "string",
-                                                  "$value": "#q112_06_sm_warehouse"
-                                                },
-                                                "sceneActorContextName": {
-                                                  "$type": "CName",
-                                                  "$storage": "string",
-                                                  "$value": "None"
-                                                },
-                                                "slotName": {
-                                                  "$type": "CName",
-                                                  "$storage": "string",
-                                                  "$value": "None"
-                                                },
-                                                "type": "EntityRef"
-                                              },
-                                              "slotName": {
-                                                "$type": "CName",
-                                                "$storage": "string",
-                                                "$value": "UI_Interaction"
-                                              },
-                                              "uiAnimation": {
-                                                "$type": "TweakDBID",
-                                                "$storage": "uint64",
-                                                "$value": "0"
-                                              }
-                                            }
-                                          }
-                                        ],
-                                        "id": "obj_shard",
-                                        "itemID": {
-                                          "$type": "TweakDBID",
-                                          "$storage": "uint64",
-                                          "$value": "0"
-                                        },
-                                        "journalEntryOverrideDataList": [],
-                                        "locationPrefabRef": {
-                                          "$type": "NodeRef",
-                                          "$storage": "uint64",
-                                          "$value": "0"
-                                        },
-                                        "optional": 0
-                                      }
-                                    },
-                                    {
-                                      "HandleId": "13",
-                                      "Data": {
-                                        "$type": "gameJournalQuestObjective",
-                                        "counter": 0,
-                                        "description": {
-                                          "unk1": "0",
-                                          "value": "cc-g01-obj-shard-read"
-                                        },
-                                        "districtID": "",
-                                        "entries": [],
-                                        "id": "obj_shard_read",
-                                        "itemID": {
-                                          "$type": "TweakDBID",
-                                          "$storage": "uint64",
-                                          "$value": "0"
-                                        },
-                                        "journalEntryOverrideDataList": [],
-                                        "locationPrefabRef": {
-                                          "$type": "NodeRef",
-                                          "$storage": "uint64",
-                                          "$value": "0"
-                                        },
-                                        "optional": 0
-                                      }
-                                    },
-                                    {
-                                      "HandleId": "14",
+                                      "HandleId": "18",
                                       "Data": {
                                         "$type": "gameJournalQuestObjective",
                                         "counter": 0,
@@ -482,7 +491,7 @@
                                       }
                                     },
                                     {
-                                      "HandleId": "15",
+                                      "HandleId": "19",
                                       "Data": {
                                         "$type": "gameJournalQuestObjective",
                                         "counter": 0,
@@ -508,7 +517,7 @@
                                       }
                                     },
                                     {
-                                      "HandleId": "16",
+                                      "HandleId": "20",
                                       "Data": {
                                         "$type": "gameJournalQuestObjective",
                                         "counter": 0,
@@ -534,7 +543,33 @@
                                       }
                                     },
                                     {
-                                      "HandleId": "18",
+                                      "HandleId": "21",
+                                      "Data": {
+                                        "$type": "gameJournalQuestObjective",
+                                        "counter": 0,
+                                        "description": {
+                                          "unk1": "0",
+                                          "value": "cc-g01-obj-nixread"
+                                        },
+                                        "districtID": "",
+                                        "entries": [],
+                                        "id": "obj_nixread",
+                                        "itemID": {
+                                          "$type": "TweakDBID",
+                                          "$storage": "uint64",
+                                          "$value": "0"
+                                        },
+                                        "journalEntryOverrideDataList": [],
+                                        "locationPrefabRef": {
+                                          "$type": "NodeRef",
+                                          "$storage": "uint64",
+                                          "$value": "0"
+                                        },
+                                        "optional": 0
+                                      }
+                                    },
+                                    {
+                                      "HandleId": "23",
                                       "Data": {
                                         "$type": "gameJournalQuestObjective",
                                         "counter": 0,
@@ -545,7 +580,7 @@
                                         "districtID": "",
                                         "entries": [
                                           {
-                                            "HandleId": "17",
+                                            "HandleId": "22",
                                             "Data": {
                                               "$type": "gameJournalQuestMapPin",
                                               "enableGPS": 1,
@@ -629,7 +664,7 @@
                                       }
                                     },
                                     {
-                                      "HandleId": "19",
+                                      "HandleId": "24",
                                       "Data": {
                                         "$type": "gameJournalQuestObjective",
                                         "counter": 0,
@@ -655,7 +690,7 @@
                                       }
                                     },
                                     {
-                                      "HandleId": "21",
+                                      "HandleId": "26",
                                       "Data": {
                                         "$type": "gameJournalQuestObjective",
                                         "counter": 0,
@@ -666,7 +701,7 @@
                                         "districtID": "",
                                         "entries": [
                                           {
-                                            "HandleId": "20",
+                                            "HandleId": "25",
                                             "Data": {
                                               "$type": "gameJournalQuestMapPin",
                                               "enableGPS": 0,
@@ -750,7 +785,7 @@
                                       }
                                     },
                                     {
-                                      "HandleId": "22",
+                                      "HandleId": "27",
                                       "Data": {
                                         "$type": "gameJournalQuestObjective",
                                         "counter": 0,
@@ -776,7 +811,7 @@
                                       }
                                     },
                                     {
-                                      "HandleId": "24",
+                                      "HandleId": "29",
                                       "Data": {
                                         "$type": "gameJournalQuestObjective",
                                         "counter": 0,
@@ -787,7 +822,7 @@
                                         "districtID": "",
                                         "entries": [
                                           {
-                                            "HandleId": "23",
+                                            "HandleId": "28",
                                             "Data": {
                                               "$type": "gameJournalQuestMapPin",
                                               "enableGPS": 1,
@@ -871,7 +906,7 @@
                                       }
                                     },
                                     {
-                                      "HandleId": "25",
+                                      "HandleId": "30",
                                       "Data": {
                                         "$type": "gameJournalQuestObjective",
                                         "counter": 0,
@@ -897,7 +932,7 @@
                                       }
                                     },
                                     {
-                                      "HandleId": "27",
+                                      "HandleId": "32",
                                       "Data": {
                                         "$type": "gameJournalQuestObjective",
                                         "counter": 0,
@@ -908,7 +943,7 @@
                                         "districtID": "",
                                         "entries": [
                                           {
-                                            "HandleId": "26",
+                                            "HandleId": "31",
                                             "Data": {
                                               "$type": "gameJournalQuestMapPin",
                                               "enableGPS": 1,
@@ -992,7 +1027,7 @@
                                       }
                                     },
                                     {
-                                      "HandleId": "28",
+                                      "HandleId": "33",
                                       "Data": {
                                         "$type": "gameJournalQuestObjective",
                                         "counter": 0,
@@ -1018,7 +1053,7 @@
                                       }
                                     },
                                     {
-                                      "HandleId": "30",
+                                      "HandleId": "35",
                                       "Data": {
                                         "$type": "gameJournalQuestObjective",
                                         "counter": 0,
@@ -1029,7 +1064,7 @@
                                         "districtID": "",
                                         "entries": [
                                           {
-                                            "HandleId": "29",
+                                            "HandleId": "34",
                                             "Data": {
                                               "$type": "gameJournalQuestMapPin",
                                               "enableGPS": 1,
@@ -1121,6 +1156,18 @@
                                     "$value": "0"
                                   }
                                 }
+                              },
+                              {
+                                "HandleId": "37",
+                                "Data": {
+                                  "$type": "gameJournalQuestDescription",
+                                  "description": {
+                                    "unk1": "0",
+                                    "value": "cc-g01-gig-brief"
+                                  },
+                                  "id": "cc_g01_briefing",
+                                  "journalEntryOverrideDataList": []
+                                }
                               }
                             ],
                             "id": "cc_g01_negative_balance",
@@ -1148,17 +1195,17 @@
               }
             },
             {
-              "HandleId": "39",
+              "HandleId": "45",
               "Data": {
                 "$type": "gameJournalPrimaryFolderEntry",
                 "entries": [
                   {
-                    "HandleId": "38",
+                    "HandleId": "44",
                     "Data": {
                       "$type": "gameJournalPointOfInterestGroup",
                       "entries": [
                         {
-                          "HandleId": "37",
+                          "HandleId": "43",
                           "Data": {
                             "$type": "gameJournalPointOfInterestMappin",
                             "dynamicEntityRef": {
@@ -1214,7 +1261,7 @@
                                 "$value": "Mappins.StaticPointOfInterestMappinDefinition"
                               },
                               "typedVariant": {
-                                "HandleId": "35",
+                                "HandleId": "41",
                                 "Data": {
                                   "$type": "gamemappinsPhaseVariant",
                                   "phase": "UndiscoveredPhase",
@@ -1234,7 +1281,7 @@
                               "Z": -0.0039
                             },
                             "questPath": {
-                              "HandleId": "36",
+                              "HandleId": "42",
                               "Data": {
                                 "$type": "gameJournalPath",
                                 "className": {
@@ -1275,37 +1322,37 @@
               }
             },
             {
-              "HandleId": "46",
+              "HandleId": "52",
               "Data": {
                 "$type": "gameJournalPrimaryFolderEntry",
                 "entries": [
                   {
-                    "HandleId": "45",
+                    "HandleId": "51",
                     "Data": {
                       "$type": "gameJournalFolderEntry",
                       "entries": [
                         {
-                          "HandleId": "44",
+                          "HandleId": "50",
                           "Data": {
                             "$type": "gameJournalFolderEntry",
                             "entries": [
                               {
-                                "HandleId": "43",
+                                "HandleId": "49",
                                 "Data": {
                                   "$type": "gameJournalFolderEntry",
                                   "entries": [
                                     {
-                                      "HandleId": "42",
+                                      "HandleId": "48",
                                       "Data": {
                                         "$type": "gameJournalFolderEntry",
                                         "entries": [
                                           {
-                                            "HandleId": "41",
+                                            "HandleId": "47",
                                             "Data": {
                                               "$type": "gameJournalOnscreenGroup",
                                               "entries": [
                                                 {
-                                                  "HandleId": "40",
+                                                  "HandleId": "46",
                                                   "Data": {
                                                     "$type": "gameJournalOnscreen",
                                                     "description": {

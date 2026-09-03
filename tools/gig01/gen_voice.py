@@ -30,7 +30,7 @@ WHAT THIS SCRIPT DOES
    `--placeholder`, synthesises one first: a tone at the length gen_scenes would
    have guessed, pitched by a hash of the key so lines are distinguishable by
    ear. That is the whole point of the placeholder stage - it proves the wiring
-   without waiting on a TTS model.
+   without waiting on a recording session.
 2. Converts them to `.wem` with Wwise (see below).
 3. Measures each WAV and writes `source\audio\durations.json`, which gen_scenes
    reads INSTEAD of its 1200ms + 55ms/char estimate. Timing then comes from the
@@ -114,96 +114,44 @@ DEPOT_VO = 'mod\\negative_balance\\audio\\vo'
 # (scene name, key) exactly as gen_scenes derives it, so the two cannot drift
 # without the build failing loudly.
 #
-# Lines DELIBERATELY absent, and they must stay absent - each one reuses a
-# recorded vanilla line, so the game's own registration supplies the audio and
-# generating one would override a real performance with a synthetic one:
-#   gig01_nix_brief/b01   Nix,  "How's things, V?"
-#   gig01_nix_call/on1    V,    "Where."
-#   gig01_nix_call/on2    V,    "On my way."
+# THE SPLICED-VOICES RECAST (2026-09-02). Most V and Johnny lines now REUSE
+# RECORDED GAME LINES whole via `vanilla_sid` in gen_scenes, so the game's own
+# registration supplies audio, text and both bodies, and those keys are
+# DELIBERATELY ABSENT here - generating one would override a real performance
+# with a stand-in. What remains in CAST is only what ships produced audio:
+#
+#   elena / hoshino        invented characters, recorded by people
+#   nix                     one line cut from his OWN vanilla recordings (n01)
+#   mama                    one line cut from HER own vanilla recordings (m03);
+#                           everything else she says is a whole vanilla take
+#   v                       three lines CUT from V's vanilla recordings (trims;
+#                           both bodies), never joined fragments
+#
+# The full pick table with source stringIds and cut recipes is
+# mods/gig-01-negative-balance/docs/corpus-recast.md.
 CAST = {
     'elena':   {'gig01_elena_call': ['e01', 'e02', 'e03', 'e04',
-                                     'e05', 'e06', 'e07', 'e08']},
+                                     'e05', 'e06', 'e07', 'e07b', 'e08']},
     'hoshino': {'gig01_hoshino': ['h01', 'h02']},
-    # n02 ("Hoshino's the choke point.") retired 2026-08-13 when the design widened
-    # the comic-verbatim exception to Nix - n05/n06 replace it. Its .wem stays
-    # in source/audio, unreferenced; the key is not reused.
-    'nix':     {'gig01_nix_brief': ['b02', 'b03', 'b04', 'b05'],
-                'gig01_nix_call': ['n01', 'n05', 'n06', 'n03', 'n07', 'n04'],
-                # THE VIDEO TWINS of Nix's two calls. Same words in the same
-                # order; audio is keyed by (scene, key), so a second scene needs
-                # its own takes and they are md5-identical copies of the ones
-                # above. Nothing was regenerated and no voice work is involved.
-                'gig01_nix_brief_holo': ['b02', 'b03', 'b04', 'b05'],
-                'gig01_nix_call_holo': ['n01', 'n05', 'n06', 'n03', 'n07',
-                                        'n04']},
-    'mama':    {'gig01_epilogue': ['m01', 'm02']},
-    # Johnny and V arrived 2026-08-13, when the bar ending stopped being a pair
-    # of scripted captions and became a real scene, and when V's hub options
-    # became spoken lines. Their remaining lines are still captions and still
-    # unvoiceable - see BUILDING.md, "Audio toolchain".
-    'johnny':  {'gig01_bar': ['j01'],
-                'gig01_arasaka': ['ja1'],
-                # p30. Moved out of gig01_nix_call into its own beat on
-                # 2026-08-14 so it plays AFTER the phone is down - the clips
-                # were copied to the new keys, md5-identical, nothing
-                # regenerated. See gen_scenes.build_graves().
-                'gig01_graves': ['j30a', 'j30b'],
-                # p25 moved out of gig01_terminal into gig01_netrunner on
-                # 2026-08-13 so it lands AFTER the shard. The clips moved by
-                # COPYING, keeping their t0N keys.
-                # t09 came home when gig01_netrunner was merged back into
-                # gig01_terminal on 2026-08-14 - the split had no gate in it.
-                'gig01_terminal': ['t02', 't04', 't09'],
-                # closes the shard beat and gives his exit a reason
-                'gig01_shard_read': ['j24'],
-                'gig01_legend': ['l03', 'l04'],
-                'gig01_kill': ['k02'],
-                'gig01_malware': ['w02']},
-    # gig01_bar v01 ("She'll never know.") retired 2026-08-13 - the gig's last
-    # line now recaps. v02 replaces it; the old .wem stays, unreferenced.
-    'v':       {'gig01_bar': ['v02'],
-                'gig01_elena_call': ['v02', 'v03', 'v04', 'v05'],
-                # v06 ("Got it. Wait. That's-") MOVED here from
-                # gig01_elena_call on 2026-08-14. It is the line Johnny
-                # interrupts, and a scene actor cannot exist before its own
-                # scene starts - so with Johnny's body now owned by the arasaka
-                # scene, the line had to come to him or he could never be on
-                # screen for it. Same take: the WAVs were COPIED to the new key,
-                # md5-identical, exactly as p25's were on 2026-08-13. Nothing
-                # was regenerated.
-                'gig01_arasaka': ['v06'],
-                # vb3 ("Need to know where they are.") retired 2026-08-13 and
-                # replaced by vb5/vb6 - the one sanctioned break in the
-                # comic-verbatim rule, scoped to V's ask. Its .wem is still in
-                # source/audio and is simply no longer referenced; do NOT reuse
-                # the key, because a key is how audio finds a line.
-                'gig01_nix_brief': ['vb1', 'vb2', 'vb5', 'vb6', 'vb4'],
-                'gig01_shard_find': ['sf1'],
-                # sr1 ("So that's where we fit.") retired 2026-08-13 - playtesting
-                # asked for the beat to be explicit about the mercs. sr2 is
-                # unchanged and still the comic's own line.
-                'gig01_shard_read': ['sr3', 'sr2'],
-                # on1/on2 were vanilla reuse until 2026-08-13. The stringId
-                # filed as "Where." is actually "Where?!" and no vanilla
-                # "Where." exists, so both are ours now - see
-                # gen_scenes.build_nix().
-                #
-                # on2 ("On my way.") CUT 2026-08-14, the design call. Its .wem
-                # stays in source/audio unreferenced, like every other retired
-                # take; the key is not reused, because a key is how audio finds
-                # a line.
-                'gig01_nix_call': ['on1'],
-                # V's half of the video twins. Same copies, same reason.
-                'gig01_nix_call_holo': ['on1'],
-                'gig01_nix_brief_holo': ['vb1', 'vb2', 'vb5', 'vb6', 'vb4'],
-                'gig01_hoshino': ['vh1'],
-                'gig01_epilogue': ['ve1', 've2'],
-                'gig01_terminal': ['t01', 't03', 't05', 't10'],
-                # l01 retired 2026-08-13: "you become a legend" -> "a merc
-                #  becomes a legend". l05 replaces it.
-                'gig01_legend': ['l05', 'l02'],
-                'gig01_kill': ['k01'],
-                'gig01_malware': ['w01']},
+    # NIX SPEAKS ONLY IN HIS OWN RECORDINGS as of 2026-09-03. His generated
+    # takes (b02, b05) went with the minimal brief call, and his callback
+    # went entirely: it is a text message now. What is left is n01, a verified
+    # HEAD-TRIM of his own line "Should take me, I dunno... four, five
+    # hours? Le'ss say we meet in six at the Arasaka Memorial" - cut at the
+    # pause, read back before promotion. The video twin is byte-identical,
+    # enforced by check_holo_twins below.
+    'nix':     {'gig01_nix_brief': ['n01', 'n02'],
+                'gig01_nix_brief_holo': ['n01', 'n02']},
+    # MAMA WELLES IS HER OWN VOICE as of 2026-09-03, which retires the last
+    # imitation of a real performer in this gig. m01/m02 were generated and
+    # are gone; m03 is a head-trim of her own "She's a nice girl. We exchanged
+    # numbers." and everything else she says is a whole vanilla take through
+    # vanilla_sid, which needs no entry here.
+    'mama':    {'gig01_epilogue': ['m03']},
+    # V keeps exactly three produced lines, all in Elena's call, each a
+    # verified TRIM of one of his own recordings, each in both bodies. Every
+    # other V and Johnny line in the gig is a whole vanilla take.
+    'v':       {'gig01_elena_call': ['v02', 'v04', 'v05']},
 }
 
 VOICED = {}
@@ -373,8 +321,8 @@ def main():
     # Mama Welles is in the bar, and they say the same four lines - so the
     # stand-in gets no recordings of its own.
     #
-    # WHY NOT JUST GENERATE THEM: a re-run of the TTS re-rolls the voice, so the
-    # two variants would be two different women. It is also unnecessary - the
+    # WHY NOT RECORD THEM TWICE: two takes of the same words are two different
+    # performances, so the two variants would not match. It is also unnecessary - the
     # voiceover map keys stringId -> wem path, so two RUIDs point at one file.
     # Nothing is converted here, nothing is copied on disk; only the map grows.
     for alias, src in sorted(gs.SCENE_ALIASES.items()):

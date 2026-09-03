@@ -1353,9 +1353,10 @@ from, and that text is recoverable from the English text table) is the untried
 middle ground, and it matters most at one or two syllables, where the eye can
 count mouth openings.
 
-**Watch for lines you did not generate.** A line that reuses a vanilla
-recording by pointing at its `stringId` has no clip of yours, so it falls out
-of every list built from "what we synthesised", including the lipsync casting.
+**A line you ship no audio for still needs a mouth.** A line that reuses a
+vanilla recording by pointing at its `stringId` has no clip of yours, so it
+falls out of every list built from "what audio do we ship", including the
+lipsync casting.
 It ships with an empty animation name and a face that never moves, and nothing
 errors. Its length is free: vanilla baked an animation for that exact line,
 named `f_<stringId>`, and its duration is the clip's. Gotcha 59.
@@ -1413,7 +1414,9 @@ Which decides where lines live. If a line needs him already on screen, that line
 belongs in HIS scene - V's "Got it. Wait. That's-" moved out of Elena's call for
 exactly this. If a beat must happen after something the scene itself ends
 (a holocall only hangs up when its scene EXITS), it needs its own scene: that is
-why Johnny's p30 pair is `gig01_graves` and not the tail of the Nix call.
+why Johnny's pair after the Nix call was built as its own scene rather than as
+the tail of the call (that beat has since been cut, but the rule is why it was
+ever separate).
 
 Moving a line between scenes changes its RUID. **Copy the `.wem` to the new key
 and md5-verify it**, move the key in `gen_voice.CAST`, and never regenerate a

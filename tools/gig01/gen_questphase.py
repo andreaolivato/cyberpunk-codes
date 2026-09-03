@@ -37,6 +37,14 @@ from gig01_config import (                                          # noqa: E402
 
 OUT = os.path.join(RAW_MOD, 'quest', 'gig01.questphase.json')
 
+# The SMS thread's ids live with the journal that builds it, so the two
+# cannot drift: a path typed twice is a path that gets fixed once.
+from gen_journal import (                                       # noqa: E402
+    NIX_CONV_PATH, NIX_MSG_PATHS, NIX_MSG_LAST_PATH,
+    NIX_REPLY_GROUP, NIX_REPLY_PATH,
+    BRIEF_PATH,
+)
+
 CONTACT = 'contacts/elena_ortega'
 QUEST = 'quests/street_stories/' + QUEST_ID
 POI = 'points_of_interest/street_stories/' + QUEST_ID
@@ -207,6 +215,11 @@ step(add_setvar('cc_g01_vlock', 0))
 step(add_setvar('cc_g01_accepted', 1))
 step(add_journal_quest(QUEST), in_sock='Active')
 step(add_journal('gameJournalQuestPhase', QUEST + '/phase_main', notify=0), in_sock='Active')
+# THE BRIEFING PARAGRAPH, new 2026-09-03. Vanilla street stories all carry
+# one and this gig shipped without through six releases. It states the
+# scheme in plain text, which matters more now that no spoken line can.
+step(add_journal('gameJournalQuestDescription', BRIEF_PATH, notify=0),
+     in_sock='Active')
 step(add_journal('gameJournalQuestObjective', QUEST + '/phase_main/obj_office'), in_sock='Active')
 # Map pins are journal entries in their own right: the engine only creates a
 # mappin once the pin entry itself is Active. Activating just the objective
@@ -315,51 +328,12 @@ step(add_setvar('cc_g01_terminal_done', 1))
 # (readAction.swift), so add_pause_journal(..., 'Active') would let V's p24 lines
 # start while the player is still reading - under a modal popup that hides
 # subtitles. The close callback is the only signal that means "he has read it".
-step(add_journal('gameJournalQuestObjective', QUEST + '/phase_main/obj_shard'),
-     in_sock='Active')
-# The pin, and it is the objective marker the design called for: a 20 cm chip on a
-# desk in a dark office is not findable without one. Pins are journal entries in
-# their own right and an inactive one is invisible - activating the objective is
-# NOT enough (map-pins-playbook.md, ingredient 2).
-step(add_journal('gameJournalQuestMapPin',
-                 QUEST + '/phase_main/obj_shard/pin_shard', notify=0),
-     in_sock='Active')
-step(add_pause_fact('cc_g01_shard_found'))
-step(add_scene(SCENES + 'gig01_shard_find.scene', ANCHOR_PLAYER,
-               ['shard_find_in'], ['shard_find_out']),
-     in_sock='shard_find_in', out_sock='shard_find_out')
-
-# FINDING IT AND READING IT ARE TWO OBJECTIVES, split 2026-08-22.
-#
-# The shard is a real container now, with Take and Read on it. [R] reads it
-# where it lies and [F] puts it in the inventory, and a player who presses F
-# was previously left looking at "Search the desks" with nothing on the desk
-# and no idea the beat was still running. So the desk objective closes the
-# moment the shard is found, and reading it becomes its own line.
-#
-# It hangs off cc_g01_shard_found, which is the proximity check in
-# Gig01_Encounter, so it appears when the player is at the shard however they
-# go on to deal with it.
-step(add_journal('gameJournalQuestObjective', QUEST + '/phase_main/obj_shard',
-                 notify=0), in_sock='Succeeded')
-step(add_journal('gameJournalQuestObjective',
-                 QUEST + '/phase_main/obj_shard_read'),
-     in_sock='Active')
-
-step(add_setvar('cc_g01_shard_open', 1))
-step(add_pause_fact('cc_g01_shard_read'))
-step(add_scene(SCENES + 'gig01_shard_read.scene', ANCHOR_PLAYER,
-               ['shard_read_in'], ['shard_read_out']),
-     in_sock='shard_read_in', out_sock='shard_read_out')
-step(add_journal('gameJournalQuestObjective',
-                 QUEST + '/phase_main/obj_shard_read', notify=0),
-     in_sock='Succeeded')
-
-# ...and a beat AFTER the scene has exited, not on the same frame as its last
-# section. playtest, 2026-08-13: "Johnny disappears right before 'Figures', should
-# wait more." The scene's own tail went to 2000 ms for the same reason; this is
-# the other half, because the dissolve is a quest-phase decision and the scene
-# cannot hold it off.
+# THE SHARD BEAT IS OUT OF THE FLOW (2026-09-02, the spliced-voices
+# restructure): the terminal gives partial data only, and the mercs-do-the-
+# killing reveal now lives in Nix's message. The shard scenes, the reader
+# script and the sector node still ship; nothing here enters them. The chain
+# that lived here (the two shard objectives, their pin, gig01_shard_find,
+# gig01_shard_read) is in git history if the beat ever comes back.
 step(add_delay(2))
 
 # JOHNNY LEAVES HERE, AND NOT BEFORE. He was staged once for the terminal
@@ -788,24 +762,12 @@ nix_call('cc_g01_nixbrief', 'gig01_nix_brief_holo.scene', 'gig01_nix_brief.scene
 # script-driven (Gig01_Encounter): the transfer is an on-screen toast in the
 # comic, not a spoken line, and Johnny needs staging.
 objective_step('cc_g01_ledger_sent', 'obj_nixcall', 'obj_nixwait')
-# Johnny on the crosswalk while Nix digs, comic p28 - V asks the question the
-# gig is built around. A scene since 2026-08-13; ANCHOR_PLAYER because V has
-# just made a phone call and could be anywhere by now.
-step(add_setvar('cc_g01_johnny_done', 0))
-step(add_scene(SCENES + 'gig01_legend.scene', ANCHOR_PLAYER,
-               ['legend_in'], ['legend_out']),
-     in_sock='legend_in', out_sock='legend_out')
-# NOT set to 1 here. Johnny is staged for the crosswalk (p28) and STAYS
-# STANDING THERE through Nix's callback, because he has two lines at the end of
-# it (p30) and the design called for the obvious thing: "let's not make Johnny
-# disappear when Nix calls. Keep him there until he finishes saying these 2 lines
-# too. So the whole call he's there just not saying anything."
-#
-# That is also what the comic draws - pp. 28-30 are one continuous street scene
-# with Johnny in frame throughout, and the phone call happens over the top of it.
-step(add_setvar('cc_g01_johnny_legend', 1))
-# Johnny has said his piece on the crosswalk, so V can ride again. This closes
-# the window opened at the nixbrief pickup above.
+# THE CROSSWALK BEAT IS OUT OF THE FLOW (2026-09-03). gig01_legend was V
+# asking Johnny what being a legend costs while Nix worked, and playtest
+# rejected it in this position: with the callback gone the beat lands in a
+# gap where the player is simply waiting for a text, and neither line has
+# anything to do with the gig. The scene still builds and nothing enters it,
+# the same standing gig01_graves and gig01_malware now have.
 step(add_setvar('cc_g01_vlock', 0))
 
 # NIX NEEDS TIME TO ACTUALLY DIG. Nexus 1.0.0, 2026-08-15: *"I know Nix is a
@@ -818,7 +780,7 @@ step(add_setvar('cc_g01_vlock', 0))
 # short crosswalk conversation, and a man who cracks a corpo ledger and names
 # the fixer inside thirty seconds is not a fixer, he is a search box.
 #
-# TWO IN-GAME HOURS, on the world clock (see add_game_delay for why not
+# FOUR IN-GAME HOURS, on the world clock (see add_game_delay for why not
 # realtime). Night City's clock runs far faster than real time, so this is a
 # handful of real minutes - long enough to read as work, short enough that
 # nobody puts the controller down waiting for it. It is also still night when it
@@ -830,41 +792,67 @@ step(add_setvar('cc_g01_vlock', 0))
 # recorded ("keep him there through Nix's call") stopped being implemented when
 # the beat became a scene. Do not resurrect it here; a Johnny trailing V for two
 # in-game hours is a different feature and a worse one.
-step(add_game_delay(hours=2))
+# FOUR HOURS, not two, since 2026-09-03: on the call Nix says "should take
+# me, I dunno... four, five hours?" in his own recorded voice, so the wait
+# has to match the words the player just heard. Night City's clock runs
+# far faster than real time, so this is still a handful of real minutes.
+step(add_game_delay(hours=4))
 
-# Same handshake as Elena's call, different fact prefix - one system in
-# Gig01_Holocall.reds drives both. Nix's contact is a BASE-GAME one, so the
-# addressee is the existing contact id "nix"; nothing new is merged for him.
-# Same window as Elena's, for gig01_graves, opened inside nix_call when the
-# call connects. See the note by the first one.
+# ===================== NIX'S FINDINGS ARRIVE AS A TEXT MESSAGE ==============
 #
-# THIS IS THE ONE CALL IN THE GIG THE PLAYER CAN MISS. He can decline it, he can
-# let it ring out, and either way Nix rings back. nix_call's docstring has the
-# four things that cannot be allowed to happen and where each is handled.
-nix_call('cc_g01_nixcall', 'gig01_nix_call_holo.scene', 'gig01_nix_call.scene',
-         ['nix_call_in'], ['nix_call_out'], incoming=True)
-
-# COMIC p30 - AFTER THE PHONE IS DOWN, not during the call.
+# REPLACED THE SECOND HOLOCALL, 2026-09-03, and the reason is the voice route
+# rather than the phone. V, Johnny and Nix speak only in recordings the game
+# already shipped, and no recording of Nix explains an insurance-kill scheme,
+# so the one beat that MUST state the plot cannot be a conversation. In the
+# base game a fixer's findings arrive as text and V's replies are unvoiced;
+# this is that shape. What used to be `nix_call('cc_g01_nixcall', ...)` - the
+# video studio, the ring loop, the five retries, the audio fallback - is gone
+# with it, and so is the beat that hung off its end.
 #
-# It used to be the tail of gig01_nix_call, and it could not read the way the design wanted from there: the chrome does not hang up until that scene EXITS, because
-# cc_g01_nixcall_end is set on its exit socket. So Johnny spoke over a live
-# call. His two lines are their own beat now, entered on nixcall_done, which is
-# the phone actually being down:
+# The thread is four messages and one reply, built in gen_journal.py, paced by
+# each message's own `delay` (a graph timer stalls while the phone menu is
+# open, gotchas 3).
 #
-#     Nix gives the address -> the call closes -> Johnny appears -> his lines
-#     -> he glitches out -> the next objective
-step(add_scene(SCENES + 'gig01_graves.scene', ANCHOR_PLAYER,
-               ['graves_in'], ['graves_out']),
-     in_sock='graves_in', out_sock='graves_out')
-
-# AND NOW Johnny goes - the beat above is the last thing he has to say before
-# North Oak.
-step(add_setvar('cc_g01_johnny_done', 1))
+# THE REPLY IS THE READ RECEIPT. A message going Active means it was
+# DELIVERED, which happens while V is driving; the gig must not move on until
+# the player has actually opened the thread. Pausing on the choice ENTRY is
+# the only signal that means "read", and it is why the thread ends with a
+# button instead of trailing off.
+step(add_journal('gameJournalPhoneConversation', NIX_CONV_PATH, notify=0),
+     in_sock='Active')
+# The fact the objective flip waits on: set once the whole thread has been
+# pushed, so 'wait for the message' cannot complete before it exists.
+for _path in NIX_MSG_PATHS:
+    step(add_journal('gameJournalPhoneMessage', _path), in_sock='Active')
+# "Wait for Nix's message" is done the moment the thread is on the phone;
+# what the player owes now is a read, so the objective says that.
+step(add_setvar('cc_g01_nixmsg_sent', 1))
+objective_step('cc_g01_nixmsg_sent', 'obj_nixwait', 'obj_nixread')
+step(add_journal('gameJournalPhoneChoiceGroup',
+                 NIX_CONV_PATH + '/' + NIX_REPLY_GROUP, notify=0),
+     in_sock='Active')
+step(add_pause_journal('gameJournalPhoneChoiceEntry', NIX_REPLY_PATH))
+# THE FEE GOES OUT HERE, and the order is the design call: the location
+# lands, V thanks him, THEN the money moves. It used to leave V's account
+# during the send, before Nix had read a line. Gig01_Encounter does the
+# transaction on this fact and answers with cc_g01_nix_paid; nothing of ours
+# is drawn over it, because changing the player's money is what makes the
+# game's own eddies counter move.
+step(add_setvar('cc_g01_pay_nix', 1))
+step(add_pause_fact('cc_g01_nix_paid'))
+# ...and Nix throws in the malware, which is where the estate objective's
+# upload and the gig's payout finally come from.
+step(add_journal('gameJournalPhoneMessage', NIX_MSG_LAST_PATH), in_sock='Active')
+step(add_journal('gameJournalQuestObjective', QUEST + '/phase_main/obj_nixread',
+                 notify=0), in_sock='Succeeded')
+step(add_setvar('cc_g01_nix_done', 1))
+# The vehicle lock is released here for the same reason it always was: the
+# beat that needed V on foot is over. Nothing after this stages Johnny until
+# the estate.
 step(add_setvar('cc_g01_vlock', 0))
 
-step(add_setvar('cc_g01_nix_done', 1))
 # Estate: travel, kill Hoshino, upload the malware from his own terminal.
-objective_step('cc_g01_nix_done', 'obj_nixwait', 'obj_estate', 'pin_estate')
+objective_step('cc_g01_nix_done', 'obj_nixread', 'obj_estate', 'pin_estate')
 # AND NOW HE EXISTS. Switched on as the objective goes up rather than on arrival,
 # so the community has the whole drive across the city to place him: a man who
 # streams in while V is already in the room is a man who appears out of nothing.
@@ -992,13 +980,17 @@ objective_step('cc_g01_malware_done', 'obj_malware', 'obj_escape')
 # gig has nothing further to do with him. Anyone reloading from here on gets an
 # entry that is already off.
 hoshino_community('Deactivate')
-# ...and the estate terminal exchange, comic p51, AFTER V has unplugged.
+# ...AND THE TERMINAL EXCHANGE, restored the same day it was cut and recast
+# with it. What was rejected was the LINE (V grieving, Johnny silent), not
+# the beat: the design call is that the upload wants two voices on it, the
+# job closed and the machine outliving the man.
 #
-# cc_g01_malware_talk is not cc_g01_malware_done: the upload finishes while V is
-# still in the device zoom, and staging an actor on a player locked in a UI is
-# what soft-locked the office beat once. Gig01_Encounter sets this one only when
-# IsUsingDevice goes false. The escape objective is already on screen by then,
-# which is what happened before too.
+# cc_g01_malware_talk is not cc_g01_malware_done: the upload finishes while V
+# is still in the device zoom, and staging an actor on a player locked in a
+# UI is what soft-locked the office beat once. Gig01_Encounter sets this one
+# only when IsUsingDevice goes false, so the eddies (which land on
+# malware_done) arrive while he is still at the screen and the conversation
+# happens as he steps away.
 step(add_pause_fact('cc_g01_malware_talk'))
 step(add_setvar('cc_g01_johnny_done', 0))
 step(add_scene(SCENES + 'gig01_malware.scene', ANCHOR_PLAYER,

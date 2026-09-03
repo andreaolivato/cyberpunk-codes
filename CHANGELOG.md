@@ -5,11 +5,37 @@ Negative Balance releases, newest first. The same changelog is on the mod's
 
 ---
 
+## 2.0.0 (2026-09-05)
+
+- **Changed: V, Johnny, Mama Welles and Nix now use the game's own voice
+  lines.** Whole lines, or lines cut short at a pause. Nothing new was made
+  for them: no generation, no new recordings, just the game's own audio,
+  repurposed.
+- **Changed: Elena and Hoshino are recorded by real people**, with only the
+  pitch and tone adjusted.
+- **Changed: subtitles follow the new recordings**, which reword most lines.
+- **Changed: the terminal, Nix's brief, the estate and the ending are
+  rewritten.** The plot is now laid out on the terminal screen and in your
+  journal instead of in dialogue. It has to be: V, Johnny and Nix can only
+  say lines the game already recorded, and none of those explains a plot
+  like this one.
+- **Added: the gig has a briefing in your journal**, in the layout the game's
+  own street stories use.
+- **Changed: Nix's second call is now a text conversation.** You have to open
+  and read it before the estate appears on your map.
+- **Changed: Nix now takes four hours instead of two**, which is what he says
+  on the call.
+- **Changed: V pays Nix 15,000 when the location arrives.** The malware skims
+  12,500 back off Hoshino's network at the estate, so the gig ends 2,500 down
+  and pays 300 Street Cred.
+- **Fixed: Hoshino ignored V after their conversation** instead of turning on
+  him.
+- **Removed: unused voice files.** The download is about a quarter of the size
+  it was.
+
 ## 1.4.0 (2026-08-28)
 
-- **Changed: every voice line is a new recording.** Voices are performed by
-  human voice actors and modulated with custom trained RVC models to resemble
-  original NPCs. Voices performed and edited by @fronterawave.
+- **Changed: every voice line is a new recording.**
 - **Changed: subtitles follow the new recordings**, which reword many lines.
 - **Added: Nix explains the malware he is sending** during his callback, before
   V asks where Hoshino is.

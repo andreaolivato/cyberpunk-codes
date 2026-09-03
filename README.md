@@ -121,7 +121,7 @@ stops you re-voicing lines; it doesn't stop you building.
 
 ## Voices
 
-Voices are performed by human voice actors and modulated with custom trained RVC models to resemble original NPCs. Voices performed and edited by @fronterawave. Every line subtitled.
+V, Johnny, Mama Welles and Nix use the game's own voice lines and nothing else: a whole line, or a line cut short at a pause. Nothing was generated and nothing new was recorded for them. Elena and Hoshino are new characters, so real people recorded them, with only the pitch and tone adjusted. Every line is subtitled.
 
 The pipeline does not care where a WAV came from: `tools/gig01/gen_voice.py` turns any
 WAV into a `.wem` through Wwise and builds the `locVoiceoverMap` the game

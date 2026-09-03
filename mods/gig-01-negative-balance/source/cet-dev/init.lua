@@ -161,6 +161,22 @@ local FACTS = {
     "cc_g01_johnny_done",
     "cc_g01_left_compound",
     "cc_g01_nix_done",
+    -- Nix's findings arrive as a TEXT MESSAGE now (2026-09-03), not a second
+    -- holocall. cc_g01_nixmsg_sent means the thread has been pushed to the
+    -- phone; cc_g01_nix_done means the player has actually opened it and
+    -- tapped the reply, which is what the estate objective waits on. Set
+    -- nix_done by hand to skip the read.
+    "cc_g01_nixmsg_sent",
+    -- The fee to Nix: pay_nix is the phase asking, nix_paid is the script
+    -- confirming the eddies left. Set nix_paid to 1 by hand to skip the
+    -- charge while testing.
+    "cc_g01_pay_nix",
+    "cc_g01_nix_paid",
+    -- The gig pays in two places now: the 2500 eddies as the malware
+    -- goes in at the estate (cc_g01_skimmed), the 300 Street Cred when
+    -- the gig closes (cc_g01_rewarded). Both guarded by their fact so a
+    -- reload cannot pay twice.
+    "cc_g01_skimmed",
     "cc_g01_estate_reached",
     "cc_g01_wayin_reached",
     -- Which of the six waypoints into North Oak is pinned, 1..6 (0 reads as 1).
@@ -273,6 +289,7 @@ local presets = {
     { name = "Estate garden", pos = { x = 340.924, y = 1033.924, z = 225.956, w = 1.0 } },
     { name = "Hoshino", pos = { x = 300.102, y = 1054.556, z = 229.928, w = 1.0 } },
     { name = "Hoshino's terminal", pos = { x = 284.852, y = 1023.697, z = 224.928, w = 1.0 } },
+} },
 }
 
 local PRESET_FILE = "presets.lua"
@@ -346,6 +363,8 @@ local TRACE_FACTS = {
     "cc_g01_johnny_legend",
     "cc_g01_nixcall_answered",
     "cc_g01_nix_done",
+    -- The message thread, in firing order: pushed to the phone, then read.
+    "cc_g01_nixmsg_sent",
     "cc_g01_at_coyote",
     "cc_g01_mama_reached",
     -- 1 = the base-game Mama is in the bar (the epilogue ACQUIRES her),
@@ -1504,6 +1523,36 @@ registerForEvent("onDraw", function()
         if not ok then log("device-dump failed: " .. tostring(err)) end
     end
 
+    -- The compound-door mechanism (Gig01_OfficeDoors.reds, gotcha 83) as a
+    -- button: DISABLED -> ForceEnabled -> OFF -> ForceON -> ON. Actions are
+    -- DEFERRED, so this sends ONE step per press and prints the state it
+    -- read; press again about a second later until it says ON. Works on
+    -- whatever door V is looking at. Scouting tool: it changes a base-game
+    -- device, so use it to judge rooms, not on doors a quest is mid-using.
+    if ImGui.Button("*** DOOR: one step towards ON (look at it) ***") then
+        local ok, err = pcall(function()
+            local target = Game.GetTargetingSystem():GetLookAtObject(Game.GetPlayer(), false, false)
+            if target == nil then
+                log("door: nothing targeted (a DISABLED door can be hard to target - stand close, aim at the frame)")
+                return
+            end
+            local ok2, ps = pcall(function() return target:GetDevicePS() end)
+            if not ok2 or ps == nil then
+                log("door: not a device")
+                return
+            end
+            local state = tostring(ps:GetDeviceState())
+            if ps:IsDisabled() then
+                ps:ExecutePSAction(ps:ActionQuestForceEnabled(), ps)
+                log("door: was " .. state .. ", sent ForceEnabled - press again in a second")
+            else
+                ps:ExecutePSAction(ps:ActionQuestForceON(), ps)
+                log("door: was " .. state .. ", sent ForceON - if still shut, press once more")
+            end
+        end)
+        if not ok then log("door force failed: " .. tostring(err)) end
+    end
+
     -- The door trace lives in facts, and facts are only visible in this window,
     -- which means reading them back costs somebody typing them out. Put them in
     -- the log file instead, where they can be read alongside the device dump
@@ -2178,6 +2227,74 @@ registerForEvent("onDraw", function()
         if ImGui.Button("TELEPORT: where Hoshino waits") then
             teleportTo({ x = 300.102, y = 1054.556, z = 229.928, w = 1.0 })
         end
+    end
+
+    ImGui.Spacing()
+    ImGui.Text("Zone probe (safe-area restrictions)")
+    ImGui.Separator()
+    -- The office interior scouting found rooms where the game holsters
+    -- weapons and blocks jumping (the club-zone treatment). DUMP says which
+    -- restriction effects the zone applied; STRIP removes them so scouting
+    -- can continue. The zone REAPPLIES them on re-entry, so strip again
+    -- after leaving and coming back. Quest-time removal for the real beat is
+    -- the same call from the scene, per docs/gameplay-restrictions.md.
+    local ZONE_RESTRICTIONS = {
+        "GameplayRestriction.InDaClub",
+        "GameplayRestriction.NoCombat",
+        "GameplayRestriction.NoWeapons",
+        "GameplayRestriction.Firearms",
+        "GameplayRestriction.NoJump",
+        "GameplayRestriction.NoSprint",
+        "GameplayRestriction.FistFight",
+        "GameplayRestriction.NoQuickMelee",
+        "GameplayRestriction.NoGrenadeOrGadget",
+        "GameplayRestriction.Tier2Locomotion",
+    }
+    if ImGui.Button("DUMP zone restrictions on me") then
+        local player = Game.GetPlayer()
+        local ses = Game.GetStatusEffectSystem()
+        local found = 0
+        for _, rid in ipairs(ZONE_RESTRICTIONS) do
+            local ok, has = pcall(function()
+                return ses:HasStatusEffect(player:GetEntityID(), TweakDBID.new(rid))
+            end)
+            if ok and has then
+                log("zone probe: ACTIVE " .. rid)
+                found = found + 1
+            end
+        end
+        if found == 0 then
+            log("zone probe: none of the known zone restrictions are active")
+        end
+    end
+    ImGui.SameLine()
+    if ImGui.Button("FORCE gameplay tier") then
+        -- The zone latches the player into a story tier (the dump showed
+        -- Tier2Locomotion), and removing the status effect does not lower
+        -- the tier itself. This sets the state machine's scene tier back to
+        -- full gameplay and strips the effects again. Test: draw, jump.
+        local player = Game.GetPlayer()
+        local ok, err = pcall(function()
+            local bb = player:GetPlayerStateMachineBlackboard()
+            local defs = GetAllBlackboardDefs().PlayerStateMachine
+            bb:SetInt(defs.SceneTier, 1, true)
+        end)
+        log("zone probe: scene tier forced to 1 (" .. tostring(ok) .. ")")
+        local ses = Game.GetStatusEffectSystem()
+        for _, rid in ipairs(ZONE_RESTRICTIONS) do
+            pcall(function() StatusEffectHelper.RemoveStatusEffect(player, TweakDBID.new(rid)) end)
+            pcall(function() ses:RemoveStatusEffect(player:GetEntityID(), rid) end)
+        end
+    end
+    ImGui.SameLine()
+    if ImGui.Button("STRIP zone restrictions") then
+        local player = Game.GetPlayer()
+        local ses = Game.GetStatusEffectSystem()
+        for _, rid in ipairs(ZONE_RESTRICTIONS) do
+            pcall(function() StatusEffectHelper.RemoveStatusEffect(player, TweakDBID.new(rid)) end)
+            pcall(function() ses:RemoveStatusEffect(player:GetEntityID(), rid) end)
+        end
+        log("zone probe: strip attempted for all known zone restrictions")
     end
 
     ImGui.Spacing()

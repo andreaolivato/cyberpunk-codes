@@ -19,39 +19,57 @@ gig01_elena_call
 ------------------------------------------------------------------------------
 (face to face, holocall)
 
-ELENA_ORTEGA: V? Sorry. I didn't know if you'd answer. My name's Elena Ortega.
+ELENA_ORTEGA: V? Sorry, I... I didn't know if you'd answer. My name's Elena
+              Ortega.
 
-ELENA_ORTEGA: I'm from Heywood. Jackie Welles used to help my family.
+ELENA_ORTEGA: I'm from Heywood. My mom and Mama Welles grew up together.
+              Jackie Welles used to help my family sometimes.
 
-V:            Ortega... yeah. Mama Welles mentioned you.
+V:            Like Mama Welles? Thought I recognized the name.
+              (male V: Like Mama Welles. Thought I'd recognize the name.)
 
-ELENA_ORTEGA: I didn't know who else to call. Jackie said you don't turn your
-              back on people.
-
-              -- V chooses --
-              > Start from the top.
-
-V:            Alright. Start from the top.
-
-ELENA_ORTEGA: I work with community accounts. People's debts are just zeroing
-              out. No disputes. No appeals.
-ELENA_ORTEGA: When a debtor dies, their account should freeze. Instead, it
-              clears. Immediately. I thought it was a glitch. It's not. Too
-              many times.
-ELENA_ORTEGA: I wasn't authorized to see this. I only noticed because I handle
-              reconciliations. My access was revoked afterward.
-
-V:            Hold on. Are you safe right now?
-
-ELENA_ORTEGA: I... don't know.
+ELENA_ORTEGA: V, I think I'm in big trouble, and I didn't know who else to
+              call. I remember Jackie saying that you don't turn your back on
+              people.
 
               -- V chooses --
-              > Go to Mama Welles.
+              > Go on, then.
 
-V:            Okay. Listen to me. Go to El Coyote. Stay with Mama Welles. I'll
-              check what I can. Where do you work?
+V:            Go on, then. Let's hear it. [vanilla recording, reused]
 
-ELENA_ORTEGA: Sending you the location.
+ELENA_ORTEGA: I work in finance with community accounts and I noticed
+              something. People's debts are just zeroing out. They're not
+              filing disputes or appeals. It's just gone.
+ELENA_ORTEGA: When a debtor dies, their account should freeze, but instead
+              it's clearing, like, immediately. I thought it was a glitch, but
+              it's not. It's just happened too many times.
+ELENA_ORTEGA: I wasn't authorized to see it. I only noticed because I handle
+              reconciliations. When I told my boss, my access was revoked and
+              security walked me out of the building. I just think something's
+              going on.
+
+V:            Are you OK?
+              (male V: Hey, are you all right?)
+
+ELENA_ORTEGA: I... I don't know. Should I be worried that they're after me or
+              something?
+
+V:            Lay low somewhere. They'll be lookin' for your family,
+              friends... You understand?
+              (male V: Lay low somewhere. They'll be lookin' for your family
+              and friends... You understand?)
+
+ELENA_ORTEGA: Maybe... maybe I could go to El Coyote? Mama Welles would take
+              me in.
+
+              -- V chooses --
+              > Good idea.
+
+V:            Good idea. [vanilla recording, reused]
+
+V:            I'll see what I can do. [vanilla recording, reused]
+
+ELENA_ORTEGA: Thank you, V. Sending you the location of my office.
 
 
 ------------------------------------------------------------------------------
@@ -59,9 +77,10 @@ gig01_arasaka
 ------------------------------------------------------------------------------
 (face to face, inner voice)
 
-V:            Got it. Wait. That's-
+V:            Got it. [vanilla recording, reused]
+V:            Wait... what? [vanilla recording, reused]
 
-JOHNNY:       Fucking Arasaka...
+JOHNNY:       'Cause it always is Arasaka. [vanilla recording, reused]
 
 
 ------------------------------------------------------------------------------
@@ -69,38 +88,17 @@ gig01_terminal
 ------------------------------------------------------------------------------
 (face to face, inner voice)
 
-V:            That's not debt collection.
+V:            Wait... What the hell is this? [vanilla recording, reused]
 
-JOHNNY:       It's a production line.
+JOHNNY:       You'd think every smart-ass would've encrypted their comms by
+              now. Anyway... what's the message say? [vanilla recording,
+              reused]
 
-V:            Insure them. Flatline them. Get the eddies.
+V:            Honestly, man? Got no clue... [vanilla recording, reused]
 
-JOHNNY:       Welcome to corporate efficiency.
+JOHNNY:       Take it to Nix. [vanilla recording, reused]
 
-V:            Yeah. With a body count.
-
-V:            We need a netrunner to find who's responsible.
-
-JOHNNY:       We know one.
-
-
-------------------------------------------------------------------------------
-gig01_shard_find
-------------------------------------------------------------------------------
-(face to face)
-
-V:            A data shard... might contain more info
-
-
-------------------------------------------------------------------------------
-gig01_shard_read
-------------------------------------------------------------------------------
-(face to face, inner voice)
-
-V:            They're not sending their own. They're paying mercs.
-V:            We do the killing.
-
-JOHNNY:       Figures.
+V:            Yeah. [vanilla recording, reused]
 
 
 ------------------------------------------------------------------------------
@@ -110,80 +108,42 @@ gig01_nix_brief
 
 NIX:          How's things, V? [vanilla recording, reused]
 
-V:            Bad. Arasaka's running a kill ledger.
-V:            Cracked the logs. Downloaded the ledger.
-V:            Someone's signing off on every one of these.
-V:            Find me the name.
+V:            So listen, Nix... got a gig with your name on it if you're game.
+              [vanilla recording, reused]
 
-NIX:          That's exec-tier heat, V.
-NIX:          I can dig, but who's paying?
+NIX:          Whatever this is, can't be good, but... shit, V, I's dyin' to
+              know. [vanilla recording, reused]
 
-V:            I am.
+V:            Yep, send you the files in a sec. [vanilla recording, reused]
 
-NIX:          Heh. That'll take a minute.
-NIX:          I'll call you back.
+NIX:          Now, let's get this show underway.
+NIX:          Should take me, I dunno... four, five hours?
 
-
-------------------------------------------------------------------------------
-gig01_legend
-------------------------------------------------------------------------------
-(face to face, inner voice)
-
-V:            Is this how a merc becomes a legend in Night City?
-V:            Killing to pad Arasaka's books?
-
-JOHNNY:       No.
-
-JOHNNY:       A legend picks who pays
-
-
-------------------------------------------------------------------------------
-gig01_nix_call
-------------------------------------------------------------------------------
-(face to face, holocall)
-
-NIX:          V. You were right.
-NIX:          Arasaka pays mercs to flatline debtors after insuring them.
-NIX:          One exec signs off on all of it. Hoshino.
-NIX:          Nothing pays without his sign-off. Ever.
-
-V:            Where.
-
-NIX:          North Oak. Private Arasaka residence.
-
-
-------------------------------------------------------------------------------
-gig01_graves
-------------------------------------------------------------------------------
-(inner voice)
-
-JOHNNY:       Of course it is.
-JOHNNY:       Arasaka owns the hill and the graves.
+V:            Much appreciated. [vanilla recording, reused]
 
 
 ------------------------------------------------------------------------------
 gig01_hoshino
 ------------------------------------------------------------------------------
-(face to face, inner voice)
+(face to face)
 
-HOSHINO:      Mmm? You lost, merc?
+HOSHINO:      Hmm? Are you lost, merc?
 
 HOSHINO:      Do you know who I am?
 
               -- V chooses --
-              > Name what he signed.
+              > The debtors.
 
-V:            I know what you signed. I know who paid for it.
+V:            Peeps ain't pawns to me. You'll pay for what you did. [vanilla
+              recording, reused]
 
 
 ------------------------------------------------------------------------------
 gig01_kill
 ------------------------------------------------------------------------------
-(face to face, inner voice)
+(inner voice)
 
-V:            Ledger's closed.
-
-JOHNNY:       They always think names beat bullets.
+JOHNNY:       Rest in peace, bastard. [vanilla recording, reused]
 
 
 ------------------------------------------------------------------------------
@@ -191,9 +151,10 @@ gig01_malware
 ------------------------------------------------------------------------------
 (face to face, inner voice)
 
-V:            No more payouts.
+V:            Think we're done. That's it. [vanilla recording, reused]
 
-JOHNNY:       No money, no bodies.
+JOHNNY:       'Cause enough people had died for nothing already. [vanilla
+              recording, reused]
 
 
 ------------------------------------------------------------------------------
@@ -201,20 +162,21 @@ gig01_epilogue
 ------------------------------------------------------------------------------
 (face to face)
 
-MAMA_WELLES:  You look tired, mija.
-              (male V: You look tired, mijo.)
+              -- V chooses --
+              > How's she doin'?
+
+V:            How's she doin'? [vanilla recording, reused]
+
+MAMA_WELLES:  I did like you said. I invited her over for dinner. [vanilla
+              recording, reused]
+MAMA_WELLES:  She's a nice girl.
 
               -- V chooses --
-              > Long night. She okay?
+              > Thank you.
 
-V:            Long night. She okay?
+V:            Thank you. [vanilla recording, reused]
 
-MAMA_WELLES:  She's in the back.
-
-              -- V chooses --
-              > Nova. I'll get a drink.
-
-V:            Nova. I'll get a drink.
+MAMA_WELLES:  Jackie chose his friends well. [vanilla recording, reused]
 
 
 ------------------------------------------------------------------------------
@@ -222,11 +184,40 @@ gig01_bar
 ------------------------------------------------------------------------------
 (face to face, inner voice)
 
-V:            She'll never know how many people died for a clean ledger.
+V:            Did what we had to. [vanilla recording, reused]
 
-JOHNNY:       Good. Let her sleep.
+JOHNNY:       Was in Mexico when I realized that no matter the conflict, corps
+              always win. Ordinary people always lose. [vanilla recording,
+              reused]
+
+V:            What matters is it's over now. [vanilla recording, reused]
+
+JOHNNY:       Hm. Not half bad, that. [vanilla recording, reused]
+
+V:            Need a drink. [vanilla recording, reused]
+
+
+------------------------------------------------------------------------------
+gig01_nix_brief_holo
+------------------------------------------------------------------------------
+(face to face, holocall)
+
+NIX:          How's things, V? [vanilla recording, reused]
+
+V:            So listen, Nix... got a gig with your name on it if you're game.
+              [vanilla recording, reused]
+
+NIX:          Whatever this is, can't be good, but... shit, V, I's dyin' to
+              know. [vanilla recording, reused]
+
+V:            Yep, send you the files in a sec. [vanilla recording, reused]
+
+NIX:          Now, let's get this show underway.
+NIX:          Should take me, I dunno... four, five hours?
+
+V:            Much appreciated. [vanilla recording, reused]
 
 
 ==============================================================================
-60 spoken lines, 5 dialogue options, 14 scenes
+53 spoken lines, 5 dialogue options, 10 scenes
 ==============================================================================

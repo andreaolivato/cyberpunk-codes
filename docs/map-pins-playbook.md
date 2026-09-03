@@ -3,9 +3,10 @@
 How to give a mod-added quest a real map pin. Established by experiment on
 2026-08-11. Follow it exactly and pins work first time.
 
-Background and dead ends: `architecture.md`. A worked example of how every
-layer below looks broken when the pin entry is never activated:
-`docs/axl-mappin-bug-report.md`, a withdrawn bug report kept as a caution.
+Background and dead ends: `architecture.md`. Worth knowing before you blame
+ArchiveXL: every layer below looks broken in exactly the same way when the pin
+entry is simply never activated, and this project got as far as drafting a bug
+report against ArchiveXL before finding that the fault was its own.
 
 ## The three ingredients
 
