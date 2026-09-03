@@ -1,0 +1,118 @@
+journal:
+  - mod\negative_balance\journal\gig01.journal
+localization:
+  onscreens:
+    ar-ar:
+      - mod\negative_balance\localization\en-us.json
+    cz-cz:
+      - mod\negative_balance\localization\en-us.json
+    de-de:
+      - mod\negative_balance\localization\en-us.json
+    en-us:
+      - mod\negative_balance\localization\en-us.json
+    es-es:
+      - mod\negative_balance\localization\en-us.json
+    es-mx:
+      - mod\negative_balance\localization\en-us.json
+    fr-fr:
+      - mod\negative_balance\localization\en-us.json
+    hu-hu:
+      - mod\negative_balance\localization\en-us.json
+    it-it:
+      - mod\negative_balance\localization\en-us.json
+    jp-jp:
+      - mod\negative_balance\localization\en-us.json
+    kr-kr:
+      - mod\negative_balance\localization\en-us.json
+    pl-pl:
+      - mod\negative_balance\localization\en-us.json
+    pt-br:
+      - mod\negative_balance\localization\en-us.json
+    ru-ru:
+      - mod\negative_balance\localization\en-us.json
+    th-th:
+      - mod\negative_balance\localization\en-us.json
+    tr-tr:
+      - mod\negative_balance\localization\en-us.json
+    ua-ua:
+      - mod\negative_balance\localization\en-us.json
+    zh-cn:
+      - mod\negative_balance\localization\en-us.json
+    zh-tw:
+      - mod\negative_balance\localization\en-us.json
+  subtitles:
+    ar-ar: mod\negative_balance\localization\subtitles.json
+    cz-cz: mod\negative_balance\localization\subtitles.json
+    de-de: mod\negative_balance\localization\subtitles.json
+    en-us: mod\negative_balance\localization\subtitles.json
+    es-es: mod\negative_balance\localization\subtitles.json
+    es-mx: mod\negative_balance\localization\subtitles.json
+    fr-fr: mod\negative_balance\localization\subtitles.json
+    hu-hu: mod\negative_balance\localization\subtitles.json
+    it-it: mod\negative_balance\localization\subtitles.json
+    jp-jp: mod\negative_balance\localization\subtitles.json
+    kr-kr: mod\negative_balance\localization\subtitles.json
+    pl-pl: mod\negative_balance\localization\subtitles.json
+    pt-br: mod\negative_balance\localization\subtitles.json
+    ru-ru: mod\negative_balance\localization\subtitles.json
+    th-th: mod\negative_balance\localization\subtitles.json
+    tr-tr: mod\negative_balance\localization\subtitles.json
+    ua-ua: mod\negative_balance\localization\subtitles.json
+    zh-cn: mod\negative_balance\localization\subtitles.json
+    zh-tw: mod\negative_balance\localization\subtitles.json
+  vomaps:
+    ar-ar: mod\negative_balance\localization\vomap.json
+    cz-cz: mod\negative_balance\localization\vomap.json
+    de-de: mod\negative_balance\localization\vomap.json
+    en-us: mod\negative_balance\localization\vomap.json
+    es-es: mod\negative_balance\localization\vomap.json
+    es-mx: mod\negative_balance\localization\vomap.json
+    fr-fr: mod\negative_balance\localization\vomap.json
+    hu-hu: mod\negative_balance\localization\vomap.json
+    it-it: mod\negative_balance\localization\vomap.json
+    jp-jp: mod\negative_balance\localization\vomap.json
+    kr-kr: mod\negative_balance\localization\vomap.json
+    pl-pl: mod\negative_balance\localization\vomap.json
+    pt-br: mod\negative_balance\localization\vomap.json
+    ru-ru: mod\negative_balance\localization\vomap.json
+    th-th: mod\negative_balance\localization\vomap.json
+    tr-tr: mod\negative_balance\localization\vomap.json
+    ua-ua: mod\negative_balance\localization\vomap.json
+    zh-cn: mod\negative_balance\localization\vomap.json
+    zh-tw: mod\negative_balance\localization\vomap.json
+  lipmaps:
+    ar-ar: mod\negative_balance\localization\gig01.lipmap
+    cz-cz: mod\negative_balance\localization\gig01.lipmap
+    de-de: mod\negative_balance\localization\gig01.lipmap
+    en-us: mod\negative_balance\localization\gig01.lipmap
+    es-es: mod\negative_balance\localization\gig01.lipmap
+    es-mx: mod\negative_balance\localization\gig01.lipmap
+    fr-fr: mod\negative_balance\localization\gig01.lipmap
+    hu-hu: mod\negative_balance\localization\gig01.lipmap
+    it-it: mod\negative_balance\localization\gig01.lipmap
+    jp-jp: mod\negative_balance\localization\gig01.lipmap
+    kr-kr: mod\negative_balance\localization\gig01.lipmap
+    pl-pl: mod\negative_balance\localization\gig01.lipmap
+    pt-br: mod\negative_balance\localization\gig01.lipmap
+    ru-ru: mod\negative_balance\localization\gig01.lipmap
+    th-th: mod\negative_balance\localization\gig01.lipmap
+    tr-tr: mod\negative_balance\localization\gig01.lipmap
+    ua-ua: mod\negative_balance\localization\gig01.lipmap
+    zh-cn: mod\negative_balance\localization\gig01.lipmap
+    zh-tw: mod\negative_balance\localization\gig01.lipmap
+streaming:
+  blocks:
+    - mod\worlds\03_night_city\_compiled\default\cc_g01_world.streamingblock
+    - mod\worlds\03_night_city\_compiled\default\cc_g01_hoshino.streamingblock
+    - mod\worlds\03_night_city\_compiled\default\cc_g01_estate.streamingblock
+    - mod\worlds\03_night_city\_compiled\default\cc_g01_compound.streamingblock
+  sectors:
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-4_-23_0_0.streamingsector
+      expectedNodes: 1242
+      nodeDeletions:
+        - index: 591
+          type: worldEntityNode
+quest:
+  phases:
+    - path: mod\negative_balance\quest\gig01.questphase
+      parent: cyberpunk2077.quest

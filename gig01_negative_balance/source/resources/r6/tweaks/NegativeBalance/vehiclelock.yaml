@@ -1,0 +1,4 @@
+GameplayRestriction.cc_g01_no_vehicle:
+  $base: GameplayRestriction.VehicleNoInteraction
+  # not in the save
+  savable: false

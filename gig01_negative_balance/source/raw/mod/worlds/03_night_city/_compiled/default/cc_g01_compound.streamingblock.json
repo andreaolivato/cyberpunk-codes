@@ -1,0 +1,110 @@
+{
+  "Header": {
+    "WolvenKitVersion": "8.20.0",
+    "WKitJsonVersion": "0.0.9",
+    "GameVersion": 2310,
+    "ExportedDateTime": "2026-08-25T12:25:19.9769353Z",
+    "DataType": "CR2W",
+    "ArchiveFileName": "C:\\Users\\andre\\OneDrive\\Desktop\\cyberpunk-gigs\\gig01_negative_balance\\source\\archive\\mod\\worlds\\03_night_city\\_compiled\\default\\cc_g01_compound.streamingblock"
+  },
+  "Data": {
+    "Version": 195,
+    "BuildVersion": 0,
+    "RootChunk": {
+      "$type": "worldStreamingBlock",
+      "cookingPlatform": "PLATFORM_PC",
+      "descriptors": [
+        {
+          "$type": "worldStreamingSectorDescriptor",
+          "blockIndex": {
+            "$type": "worldStreamingBlockIndex",
+            "oup": "Base",
+            "rldGridCell": 0
+          },
+          "category": "AlwaysLoaded",
+          "data": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "mod\\worlds\\03_night_city\\_compiled\\default\\cc_g01_compound_reg.streamingsector"
+            },
+            "Flags": "Soft"
+          },
+          "level": 1,
+          "numNodeRanges": 1,
+          "questPrefabNodeRef": {
+            "$type": "NodeRef",
+            "$storage": "uint64",
+            "$value": "0"
+          },
+          "streamingBox": {
+            "$type": "Box",
+            "Max": {
+              "$type": "Vector4",
+              "W": 1,
+              "X": 99999,
+              "Y": 99999,
+              "Z": 99999
+            },
+            "Min": {
+              "$type": "Vector4",
+              "W": 1,
+              "X": -99999,
+              "Y": -99999,
+              "Z": -99999
+            }
+          },
+          "variants": []
+        },
+        {
+          "$type": "worldStreamingSectorDescriptor",
+          "blockIndex": {
+            "$type": "worldStreamingBlockIndex",
+            "oup": "Base",
+            "rldGridCell": 0
+          },
+          "category": "AlwaysLoaded",
+          "data": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "mod\\worlds\\03_night_city\\_compiled\\default\\cc_g01_compound.streamingsector"
+            },
+            "Flags": "Soft"
+          },
+          "level": 1,
+          "numNodeRanges": 1,
+          "questPrefabNodeRef": {
+            "$type": "NodeRef",
+            "$storage": "uint64",
+            "$value": "0"
+          },
+          "streamingBox": {
+            "$type": "Box",
+            "Max": {
+              "$type": "Vector4",
+              "W": 1,
+              "X": 6.13100004,
+              "Y": -1226.22302,
+              "Z": 215.845001
+            },
+            "Min": {
+              "$type": "Vector4",
+              "W": 1,
+              "X": -481.563995,
+              "Y": -1705.83496,
+              "Z": -192.399994
+            }
+          },
+          "variants": []
+        }
+      ],
+      "index": {
+        "$type": "worldStreamingBlockIndex",
+        "oup": "Base",
+        "rldGridCell": 0
+      }
+    },
+    "EmbeddedFiles": []
+  }
+}

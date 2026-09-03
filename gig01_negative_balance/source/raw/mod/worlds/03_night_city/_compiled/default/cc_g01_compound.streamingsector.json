@@ -1,0 +1,5373 @@
+{
+  "Header": {
+    "WolvenKitVersion": "8.20.0",
+    "WKitJsonVersion": "0.0.9",
+    "GameVersion": 2310,
+    "ExportedDateTime": "2026-08-25T12:25:36.5141499Z",
+    "DataType": "CR2W",
+    "ArchiveFileName": "C:\\Users\\andre\\OneDrive\\Desktop\\cyberpunk-gigs\\gig01_negative_balance\\source\\archive\\mod\\worlds\\03_night_city\\_compiled\\default\\cc_g01_compound.streamingsector"
+  },
+  "Data": {
+    "Version": 195,
+    "BuildVersion": 0,
+    "RootChunk": {
+      "$type": "worldStreamingSector",
+      "category": "AlwaysLoaded",
+      "cookingPlatform": "PLATFORM_PC",
+      "externInplaceResource": {
+        "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "uint64",
+          "$value": "0"
+        },
+        "Flags": "Soft"
+      },
+      "level": 1,
+      "localInplaceResource": [],
+      "nodeData": {
+        "BufferId": "0",
+        "Flags": 4063232,
+        "Type": "WolvenKit.RED4.Archive.Buffer.worldNodeDataBuffer, WolvenKit.RED4, Version=8.20.0.0, Culture=neutral, PublicKeyToken=null",
+        "Data": [
+          {
+            "Id": "0",
+            "NodeIndex": 0,
+            "Position": {
+              "$type": "Vector4",
+              "W": 0,
+              "X": -193.869003,
+              "Y": -1460.151,
+              "Z": 7.5999999
+            },
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": -0.882947564,
+              "r": 0.469471574
+            },
+            "Scale": {
+              "$type": "Vector3",
+              "X": 1,
+              "Y": 1,
+              "Z": 1
+            },
+            "Pivot": {
+              "$type": "Vector3",
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "Bounds": {
+              "$type": "Box",
+              "Max": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -193.869003,
+                "Y": -1460.151,
+                "Z": 7.5999999
+              },
+              "Min": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -193.869003,
+                "Y": -1460.151,
+                "Z": 7.5999999
+              }
+            },
+            "QuestPrefabRefHash": {
+              "$type": "NodeRef",
+              "$storage": "string",
+              "$value": "$/mod/cc_g01_compound/#cc_g01_compound_gate03"
+            },
+            "UkHash1": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "CookedPrefabData": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Default"
+            },
+            "MaxStreamingDistance": 120,
+            "UkFloat1": 100,
+            "Uk10": 1024,
+            "Uk11": 512,
+            "Uk12": 0,
+            "Uk13": "0",
+            "Uk14": "0"
+          },
+          {
+            "Id": "0",
+            "NodeIndex": 1,
+            "Position": {
+              "$type": "Vector4",
+              "W": 0,
+              "X": -225.764008,
+              "Y": -1497.93103,
+              "Z": 7.5999999
+            },
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": -0.903335273,
+              "r": 0.42893514
+            },
+            "Scale": {
+              "$type": "Vector3",
+              "X": 1,
+              "Y": 1,
+              "Z": 1
+            },
+            "Pivot": {
+              "$type": "Vector3",
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "Bounds": {
+              "$type": "Box",
+              "Max": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -225.764008,
+                "Y": -1497.93103,
+                "Z": 7.5999999
+              },
+              "Min": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -225.764008,
+                "Y": -1497.93103,
+                "Z": 7.5999999
+              }
+            },
+            "QuestPrefabRefHash": {
+              "$type": "NodeRef",
+              "$storage": "string",
+              "$value": "$/mod/cc_g01_compound/#cc_g01_compound_gate2_01"
+            },
+            "UkHash1": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "CookedPrefabData": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Default"
+            },
+            "MaxStreamingDistance": 120,
+            "UkFloat1": 100,
+            "Uk10": 1024,
+            "Uk11": 512,
+            "Uk12": 0,
+            "Uk13": "0",
+            "Uk14": "0"
+          },
+          {
+            "Id": "0",
+            "NodeIndex": 2,
+            "Position": {
+              "$type": "Vector4",
+              "W": 0,
+              "X": -227.069,
+              "Y": -1501.46399,
+              "Z": 7.5999999
+            },
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": -0.868198812,
+              "r": 0.496216506
+            },
+            "Scale": {
+              "$type": "Vector3",
+              "X": 1,
+              "Y": 1,
+              "Z": 1
+            },
+            "Pivot": {
+              "$type": "Vector3",
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "Bounds": {
+              "$type": "Box",
+              "Max": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -227.069,
+                "Y": -1501.46399,
+                "Z": 7.5999999
+              },
+              "Min": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -227.069,
+                "Y": -1501.46399,
+                "Z": 7.5999999
+              }
+            },
+            "QuestPrefabRefHash": {
+              "$type": "NodeRef",
+              "$storage": "string",
+              "$value": "$/mod/cc_g01_compound/#cc_g01_compound_gate2_02"
+            },
+            "UkHash1": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "CookedPrefabData": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Default"
+            },
+            "MaxStreamingDistance": 120,
+            "UkFloat1": 100,
+            "Uk10": 1024,
+            "Uk11": 512,
+            "Uk12": 0,
+            "Uk13": "0",
+            "Uk14": "0"
+          },
+          {
+            "Id": "0",
+            "NodeIndex": 3,
+            "Position": {
+              "$type": "Vector4",
+              "W": 0,
+              "X": -229.416,
+              "Y": -1505.83496,
+              "Z": 7.61100006
+            },
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": -0.865588725,
+              "r": 0.500755548
+            },
+            "Scale": {
+              "$type": "Vector3",
+              "X": 1,
+              "Y": 1,
+              "Z": 1
+            },
+            "Pivot": {
+              "$type": "Vector3",
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "Bounds": {
+              "$type": "Box",
+              "Max": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -229.416,
+                "Y": -1505.83496,
+                "Z": 7.61100006
+              },
+              "Min": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -229.416,
+                "Y": -1505.83496,
+                "Z": 7.61100006
+              }
+            },
+            "QuestPrefabRefHash": {
+              "$type": "NodeRef",
+              "$storage": "string",
+              "$value": "$/mod/cc_g01_compound/#cc_g01_compound_gate2_03"
+            },
+            "UkHash1": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "CookedPrefabData": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Default"
+            },
+            "MaxStreamingDistance": 120,
+            "UkFloat1": 100,
+            "Uk10": 1024,
+            "Uk11": 512,
+            "Uk12": 0,
+            "Uk13": "0",
+            "Uk14": "0"
+          },
+          {
+            "Id": "0",
+            "NodeIndex": 4,
+            "Position": {
+              "$type": "Vector4",
+              "W": 0,
+              "X": -245.882996,
+              "Y": -1491.90503,
+              "Z": 7.5999999
+            },
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": -0.876726747,
+              "r": 0.480988771
+            },
+            "Scale": {
+              "$type": "Vector3",
+              "X": 1,
+              "Y": 1,
+              "Z": 1
+            },
+            "Pivot": {
+              "$type": "Vector3",
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "Bounds": {
+              "$type": "Box",
+              "Max": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -245.882996,
+                "Y": -1491.90503,
+                "Z": 7.5999999
+              },
+              "Min": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -245.882996,
+                "Y": -1491.90503,
+                "Z": 7.5999999
+              }
+            },
+            "QuestPrefabRefHash": {
+              "$type": "NodeRef",
+              "$storage": "string",
+              "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inner02"
+            },
+            "UkHash1": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "CookedPrefabData": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Default"
+            },
+            "MaxStreamingDistance": 120,
+            "UkFloat1": 100,
+            "Uk10": 1024,
+            "Uk11": 512,
+            "Uk12": 0,
+            "Uk13": "0",
+            "Uk14": "0"
+          },
+          {
+            "Id": "0",
+            "NodeIndex": 5,
+            "Position": {
+              "$type": "Vector4",
+              "W": 0,
+              "X": -267.817993,
+              "Y": -1459.45398,
+              "Z": 7.5999999
+            },
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0.984040678,
+              "r": 0.177943543
+            },
+            "Scale": {
+              "$type": "Vector3",
+              "X": 1,
+              "Y": 1,
+              "Z": 1
+            },
+            "Pivot": {
+              "$type": "Vector3",
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "Bounds": {
+              "$type": "Box",
+              "Max": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -267.817993,
+                "Y": -1459.45398,
+                "Z": 7.5999999
+              },
+              "Min": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -267.817993,
+                "Y": -1459.45398,
+                "Z": 7.5999999
+              }
+            },
+            "QuestPrefabRefHash": {
+              "$type": "NodeRef",
+              "$storage": "string",
+              "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inner03"
+            },
+            "UkHash1": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "CookedPrefabData": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Default"
+            },
+            "MaxStreamingDistance": 120,
+            "UkFloat1": 100,
+            "Uk10": 1024,
+            "Uk11": 512,
+            "Uk12": 0,
+            "Uk13": "0",
+            "Uk14": "0"
+          },
+          {
+            "Id": "0",
+            "NodeIndex": 6,
+            "Position": {
+              "$type": "Vector4",
+              "W": 0,
+              "X": -263.399994,
+              "Y": -1462.177,
+              "Z": 7.65500021
+            },
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0.925870597,
+              "r": 0.377840787
+            },
+            "Scale": {
+              "$type": "Vector3",
+              "X": 1,
+              "Y": 1,
+              "Z": 1
+            },
+            "Pivot": {
+              "$type": "Vector3",
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "Bounds": {
+              "$type": "Box",
+              "Max": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -263.399994,
+                "Y": -1462.177,
+                "Z": 7.65500021
+              },
+              "Min": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -263.399994,
+                "Y": -1462.177,
+                "Z": 7.65500021
+              }
+            },
+            "QuestPrefabRefHash": {
+              "$type": "NodeRef",
+              "$storage": "string",
+              "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inner04"
+            },
+            "UkHash1": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "CookedPrefabData": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Default"
+            },
+            "MaxStreamingDistance": 120,
+            "UkFloat1": 100,
+            "Uk10": 1024,
+            "Uk11": 512,
+            "Uk12": 0,
+            "Uk13": "0",
+            "Uk14": "0"
+          },
+          {
+            "Id": "0",
+            "NodeIndex": 7,
+            "Position": {
+              "$type": "Vector4",
+              "W": 0,
+              "X": -281.563995,
+              "Y": -1501.88,
+              "Z": 9.60700035
+            },
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": -0.314820856,
+              "r": 0.949151099
+            },
+            "Scale": {
+              "$type": "Vector3",
+              "X": 1,
+              "Y": 1,
+              "Z": 1
+            },
+            "Pivot": {
+              "$type": "Vector3",
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "Bounds": {
+              "$type": "Box",
+              "Max": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -281.563995,
+                "Y": -1501.88,
+                "Z": 9.60700035
+              },
+              "Min": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -281.563995,
+                "Y": -1501.88,
+                "Z": 9.60700035
+              }
+            },
+            "QuestPrefabRefHash": {
+              "$type": "NodeRef",
+              "$storage": "string",
+              "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inner05"
+            },
+            "UkHash1": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "CookedPrefabData": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Default"
+            },
+            "MaxStreamingDistance": 120,
+            "UkFloat1": 100,
+            "Uk10": 1024,
+            "Uk11": 512,
+            "Uk12": 0,
+            "Uk13": "0",
+            "Uk14": "0"
+          },
+          {
+            "Id": "0",
+            "NodeIndex": 8,
+            "Position": {
+              "$type": "Vector4",
+              "W": 0,
+              "X": -240.843002,
+              "Y": -1468.98596,
+              "Z": 7.5999999
+            },
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": -0.979575276,
+              "r": 0.201077923
+            },
+            "Scale": {
+              "$type": "Vector3",
+              "X": 1,
+              "Y": 1,
+              "Z": 1
+            },
+            "Pivot": {
+              "$type": "Vector3",
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "Bounds": {
+              "$type": "Box",
+              "Max": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -240.843002,
+                "Y": -1468.98596,
+                "Z": 7.5999999
+              },
+              "Min": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -240.843002,
+                "Y": -1468.98596,
+                "Z": 7.5999999
+              }
+            },
+            "QuestPrefabRefHash": {
+              "$type": "NodeRef",
+              "$storage": "string",
+              "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inner06"
+            },
+            "UkHash1": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "CookedPrefabData": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Default"
+            },
+            "MaxStreamingDistance": 120,
+            "UkFloat1": 100,
+            "Uk10": 1024,
+            "Uk11": 512,
+            "Uk12": 0,
+            "Uk13": "0",
+            "Uk14": "0"
+          },
+          {
+            "Id": "0",
+            "NodeIndex": 9,
+            "Position": {
+              "$type": "Vector4",
+              "W": 0,
+              "X": -245.546005,
+              "Y": -1466.52795,
+              "Z": 7.5999999
+            },
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": -0.982287228,
+              "r": 0.187381312
+            },
+            "Scale": {
+              "$type": "Vector3",
+              "X": 1,
+              "Y": 1,
+              "Z": 1
+            },
+            "Pivot": {
+              "$type": "Vector3",
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "Bounds": {
+              "$type": "Box",
+              "Max": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -245.546005,
+                "Y": -1466.52795,
+                "Z": 7.5999999
+              },
+              "Min": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -245.546005,
+                "Y": -1466.52795,
+                "Z": 7.5999999
+              }
+            },
+            "QuestPrefabRefHash": {
+              "$type": "NodeRef",
+              "$storage": "string",
+              "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inner07"
+            },
+            "UkHash1": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "CookedPrefabData": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Default"
+            },
+            "MaxStreamingDistance": 120,
+            "UkFloat1": 100,
+            "Uk10": 1024,
+            "Uk11": 512,
+            "Uk12": 0,
+            "Uk13": "0",
+            "Uk14": "0"
+          },
+          {
+            "Id": "0",
+            "NodeIndex": 10,
+            "Position": {
+              "$type": "Vector4",
+              "W": 0,
+              "X": -235.576996,
+              "Y": -1450.776,
+              "Z": 7.60599995
+            },
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": -0.738455355,
+              "r": 0.674302399
+            },
+            "Scale": {
+              "$type": "Vector3",
+              "X": 1,
+              "Y": 1,
+              "Z": 1
+            },
+            "Pivot": {
+              "$type": "Vector3",
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "Bounds": {
+              "$type": "Box",
+              "Max": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -235.576996,
+                "Y": -1450.776,
+                "Z": 7.60599995
+              },
+              "Min": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -235.576996,
+                "Y": -1450.776,
+                "Z": 7.60599995
+              }
+            },
+            "QuestPrefabRefHash": {
+              "$type": "NodeRef",
+              "$storage": "string",
+              "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inner08"
+            },
+            "UkHash1": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "CookedPrefabData": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Default"
+            },
+            "MaxStreamingDistance": 120,
+            "UkFloat1": 100,
+            "Uk10": 1024,
+            "Uk11": 512,
+            "Uk12": 0,
+            "Uk13": "0",
+            "Uk14": "0"
+          },
+          {
+            "Id": "0",
+            "NodeIndex": 11,
+            "Position": {
+              "$type": "Vector4",
+              "W": 0,
+              "X": -224.378998,
+              "Y": -1435.30798,
+              "Z": 7.5999999
+            },
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": -0.91354543,
+              "r": 0.406736642
+            },
+            "Scale": {
+              "$type": "Vector3",
+              "X": 1,
+              "Y": 1,
+              "Z": 1
+            },
+            "Pivot": {
+              "$type": "Vector3",
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "Bounds": {
+              "$type": "Box",
+              "Max": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -224.378998,
+                "Y": -1435.30798,
+                "Z": 7.5999999
+              },
+              "Min": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -224.378998,
+                "Y": -1435.30798,
+                "Z": 7.5999999
+              }
+            },
+            "QuestPrefabRefHash": {
+              "$type": "NodeRef",
+              "$storage": "string",
+              "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inner09"
+            },
+            "UkHash1": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "CookedPrefabData": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Default"
+            },
+            "MaxStreamingDistance": 120,
+            "UkFloat1": 100,
+            "Uk10": 1024,
+            "Uk11": 512,
+            "Uk12": 0,
+            "Uk13": "0",
+            "Uk14": "0"
+          },
+          {
+            "Id": "0",
+            "NodeIndex": 12,
+            "Position": {
+              "$type": "Vector4",
+              "W": 0,
+              "X": -212.522995,
+              "Y": -1440.33997,
+              "Z": 7.6500001
+            },
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": -0.999986291,
+              "r": 0.00523596397
+            },
+            "Scale": {
+              "$type": "Vector3",
+              "X": 1,
+              "Y": 1,
+              "Z": 1
+            },
+            "Pivot": {
+              "$type": "Vector3",
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "Bounds": {
+              "$type": "Box",
+              "Max": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -212.522995,
+                "Y": -1440.33997,
+                "Z": 7.6500001
+              },
+              "Min": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -212.522995,
+                "Y": -1440.33997,
+                "Z": 7.6500001
+              }
+            },
+            "QuestPrefabRefHash": {
+              "$type": "NodeRef",
+              "$storage": "string",
+              "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inner10"
+            },
+            "UkHash1": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "CookedPrefabData": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Default"
+            },
+            "MaxStreamingDistance": 120,
+            "UkFloat1": 100,
+            "Uk10": 1024,
+            "Uk11": 512,
+            "Uk12": 0,
+            "Uk13": "0",
+            "Uk14": "0"
+          },
+          {
+            "Id": "0",
+            "NodeIndex": 13,
+            "Position": {
+              "$type": "Vector4",
+              "W": 0,
+              "X": -194.932007,
+              "Y": -1437.81299,
+              "Z": 7.5999999
+            },
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0.977045596,
+              "r": 0.213030383
+            },
+            "Scale": {
+              "$type": "Vector3",
+              "X": 1,
+              "Y": 1,
+              "Z": 1
+            },
+            "Pivot": {
+              "$type": "Vector3",
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "Bounds": {
+              "$type": "Box",
+              "Max": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -194.932007,
+                "Y": -1437.81299,
+                "Z": 7.5999999
+              },
+              "Min": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -194.932007,
+                "Y": -1437.81299,
+                "Z": 7.5999999
+              }
+            },
+            "QuestPrefabRefHash": {
+              "$type": "NodeRef",
+              "$storage": "string",
+              "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inner11"
+            },
+            "UkHash1": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "CookedPrefabData": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Default"
+            },
+            "MaxStreamingDistance": 120,
+            "UkFloat1": 100,
+            "Uk10": 1024,
+            "Uk11": 512,
+            "Uk12": 0,
+            "Uk13": "0",
+            "Uk14": "0"
+          },
+          {
+            "Id": "0",
+            "NodeIndex": 14,
+            "Position": {
+              "$type": "Vector4",
+              "W": 0,
+              "X": -199.104004,
+              "Y": -1450.64502,
+              "Z": 7.5999999
+            },
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": -0.979399383,
+              "r": 0.201932684
+            },
+            "Scale": {
+              "$type": "Vector3",
+              "X": 1,
+              "Y": 1,
+              "Z": 1
+            },
+            "Pivot": {
+              "$type": "Vector3",
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "Bounds": {
+              "$type": "Box",
+              "Max": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -199.104004,
+                "Y": -1450.64502,
+                "Z": 7.5999999
+              },
+              "Min": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -199.104004,
+                "Y": -1450.64502,
+                "Z": 7.5999999
+              }
+            },
+            "QuestPrefabRefHash": {
+              "$type": "NodeRef",
+              "$storage": "string",
+              "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inner12"
+            },
+            "UkHash1": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "CookedPrefabData": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Default"
+            },
+            "MaxStreamingDistance": 120,
+            "UkFloat1": 100,
+            "Uk10": 1024,
+            "Uk11": 512,
+            "Uk12": 0,
+            "Uk13": "0",
+            "Uk14": "0"
+          },
+          {
+            "Id": "0",
+            "NodeIndex": 15,
+            "Position": {
+              "$type": "Vector4",
+              "W": 0,
+              "X": -219.688995,
+              "Y": -1426.22302,
+              "Z": 14.6040001
+            },
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": -0.804375648,
+              "r": 0.594121039
+            },
+            "Scale": {
+              "$type": "Vector3",
+              "X": 1,
+              "Y": 1,
+              "Z": 1
+            },
+            "Pivot": {
+              "$type": "Vector3",
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "Bounds": {
+              "$type": "Box",
+              "Max": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -219.688995,
+                "Y": -1426.22302,
+                "Z": 14.6040001
+              },
+              "Min": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -219.688995,
+                "Y": -1426.22302,
+                "Z": 14.6040001
+              }
+            },
+            "QuestPrefabRefHash": {
+              "$type": "NodeRef",
+              "$storage": "string",
+              "$value": "$/mod/cc_g01_compound/#cc_g01_compound_deck02"
+            },
+            "UkHash1": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "CookedPrefabData": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Default"
+            },
+            "MaxStreamingDistance": 120,
+            "UkFloat1": 100,
+            "Uk10": 1024,
+            "Uk11": 512,
+            "Uk12": 0,
+            "Uk13": "0",
+            "Uk14": "0"
+          },
+          {
+            "Id": "0",
+            "NodeIndex": 16,
+            "Position": {
+              "$type": "Vector4",
+              "W": 0,
+              "X": -207.365997,
+              "Y": -1433.43701,
+              "Z": 15.8450003
+            },
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": -0.976296008,
+              "r": 0.21643962
+            },
+            "Scale": {
+              "$type": "Vector3",
+              "X": 1,
+              "Y": 1,
+              "Z": 1
+            },
+            "Pivot": {
+              "$type": "Vector3",
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "Bounds": {
+              "$type": "Box",
+              "Max": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -207.365997,
+                "Y": -1433.43701,
+                "Z": 15.8450003
+              },
+              "Min": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -207.365997,
+                "Y": -1433.43701,
+                "Z": 15.8450003
+              }
+            },
+            "QuestPrefabRefHash": {
+              "$type": "NodeRef",
+              "$storage": "string",
+              "$value": "$/mod/cc_g01_compound/#cc_g01_compound_deck03"
+            },
+            "UkHash1": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "CookedPrefabData": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Default"
+            },
+            "MaxStreamingDistance": 120,
+            "UkFloat1": 100,
+            "Uk10": 1024,
+            "Uk11": 512,
+            "Uk12": 0,
+            "Uk13": "0",
+            "Uk14": "0"
+          },
+          {
+            "Id": "0",
+            "NodeIndex": 17,
+            "Position": {
+              "$type": "Vector4",
+              "W": 0,
+              "X": -216.947006,
+              "Y": -1430.11096,
+              "Z": 14.6040001
+            },
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0.19166556,
+              "r": 0.981460273
+            },
+            "Scale": {
+              "$type": "Vector3",
+              "X": 1,
+              "Y": 1,
+              "Z": 1
+            },
+            "Pivot": {
+              "$type": "Vector3",
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "Bounds": {
+              "$type": "Box",
+              "Max": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -216.947006,
+                "Y": -1430.11096,
+                "Z": 14.6040001
+              },
+              "Min": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -216.947006,
+                "Y": -1430.11096,
+                "Z": 14.6040001
+              }
+            },
+            "QuestPrefabRefHash": {
+              "$type": "NodeRef",
+              "$storage": "string",
+              "$value": "$/mod/cc_g01_compound/#cc_g01_compound_deck04"
+            },
+            "UkHash1": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "CookedPrefabData": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Default"
+            },
+            "MaxStreamingDistance": 120,
+            "UkFloat1": 100,
+            "Uk10": 1024,
+            "Uk11": 512,
+            "Uk12": 0,
+            "Uk13": "0",
+            "Uk14": "0"
+          },
+          {
+            "Id": "0",
+            "NodeIndex": 18,
+            "Position": {
+              "$type": "Vector4",
+              "W": 0,
+              "X": -267.006989,
+              "Y": -1428.349,
+              "Z": 8.60000038
+            },
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0.320612997,
+              "r": 0.947210252
+            },
+            "Scale": {
+              "$type": "Vector3",
+              "X": 1,
+              "Y": 1,
+              "Z": 1
+            },
+            "Pivot": {
+              "$type": "Vector3",
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "Bounds": {
+              "$type": "Box",
+              "Max": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -267.006989,
+                "Y": -1428.349,
+                "Z": 8.60000038
+              },
+              "Min": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -267.006989,
+                "Y": -1428.349,
+                "Z": 8.60000038
+              }
+            },
+            "QuestPrefabRefHash": {
+              "$type": "NodeRef",
+              "$storage": "string",
+              "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inside10"
+            },
+            "UkHash1": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "CookedPrefabData": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Default"
+            },
+            "MaxStreamingDistance": 120,
+            "UkFloat1": 100,
+            "Uk10": 1024,
+            "Uk11": 512,
+            "Uk12": 0,
+            "Uk13": "0",
+            "Uk14": "0"
+          },
+          {
+            "Id": "0",
+            "NodeIndex": 19,
+            "Position": {
+              "$type": "Vector4",
+              "W": 0,
+              "X": -259.134003,
+              "Y": -1432.922,
+              "Z": 8.60000038
+            },
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": -0.977965772,
+              "r": 0.208765209
+            },
+            "Scale": {
+              "$type": "Vector3",
+              "X": 1,
+              "Y": 1,
+              "Z": 1
+            },
+            "Pivot": {
+              "$type": "Vector3",
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "Bounds": {
+              "$type": "Box",
+              "Max": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -259.134003,
+                "Y": -1432.922,
+                "Z": 8.60000038
+              },
+              "Min": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -259.134003,
+                "Y": -1432.922,
+                "Z": 8.60000038
+              }
+            },
+            "QuestPrefabRefHash": {
+              "$type": "NodeRef",
+              "$storage": "string",
+              "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inside11"
+            },
+            "UkHash1": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "CookedPrefabData": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Default"
+            },
+            "MaxStreamingDistance": 120,
+            "UkFloat1": 100,
+            "Uk10": 1024,
+            "Uk11": 512,
+            "Uk12": 0,
+            "Uk13": "0",
+            "Uk14": "0"
+          },
+          {
+            "Id": "0",
+            "NodeIndex": 20,
+            "Position": {
+              "$type": "Vector4",
+              "W": 0,
+              "X": -255.259995,
+              "Y": -1448.073,
+              "Z": 8.60299969
+            },
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0.572145879,
+              "r": 0.820151865
+            },
+            "Scale": {
+              "$type": "Vector3",
+              "X": 1,
+              "Y": 1,
+              "Z": 1
+            },
+            "Pivot": {
+              "$type": "Vector3",
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "Bounds": {
+              "$type": "Box",
+              "Max": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -255.259995,
+                "Y": -1448.073,
+                "Z": 8.60299969
+              },
+              "Min": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -255.259995,
+                "Y": -1448.073,
+                "Z": 8.60299969
+              }
+            },
+            "QuestPrefabRefHash": {
+              "$type": "NodeRef",
+              "$storage": "string",
+              "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inside12"
+            },
+            "UkHash1": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "CookedPrefabData": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Default"
+            },
+            "MaxStreamingDistance": 120,
+            "UkFloat1": 100,
+            "Uk10": 1024,
+            "Uk11": 512,
+            "Uk12": 0,
+            "Uk13": "0",
+            "Uk14": "0"
+          },
+          {
+            "Id": "0",
+            "NodeIndex": 21,
+            "Position": {
+              "$type": "Vector4",
+              "W": 0,
+              "X": -240.503006,
+              "Y": -1449.09998,
+              "Z": 14.6000004
+            },
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0.938191354,
+              "r": 0.346117049
+            },
+            "Scale": {
+              "$type": "Vector3",
+              "X": 1,
+              "Y": 1,
+              "Z": 1
+            },
+            "Pivot": {
+              "$type": "Vector3",
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "Bounds": {
+              "$type": "Box",
+              "Max": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -240.503006,
+                "Y": -1449.09998,
+                "Z": 14.6000004
+              },
+              "Min": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -240.503006,
+                "Y": -1449.09998,
+                "Z": 14.6000004
+              }
+            },
+            "QuestPrefabRefHash": {
+              "$type": "NodeRef",
+              "$storage": "string",
+              "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inside14"
+            },
+            "UkHash1": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "CookedPrefabData": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Default"
+            },
+            "MaxStreamingDistance": 120,
+            "UkFloat1": 100,
+            "Uk10": 1024,
+            "Uk11": 512,
+            "Uk12": 0,
+            "Uk13": "0",
+            "Uk14": "0"
+          },
+          {
+            "Id": "0",
+            "NodeIndex": 22,
+            "Position": {
+              "$type": "Vector4",
+              "W": 0,
+              "X": -239.460007,
+              "Y": -1442.24097,
+              "Z": 14.592
+            },
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0.970295727,
+              "r": 0.241921902
+            },
+            "Scale": {
+              "$type": "Vector3",
+              "X": 1,
+              "Y": 1,
+              "Z": 1
+            },
+            "Pivot": {
+              "$type": "Vector3",
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "Bounds": {
+              "$type": "Box",
+              "Max": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -239.460007,
+                "Y": -1442.24097,
+                "Z": 14.592
+              },
+              "Min": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -239.460007,
+                "Y": -1442.24097,
+                "Z": 14.592
+              }
+            },
+            "QuestPrefabRefHash": {
+              "$type": "NodeRef",
+              "$storage": "string",
+              "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inside15"
+            },
+            "UkHash1": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "CookedPrefabData": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Default"
+            },
+            "MaxStreamingDistance": 120,
+            "UkFloat1": 100,
+            "Uk10": 1024,
+            "Uk11": 512,
+            "Uk12": 0,
+            "Uk13": "0",
+            "Uk14": "0"
+          },
+          {
+            "Id": "0",
+            "NodeIndex": 23,
+            "Position": {
+              "$type": "Vector4",
+              "W": 0,
+              "X": -248.283997,
+              "Y": -1439.28503,
+              "Z": 14.6029997
+            },
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0.891006529,
+              "r": 0.453990489
+            },
+            "Scale": {
+              "$type": "Vector3",
+              "X": 1,
+              "Y": 1,
+              "Z": 1
+            },
+            "Pivot": {
+              "$type": "Vector3",
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "Bounds": {
+              "$type": "Box",
+              "Max": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -248.283997,
+                "Y": -1439.28503,
+                "Z": 14.6029997
+              },
+              "Min": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -248.283997,
+                "Y": -1439.28503,
+                "Z": 14.6029997
+              }
+            },
+            "QuestPrefabRefHash": {
+              "$type": "NodeRef",
+              "$storage": "string",
+              "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inside16"
+            },
+            "UkHash1": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "CookedPrefabData": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Default"
+            },
+            "MaxStreamingDistance": 120,
+            "UkFloat1": 100,
+            "Uk10": 1024,
+            "Uk11": 512,
+            "Uk12": 0,
+            "Uk13": "0",
+            "Uk14": "0"
+          },
+          {
+            "Id": "0",
+            "NodeIndex": 24,
+            "Position": {
+              "$type": "Vector4",
+              "W": 0,
+              "X": -256.987,
+              "Y": -1433.08606,
+              "Z": 14.9309998
+            },
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": -0.148672432,
+              "r": 0.988886476
+            },
+            "Scale": {
+              "$type": "Vector3",
+              "X": 1,
+              "Y": 1,
+              "Z": 1
+            },
+            "Pivot": {
+              "$type": "Vector3",
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "Bounds": {
+              "$type": "Box",
+              "Max": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -256.987,
+                "Y": -1433.08606,
+                "Z": 14.9309998
+              },
+              "Min": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -256.987,
+                "Y": -1433.08606,
+                "Z": 14.9309998
+              }
+            },
+            "QuestPrefabRefHash": {
+              "$type": "NodeRef",
+              "$storage": "string",
+              "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inside17"
+            },
+            "UkHash1": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "CookedPrefabData": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Default"
+            },
+            "MaxStreamingDistance": 120,
+            "UkFloat1": 100,
+            "Uk10": 1024,
+            "Uk11": 512,
+            "Uk12": 0,
+            "Uk13": "0",
+            "Uk14": "0"
+          },
+          {
+            "Id": "0",
+            "NodeIndex": 25,
+            "Position": {
+              "$type": "Vector4",
+              "W": 0,
+              "X": -265.233002,
+              "Y": -1427.48401,
+              "Z": 14.6009998
+            },
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0.275637358,
+              "r": 0.96126169
+            },
+            "Scale": {
+              "$type": "Vector3",
+              "X": 1,
+              "Y": 1,
+              "Z": 1
+            },
+            "Pivot": {
+              "$type": "Vector3",
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "Bounds": {
+              "$type": "Box",
+              "Max": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -265.233002,
+                "Y": -1427.48401,
+                "Z": 14.6009998
+              },
+              "Min": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -265.233002,
+                "Y": -1427.48401,
+                "Z": 14.6009998
+              }
+            },
+            "QuestPrefabRefHash": {
+              "$type": "NodeRef",
+              "$storage": "string",
+              "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inside18"
+            },
+            "UkHash1": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "CookedPrefabData": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Default"
+            },
+            "MaxStreamingDistance": 120,
+            "UkFloat1": 100,
+            "Uk10": 1024,
+            "Uk11": 512,
+            "Uk12": 0,
+            "Uk13": "0",
+            "Uk14": "0"
+          },
+          {
+            "Id": "0",
+            "NodeIndex": 26,
+            "Position": {
+              "$type": "Vector4",
+              "W": 0,
+              "X": -252.061996,
+              "Y": -1454.15796,
+              "Z": 14.6000004
+            },
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": -0.605988383,
+              "r": 0.795473456
+            },
+            "Scale": {
+              "$type": "Vector3",
+              "X": 1,
+              "Y": 1,
+              "Z": 1
+            },
+            "Pivot": {
+              "$type": "Vector3",
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "Bounds": {
+              "$type": "Box",
+              "Max": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -252.061996,
+                "Y": -1454.15796,
+                "Z": 14.6000004
+              },
+              "Min": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -252.061996,
+                "Y": -1454.15796,
+                "Z": 14.6000004
+              }
+            },
+            "QuestPrefabRefHash": {
+              "$type": "NodeRef",
+              "$storage": "string",
+              "$value": "$/mod/cc_g01_compound/#cc_g01_compound_office01"
+            },
+            "UkHash1": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "CookedPrefabData": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Default"
+            },
+            "MaxStreamingDistance": 120,
+            "UkFloat1": 100,
+            "Uk10": 1024,
+            "Uk11": 512,
+            "Uk12": 0,
+            "Uk13": "0",
+            "Uk14": "0"
+          },
+          {
+            "Id": "0",
+            "NodeIndex": 27,
+            "Position": {
+              "$type": "Vector4",
+              "W": 0,
+              "X": -246.393997,
+              "Y": -1455.41003,
+              "Z": 14.6000004
+            },
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": -0.294040322,
+              "r": 0.955793023
+            },
+            "Scale": {
+              "$type": "Vector3",
+              "X": 1,
+              "Y": 1,
+              "Z": 1
+            },
+            "Pivot": {
+              "$type": "Vector3",
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "Bounds": {
+              "$type": "Box",
+              "Max": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -246.393997,
+                "Y": -1455.41003,
+                "Z": 14.6000004
+              },
+              "Min": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -246.393997,
+                "Y": -1455.41003,
+                "Z": 14.6000004
+              }
+            },
+            "QuestPrefabRefHash": {
+              "$type": "NodeRef",
+              "$storage": "string",
+              "$value": "$/mod/cc_g01_compound/#cc_g01_compound_office02"
+            },
+            "UkHash1": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "CookedPrefabData": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Default"
+            },
+            "MaxStreamingDistance": 120,
+            "UkFloat1": 100,
+            "Uk10": 1024,
+            "Uk11": 512,
+            "Uk12": 0,
+            "Uk13": "0",
+            "Uk14": "0"
+          },
+          {
+            "Id": "0",
+            "NodeIndex": 28,
+            "Position": {
+              "$type": "Vector4",
+              "W": 0,
+              "X": -256.108002,
+              "Y": -1445.12903,
+              "Z": 14.6000004
+            },
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": -0.908872485,
+              "r": 0.417074084
+            },
+            "Scale": {
+              "$type": "Vector3",
+              "X": 1,
+              "Y": 1,
+              "Z": 1
+            },
+            "Pivot": {
+              "$type": "Vector3",
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "Bounds": {
+              "$type": "Box",
+              "Max": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -256.108002,
+                "Y": -1445.12903,
+                "Z": 14.6000004
+              },
+              "Min": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -256.108002,
+                "Y": -1445.12903,
+                "Z": 14.6000004
+              }
+            },
+            "QuestPrefabRefHash": {
+              "$type": "NodeRef",
+              "$storage": "string",
+              "$value": "$/mod/cc_g01_compound/#cc_g01_compound_office03"
+            },
+            "UkHash1": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "CookedPrefabData": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Default"
+            },
+            "MaxStreamingDistance": 120,
+            "UkFloat1": 100,
+            "Uk10": 1024,
+            "Uk11": 512,
+            "Uk12": 0,
+            "Uk13": "0",
+            "Uk14": "0"
+          },
+          {
+            "Id": "0",
+            "NodeIndex": 29,
+            "Position": {
+              "$type": "Vector4",
+              "W": 0,
+              "X": -263.579987,
+              "Y": -1438.58203,
+              "Z": 14.6000004
+            },
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0.384295315,
+              "r": 0.923210204
+            },
+            "Scale": {
+              "$type": "Vector3",
+              "X": 1,
+              "Y": 1,
+              "Z": 1
+            },
+            "Pivot": {
+              "$type": "Vector3",
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "Bounds": {
+              "$type": "Box",
+              "Max": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -263.579987,
+                "Y": -1438.58203,
+                "Z": 14.6000004
+              },
+              "Min": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -263.579987,
+                "Y": -1438.58203,
+                "Z": 14.6000004
+              }
+            },
+            "QuestPrefabRefHash": {
+              "$type": "NodeRef",
+              "$storage": "string",
+              "$value": "$/mod/cc_g01_compound/#cc_g01_compound_office04"
+            },
+            "UkHash1": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "CookedPrefabData": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Default"
+            },
+            "MaxStreamingDistance": 120,
+            "UkFloat1": 100,
+            "Uk10": 1024,
+            "Uk11": 512,
+            "Uk12": 0,
+            "Uk13": "0",
+            "Uk14": "0"
+          },
+          {
+            "Id": "0",
+            "NodeIndex": 30,
+            "Position": {
+              "$type": "Vector4",
+              "W": 0,
+              "X": -237.716507,
+              "Y": -1466.02905,
+              "Z": 11.7224998
+            },
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Scale": {
+              "$type": "Vector3",
+              "X": 127.695,
+              "Y": 119.612,
+              "Z": 50
+            },
+            "Pivot": {
+              "$type": "Vector3",
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "Bounds": {
+              "$type": "Box",
+              "Max": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -237.716507,
+                "Y": -1466.02905,
+                "Z": 11.7224998
+              },
+              "Min": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -237.716507,
+                "Y": -1466.02905,
+                "Z": 11.7224998
+              }
+            },
+            "QuestPrefabRefHash": {
+              "$type": "NodeRef",
+              "$storage": "string",
+              "$value": "$/mod/cc_g01_compound/#cc_g01_compound_com"
+            },
+            "UkHash1": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "CookedPrefabData": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Default"
+            },
+            "MaxStreamingDistance": 120,
+            "UkFloat1": 100,
+            "Uk10": 1024,
+            "Uk11": 512,
+            "Uk12": 0,
+            "Uk13": "0",
+            "Uk14": "0"
+          }
+        ]
+      },
+      "nodeRefs": [
+        {
+          "$type": "NodeRef",
+          "$storage": "string",
+          "$value": "$/mod/cc_g01_compound/#cc_g01_compound_gate03"
+        },
+        {
+          "$type": "NodeRef",
+          "$storage": "string",
+          "$value": "$/mod/cc_g01_compound/#cc_g01_compound_gate2_01"
+        },
+        {
+          "$type": "NodeRef",
+          "$storage": "string",
+          "$value": "$/mod/cc_g01_compound/#cc_g01_compound_gate2_02"
+        },
+        {
+          "$type": "NodeRef",
+          "$storage": "string",
+          "$value": "$/mod/cc_g01_compound/#cc_g01_compound_gate2_03"
+        },
+        {
+          "$type": "NodeRef",
+          "$storage": "string",
+          "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inner02"
+        },
+        {
+          "$type": "NodeRef",
+          "$storage": "string",
+          "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inner03"
+        },
+        {
+          "$type": "NodeRef",
+          "$storage": "string",
+          "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inner04"
+        },
+        {
+          "$type": "NodeRef",
+          "$storage": "string",
+          "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inner05"
+        },
+        {
+          "$type": "NodeRef",
+          "$storage": "string",
+          "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inner06"
+        },
+        {
+          "$type": "NodeRef",
+          "$storage": "string",
+          "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inner07"
+        },
+        {
+          "$type": "NodeRef",
+          "$storage": "string",
+          "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inner08"
+        },
+        {
+          "$type": "NodeRef",
+          "$storage": "string",
+          "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inner09"
+        },
+        {
+          "$type": "NodeRef",
+          "$storage": "string",
+          "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inner10"
+        },
+        {
+          "$type": "NodeRef",
+          "$storage": "string",
+          "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inner11"
+        },
+        {
+          "$type": "NodeRef",
+          "$storage": "string",
+          "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inner12"
+        },
+        {
+          "$type": "NodeRef",
+          "$storage": "string",
+          "$value": "$/mod/cc_g01_compound/#cc_g01_compound_deck02"
+        },
+        {
+          "$type": "NodeRef",
+          "$storage": "string",
+          "$value": "$/mod/cc_g01_compound/#cc_g01_compound_deck03"
+        },
+        {
+          "$type": "NodeRef",
+          "$storage": "string",
+          "$value": "$/mod/cc_g01_compound/#cc_g01_compound_deck04"
+        },
+        {
+          "$type": "NodeRef",
+          "$storage": "string",
+          "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inside10"
+        },
+        {
+          "$type": "NodeRef",
+          "$storage": "string",
+          "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inside11"
+        },
+        {
+          "$type": "NodeRef",
+          "$storage": "string",
+          "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inside12"
+        },
+        {
+          "$type": "NodeRef",
+          "$storage": "string",
+          "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inside14"
+        },
+        {
+          "$type": "NodeRef",
+          "$storage": "string",
+          "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inside15"
+        },
+        {
+          "$type": "NodeRef",
+          "$storage": "string",
+          "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inside16"
+        },
+        {
+          "$type": "NodeRef",
+          "$storage": "string",
+          "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inside17"
+        },
+        {
+          "$type": "NodeRef",
+          "$storage": "string",
+          "$value": "$/mod/cc_g01_compound/#cc_g01_compound_inside18"
+        },
+        {
+          "$type": "NodeRef",
+          "$storage": "string",
+          "$value": "$/mod/cc_g01_compound/#cc_g01_compound_office01"
+        },
+        {
+          "$type": "NodeRef",
+          "$storage": "string",
+          "$value": "$/mod/cc_g01_compound/#cc_g01_compound_office02"
+        },
+        {
+          "$type": "NodeRef",
+          "$storage": "string",
+          "$value": "$/mod/cc_g01_compound/#cc_g01_compound_office03"
+        },
+        {
+          "$type": "NodeRef",
+          "$storage": "string",
+          "$value": "$/mod/cc_g01_compound/#cc_g01_compound_office04"
+        },
+        {
+          "$type": "NodeRef",
+          "$storage": "string",
+          "$value": "$/mod/cc_g01_compound/#cc_g01_compound_com"
+        }
+      ],
+      "nodes": [
+        {
+          "HandleId": "0",
+          "Data": {
+            "$type": "worldAISpotNode",
+            "crowdBlacklist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "crowdWhitelist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "debugName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "{cc_g01_compound_gate03}"
+            },
+            "disableBumps": 0,
+            "isHostOnly": 0,
+            "isVisibleInGame": 1,
+            "isWorkspotInfinite": 1,
+            "isWorkspotStatic": 0,
+            "lookAtTarget": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "markings": [],
+            "proxyScale": null,
+            "sourcePrefabHash": "0",
+            "spot": {
+              "HandleId": "1",
+              "Data": {
+                "$type": "AIActionSpot",
+                "ActorBodytypeE3": "Undefined",
+                "clippingSpaceOrientation": 180,
+                "clippingSpaceRange": 120,
+                "enabledWhenMasterOccupied": 0,
+                "masterNodeRef": {
+                  "$type": "NodeRef",
+                  "$storage": "uint64",
+                  "$value": "0"
+                },
+                "resource": {
+                  "DepotPath": {
+                    "$type": "ResourcePath",
+                    "$storage": "string",
+                    "$value": "base\\workspots\\common\\ground\\generic__stand_ground_arms_crossed__stand_around__02.workspot"
+                  },
+                  "Flags": "Soft"
+                },
+                "snapToGround": 0,
+                "useClippingSpace": 0
+              }
+            },
+            "spotDef": null,
+            "tag": "None",
+            "tagExt": "None",
+            "useCrowdBlacklist": 1,
+            "useCrowdWhitelist": 1
+          }
+        },
+        {
+          "HandleId": "2",
+          "Data": {
+            "$type": "worldAISpotNode",
+            "crowdBlacklist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "crowdWhitelist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "debugName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "{cc_g01_compound_gate2_01}"
+            },
+            "disableBumps": 0,
+            "isHostOnly": 0,
+            "isVisibleInGame": 1,
+            "isWorkspotInfinite": 1,
+            "isWorkspotStatic": 0,
+            "lookAtTarget": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "markings": [],
+            "proxyScale": null,
+            "sourcePrefabHash": "0",
+            "spot": {
+              "HandleId": "3",
+              "Data": {
+                "$type": "AIActionSpot",
+                "ActorBodytypeE3": "Undefined",
+                "clippingSpaceOrientation": 180,
+                "clippingSpaceRange": 120,
+                "enabledWhenMasterOccupied": 0,
+                "masterNodeRef": {
+                  "$type": "NodeRef",
+                  "$storage": "uint64",
+                  "$value": "0"
+                },
+                "resource": {
+                  "DepotPath": {
+                    "$type": "ResourcePath",
+                    "$storage": "string",
+                    "$value": "base\\workspots\\common\\ground\\generic__stand_ground_arms_crossed__stand_around__02.workspot"
+                  },
+                  "Flags": "Soft"
+                },
+                "snapToGround": 0,
+                "useClippingSpace": 0
+              }
+            },
+            "spotDef": null,
+            "tag": "None",
+            "tagExt": "None",
+            "useCrowdBlacklist": 1,
+            "useCrowdWhitelist": 1
+          }
+        },
+        {
+          "HandleId": "4",
+          "Data": {
+            "$type": "worldAISpotNode",
+            "crowdBlacklist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "crowdWhitelist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "debugName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "{cc_g01_compound_gate2_02}"
+            },
+            "disableBumps": 0,
+            "isHostOnly": 0,
+            "isVisibleInGame": 1,
+            "isWorkspotInfinite": 1,
+            "isWorkspotStatic": 0,
+            "lookAtTarget": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "markings": [],
+            "proxyScale": null,
+            "sourcePrefabHash": "0",
+            "spot": {
+              "HandleId": "5",
+              "Data": {
+                "$type": "AIActionSpot",
+                "ActorBodytypeE3": "Undefined",
+                "clippingSpaceOrientation": 180,
+                "clippingSpaceRange": 120,
+                "enabledWhenMasterOccupied": 0,
+                "masterNodeRef": {
+                  "$type": "NodeRef",
+                  "$storage": "uint64",
+                  "$value": "0"
+                },
+                "resource": {
+                  "DepotPath": {
+                    "$type": "ResourcePath",
+                    "$storage": "string",
+                    "$value": "base\\workspots\\common\\ground\\generic__stand_ground_cigarette__smoke__02.workspot"
+                  },
+                  "Flags": "Soft"
+                },
+                "snapToGround": 0,
+                "useClippingSpace": 0
+              }
+            },
+            "spotDef": null,
+            "tag": "None",
+            "tagExt": "None",
+            "useCrowdBlacklist": 1,
+            "useCrowdWhitelist": 1
+          }
+        },
+        {
+          "HandleId": "6",
+          "Data": {
+            "$type": "worldAISpotNode",
+            "crowdBlacklist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "crowdWhitelist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "debugName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "{cc_g01_compound_gate2_03}"
+            },
+            "disableBumps": 0,
+            "isHostOnly": 0,
+            "isVisibleInGame": 1,
+            "isWorkspotInfinite": 1,
+            "isWorkspotStatic": 0,
+            "lookAtTarget": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "markings": [],
+            "proxyScale": null,
+            "sourcePrefabHash": "0",
+            "spot": {
+              "HandleId": "7",
+              "Data": {
+                "$type": "AIActionSpot",
+                "ActorBodytypeE3": "Undefined",
+                "clippingSpaceOrientation": 180,
+                "clippingSpaceRange": 120,
+                "enabledWhenMasterOccupied": 0,
+                "masterNodeRef": {
+                  "$type": "NodeRef",
+                  "$storage": "uint64",
+                  "$value": "0"
+                },
+                "resource": {
+                  "DepotPath": {
+                    "$type": "ResourcePath",
+                    "$storage": "string",
+                    "$value": "base\\workspots\\common\\ground\\generic__stand_ground_arms_crossed__stand_around__02.workspot"
+                  },
+                  "Flags": "Soft"
+                },
+                "snapToGround": 0,
+                "useClippingSpace": 0
+              }
+            },
+            "spotDef": null,
+            "tag": "None",
+            "tagExt": "None",
+            "useCrowdBlacklist": 1,
+            "useCrowdWhitelist": 1
+          }
+        },
+        {
+          "HandleId": "8",
+          "Data": {
+            "$type": "worldAISpotNode",
+            "crowdBlacklist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "crowdWhitelist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "debugName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "{cc_g01_compound_inner02}"
+            },
+            "disableBumps": 0,
+            "isHostOnly": 0,
+            "isVisibleInGame": 1,
+            "isWorkspotInfinite": 1,
+            "isWorkspotStatic": 0,
+            "lookAtTarget": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "markings": [],
+            "proxyScale": null,
+            "sourcePrefabHash": "0",
+            "spot": {
+              "HandleId": "9",
+              "Data": {
+                "$type": "AIActionSpot",
+                "ActorBodytypeE3": "Undefined",
+                "clippingSpaceOrientation": 180,
+                "clippingSpaceRange": 120,
+                "enabledWhenMasterOccupied": 0,
+                "masterNodeRef": {
+                  "$type": "NodeRef",
+                  "$storage": "uint64",
+                  "$value": "0"
+                },
+                "resource": {
+                  "DepotPath": {
+                    "$type": "ResourcePath",
+                    "$storage": "string",
+                    "$value": "base\\workspots\\common\\ground\\generic__stand_ground__wait__03.workspot"
+                  },
+                  "Flags": "Soft"
+                },
+                "snapToGround": 0,
+                "useClippingSpace": 0
+              }
+            },
+            "spotDef": null,
+            "tag": "None",
+            "tagExt": "None",
+            "useCrowdBlacklist": 1,
+            "useCrowdWhitelist": 1
+          }
+        },
+        {
+          "HandleId": "10",
+          "Data": {
+            "$type": "worldAISpotNode",
+            "crowdBlacklist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "crowdWhitelist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "debugName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "{cc_g01_compound_inner03}"
+            },
+            "disableBumps": 0,
+            "isHostOnly": 0,
+            "isVisibleInGame": 1,
+            "isWorkspotInfinite": 1,
+            "isWorkspotStatic": 0,
+            "lookAtTarget": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "markings": [],
+            "proxyScale": null,
+            "sourcePrefabHash": "0",
+            "spot": {
+              "HandleId": "11",
+              "Data": {
+                "$type": "AIActionSpot",
+                "ActorBodytypeE3": "Undefined",
+                "clippingSpaceOrientation": 180,
+                "clippingSpaceRange": 120,
+                "enabledWhenMasterOccupied": 0,
+                "masterNodeRef": {
+                  "$type": "NodeRef",
+                  "$storage": "uint64",
+                  "$value": "0"
+                },
+                "resource": {
+                  "DepotPath": {
+                    "$type": "ResourcePath",
+                    "$storage": "string",
+                    "$value": "base\\workspots\\common\\ground\\generic__stand_ground_arms_crossed__stand_around__02.workspot"
+                  },
+                  "Flags": "Soft"
+                },
+                "snapToGround": 0,
+                "useClippingSpace": 0
+              }
+            },
+            "spotDef": null,
+            "tag": "None",
+            "tagExt": "None",
+            "useCrowdBlacklist": 1,
+            "useCrowdWhitelist": 1
+          }
+        },
+        {
+          "HandleId": "12",
+          "Data": {
+            "$type": "worldAISpotNode",
+            "crowdBlacklist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "crowdWhitelist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "debugName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "{cc_g01_compound_inner04}"
+            },
+            "disableBumps": 0,
+            "isHostOnly": 0,
+            "isVisibleInGame": 1,
+            "isWorkspotInfinite": 1,
+            "isWorkspotStatic": 0,
+            "lookAtTarget": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "markings": [],
+            "proxyScale": null,
+            "sourcePrefabHash": "0",
+            "spot": {
+              "HandleId": "13",
+              "Data": {
+                "$type": "AIActionSpot",
+                "ActorBodytypeE3": "Undefined",
+                "clippingSpaceOrientation": 180,
+                "clippingSpaceRange": 120,
+                "enabledWhenMasterOccupied": 0,
+                "masterNodeRef": {
+                  "$type": "NodeRef",
+                  "$storage": "uint64",
+                  "$value": "0"
+                },
+                "resource": {
+                  "DepotPath": {
+                    "$type": "ResourcePath",
+                    "$storage": "string",
+                    "$value": "base\\workspots\\common\\ground\\generic__stand_ground_arms_crossed__stand_around__02.workspot"
+                  },
+                  "Flags": "Soft"
+                },
+                "snapToGround": 0,
+                "useClippingSpace": 0
+              }
+            },
+            "spotDef": null,
+            "tag": "None",
+            "tagExt": "None",
+            "useCrowdBlacklist": 1,
+            "useCrowdWhitelist": 1
+          }
+        },
+        {
+          "HandleId": "14",
+          "Data": {
+            "$type": "worldAISpotNode",
+            "crowdBlacklist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "crowdWhitelist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "debugName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "{cc_g01_compound_inner05}"
+            },
+            "disableBumps": 0,
+            "isHostOnly": 0,
+            "isVisibleInGame": 1,
+            "isWorkspotInfinite": 1,
+            "isWorkspotStatic": 0,
+            "lookAtTarget": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "markings": [],
+            "proxyScale": null,
+            "sourcePrefabHash": "0",
+            "spot": {
+              "HandleId": "15",
+              "Data": {
+                "$type": "AIActionSpot",
+                "ActorBodytypeE3": "Undefined",
+                "clippingSpaceOrientation": 180,
+                "clippingSpaceRange": 120,
+                "enabledWhenMasterOccupied": 0,
+                "masterNodeRef": {
+                  "$type": "NodeRef",
+                  "$storage": "uint64",
+                  "$value": "0"
+                },
+                "resource": {
+                  "DepotPath": {
+                    "$type": "ResourcePath",
+                    "$storage": "string",
+                    "$value": "base\\workspots\\common\\ground\\generic__stand_ground__phone_talk__03.workspot"
+                  },
+                  "Flags": "Soft"
+                },
+                "snapToGround": 0,
+                "useClippingSpace": 0
+              }
+            },
+            "spotDef": null,
+            "tag": "None",
+            "tagExt": "None",
+            "useCrowdBlacklist": 1,
+            "useCrowdWhitelist": 1
+          }
+        },
+        {
+          "HandleId": "16",
+          "Data": {
+            "$type": "worldAISpotNode",
+            "crowdBlacklist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "crowdWhitelist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "debugName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "{cc_g01_compound_inner06}"
+            },
+            "disableBumps": 0,
+            "isHostOnly": 0,
+            "isVisibleInGame": 1,
+            "isWorkspotInfinite": 1,
+            "isWorkspotStatic": 0,
+            "lookAtTarget": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "markings": [],
+            "proxyScale": null,
+            "sourcePrefabHash": "0",
+            "spot": {
+              "HandleId": "17",
+              "Data": {
+                "$type": "AIActionSpot",
+                "ActorBodytypeE3": "Undefined",
+                "clippingSpaceOrientation": 180,
+                "clippingSpaceRange": 120,
+                "enabledWhenMasterOccupied": 0,
+                "masterNodeRef": {
+                  "$type": "NodeRef",
+                  "$storage": "uint64",
+                  "$value": "0"
+                },
+                "resource": {
+                  "DepotPath": {
+                    "$type": "ResourcePath",
+                    "$storage": "string",
+                    "$value": "base\\workspots\\common\\ground\\generic__stand_ground_arms_crossed__stand_around__02.workspot"
+                  },
+                  "Flags": "Soft"
+                },
+                "snapToGround": 0,
+                "useClippingSpace": 0
+              }
+            },
+            "spotDef": null,
+            "tag": "None",
+            "tagExt": "None",
+            "useCrowdBlacklist": 1,
+            "useCrowdWhitelist": 1
+          }
+        },
+        {
+          "HandleId": "18",
+          "Data": {
+            "$type": "worldAISpotNode",
+            "crowdBlacklist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "crowdWhitelist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "debugName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "{cc_g01_compound_inner07}"
+            },
+            "disableBumps": 0,
+            "isHostOnly": 0,
+            "isVisibleInGame": 1,
+            "isWorkspotInfinite": 1,
+            "isWorkspotStatic": 0,
+            "lookAtTarget": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "markings": [],
+            "proxyScale": null,
+            "sourcePrefabHash": "0",
+            "spot": {
+              "HandleId": "19",
+              "Data": {
+                "$type": "AIActionSpot",
+                "ActorBodytypeE3": "Undefined",
+                "clippingSpaceOrientation": 180,
+                "clippingSpaceRange": 120,
+                "enabledWhenMasterOccupied": 0,
+                "masterNodeRef": {
+                  "$type": "NodeRef",
+                  "$storage": "uint64",
+                  "$value": "0"
+                },
+                "resource": {
+                  "DepotPath": {
+                    "$type": "ResourcePath",
+                    "$storage": "string",
+                    "$value": "base\\workspots\\common\\ground\\generic__stand_ground_arms_crossed__stand_around__02.workspot"
+                  },
+                  "Flags": "Soft"
+                },
+                "snapToGround": 0,
+                "useClippingSpace": 0
+              }
+            },
+            "spotDef": null,
+            "tag": "None",
+            "tagExt": "None",
+            "useCrowdBlacklist": 1,
+            "useCrowdWhitelist": 1
+          }
+        },
+        {
+          "HandleId": "20",
+          "Data": {
+            "$type": "worldAISpotNode",
+            "crowdBlacklist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "crowdWhitelist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "debugName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "{cc_g01_compound_inner08}"
+            },
+            "disableBumps": 0,
+            "isHostOnly": 0,
+            "isVisibleInGame": 1,
+            "isWorkspotInfinite": 1,
+            "isWorkspotStatic": 0,
+            "lookAtTarget": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "markings": [],
+            "proxyScale": null,
+            "sourcePrefabHash": "0",
+            "spot": {
+              "HandleId": "21",
+              "Data": {
+                "$type": "AIActionSpot",
+                "ActorBodytypeE3": "Undefined",
+                "clippingSpaceOrientation": 180,
+                "clippingSpaceRange": 120,
+                "enabledWhenMasterOccupied": 0,
+                "masterNodeRef": {
+                  "$type": "NodeRef",
+                  "$storage": "uint64",
+                  "$value": "0"
+                },
+                "resource": {
+                  "DepotPath": {
+                    "$type": "ResourcePath",
+                    "$storage": "string",
+                    "$value": "base\\workspots\\common\\ground\\generic__stand_ground__look_at_products__01.workspot"
+                  },
+                  "Flags": "Soft"
+                },
+                "snapToGround": 0,
+                "useClippingSpace": 0
+              }
+            },
+            "spotDef": null,
+            "tag": "None",
+            "tagExt": "None",
+            "useCrowdBlacklist": 1,
+            "useCrowdWhitelist": 1
+          }
+        },
+        {
+          "HandleId": "22",
+          "Data": {
+            "$type": "worldAISpotNode",
+            "crowdBlacklist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "crowdWhitelist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "debugName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "{cc_g01_compound_inner09}"
+            },
+            "disableBumps": 0,
+            "isHostOnly": 0,
+            "isVisibleInGame": 1,
+            "isWorkspotInfinite": 1,
+            "isWorkspotStatic": 0,
+            "lookAtTarget": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "markings": [],
+            "proxyScale": null,
+            "sourcePrefabHash": "0",
+            "spot": {
+              "HandleId": "23",
+              "Data": {
+                "$type": "AIActionSpot",
+                "ActorBodytypeE3": "Undefined",
+                "clippingSpaceOrientation": 180,
+                "clippingSpaceRange": 120,
+                "enabledWhenMasterOccupied": 0,
+                "masterNodeRef": {
+                  "$type": "NodeRef",
+                  "$storage": "uint64",
+                  "$value": "0"
+                },
+                "resource": {
+                  "DepotPath": {
+                    "$type": "ResourcePath",
+                    "$storage": "string",
+                    "$value": "base\\workspots\\common\\ground\\generic__stand_ground_arms_crossed__stand_around__02.workspot"
+                  },
+                  "Flags": "Soft"
+                },
+                "snapToGround": 0,
+                "useClippingSpace": 0
+              }
+            },
+            "spotDef": null,
+            "tag": "None",
+            "tagExt": "None",
+            "useCrowdBlacklist": 1,
+            "useCrowdWhitelist": 1
+          }
+        },
+        {
+          "HandleId": "24",
+          "Data": {
+            "$type": "worldAISpotNode",
+            "crowdBlacklist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "crowdWhitelist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "debugName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "{cc_g01_compound_inner10}"
+            },
+            "disableBumps": 0,
+            "isHostOnly": 0,
+            "isVisibleInGame": 1,
+            "isWorkspotInfinite": 1,
+            "isWorkspotStatic": 0,
+            "lookAtTarget": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "markings": [],
+            "proxyScale": null,
+            "sourcePrefabHash": "0",
+            "spot": {
+              "HandleId": "25",
+              "Data": {
+                "$type": "AIActionSpot",
+                "ActorBodytypeE3": "Undefined",
+                "clippingSpaceOrientation": 180,
+                "clippingSpaceRange": 120,
+                "enabledWhenMasterOccupied": 0,
+                "masterNodeRef": {
+                  "$type": "NodeRef",
+                  "$storage": "uint64",
+                  "$value": "0"
+                },
+                "resource": {
+                  "DepotPath": {
+                    "$type": "ResourcePath",
+                    "$storage": "string",
+                    "$value": "base\\workspots\\common\\ground\\generic__stand_ground_arms_crossed__stand_around__02.workspot"
+                  },
+                  "Flags": "Soft"
+                },
+                "snapToGround": 0,
+                "useClippingSpace": 0
+              }
+            },
+            "spotDef": null,
+            "tag": "None",
+            "tagExt": "None",
+            "useCrowdBlacklist": 1,
+            "useCrowdWhitelist": 1
+          }
+        },
+        {
+          "HandleId": "26",
+          "Data": {
+            "$type": "worldAISpotNode",
+            "crowdBlacklist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "crowdWhitelist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "debugName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "{cc_g01_compound_inner11}"
+            },
+            "disableBumps": 0,
+            "isHostOnly": 0,
+            "isVisibleInGame": 1,
+            "isWorkspotInfinite": 1,
+            "isWorkspotStatic": 0,
+            "lookAtTarget": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "markings": [],
+            "proxyScale": null,
+            "sourcePrefabHash": "0",
+            "spot": {
+              "HandleId": "27",
+              "Data": {
+                "$type": "AIActionSpot",
+                "ActorBodytypeE3": "Undefined",
+                "clippingSpaceOrientation": 180,
+                "clippingSpaceRange": 120,
+                "enabledWhenMasterOccupied": 0,
+                "masterNodeRef": {
+                  "$type": "NodeRef",
+                  "$storage": "uint64",
+                  "$value": "0"
+                },
+                "resource": {
+                  "DepotPath": {
+                    "$type": "ResourcePath",
+                    "$storage": "string",
+                    "$value": "base\\workspots\\common\\ground\\generic__stand_ground_arms_crossed__stand_around__02.workspot"
+                  },
+                  "Flags": "Soft"
+                },
+                "snapToGround": 0,
+                "useClippingSpace": 0
+              }
+            },
+            "spotDef": null,
+            "tag": "None",
+            "tagExt": "None",
+            "useCrowdBlacklist": 1,
+            "useCrowdWhitelist": 1
+          }
+        },
+        {
+          "HandleId": "28",
+          "Data": {
+            "$type": "worldAISpotNode",
+            "crowdBlacklist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "crowdWhitelist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "debugName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "{cc_g01_compound_inner12}"
+            },
+            "disableBumps": 0,
+            "isHostOnly": 0,
+            "isVisibleInGame": 1,
+            "isWorkspotInfinite": 1,
+            "isWorkspotStatic": 0,
+            "lookAtTarget": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "markings": [],
+            "proxyScale": null,
+            "sourcePrefabHash": "0",
+            "spot": {
+              "HandleId": "29",
+              "Data": {
+                "$type": "AIActionSpot",
+                "ActorBodytypeE3": "Undefined",
+                "clippingSpaceOrientation": 180,
+                "clippingSpaceRange": 120,
+                "enabledWhenMasterOccupied": 0,
+                "masterNodeRef": {
+                  "$type": "NodeRef",
+                  "$storage": "uint64",
+                  "$value": "0"
+                },
+                "resource": {
+                  "DepotPath": {
+                    "$type": "ResourcePath",
+                    "$storage": "string",
+                    "$value": "base\\workspots\\common\\ground\\generic__stand_ground_arms_crossed__stand_around__02.workspot"
+                  },
+                  "Flags": "Soft"
+                },
+                "snapToGround": 0,
+                "useClippingSpace": 0
+              }
+            },
+            "spotDef": null,
+            "tag": "None",
+            "tagExt": "None",
+            "useCrowdBlacklist": 1,
+            "useCrowdWhitelist": 1
+          }
+        },
+        {
+          "HandleId": "30",
+          "Data": {
+            "$type": "worldAISpotNode",
+            "crowdBlacklist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "crowdWhitelist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "debugName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "{cc_g01_compound_deck02}"
+            },
+            "disableBumps": 0,
+            "isHostOnly": 0,
+            "isVisibleInGame": 1,
+            "isWorkspotInfinite": 1,
+            "isWorkspotStatic": 0,
+            "lookAtTarget": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "markings": [],
+            "proxyScale": null,
+            "sourcePrefabHash": "0",
+            "spot": {
+              "HandleId": "31",
+              "Data": {
+                "$type": "AIActionSpot",
+                "ActorBodytypeE3": "Undefined",
+                "clippingSpaceOrientation": 180,
+                "clippingSpaceRange": 120,
+                "enabledWhenMasterOccupied": 0,
+                "masterNodeRef": {
+                  "$type": "NodeRef",
+                  "$storage": "uint64",
+                  "$value": "0"
+                },
+                "resource": {
+                  "DepotPath": {
+                    "$type": "ResourcePath",
+                    "$storage": "string",
+                    "$value": "base\\workspots\\common\\ground\\generic__stand_ground_arms_crossed__stand_around__02.workspot"
+                  },
+                  "Flags": "Soft"
+                },
+                "snapToGround": 0,
+                "useClippingSpace": 0
+              }
+            },
+            "spotDef": null,
+            "tag": "None",
+            "tagExt": "None",
+            "useCrowdBlacklist": 1,
+            "useCrowdWhitelist": 1
+          }
+        },
+        {
+          "HandleId": "32",
+          "Data": {
+            "$type": "worldAISpotNode",
+            "crowdBlacklist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "crowdWhitelist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "debugName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "{cc_g01_compound_deck03}"
+            },
+            "disableBumps": 0,
+            "isHostOnly": 0,
+            "isVisibleInGame": 1,
+            "isWorkspotInfinite": 1,
+            "isWorkspotStatic": 0,
+            "lookAtTarget": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "markings": [],
+            "proxyScale": null,
+            "sourcePrefabHash": "0",
+            "spot": {
+              "HandleId": "33",
+              "Data": {
+                "$type": "AIActionSpot",
+                "ActorBodytypeE3": "Undefined",
+                "clippingSpaceOrientation": 180,
+                "clippingSpaceRange": 120,
+                "enabledWhenMasterOccupied": 0,
+                "masterNodeRef": {
+                  "$type": "NodeRef",
+                  "$storage": "uint64",
+                  "$value": "0"
+                },
+                "resource": {
+                  "DepotPath": {
+                    "$type": "ResourcePath",
+                    "$storage": "string",
+                    "$value": "base\\workspots\\common\\ground\\generic__stand_ground_cigarette__smoke__01.workspot"
+                  },
+                  "Flags": "Soft"
+                },
+                "snapToGround": 0,
+                "useClippingSpace": 0
+              }
+            },
+            "spotDef": null,
+            "tag": "None",
+            "tagExt": "None",
+            "useCrowdBlacklist": 1,
+            "useCrowdWhitelist": 1
+          }
+        },
+        {
+          "HandleId": "34",
+          "Data": {
+            "$type": "worldAISpotNode",
+            "crowdBlacklist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "crowdWhitelist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "debugName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "{cc_g01_compound_deck04}"
+            },
+            "disableBumps": 0,
+            "isHostOnly": 0,
+            "isVisibleInGame": 1,
+            "isWorkspotInfinite": 1,
+            "isWorkspotStatic": 0,
+            "lookAtTarget": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "markings": [],
+            "proxyScale": null,
+            "sourcePrefabHash": "0",
+            "spot": {
+              "HandleId": "35",
+              "Data": {
+                "$type": "AIActionSpot",
+                "ActorBodytypeE3": "Undefined",
+                "clippingSpaceOrientation": 180,
+                "clippingSpaceRange": 120,
+                "enabledWhenMasterOccupied": 0,
+                "masterNodeRef": {
+                  "$type": "NodeRef",
+                  "$storage": "uint64",
+                  "$value": "0"
+                },
+                "resource": {
+                  "DepotPath": {
+                    "$type": "ResourcePath",
+                    "$storage": "string",
+                    "$value": "base\\workspots\\common\\ground\\generic__stand_ground_arms_crossed__stand_around__02.workspot"
+                  },
+                  "Flags": "Soft"
+                },
+                "snapToGround": 0,
+                "useClippingSpace": 0
+              }
+            },
+            "spotDef": null,
+            "tag": "None",
+            "tagExt": "None",
+            "useCrowdBlacklist": 1,
+            "useCrowdWhitelist": 1
+          }
+        },
+        {
+          "HandleId": "36",
+          "Data": {
+            "$type": "worldAISpotNode",
+            "crowdBlacklist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "crowdWhitelist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "debugName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "{cc_g01_compound_inside10}"
+            },
+            "disableBumps": 0,
+            "isHostOnly": 0,
+            "isVisibleInGame": 1,
+            "isWorkspotInfinite": 1,
+            "isWorkspotStatic": 0,
+            "lookAtTarget": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "markings": [],
+            "proxyScale": null,
+            "sourcePrefabHash": "0",
+            "spot": {
+              "HandleId": "37",
+              "Data": {
+                "$type": "AIActionSpot",
+                "ActorBodytypeE3": "Undefined",
+                "clippingSpaceOrientation": 180,
+                "clippingSpaceRange": 120,
+                "enabledWhenMasterOccupied": 0,
+                "masterNodeRef": {
+                  "$type": "NodeRef",
+                  "$storage": "uint64",
+                  "$value": "0"
+                },
+                "resource": {
+                  "DepotPath": {
+                    "$type": "ResourcePath",
+                    "$storage": "string",
+                    "$value": "base\\workspots\\common\\ground\\generic__stand_ground_arms_crossed__stand_around__02.workspot"
+                  },
+                  "Flags": "Soft"
+                },
+                "snapToGround": 0,
+                "useClippingSpace": 0
+              }
+            },
+            "spotDef": null,
+            "tag": "None",
+            "tagExt": "None",
+            "useCrowdBlacklist": 1,
+            "useCrowdWhitelist": 1
+          }
+        },
+        {
+          "HandleId": "38",
+          "Data": {
+            "$type": "worldAISpotNode",
+            "crowdBlacklist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "crowdWhitelist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "debugName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "{cc_g01_compound_inside11}"
+            },
+            "disableBumps": 0,
+            "isHostOnly": 0,
+            "isVisibleInGame": 1,
+            "isWorkspotInfinite": 1,
+            "isWorkspotStatic": 0,
+            "lookAtTarget": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "markings": [],
+            "proxyScale": null,
+            "sourcePrefabHash": "0",
+            "spot": {
+              "HandleId": "39",
+              "Data": {
+                "$type": "AIActionSpot",
+                "ActorBodytypeE3": "Undefined",
+                "clippingSpaceOrientation": 180,
+                "clippingSpaceRange": 120,
+                "enabledWhenMasterOccupied": 0,
+                "masterNodeRef": {
+                  "$type": "NodeRef",
+                  "$storage": "uint64",
+                  "$value": "0"
+                },
+                "resource": {
+                  "DepotPath": {
+                    "$type": "ResourcePath",
+                    "$storage": "string",
+                    "$value": "base\\workspots\\common\\ground\\generic__stand_ground__think__01.workspot"
+                  },
+                  "Flags": "Soft"
+                },
+                "snapToGround": 0,
+                "useClippingSpace": 0
+              }
+            },
+            "spotDef": null,
+            "tag": "None",
+            "tagExt": "None",
+            "useCrowdBlacklist": 1,
+            "useCrowdWhitelist": 1
+          }
+        },
+        {
+          "HandleId": "40",
+          "Data": {
+            "$type": "worldAISpotNode",
+            "crowdBlacklist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "crowdWhitelist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "debugName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "{cc_g01_compound_inside12}"
+            },
+            "disableBumps": 0,
+            "isHostOnly": 0,
+            "isVisibleInGame": 1,
+            "isWorkspotInfinite": 1,
+            "isWorkspotStatic": 0,
+            "lookAtTarget": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "markings": [],
+            "proxyScale": null,
+            "sourcePrefabHash": "0",
+            "spot": {
+              "HandleId": "41",
+              "Data": {
+                "$type": "AIActionSpot",
+                "ActorBodytypeE3": "Undefined",
+                "clippingSpaceOrientation": 180,
+                "clippingSpaceRange": 120,
+                "enabledWhenMasterOccupied": 0,
+                "masterNodeRef": {
+                  "$type": "NodeRef",
+                  "$storage": "uint64",
+                  "$value": "0"
+                },
+                "resource": {
+                  "DepotPath": {
+                    "$type": "ResourcePath",
+                    "$storage": "string",
+                    "$value": "base\\workspots\\common\\ground\\generic__stand_ground_arms_crossed__stand_around__02.workspot"
+                  },
+                  "Flags": "Soft"
+                },
+                "snapToGround": 0,
+                "useClippingSpace": 0
+              }
+            },
+            "spotDef": null,
+            "tag": "None",
+            "tagExt": "None",
+            "useCrowdBlacklist": 1,
+            "useCrowdWhitelist": 1
+          }
+        },
+        {
+          "HandleId": "42",
+          "Data": {
+            "$type": "worldAISpotNode",
+            "crowdBlacklist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "crowdWhitelist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "debugName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "{cc_g01_compound_inside14}"
+            },
+            "disableBumps": 0,
+            "isHostOnly": 0,
+            "isVisibleInGame": 1,
+            "isWorkspotInfinite": 1,
+            "isWorkspotStatic": 0,
+            "lookAtTarget": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "markings": [],
+            "proxyScale": null,
+            "sourcePrefabHash": "0",
+            "spot": {
+              "HandleId": "43",
+              "Data": {
+                "$type": "AIActionSpot",
+                "ActorBodytypeE3": "Undefined",
+                "clippingSpaceOrientation": 180,
+                "clippingSpaceRange": 120,
+                "enabledWhenMasterOccupied": 0,
+                "masterNodeRef": {
+                  "$type": "NodeRef",
+                  "$storage": "uint64",
+                  "$value": "0"
+                },
+                "resource": {
+                  "DepotPath": {
+                    "$type": "ResourcePath",
+                    "$storage": "string",
+                    "$value": "base\\workspots\\common\\ground\\generic__stand_ground_arms_crossed__stand_around__02.workspot"
+                  },
+                  "Flags": "Soft"
+                },
+                "snapToGround": 0,
+                "useClippingSpace": 0
+              }
+            },
+            "spotDef": null,
+            "tag": "None",
+            "tagExt": "None",
+            "useCrowdBlacklist": 1,
+            "useCrowdWhitelist": 1
+          }
+        },
+        {
+          "HandleId": "44",
+          "Data": {
+            "$type": "worldAISpotNode",
+            "crowdBlacklist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "crowdWhitelist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "debugName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "{cc_g01_compound_inside15}"
+            },
+            "disableBumps": 0,
+            "isHostOnly": 0,
+            "isVisibleInGame": 1,
+            "isWorkspotInfinite": 1,
+            "isWorkspotStatic": 0,
+            "lookAtTarget": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "markings": [],
+            "proxyScale": null,
+            "sourcePrefabHash": "0",
+            "spot": {
+              "HandleId": "45",
+              "Data": {
+                "$type": "AIActionSpot",
+                "ActorBodytypeE3": "Undefined",
+                "clippingSpaceOrientation": 180,
+                "clippingSpaceRange": 120,
+                "enabledWhenMasterOccupied": 0,
+                "masterNodeRef": {
+                  "$type": "NodeRef",
+                  "$storage": "uint64",
+                  "$value": "0"
+                },
+                "resource": {
+                  "DepotPath": {
+                    "$type": "ResourcePath",
+                    "$storage": "string",
+                    "$value": "base\\workspots\\common\\ground\\generic__stand_ground_arms_crossed__stand_around__02.workspot"
+                  },
+                  "Flags": "Soft"
+                },
+                "snapToGround": 0,
+                "useClippingSpace": 0
+              }
+            },
+            "spotDef": null,
+            "tag": "None",
+            "tagExt": "None",
+            "useCrowdBlacklist": 1,
+            "useCrowdWhitelist": 1
+          }
+        },
+        {
+          "HandleId": "46",
+          "Data": {
+            "$type": "worldAISpotNode",
+            "crowdBlacklist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "crowdWhitelist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "debugName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "{cc_g01_compound_inside16}"
+            },
+            "disableBumps": 0,
+            "isHostOnly": 0,
+            "isVisibleInGame": 1,
+            "isWorkspotInfinite": 1,
+            "isWorkspotStatic": 0,
+            "lookAtTarget": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "markings": [],
+            "proxyScale": null,
+            "sourcePrefabHash": "0",
+            "spot": {
+              "HandleId": "47",
+              "Data": {
+                "$type": "AIActionSpot",
+                "ActorBodytypeE3": "Undefined",
+                "clippingSpaceOrientation": 180,
+                "clippingSpaceRange": 120,
+                "enabledWhenMasterOccupied": 0,
+                "masterNodeRef": {
+                  "$type": "NodeRef",
+                  "$storage": "uint64",
+                  "$value": "0"
+                },
+                "resource": {
+                  "DepotPath": {
+                    "$type": "ResourcePath",
+                    "$storage": "string",
+                    "$value": "base\\workspots\\common\\ground\\generic__stand_ground__look_at_products__01.workspot"
+                  },
+                  "Flags": "Soft"
+                },
+                "snapToGround": 0,
+                "useClippingSpace": 0
+              }
+            },
+            "spotDef": null,
+            "tag": "None",
+            "tagExt": "None",
+            "useCrowdBlacklist": 1,
+            "useCrowdWhitelist": 1
+          }
+        },
+        {
+          "HandleId": "48",
+          "Data": {
+            "$type": "worldAISpotNode",
+            "crowdBlacklist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "crowdWhitelist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "debugName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "{cc_g01_compound_inside17}"
+            },
+            "disableBumps": 0,
+            "isHostOnly": 0,
+            "isVisibleInGame": 1,
+            "isWorkspotInfinite": 1,
+            "isWorkspotStatic": 0,
+            "lookAtTarget": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "markings": [],
+            "proxyScale": null,
+            "sourcePrefabHash": "0",
+            "spot": {
+              "HandleId": "49",
+              "Data": {
+                "$type": "AIActionSpot",
+                "ActorBodytypeE3": "Undefined",
+                "clippingSpaceOrientation": 180,
+                "clippingSpaceRange": 120,
+                "enabledWhenMasterOccupied": 0,
+                "masterNodeRef": {
+                  "$type": "NodeRef",
+                  "$storage": "uint64",
+                  "$value": "0"
+                },
+                "resource": {
+                  "DepotPath": {
+                    "$type": "ResourcePath",
+                    "$storage": "string",
+                    "$value": "base\\workspots\\common\\ground\\generic__stand_ground_arms_crossed__stand_around__02.workspot"
+                  },
+                  "Flags": "Soft"
+                },
+                "snapToGround": 0,
+                "useClippingSpace": 0
+              }
+            },
+            "spotDef": null,
+            "tag": "None",
+            "tagExt": "None",
+            "useCrowdBlacklist": 1,
+            "useCrowdWhitelist": 1
+          }
+        },
+        {
+          "HandleId": "50",
+          "Data": {
+            "$type": "worldAISpotNode",
+            "crowdBlacklist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "crowdWhitelist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "debugName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "{cc_g01_compound_inside18}"
+            },
+            "disableBumps": 0,
+            "isHostOnly": 0,
+            "isVisibleInGame": 1,
+            "isWorkspotInfinite": 1,
+            "isWorkspotStatic": 0,
+            "lookAtTarget": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "markings": [],
+            "proxyScale": null,
+            "sourcePrefabHash": "0",
+            "spot": {
+              "HandleId": "51",
+              "Data": {
+                "$type": "AIActionSpot",
+                "ActorBodytypeE3": "Undefined",
+                "clippingSpaceOrientation": 180,
+                "clippingSpaceRange": 120,
+                "enabledWhenMasterOccupied": 0,
+                "masterNodeRef": {
+                  "$type": "NodeRef",
+                  "$storage": "uint64",
+                  "$value": "0"
+                },
+                "resource": {
+                  "DepotPath": {
+                    "$type": "ResourcePath",
+                    "$storage": "string",
+                    "$value": "base\\workspots\\common\\ground\\generic__stand_ground_arms_crossed__stand_around__02.workspot"
+                  },
+                  "Flags": "Soft"
+                },
+                "snapToGround": 0,
+                "useClippingSpace": 0
+              }
+            },
+            "spotDef": null,
+            "tag": "None",
+            "tagExt": "None",
+            "useCrowdBlacklist": 1,
+            "useCrowdWhitelist": 1
+          }
+        },
+        {
+          "HandleId": "52",
+          "Data": {
+            "$type": "worldAISpotNode",
+            "crowdBlacklist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "crowdWhitelist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "debugName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "{cc_g01_compound_office01}"
+            },
+            "disableBumps": 0,
+            "isHostOnly": 0,
+            "isVisibleInGame": 1,
+            "isWorkspotInfinite": 1,
+            "isWorkspotStatic": 0,
+            "lookAtTarget": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "markings": [],
+            "proxyScale": null,
+            "sourcePrefabHash": "0",
+            "spot": {
+              "HandleId": "53",
+              "Data": {
+                "$type": "AIActionSpot",
+                "ActorBodytypeE3": "Undefined",
+                "clippingSpaceOrientation": 180,
+                "clippingSpaceRange": 120,
+                "enabledWhenMasterOccupied": 0,
+                "masterNodeRef": {
+                  "$type": "NodeRef",
+                  "$storage": "uint64",
+                  "$value": "0"
+                },
+                "resource": {
+                  "DepotPath": {
+                    "$type": "ResourcePath",
+                    "$storage": "string",
+                    "$value": "base\\workspots\\common\\ground\\generic__stand_ground_arms_crossed__stand_around__02.workspot"
+                  },
+                  "Flags": "Soft"
+                },
+                "snapToGround": 0,
+                "useClippingSpace": 0
+              }
+            },
+            "spotDef": null,
+            "tag": "None",
+            "tagExt": "None",
+            "useCrowdBlacklist": 1,
+            "useCrowdWhitelist": 1
+          }
+        },
+        {
+          "HandleId": "54",
+          "Data": {
+            "$type": "worldAISpotNode",
+            "crowdBlacklist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "crowdWhitelist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "debugName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "{cc_g01_compound_office02}"
+            },
+            "disableBumps": 0,
+            "isHostOnly": 0,
+            "isVisibleInGame": 1,
+            "isWorkspotInfinite": 1,
+            "isWorkspotStatic": 0,
+            "lookAtTarget": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "markings": [],
+            "proxyScale": null,
+            "sourcePrefabHash": "0",
+            "spot": {
+              "HandleId": "55",
+              "Data": {
+                "$type": "AIActionSpot",
+                "ActorBodytypeE3": "Undefined",
+                "clippingSpaceOrientation": 180,
+                "clippingSpaceRange": 120,
+                "enabledWhenMasterOccupied": 0,
+                "masterNodeRef": {
+                  "$type": "NodeRef",
+                  "$storage": "uint64",
+                  "$value": "0"
+                },
+                "resource": {
+                  "DepotPath": {
+                    "$type": "ResourcePath",
+                    "$storage": "string",
+                    "$value": "base\\workspots\\common\\ground\\generic__stand_ground__stand_around__03.workspot"
+                  },
+                  "Flags": "Soft"
+                },
+                "snapToGround": 0,
+                "useClippingSpace": 0
+              }
+            },
+            "spotDef": null,
+            "tag": "None",
+            "tagExt": "None",
+            "useCrowdBlacklist": 1,
+            "useCrowdWhitelist": 1
+          }
+        },
+        {
+          "HandleId": "56",
+          "Data": {
+            "$type": "worldAISpotNode",
+            "crowdBlacklist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "crowdWhitelist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "debugName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "{cc_g01_compound_office03}"
+            },
+            "disableBumps": 0,
+            "isHostOnly": 0,
+            "isVisibleInGame": 1,
+            "isWorkspotInfinite": 1,
+            "isWorkspotStatic": 0,
+            "lookAtTarget": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "markings": [],
+            "proxyScale": null,
+            "sourcePrefabHash": "0",
+            "spot": {
+              "HandleId": "57",
+              "Data": {
+                "$type": "AIActionSpot",
+                "ActorBodytypeE3": "Undefined",
+                "clippingSpaceOrientation": 180,
+                "clippingSpaceRange": 120,
+                "enabledWhenMasterOccupied": 0,
+                "masterNodeRef": {
+                  "$type": "NodeRef",
+                  "$storage": "uint64",
+                  "$value": "0"
+                },
+                "resource": {
+                  "DepotPath": {
+                    "$type": "ResourcePath",
+                    "$storage": "string",
+                    "$value": "base\\workspots\\common\\ground\\generic__stand_ground_coffee__drink__01.workspot"
+                  },
+                  "Flags": "Soft"
+                },
+                "snapToGround": 0,
+                "useClippingSpace": 0
+              }
+            },
+            "spotDef": null,
+            "tag": "None",
+            "tagExt": "None",
+            "useCrowdBlacklist": 1,
+            "useCrowdWhitelist": 1
+          }
+        },
+        {
+          "HandleId": "58",
+          "Data": {
+            "$type": "worldAISpotNode",
+            "crowdBlacklist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "crowdWhitelist": {
+              "$type": "redTagList",
+              "tags": []
+            },
+            "debugName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "{cc_g01_compound_office04}"
+            },
+            "disableBumps": 0,
+            "isHostOnly": 0,
+            "isVisibleInGame": 1,
+            "isWorkspotInfinite": 1,
+            "isWorkspotStatic": 0,
+            "lookAtTarget": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "markings": [],
+            "proxyScale": null,
+            "sourcePrefabHash": "0",
+            "spot": {
+              "HandleId": "59",
+              "Data": {
+                "$type": "AIActionSpot",
+                "ActorBodytypeE3": "Undefined",
+                "clippingSpaceOrientation": 180,
+                "clippingSpaceRange": 120,
+                "enabledWhenMasterOccupied": 0,
+                "masterNodeRef": {
+                  "$type": "NodeRef",
+                  "$storage": "uint64",
+                  "$value": "0"
+                },
+                "resource": {
+                  "DepotPath": {
+                    "$type": "ResourcePath",
+                    "$storage": "string",
+                    "$value": "base\\workspots\\common\\ground\\generic__stand_ground_arms_crossed__stand_around__02.workspot"
+                  },
+                  "Flags": "Soft"
+                },
+                "snapToGround": 0,
+                "useClippingSpace": 0
+              }
+            },
+            "spotDef": null,
+            "tag": "None",
+            "tagExt": "None",
+            "useCrowdBlacklist": 1,
+            "useCrowdWhitelist": 1
+          }
+        },
+        {
+          "HandleId": "60",
+          "Data": {
+            "$type": "worldCompiledCommunityAreaNode",
+            "area": {
+              "HandleId": "61",
+              "Data": {
+                "$type": "communityArea",
+                "entriesData": [
+                  {
+                    "$type": "communityCommunityEntrySpotsData",
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "gate03"
+                    },
+                    "phasesData": [
+                      {
+                        "$type": "communityCommunityEntryPhaseSpotsData",
+                        "entryPhaseName": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "default"
+                        },
+                        "timePeriodsData": [
+                          {
+                            "$type": "communityCommunityEntryPhaseTimePeriodData",
+                            "isSequence": 0,
+                            "periodName": {
+                              "$type": "CName",
+                              "$storage": "string",
+                              "$value": "Day"
+                            },
+                            "spotNodeIds": [
+                              {
+                                "$type": "worldGlobalNodeID",
+                                "hash": "8025170056177890219"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "$type": "communityCommunityEntrySpotsData",
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "gate2_01"
+                    },
+                    "phasesData": [
+                      {
+                        "$type": "communityCommunityEntryPhaseSpotsData",
+                        "entryPhaseName": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "default"
+                        },
+                        "timePeriodsData": [
+                          {
+                            "$type": "communityCommunityEntryPhaseTimePeriodData",
+                            "isSequence": 0,
+                            "periodName": {
+                              "$type": "CName",
+                              "$storage": "string",
+                              "$value": "Day"
+                            },
+                            "spotNodeIds": [
+                              {
+                                "$type": "worldGlobalNodeID",
+                                "hash": "5742344037439046918"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "$type": "communityCommunityEntrySpotsData",
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "gate2_02"
+                    },
+                    "phasesData": [
+                      {
+                        "$type": "communityCommunityEntryPhaseSpotsData",
+                        "entryPhaseName": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "default"
+                        },
+                        "timePeriodsData": [
+                          {
+                            "$type": "communityCommunityEntryPhaseTimePeriodData",
+                            "isSequence": 0,
+                            "periodName": {
+                              "$type": "CName",
+                              "$storage": "string",
+                              "$value": "Day"
+                            },
+                            "spotNodeIds": [
+                              {
+                                "$type": "worldGlobalNodeID",
+                                "hash": "5742342937927418707"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "$type": "communityCommunityEntrySpotsData",
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "gate2_03"
+                    },
+                    "phasesData": [
+                      {
+                        "$type": "communityCommunityEntryPhaseSpotsData",
+                        "entryPhaseName": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "default"
+                        },
+                        "timePeriodsData": [
+                          {
+                            "$type": "communityCommunityEntryPhaseTimePeriodData",
+                            "isSequence": 0,
+                            "periodName": {
+                              "$type": "CName",
+                              "$storage": "string",
+                              "$value": "Day"
+                            },
+                            "spotNodeIds": [
+                              {
+                                "$type": "worldGlobalNodeID",
+                                "hash": "5742341838415790496"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "$type": "communityCommunityEntrySpotsData",
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "inner02"
+                    },
+                    "phasesData": [
+                      {
+                        "$type": "communityCommunityEntryPhaseSpotsData",
+                        "entryPhaseName": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "default"
+                        },
+                        "timePeriodsData": [
+                          {
+                            "$type": "communityCommunityEntryPhaseTimePeriodData",
+                            "isSequence": 0,
+                            "periodName": {
+                              "$type": "CName",
+                              "$storage": "string",
+                              "$value": "Day"
+                            },
+                            "spotNodeIds": [
+                              {
+                                "$type": "worldGlobalNodeID",
+                                "hash": "9372359075629146905"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "$type": "communityCommunityEntrySpotsData",
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "inner03"
+                    },
+                    "phasesData": [
+                      {
+                        "$type": "communityCommunityEntryPhaseSpotsData",
+                        "entryPhaseName": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "default"
+                        },
+                        "timePeriodsData": [
+                          {
+                            "$type": "communityCommunityEntryPhaseTimePeriodData",
+                            "isSequence": 0,
+                            "periodName": {
+                              "$type": "CName",
+                              "$storage": "string",
+                              "$value": "Day"
+                            },
+                            "spotNodeIds": [
+                              {
+                                "$type": "worldGlobalNodeID",
+                                "hash": "9372357976117518694"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "$type": "communityCommunityEntrySpotsData",
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "inner04"
+                    },
+                    "phasesData": [
+                      {
+                        "$type": "communityCommunityEntryPhaseSpotsData",
+                        "entryPhaseName": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "default"
+                        },
+                        "timePeriodsData": [
+                          {
+                            "$type": "communityCommunityEntryPhaseTimePeriodData",
+                            "isSequence": 0,
+                            "periodName": {
+                              "$type": "CName",
+                              "$storage": "string",
+                              "$value": "Day"
+                            },
+                            "spotNodeIds": [
+                              {
+                                "$type": "worldGlobalNodeID",
+                                "hash": "9372361274652403327"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "$type": "communityCommunityEntrySpotsData",
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "inner05"
+                    },
+                    "phasesData": [
+                      {
+                        "$type": "communityCommunityEntryPhaseSpotsData",
+                        "entryPhaseName": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "default"
+                        },
+                        "timePeriodsData": [
+                          {
+                            "$type": "communityCommunityEntryPhaseTimePeriodData",
+                            "isSequence": 0,
+                            "periodName": {
+                              "$type": "CName",
+                              "$storage": "string",
+                              "$value": "Day"
+                            },
+                            "spotNodeIds": [
+                              {
+                                "$type": "worldGlobalNodeID",
+                                "hash": "9372360175140775116"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "$type": "communityCommunityEntrySpotsData",
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "inner06"
+                    },
+                    "phasesData": [
+                      {
+                        "$type": "communityCommunityEntryPhaseSpotsData",
+                        "entryPhaseName": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "default"
+                        },
+                        "timePeriodsData": [
+                          {
+                            "$type": "communityCommunityEntryPhaseTimePeriodData",
+                            "isSequence": 0,
+                            "periodName": {
+                              "$type": "CName",
+                              "$storage": "string",
+                              "$value": "Day"
+                            },
+                            "spotNodeIds": [
+                              {
+                                "$type": "worldGlobalNodeID",
+                                "hash": "9372363473675659749"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "$type": "communityCommunityEntrySpotsData",
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "inner07"
+                    },
+                    "phasesData": [
+                      {
+                        "$type": "communityCommunityEntryPhaseSpotsData",
+                        "entryPhaseName": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "default"
+                        },
+                        "timePeriodsData": [
+                          {
+                            "$type": "communityCommunityEntryPhaseTimePeriodData",
+                            "isSequence": 0,
+                            "periodName": {
+                              "$type": "CName",
+                              "$storage": "string",
+                              "$value": "Day"
+                            },
+                            "spotNodeIds": [
+                              {
+                                "$type": "worldGlobalNodeID",
+                                "hash": "9372362374164031538"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "$type": "communityCommunityEntrySpotsData",
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "inner08"
+                    },
+                    "phasesData": [
+                      {
+                        "$type": "communityCommunityEntryPhaseSpotsData",
+                        "entryPhaseName": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "default"
+                        },
+                        "timePeriodsData": [
+                          {
+                            "$type": "communityCommunityEntryPhaseTimePeriodData",
+                            "isSequence": 0,
+                            "periodName": {
+                              "$type": "CName",
+                              "$storage": "string",
+                              "$value": "Day"
+                            },
+                            "spotNodeIds": [
+                              {
+                                "$type": "worldGlobalNodeID",
+                                "hash": "9372365672698916171"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "$type": "communityCommunityEntrySpotsData",
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "inner09"
+                    },
+                    "phasesData": [
+                      {
+                        "$type": "communityCommunityEntryPhaseSpotsData",
+                        "entryPhaseName": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "default"
+                        },
+                        "timePeriodsData": [
+                          {
+                            "$type": "communityCommunityEntryPhaseTimePeriodData",
+                            "isSequence": 0,
+                            "periodName": {
+                              "$type": "CName",
+                              "$storage": "string",
+                              "$value": "Day"
+                            },
+                            "spotNodeIds": [
+                              {
+                                "$type": "worldGlobalNodeID",
+                                "hash": "9372364573187287960"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "$type": "communityCommunityEntrySpotsData",
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "inner10"
+                    },
+                    "phasesData": [
+                      {
+                        "$type": "communityCommunityEntryPhaseSpotsData",
+                        "entryPhaseName": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "default"
+                        },
+                        "timePeriodsData": [
+                          {
+                            "$type": "communityCommunityEntryPhaseTimePeriodData",
+                            "isSequence": 0,
+                            "periodName": {
+                              "$type": "CName",
+                              "$storage": "string",
+                              "$value": "Day"
+                            },
+                            "spotNodeIds": [
+                              {
+                                "$type": "worldGlobalNodeID",
+                                "hash": "9371400301489536138"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "$type": "communityCommunityEntrySpotsData",
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "inner11"
+                    },
+                    "phasesData": [
+                      {
+                        "$type": "communityCommunityEntryPhaseSpotsData",
+                        "entryPhaseName": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "default"
+                        },
+                        "timePeriodsData": [
+                          {
+                            "$type": "communityCommunityEntryPhaseTimePeriodData",
+                            "isSequence": 0,
+                            "periodName": {
+                              "$type": "CName",
+                              "$storage": "string",
+                              "$value": "Day"
+                            },
+                            "spotNodeIds": [
+                              {
+                                "$type": "worldGlobalNodeID",
+                                "hash": "9371401401001164349"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "$type": "communityCommunityEntrySpotsData",
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "inner12"
+                    },
+                    "phasesData": [
+                      {
+                        "$type": "communityCommunityEntryPhaseSpotsData",
+                        "entryPhaseName": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "default"
+                        },
+                        "timePeriodsData": [
+                          {
+                            "$type": "communityCommunityEntryPhaseTimePeriodData",
+                            "isSequence": 0,
+                            "periodName": {
+                              "$type": "CName",
+                              "$storage": "string",
+                              "$value": "Day"
+                            },
+                            "spotNodeIds": [
+                              {
+                                "$type": "worldGlobalNodeID",
+                                "hash": "9371398102466279716"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "$type": "communityCommunityEntrySpotsData",
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "deck02"
+                    },
+                    "phasesData": [
+                      {
+                        "$type": "communityCommunityEntryPhaseSpotsData",
+                        "entryPhaseName": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "default"
+                        },
+                        "timePeriodsData": [
+                          {
+                            "$type": "communityCommunityEntryPhaseTimePeriodData",
+                            "isSequence": 0,
+                            "periodName": {
+                              "$type": "CName",
+                              "$storage": "string",
+                              "$value": "Day"
+                            },
+                            "spotNodeIds": [
+                              {
+                                "$type": "worldGlobalNodeID",
+                                "hash": "14710448483101128370"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "$type": "communityCommunityEntrySpotsData",
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "deck03"
+                    },
+                    "phasesData": [
+                      {
+                        "$type": "communityCommunityEntryPhaseSpotsData",
+                        "entryPhaseName": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "default"
+                        },
+                        "timePeriodsData": [
+                          {
+                            "$type": "communityCommunityEntryPhaseTimePeriodData",
+                            "isSequence": 0,
+                            "periodName": {
+                              "$type": "CName",
+                              "$storage": "string",
+                              "$value": "Day"
+                            },
+                            "spotNodeIds": [
+                              {
+                                "$type": "worldGlobalNodeID",
+                                "hash": "14710449582612756581"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "$type": "communityCommunityEntrySpotsData",
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "deck04"
+                    },
+                    "phasesData": [
+                      {
+                        "$type": "communityCommunityEntryPhaseSpotsData",
+                        "entryPhaseName": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "default"
+                        },
+                        "timePeriodsData": [
+                          {
+                            "$type": "communityCommunityEntryPhaseTimePeriodData",
+                            "isSequence": 0,
+                            "periodName": {
+                              "$type": "CName",
+                              "$storage": "string",
+                              "$value": "Day"
+                            },
+                            "spotNodeIds": [
+                              {
+                                "$type": "worldGlobalNodeID",
+                                "hash": "14710441886031359104"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "$type": "communityCommunityEntrySpotsData",
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "inside10"
+                    },
+                    "phasesData": [
+                      {
+                        "$type": "communityCommunityEntryPhaseSpotsData",
+                        "entryPhaseName": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "default"
+                        },
+                        "timePeriodsData": [
+                          {
+                            "$type": "communityCommunityEntryPhaseTimePeriodData",
+                            "isSequence": 0,
+                            "periodName": {
+                              "$type": "CName",
+                              "$storage": "string",
+                              "$value": "Day"
+                            },
+                            "spotNodeIds": [
+                              {
+                                "$type": "worldGlobalNodeID",
+                                "hash": "5174976058013201736"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "$type": "communityCommunityEntrySpotsData",
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "inside11"
+                    },
+                    "phasesData": [
+                      {
+                        "$type": "communityCommunityEntryPhaseSpotsData",
+                        "entryPhaseName": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "default"
+                        },
+                        "timePeriodsData": [
+                          {
+                            "$type": "communityCommunityEntryPhaseTimePeriodData",
+                            "isSequence": 0,
+                            "periodName": {
+                              "$type": "CName",
+                              "$storage": "string",
+                              "$value": "Day"
+                            },
+                            "spotNodeIds": [
+                              {
+                                "$type": "worldGlobalNodeID",
+                                "hash": "5174977157524829947"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "$type": "communityCommunityEntrySpotsData",
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "inside12"
+                    },
+                    "phasesData": [
+                      {
+                        "$type": "communityCommunityEntryPhaseSpotsData",
+                        "entryPhaseName": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "default"
+                        },
+                        "timePeriodsData": [
+                          {
+                            "$type": "communityCommunityEntryPhaseTimePeriodData",
+                            "isSequence": 0,
+                            "periodName": {
+                              "$type": "CName",
+                              "$storage": "string",
+                              "$value": "Day"
+                            },
+                            "spotNodeIds": [
+                              {
+                                "$type": "worldGlobalNodeID",
+                                "hash": "5174978257036458158"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "$type": "communityCommunityEntrySpotsData",
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "inside14"
+                    },
+                    "phasesData": [
+                      {
+                        "$type": "communityCommunityEntryPhaseSpotsData",
+                        "entryPhaseName": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "default"
+                        },
+                        "timePeriodsData": [
+                          {
+                            "$type": "communityCommunityEntryPhaseTimePeriodData",
+                            "isSequence": 0,
+                            "periodName": {
+                              "$type": "CName",
+                              "$storage": "string",
+                              "$value": "Day"
+                            },
+                            "spotNodeIds": [
+                              {
+                                "$type": "worldGlobalNodeID",
+                                "hash": "5174980456059714580"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "$type": "communityCommunityEntrySpotsData",
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "inside15"
+                    },
+                    "phasesData": [
+                      {
+                        "$type": "communityCommunityEntryPhaseSpotsData",
+                        "entryPhaseName": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "default"
+                        },
+                        "timePeriodsData": [
+                          {
+                            "$type": "communityCommunityEntryPhaseTimePeriodData",
+                            "isSequence": 0,
+                            "periodName": {
+                              "$type": "CName",
+                              "$storage": "string",
+                              "$value": "Day"
+                            },
+                            "spotNodeIds": [
+                              {
+                                "$type": "worldGlobalNodeID",
+                                "hash": "5174981555571342791"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "$type": "communityCommunityEntrySpotsData",
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "inside16"
+                    },
+                    "phasesData": [
+                      {
+                        "$type": "communityCommunityEntryPhaseSpotsData",
+                        "entryPhaseName": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "default"
+                        },
+                        "timePeriodsData": [
+                          {
+                            "$type": "communityCommunityEntryPhaseTimePeriodData",
+                            "isSequence": 0,
+                            "periodName": {
+                              "$type": "CName",
+                              "$storage": "string",
+                              "$value": "Day"
+                            },
+                            "spotNodeIds": [
+                              {
+                                "$type": "worldGlobalNodeID",
+                                "hash": "5174982655082971002"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "$type": "communityCommunityEntrySpotsData",
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "inside17"
+                    },
+                    "phasesData": [
+                      {
+                        "$type": "communityCommunityEntryPhaseSpotsData",
+                        "entryPhaseName": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "default"
+                        },
+                        "timePeriodsData": [
+                          {
+                            "$type": "communityCommunityEntryPhaseTimePeriodData",
+                            "isSequence": 0,
+                            "periodName": {
+                              "$type": "CName",
+                              "$storage": "string",
+                              "$value": "Day"
+                            },
+                            "spotNodeIds": [
+                              {
+                                "$type": "worldGlobalNodeID",
+                                "hash": "5174983754594599213"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "$type": "communityCommunityEntrySpotsData",
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "inside18"
+                    },
+                    "phasesData": [
+                      {
+                        "$type": "communityCommunityEntryPhaseSpotsData",
+                        "entryPhaseName": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "default"
+                        },
+                        "timePeriodsData": [
+                          {
+                            "$type": "communityCommunityEntryPhaseTimePeriodData",
+                            "isSequence": 0,
+                            "periodName": {
+                              "$type": "CName",
+                              "$storage": "string",
+                              "$value": "Day"
+                            },
+                            "spotNodeIds": [
+                              {
+                                "$type": "worldGlobalNodeID",
+                                "hash": "5174967261920176048"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "$type": "communityCommunityEntrySpotsData",
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "office01"
+                    },
+                    "phasesData": [
+                      {
+                        "$type": "communityCommunityEntryPhaseSpotsData",
+                        "entryPhaseName": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "default"
+                        },
+                        "timePeriodsData": [
+                          {
+                            "$type": "communityCommunityEntryPhaseTimePeriodData",
+                            "isSequence": 0,
+                            "periodName": {
+                              "$type": "CName",
+                              "$storage": "string",
+                              "$value": "Day"
+                            },
+                            "spotNodeIds": [
+                              {
+                                "$type": "worldGlobalNodeID",
+                                "hash": "10704877951882234538"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "$type": "communityCommunityEntrySpotsData",
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "office02"
+                    },
+                    "phasesData": [
+                      {
+                        "$type": "communityCommunityEntryPhaseSpotsData",
+                        "entryPhaseName": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "default"
+                        },
+                        "timePeriodsData": [
+                          {
+                            "$type": "communityCommunityEntryPhaseTimePeriodData",
+                            "isSequence": 0,
+                            "periodName": {
+                              "$type": "CName",
+                              "$storage": "string",
+                              "$value": "Day"
+                            },
+                            "spotNodeIds": [
+                              {
+                                "$type": "worldGlobalNodeID",
+                                "hash": "10704876852370606327"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "$type": "communityCommunityEntrySpotsData",
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "office03"
+                    },
+                    "phasesData": [
+                      {
+                        "$type": "communityCommunityEntryPhaseSpotsData",
+                        "entryPhaseName": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "default"
+                        },
+                        "timePeriodsData": [
+                          {
+                            "$type": "communityCommunityEntryPhaseTimePeriodData",
+                            "isSequence": 0,
+                            "periodName": {
+                              "$type": "CName",
+                              "$storage": "string",
+                              "$value": "Day"
+                            },
+                            "spotNodeIds": [
+                              {
+                                "$type": "worldGlobalNodeID",
+                                "hash": "10704875752858978116"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "$type": "communityCommunityEntrySpotsData",
+                    "entryName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "office04"
+                    },
+                    "phasesData": [
+                      {
+                        "$type": "communityCommunityEntryPhaseSpotsData",
+                        "entryPhaseName": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "default"
+                        },
+                        "timePeriodsData": [
+                          {
+                            "$type": "communityCommunityEntryPhaseTimePeriodData",
+                            "isSequence": 0,
+                            "periodName": {
+                              "$type": "CName",
+                              "$storage": "string",
+                              "$value": "Day"
+                            },
+                            "spotNodeIds": [
+                              {
+                                "$type": "worldGlobalNodeID",
+                                "hash": "10704874653347349905"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            "debugName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "{cc_g01_compound_com}"
+            },
+            "isHostOnly": 0,
+            "isVisibleInGame": 1,
+            "proxyScale": null,
+            "sourceObjectId": {
+              "$type": "entEntityID",
+              "hash": "9820227822267702986"
+            },
+            "sourcePrefabHash": "0",
+            "tag": "None",
+            "tagExt": "None"
+          }
+        }
+      ],
+      "persistentNodeIndex": 0,
+      "persistentNodes": [],
+      "variantIndices": [0
+      ],
+      "variantNodes": [],
+      "version": 62
+    },
+    "EmbeddedFiles": []
+  }
+}
