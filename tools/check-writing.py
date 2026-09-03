@@ -103,6 +103,18 @@ LIMP = [
     'serves to ', 'acts as a ', 'in order to ',
 ]
 
+# Figures of speech standing in for a plain statement. A line does not "sit
+# wide of" a comic, it is different from it. Nothing physical is happening in
+# any of these, so the metaphor makes the reader translate for nothing. This
+# list only holds the ones already caught here: a new one gets through, which
+# is why the rule is also written down for a person to apply.
+FIGURATIVE = [
+    'wide of the', 'sit a little wide', 'sits a little wide',
+    'close rather than exact', 'lands harder', 'lands as',
+    'left the dialogue', 'set against what', 'is set against',
+    'reads as an', 'reads as a ',
+]
+
 # The stock phrases a finding gets wrapped in when nobody is reading carefully.
 # Checked everywhere, because they read as generated wherever they appear.
 TELLS = [
@@ -194,6 +206,9 @@ def check(path, player, mode='all'):
         for phrase in LIMP:
             if phrase in low:
                 add('limp', phrase.strip(), i)
+        for phrase in FIGURATIVE:
+            if phrase in low:
+                add('figurative', phrase.strip(), i)
         if DASH.search(line):
             add('dash', 'em dash or spaced hyphen used as an aside', i)
         if INSIDE.search(line):
