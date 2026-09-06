@@ -41,9 +41,9 @@ It cannot tell you a sentence is bad. Every rule here is a string match, so it
 finds the tells that have actually bitten this project and nothing else. A
 sentence can pass every check and still be unreadable. Read it aloud.
 
-THIS FILE HOLDS THE FORBIDDEN STRINGS DELIBERATELY, the same as
-scan-public.ps1. Exclude it from any bulk edit: a sweep that rewrites the
-patterns turns the check into one that passes everything, silently.
+THIS FILE HOLDS THE STRINGS IT BANS, DELIBERATELY. Exclude it from any bulk
+edit over the prose: a sweep that rewrites the patterns turns the check into
+one that passes everything, silently.
 """
 import argparse
 import io
@@ -62,21 +62,20 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 #
 # The changelog is checked FROM THE TOP DOWN TO THE SECOND VERSION HEADING.
 # Older entries shipped and are not rewritten, so flagging them is noise.
-# Named by shape rather than by path, so this ships without pointing a reader at
-# a file only this machine has: the mod-page copy is not in the public tree.
+# Named by shape rather than by path, so a checkout that has no mod-page copy
+# simply checks the changelog and moves on.
 PLAYER_GLOBS = [
     ('CHANGELOG.md', 'newest'),
-    ('docs/release/*changelog*.bbcode', 'newest'),
-    ('docs/release/*description*.bbcode', 'player-half'),
+    ('docs/release/*/*changelog*.bbcode', 'newest'),
+    ('docs/release/*/*description*.bbcode', 'player-half'),
 ]
 
 # Everything else written as prose. The numbered registers are excluded: they
 # are records rather than documents, they must never be swept, and their
 # entries are frozen once closed. A file that is not present is skipped, so a
-# clone of the public tree checks what it has.
+# checkout with fewer docs checks what it has.
 MODDER_DIRS = ['docs', 'mods/gig-01-negative-balance/docs']
-MODDER_SKIP_SUFFIX = ('gotchas.md', 'backlog.md', 'dialogue.txt',
-                      'corpus-recast.md')
+MODDER_SKIP_SUFFIX = ('gotchas.md', 'backlog.md', 'dialogue.txt')
 MODDER_EXTRA = ['BUILDING.md', 'CONTRIBUTING.md', 'public/README.md',
                 'mods/gig-01-negative-balance/source/scripts/README.md']
 
@@ -101,6 +100,11 @@ LIMP = [
     'are addressed by', 'is addressed by', 'are carried by', 'is carried by',
     'it is worth noting', 'it should be noted', 'it is important to',
     'serves to ', 'acts as a ', 'in order to ',
+    # Sentences that point at their own content instead of delivering it.
+    # "The one thing that decides the performance: he is not frightened" is
+    # "he is not frightened".
+    'the one thing that decides', 'the thing to know is',
+    'the part worth reading', 'what is worth knowing',
 ]
 
 # Figures of speech standing in for a plain statement. A line does not "sit
@@ -129,8 +133,16 @@ TELLS = [
 INTENSIFIERS = ['genuinely', 'literally']
 
 # Built from code points, not typed: a file that ships must not itself contain
-# the characters it bans, or every scan of the public tree flags this line.
+# the characters it bans, or it flags its own source.
 DASH = re.compile('%s|%s|(?<=[a-z]) - (?=[a-z])' % (chr(0x2014), chr(0x2013)))
+# A house rule: never tell the reader a thing is other than it appears.
+# The clause withholds the fact for a beat and the next sentence always
+# carries the meaning without it. Verbatim quotes are exempt by the same
+# convention as the punctuation check.
+THAN_IT = re.compile(
+    r'(more|less|narrower|wider|simpler|smaller|bigger|worse|better|harder|easier)\s+than\s+(it|you|one)\b'
+    r'|than (it|you)(\s+would|\s+might|\'d)?\s+(looks?|sounds?|seems?|reads?|think|expect)'
+    r'|\bcounter-?intuitively\b|\bsurprisingly\b', re.I)
 INSIDE = re.compile(r'[a-z]\.\)|[a-z]\."(?!\w)')
 SENTENCE = re.compile(r'[^.!?\n]+[.!?]')
 
@@ -211,6 +223,8 @@ def check(path, player, mode='all'):
                 add('figurative', phrase.strip(), i)
         if DASH.search(line):
             add('dash', 'em dash or spaced hyphen used as an aside', i)
+        if THAN_IT.search(line):
+            add('tease', 'says a thing is other than it appears', i)
         if INSIDE.search(line):
             add('punctuation', 'full stop inside a quote or bracket', i)
         if player:

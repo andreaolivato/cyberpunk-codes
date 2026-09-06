@@ -271,9 +271,9 @@ IDLES = {
 # gotcha 80 lists. What separates vanilla's alertable communities is that they
 # sit in the game's own `always_loaded` sectors, and a mod cannot add to those.
 #
-# WHAT THE RUN DID ESTABLISH, and it is worth more than the question it was
-# asked for: a mod's own sector spawns from EITHER class. Thirty guards stand
-# here in play, so gotcha 66 part 3 is narrower than it reads.
+# WHAT THE RUN DID ESTABLISH: a mod's own sector spawns from EITHER class.
+# Thirty guards stand here in play, so gotcha 66 part 3 applies to fewer cases
+# than its wording suggests.
 #
 # The residence keeps `_Streamable` and this site keeps the plain class. Neither
 # is rewritten to match the other, because both are shipped and playtested and

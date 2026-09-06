@@ -1,0 +1,333 @@
+# Dead Ringer's Character records.
+#
+# ONE FILE, because every record here is doing the same small job and a file per
+# character would be seven files of four lines. Gig 01 splits by character
+# because two of its three carry real behaviour; only two here do.
+#
+# ---------------------------------------------------------------------------
+# MOST OF THESE ARE A NAME AND NOTHING ELSE
+#
+# A scene line's subtitle takes its speaker name from the speaker's Character
+# record, so every voice in the gig needs one even when the body is never seen.
+# Seven of the eight below are exactly that: the scene spawns them a kilometre
+# away and a hundred metres down, and what the player sees is the base game's
+# own NPC standing in the room. tools/gig02/gen_scenes.py has the whole account
+# of why the gig is shaped that way and what a capture pass would change.
+#
+# So `$base` for those is chosen only for being a VERIFIED id of the right
+# gender. Nothing about the base body is ever rendered. Do not "tidy" the
+# capitalisation of any of them: TweakDBIDs are case-sensitive and a wrong one
+# fails silently.
+#
+# `displayName` is LocKey#<FNV1a64 of the bare key>, which is the hash ArchiveXL
+# registers our own localization string under. The strings themselves are in
+# tools/gig02/gen_localization.py.
+
+# WAKAKO. The one record here whose base body IS seen: the holocall studio
+# spawns this record on its floor spot and the phone renders it, so it has to
+# be her. `Character.wakako_okada` is the real one.
+#
+# The short name rather than the full one, for the reason gig 01 shortened
+# Elena's: "Wakako Okada" over every line of a long conversation is a mouthful
+# once the standard styling shows speaker names. Her phone CONTACT keeps the
+# full name, which is a different string.
+Character.cc_g02_wakako:
+  $base: Character.wakako_okada
+  # HER FACE, the one her own holocall entry names (2026-09-05). This record
+  # is a body now: at her desk for the parlor leg, and in the studio.
+  appearanceName: wakako_okada_default
+  displayName: LocKey#9849343552330629433
+  fullDisplayName: LocKey#9849343552330629433
+  skipDisplayArchetype: true
+
+# ---------------------------------------------------------------------------
+# EVERY displayName BELOW IS ITS OWN STRING, and that sentence is here because
+# three of them were not.
+#
+# `LocKey#1297990292505017833` is the hash of `cc-g02-yoko-short`, which is the
+# word "Yoko". Huscle and both queue strangers carried it, so a doorman in
+# Wakako's office and four voices in a crowd outside Afterlife all had YOKO
+# written over their subtitles. Playtest, 2026-08-26: "the subtitles should
+# show random names or labels, like in the comics. Instead they say Yoko, not
+# sure why."
+#
+# The hash is easy to copy and impossible to read, which is how it spread. When
+# adding a record, derive the number from the key rather than pasting a
+# neighbour's.
+
+# YOKO TSURU. Voice only. The base game has no record for her at all: she is
+# an unnamed Clouds NPC placed by a scene, so there is nothing of hers to
+# clone, which is also why her phone contact carries the placeholder avatar.
+# HER BASE IS NOT MAMA WELLES ANY MORE, and it never should have been once she
+# became a body. `$base` was chosen when she was a voice with no body and the
+# only requirement was "a verified id of the right gender" - the note at the top
+# of this file says exactly that. The moment the community started placing her,
+# that base became what the player sees, and what they saw was Mama Welles
+# standing in a Kabuki doorway.
+#
+# `Character.LightCrowd_japantown_wa` was captured in game, so it exists, and it
+# is a female civilian of the right district styling.
+# HER OWN RECORD, captured off her in game 2026-08-27:
+# `Character.wat_kab_netrunner_01`, the fixed NPC on the door of the Dewdrop
+# Inn. Nothing renders this today - she is a voice over the real body - but a
+# base that is actually her is what makes the acquisition route safe to switch
+# on, and it is what stops the next person seeing Mama Welles in Kabuki.
+Character.cc_g02_yoko:
+  $base: Character.wat_kab_netrunner_01
+  # HER FACE (playtest 2026-09-05: the entry's appearance alone put a woman in
+  # a beret on her spot). The game's own entry for her names this appearance;
+  # it is on the record as well so nothing can pick another.
+  appearanceName: service__vendor_wa_vendor_asian_02
+  displayName: LocKey#1297990292505017833
+  fullDisplayName: LocKey#1297990292505017833
+  skipDisplayArchetype: true
+
+# CHAR, Wakako's netrunner. New to the comic.
+#
+# SHE IS A REAL BODY NOW, spawned by Gig02_Encounter into the chair at the
+# Dewdrop Inn. She used to be a voice with the base game's own crowd sitting
+# where she should be, and that fails twice: the occupant of that chair is
+# ordinary passing crowd, so she was a different woman every load, and scanning
+# her showed whoever it happened to be.
+#
+# `Character.SlackerFemale` is the record captured in that chair, and it was
+# confirmed a second time on 2026-08-27 - "perfect style of npc" - so this is
+# the look that was asked for rather than the nearest verified id. `skipDisplayArchetype` is what stops the scanner reading the
+# archetype instead of her name.
+Character.cc_g02_char:
+  $base: Character.SlackerFemale
+  # ONE FACE (design call 2026-09-05: the same woman in the chair and on the
+  # phone). SlackerFemale's default rolls one of twenty; this is one the
+  # game pins on its own placements (see gen_community.APPEARANCE).
+  appearanceName: slacker_wa_slacker_wa_03
+  displayName: LocKey#17642806731671841792
+  fullDisplayName: LocKey#17642806731671841792
+  skipDisplayArchetype: true
+
+# IDEKA, behind the parlor counter. New to the comic, voice only.
+# SAME CORRECTION AS YOKO'S ABOVE. She is a body now, so the base is her face.
+Character.cc_g02_ideka:
+  $base: Character.LightCrowd_japantown_wa
+  displayName: LocKey#13964536880637536916
+  fullDisplayName: LocKey#13964536880637536916
+  skipDisplayArchetype: true
+
+# HUSCLE, Wakako's doorman, who says "Mh." and nothing else. Voice only.
+#
+# `Character.q112_wakako_guard` IS THE REAL DOORMAN, captured in game
+# 2026-08-26 by pointing at the man standing 6 m from Wakako in her office.
+# `q112` is her own quest prefix, so this is the guard the base game puts on her
+# door rather than a stand-in chosen for being a verified id. It replaces
+# `Character.Nix`, which was exactly that.
+Character.cc_g02_huscle:
+  $base: Character.q112_wakako_guard
+  # The game's own entry for him names this appearance.
+  appearanceName: gang__tyger_mb_ozeki__lvl3_02
+  displayName: LocKey#15582622219031382
+  fullDisplayName: LocKey#15582622219031382
+  skipDisplayArchetype: true
+
+# THE FOUR STRANGERS OUTSIDE AFTERLIFE, ONE RECORD EACH.
+#
+# There are three knots of people out there and the player overhears all three,
+# so there are four speakers: two in each of the first two conversations. The
+# third group is the merc talking and all three of its lines are his.
+#
+# THEY WERE ONE RECORD, THEN TWO, AND BOTH WERE WRONG. One record meant one
+# voice for everybody. Two records fixed each conversation internally and left
+# the two conversations casting the SAME PAIR, because the scenes are ordered
+# rather than placed: whichever group is reached first plays `talk_a` and the
+# other plays `talk_b`, and both were drawing on the same two throats.
+# Playtest, 2026-08-26: "the 2 groups have the same voices, they should have
+# different voices."
+#
+# One record per speaker is the only arrangement that cannot collapse: a voice
+# is cast per record, so five records is five castings and nothing has to be
+# remembered.
+#
+# ALL FIVE ARE LABELLED "Voice", which is the comic's own caption for every
+# speaker in this crowd (pp. 11-15). Two lines running under one anonymous
+# label is what overhearing strangers looks like, and none of these people is
+# somebody the story is introducing.
+# THE FIVE STRANGERS ARE BODIES NOW, 2026-09-03, so the bases changed: a
+# voice-only actor could be based on anyone, and these were Mama Welles and
+# Nix, which would have put two story characters in the queue the moment they
+# were placed. They are the game's own unarmed crowd look, by gender, and the
+# fifth is new for the three-person group. Their lines are the club's own
+# ambient chatter (gen_scenes.build_talk_a).
+Character.cc_g02_queue_a:
+  $base: Character.LightCrowd_japantown_ma
+  appearanceName: crowd__districts_ma_rich_07
+  # NO REACTION AND NOT A CIVILIAN (playtest 2026-09-05: the queue turned
+  # on V when the merc was shot, V killed one, the police came). The merc's
+  # own record proved both halves: NoReaction never opened on V, and a
+  # neutral-group kill brought nobody. Same two lines here.
+  reactionPreset: ReactionPresets.NoReaction
+  baseAttitudeGroup: neutral
+  displayName: LocKey#1975290165512292963
+  fullDisplayName: LocKey#1975290165512292963
+  skipDisplayArchetype: true
+
+Character.cc_g02_queue_b:
+  $base: Character.LightCrowd_japantown_ma
+  appearanceName: crowd__districts_ma_rich_09
+  # NO REACTION AND NOT A CIVILIAN (playtest 2026-09-05: the queue turned
+  # on V when the merc was shot, V killed one, the police came). The merc's
+  # own record proved both halves: NoReaction never opened on V, and a
+  # neutral-group kill brought nobody. Same two lines here.
+  reactionPreset: ReactionPresets.NoReaction
+  baseAttitudeGroup: neutral
+  displayName: LocKey#9736963685951084832
+  fullDisplayName: LocKey#9736963685951084832
+  skipDisplayArchetype: true
+
+Character.cc_g02_queue_c:
+  $base: Character.LightCrowd_japantown_ma
+  appearanceName: crowd__districts_ma_rich_04
+  # NO REACTION AND NOT A CIVILIAN (playtest 2026-09-05: the queue turned
+  # on V when the merc was shot, V killed one, the police came). The merc's
+  # own record proved both halves: NoReaction never opened on V, and a
+  # neutral-group kill brought nobody. Same two lines here.
+  reactionPreset: ReactionPresets.NoReaction
+  baseAttitudeGroup: neutral
+  displayName: LocKey#149175854294850397
+  fullDisplayName: LocKey#149175854294850397
+  skipDisplayArchetype: true
+
+Character.cc_g02_queue_d:
+  $base: Character.LightCrowd_japantown_wa
+  appearanceName: crowd__districts_wa_casual_14
+  # NO REACTION AND NOT A CIVILIAN (playtest 2026-09-05: the queue turned
+  # on V when the merc was shot, V killed one, the police came). The merc's
+  # own record proved both halves: NoReaction never opened on V, and a
+  # neutral-group kill brought nobody. Same two lines here.
+  reactionPreset: ReactionPresets.NoReaction
+  baseAttitudeGroup: neutral
+  displayName: LocKey#9210354639909328274
+  fullDisplayName: LocKey#9210354639909328274
+  skipDisplayArchetype: true
+
+# fnv1a64 of cc-g02-queue-e-name, derived rather than copied.
+Character.cc_g02_queue_e:
+  $base: Character.LightCrowd_japantown_ma
+  appearanceName: crowd__districts_ma_teen_04
+  # NO REACTION AND NOT A CIVILIAN (playtest 2026-09-05: the queue turned
+  # on V when the merc was shot, V killed one, the police came). The merc's
+  # own record proved both halves: NoReaction never opened on V, and a
+  # neutral-group kill brought nobody. Same two lines here.
+  reactionPreset: ReactionPresets.NoReaction
+  baseAttitudeGroup: neutral
+  displayName: LocKey#9770969260198886463
+  fullDisplayName: LocKey#9770969260198886463
+  skipDisplayArchetype: true
+
+# ---------------------------------------------------------------------------
+# THE TWO THAT ARE FOUGHT
+#
+# Both are spawned as real bodies by Gig02_Encounter.reds and both keep their
+# base record's combat behaviour. Only the name is overridden: an NPC who
+# cannot fight back is worse than one whose archetype is wrong.
+
+# THE MERC. `Character.wraiths_grunt2_ranged2_copperhead_ma` is a Wraith
+# grunt. Wraiths are not Tyger Claws and not Wakako's, which is right: he is
+# an independent who took a contract he believed was hers.
+#
+# A MAN SINCE 2026-09-06. The recorded voice that landed is a man's, so the
+# body follows the voice: the same Wraith grunt record in its male form
+# (`_ma` for `_wa`; both names are in the game's TweakDB string table). The
+# look is pinned so the mask cannot roll away: `gang__wraith_ma.app` has five
+# lvl2 grunt looks and four of them wear the Wraith skull breather
+# (`h1_058_ma_mask__skull`); `grunt__lvl2_02` is the skull mask with its vent
+# cover, a tactical vest and military gloves. The entity's name for that look
+# is `gang__wraith_ma_grunt__lvl2_02`, read off `gang__wraith_ma.ent`. The
+# other three masked ones, if this one is wrong in play: `grunt__lvl2_01`
+# (skull mask with a cover, ninja harness), `grunt__lvl2_04`, `grunt__lvl2_05`.
+#
+# HE IS UNKILLABLE, AND NOT BECAUSE OF ANYTHING ON THIS RECORD.
+# Gig02_Encounter holds god mode on him: Immortal while he is up, so he takes
+# damage and goes down, then Invulnerable once he is down, so a player who
+# empties a shotgun into him cannot end the gig by accident. Nothing here does
+# that, and nothing here should: a record-level shield could not be released.
+#
+# `skipDisplayArchetype` is what stops the scanner reading "MERC GRUNT". Both
+# name fields are set because Character_Record carries `displayName` AND
+# `fullDisplayName` and the scanner shows the full one; gig 01 paid for that
+# finding.
+# HE DOES NOT START THE FIGHT, AND THE RECORD IS WHERE THAT BELONGS.
+#
+# It was done from the script first - writing Neutral over him every tick and
+# switching his senses off - and it lost a race: a Wraith's own reaction preset
+# had already decided it had seen a threat. Playtest: "she targets V
+# immediately."
+#
+# These are gig 01's three peaceful fields on Hoshino, for the same problem and
+# in the same order. They cannot lose a race because they are true before he
+# exists:
+#
+#   reactionPreset  NoReaction   nothing to broadcast, nothing to react to
+#   baseAttitudeGroup neutral    targetable, not an enemy. Friendly would make
+#                                him unshootable, hostile would open fire
+#   enableSensesOnStart false    he never starts looking for V at all
+#
+# Gig02_Encounter switches his senses ON the moment he is hit, and from there
+# the game's own reaction rules make him fight back.
+Character.cc_g02_merc:
+  $base: Character.wraiths_grunt2_ranged2_copperhead_ma
+  appearanceName: gang__wraith_ma_grunt__lvl2_02
+  displayName: LocKey#11645959053887079659
+  fullDisplayName: LocKey#11645959053887079659
+  skipDisplayArchetype: true
+  reactionPreset: ReactionPresets.NoReaction
+  baseAttitudeGroup: neutral
+  enableSensesOnStart: false
+
+# TOJI. A Tyger Claw gangster with a gun, which is what the comic draws: pink
+# hair, an oni breather, a white pinstripe jacket and a rifle over the
+# shoulder. `gangster3_ranged3` is the tier that reads as somebody's lieutenant
+# without being a boss with a health bar the player has to grind through. He is
+# meant to die quietly.
+#
+# HE IS THE ONLY PERSON WHO HAS TO DIE, so he is left entirely killable. The
+# surviving Claws around him are spawned from base-game records with no
+# overrides at all; see Gig02_Encounter.reds.
+Character.cc_g02_toji:
+  $base: Character.tyger_claws_gangster3_ranged3_sidewinder_ma
+  # ONE FACE (design review 2026-09-05): the base rolls a look per spawn, and
+  # Char's text describes one man. The lvl3 gangster looks are the game's
+  # own top-tier Tyger Claws; which of the four is settled with the dev
+  # menu's Toji spawner, and Char's description then matches it.
+  appearanceName: gang__tyger_ma_gangster__lvl3_04
+  # STRONGER (same review): the rarity tier scales his health and damage
+  # the way the game's own elites are scaled.
+  rarity: NPCRarity.Elite
+  displayName: LocKey#4365166979693360572
+  fullDisplayName: LocKey#4365166979693360572
+  skipDisplayArchetype: true
+
+# The merc's two listeners, 2026-09-04. Same crowd bases as the queue.
+Character.cc_g02_queue_f:
+  $base: Character.LightCrowd_japantown_ma
+  appearanceName: crowd__districts_ma_casual_02
+  # NO REACTION AND NOT A CIVILIAN (playtest 2026-09-05: the queue turned
+  # on V when the merc was shot, V killed one, the police came). The merc's
+  # own record proved both halves: NoReaction never opened on V, and a
+  # neutral-group kill brought nobody. Same two lines here.
+  reactionPreset: ReactionPresets.NoReaction
+  baseAttitudeGroup: neutral
+  displayName: LocKey#1975290165512292963
+  fullDisplayName: LocKey#1975290165512292963
+  skipDisplayArchetype: true
+
+Character.cc_g02_queue_g:
+  $base: Character.LightCrowd_japantown_wa
+  appearanceName: crowd__districts_ma_rich_02
+  # NO REACTION AND NOT A CIVILIAN (playtest 2026-09-05: the queue turned
+  # on V when the merc was shot, V killed one, the police came). The merc's
+  # own record proved both halves: NoReaction never opened on V, and a
+  # neutral-group kill brought nobody. Same two lines here.
+  reactionPreset: ReactionPresets.NoReaction
+  baseAttitudeGroup: neutral
+  displayName: LocKey#1975290165512292963
+  fullDisplayName: LocKey#1975290165512292963
+  skipDisplayArchetype: true
+

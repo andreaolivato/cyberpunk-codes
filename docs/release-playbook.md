@@ -38,7 +38,8 @@ in the game folder. That explains most of the conventions:
 .\tools\build-release.ps1 gig-01 -Version 1.1.1
 ```
 
-Writes `dist\NegativeBalance-1.1.1.zip`. `dist\` is gitignored.
+Writes `dist\gig-01\NegativeBalance-1.1.1.zip`. One folder per gig since
+2026-09-06, and `dist\` is gitignored.
 
 The version lives in exactly two places: this command line and the Nexus page,
 because a Cyberpunk mod zip has no manifest to hold it. The third place is the
@@ -56,16 +57,14 @@ is what a GitHub release attaches to, and it marks the exact source of the
 shipped bytes, which matters because the packing is non-deterministic and a
 rebuild can never prove it matches.
 
-**THE PREFIX IS NOT OPTIONAL AND IT IS NOT ONLY FOR THIS REPO.** Both repos hold
-four gigs, so a bare `v1.2.1` claims a version the repo does not have, and the
-second gig to ship has no unambiguous name for its own `v1.0.0`. Every tag in
-both repos is `gig-01/v...` and every future one is `gig-02/v...` and so on.
+**THE PREFIX IS NOT OPTIONAL.** This repo holds four gigs, so a bare `v1.2.1`
+claims a version the repo does not have, and the second gig to ship has no
+unambiguous name for its own `v1.0.0`. Every tag is `gig-01/v...` and every
+future one is `gig-02/v...` and so on.
 
-This drifted for three releases: the public repo carried `v1.1.3`, `v1.2.0` and
-`v1.2.1` unprefixed while the private one was scoped correctly, because "in
-every repo" was read as "remember to tag the public repo too" and not as "with
-the same name". They were renamed on 2026-08-18, before anything pinned them.
-So after tagging, check both:
+This drifted for three releases, which carried `v1.1.3`, `v1.2.0` and `v1.2.1`
+unprefixed. They were renamed on 2026-08-18, before anything pinned them. So
+after tagging, check:
 
 ```powershell
 git -C $repo tag --list "v*"        # must print NOTHING, in either repo

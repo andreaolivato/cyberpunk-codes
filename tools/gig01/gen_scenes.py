@@ -358,7 +358,7 @@ def build_elena():
     #
     # SPLICED-VOICES RECAST (2026-09-02): V's side of this call is now the
     # actor's own recordings. This line is a verified TRIM of vanilla
-    # `0x197527fc222ef000` per body (corpus-recast.md); it answers e02's
+    # `0x197527fc222ef000` per body; it answers e02's
     # "Jackie Welles used to help my family" without any rewording of Elena.
     v2 = s.section([s.add_line(
         v, "Like Mama Welles? Thought I recognized the name.",
@@ -417,10 +417,9 @@ def build_elena():
     #
     # splice_takes cuts on the silence map and there is no pause after "Tell
     # 'er to", so a first attempt shipped only the second sentence and lost
-    # the instruction. The recogniser returns per-word timings, so the cut is
-    # taken at the start of "lay" (0.78 s female, 0.80 s male), snapped to a
-    # zero crossing and given a 15 ms fade so the onset cannot click. Read
-    # back afterwards like every other trim.
+    # the instruction. The cut is taken at the start of "lay" (0.78 s female,
+    # 0.80 s male), snapped to a zero crossing and given a 15 ms fade so the
+    # onset cannot click. Listened to afterwards like every other trim.
     #
     # The male body says "family and friends" where the female says "family,
     # friends" - a real difference between the two recordings, so the male
@@ -1460,11 +1459,10 @@ def _epilogue(name):
     # mark, which is where vanilla plays these lines from. The stand-in's copy
     # of these lines was 2D because its speaker was a kilometre away; that
     # variant is gone, and with it the reason to route hers any other way.
-    # MAMA WELLES IS HER OWN VOICE NOW, 2026-09-03, and this is the change
-    # that retires the last imitation of a real performer in the gig. Her
-    # generated lines (m01 "You look tired, mija.", m02 "She's in the back.")
-    # are gone; what she says here is four of her own recordings, three whole
-    # and one trimmed.
+    # MAMA WELLES IS HER OWN VOICE NOW, 2026-09-03. The two lines written for
+    # her (m01 "You look tired, mija.", m02 "She's in the back.") are gone;
+    # what she says here is four of her own recordings, three whole and one
+    # trimmed.
     #
     # THE SCENE NO LONGER OPENS ON HER. Her vanilla bark ("Look who it is!")
     # fires from her voiceset as V walks up and cannot be suppressed
@@ -1486,7 +1484,7 @@ def _epilogue(name):
                    key='m04', vanilla_sid=0x1b20084c292d2000),
         # A HEAD-TRIM of "She's a nice girl. We exchanged numbers." - the
         # second sentence is Misty's thread and would land as a non sequitur
-        # here. Cut at the pause after "girl.", read back before promotion.
+        # here. Cut at the pause after "girl." and listened to before use.
         s.add_line(mama, "She's a nice girl.", key='m03'),
     ])
     # "Nova. I'll get a drink." now ENDS this scene, and it is a cue rather than

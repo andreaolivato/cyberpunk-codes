@@ -59,6 +59,27 @@ public abstract class CCSharedWorld {
         return Vector4.Distance2D(pos, anchor) <= radiusXY;
     }
 
+    // Is this point inside one of the game's own safe areas?
+    //
+    // A SAFE AREA IS WHY A FIGHT SOMETIMES CANNOT HAPPEN AT ALL. Outside a club
+    // door, in a market, in a ripperdoc's shop, the game holsters the player's
+    // weapon and refuses to let it come out. An NPC a gig means to be fought
+    // who is standing inside one is unfightable, and in game it looks exactly
+    // like a broken trigger: the marker is there, the man is there, and nothing
+    // the player does registers.
+    //
+    // Gig 02 spawned its merc on the Afterlife entrance marker, which is the
+    // door, and the first playtest of that leg reported the whole area as
+    // unplayable. Asking is one call and settles it, so nothing should ever
+    // guess at where the line is again.
+    public static func InSafeArea(game: GameInstance, point: Vector4) -> Bool {
+        let mgr: ref<SafeAreaManager> = GameInstance.GetSafeAreaManager(game);
+        if !IsDefined(mgr) {
+            return false;
+        }
+        return mgr.IsPointInSafeArea(point);
+    }
+
     // Is the player currently in a device UI? Two separate blackboard flags,
     // because the terminal zoom and an ordinary device interaction are not the
     // same state and a beat that waits for "off the screen" must clear both.

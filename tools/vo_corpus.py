@@ -411,9 +411,10 @@ def cmd_extract(args):
         raise SystemExit('no lines for speaker %r - try `speakers --like %s`'
                          % (args.speaker, args.speaker))
 
-    # Longest lines first. Voice conversion wants sustained, connected speech;
-    # a corpus of "Hm." and "V?" teaches a model almost nothing, and the short
-    # ones are also the most likely to be a grunt with no phonetic content.
+    # Longest lines first, because a long line is the more useful sample
+    # whatever it is wanted for: a corpus of "Hm." and "V?" carries almost no
+    # speech, and the short ones are also the most likely to be a grunt with no
+    # phonetic content at all.
     usable = [r for r in rows
               if not has_markup(r['f'] or r['m'])
               and len(clean(r['f'] or r['m'])) >= args.min_chars]

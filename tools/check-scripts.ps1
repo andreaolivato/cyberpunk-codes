@@ -22,8 +22,17 @@
 # If you change this, re-run the self-test: .\tools\check-scripts.ps1 -SelfTest
 #
 # Usage: .\tools\check-scripts.ps1 [-SelfTest]
+#        .\tools\check-scripts.ps1 -Only gig-02
+#
+# -Only scopes the staleness guard below to ONE mod folder, for a game install
+# that deliberately has only one gig deployed. Stripping everything else out is
+# how you find out whether a symptom belongs to this gig or to the load order,
+# and without this the guard refuses to run at all because the other gig's
+# scripts are "not deployed". The COMPILE is unchanged and still covers whatever
+# is actually in the game folder; only the repo-against-deployed comparison
+# narrows, and the script says out loud which mods it stopped checking.
 
-param([switch]$SelfTest)
+param([switch]$SelfTest, [string]$Only)
 
 $ErrorActionPreference = "Stop"
 $game = "C:\Program Files (x86)\Steam\steamapps\common\Cyberpunk 2077"
@@ -41,8 +50,29 @@ $scripts = Join-Path $root "r6\scripts"
 if (-not $SelfTest) {
     $repo = Split-Path -Parent $PSScriptRoot
     $stale = @()
+
+    # -Only: which mod folders are in scope, and which are being skipped.
+    # Resolved against the folder names rather than matched loosely, so a
+    # prefix that names nothing is an error instead of a check that silently
+    # covers zero files.
+    $modDirs = Get-ChildItem (Join-Path $repo "mods") -Directory
+    $inScope = $modDirs
+    if ($Only) {
+        $inScope = $modDirs | Where-Object { $_.Name -like "$Only*" }
+        if (-not $inScope) { throw "-Only '$Only' matches no folder under mods\" }
+        $skipped = $modDirs | Where-Object { $_.Name -notin $inScope.Name }
+        foreach ($m in $skipped) {
+            Write-Host "  NOT CHECKED against the repo: $($m.Name)" -ForegroundColor Yellow
+        }
+    }
+
     foreach ($src in Get-ChildItem (Join-Path $repo "mods") -Recurse -Filter *.reds -File) {
         if ($src.FullName -like "*\scripts-disabled\*") { continue }
+        $mine = $false
+        foreach ($m in $inScope) {
+            if ($src.FullName.StartsWith($m.FullName)) { $mine = $true }
+        }
+        if (-not $mine) { continue }
         $dst = Get-ChildItem "$game\r6\scripts" -Recurse -Filter $src.Name -File -ErrorAction SilentlyContinue |
                Select-Object -First 1
         if (-not $dst) {

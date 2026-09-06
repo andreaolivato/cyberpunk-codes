@@ -390,6 +390,96 @@ Two traps in authoring the sector, both of which cost a build:
 With this, `pin.offset` can be zero and the anchor sits exactly where the pin
 belongs. `find_pin_anchors.py` and the `ANCHOR_POS` table become optional.
 
+## A quest area drawn on the minimap
+
+Measured in game 2026-09-06 (`backlog.md` 39, gotcha 99). The game's shaded
+quest zones are map pins whose node is a `worldTriggerAreaNode`, and a mod can
+ship one. The outline shows while the pin's objective is tracked and the
+player stands inside the area, which is what a "leave the area" objective
+wants, and it takes the quest colour on its own.
+
+The node, as an extra node of an always-loaded sector of yours (the community
+sector is the natural one; `questkit.community` takes it in `extra`):
+
+```
+worldTriggerAreaNode
+  debugName          {my_area}
+  isVisibleInGame    1
+  notifiers          [ questTriggerNotifier_Quest, includeChannels TC_Default ]
+  outline            AreaShapeOutline
+    buffer           uint32 count, then X Y Z W (W 1) per corner in the NODE'S
+                     local space, then the height, all little-endian float32
+    points           the same corners as Vector3
+    height           metres above the node
+instance
+  QuestPrefabRefHash the long-form name
+  MaxStreamingDistance 2760.11, UkFloat1 90.04, Uk10 1056, Uk11 65024, Uk12 1
+```
+
+The flags are what every one of the 1071 vanilla trigger area instances in the
+cached sectors carries (Uk11 65024, Uk12 1); with a shard case's flags, in an
+ordinary Exterior sector, the loader never found the node. A device node with
+a trigger component resolves to a position and draws nothing: ArchiveXL's
+`ResolveMappinVolume` builds the outline only from a `worldAreaShapeNode`.
+
+The pin is an ordinary `gameJournalQuestMapPin` with `reference` on that node
+and a zero offset; the variant does not matter. Worked example:
+`tools/gig02/hit_area.py` (the corners), `gen_community.hit_area_node` (the
+node), the way-out pins in `tools/gig02/gen_journal.py`.
+
+### The area is a PRISM, and its height is a real number
+
+The outline drawn on the minimap is the footprint of a box, and the game asks
+whether the player is inside the whole box. Stand above it and you are outside
+it: the outline disappears and the pin goes back to being a marker, exactly as
+if you had walked out of the side.
+
+Gig 02 met this on a walkway over the target's yard. The player was inside the
+footprint, 61 m up, and half a metre above a prism that had been given a
+sensible-looking 45 m. The gig read him as gone.
+
+So set the height for the tallest place the player can legitimately be while
+still being "in" the area, not for the height of the ground. Gig 02's node sits
+2 m below the lowest ground the area covers and stands 90 m tall, which reaches
+the walkways and the bridge decks above it. A prism that is too tall costs
+nothing; one that is too short fails silently, in the one direction nobody
+thinks to test.
+
+### The walked corners are not the area
+
+Walking the boundary and capturing corners gives you where you WALKED, which is
+one side of the space. Anything you could not stand on is missing: in gig 02 the
+staircase itself came out 1 to 4 m outside the walked line, so a player on the
+steps was outside an area the steps are obviously part of.
+
+Take the convex hull of every point the area must contain, then push it outward
+by a margin. Gig 02 uses the walked corners plus the stair positions, a landmark
+and the sniper's perch, hulled and offset by 12 m.
+
+### ONE SOURCE for the shape the game draws and the shape the script tests
+
+A "leave the area" objective has two halves and they must be the same polygon:
+the outline the node ships, and whatever the script uses to decide the player
+has left. Write the corners once and generate both.
+
+Gig 02 keeps them in `tools/gig02/hit_area.py`. That module writes the node's
+outline through `gen_community.hit_area_node`, and it also GENERATES a redscript
+file of the same corners, which the encounter reads for its point-in-polygon
+test. The generator runs first in `run_all`, so a change to the walked corners
+reaches the drawn area and the test in the same pass.
+
+They were a hand-copied copy until 2026-09-06, which is right only for as long
+as nobody edits one side. Do not copy them by hand.
+
+Two smaller things the script half wants:
+
+- **Test in two dimensions unless you mean the prism.** Ray-casting
+  point-in-polygon on X and Y is enough for "has he left", and it does not
+  inherit the height problem above.
+- **Give the exit its own margin.** Gig 02 asks for 2 m clear of the polygon
+  before it calls the player out, so standing exactly on the boundary does not
+  flicker the objective.
+
 ## Adding a pin to a new gig
 
 1. Author the pin and POI entries in the gig's journal JSON.

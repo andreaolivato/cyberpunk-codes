@@ -57,6 +57,10 @@ called anything.
 | `voice.py` | WAV to WEM through Wwise, and the voiceover map |
 | `lipsync.py` | casting a vanilla lipsync animation per line |
 | `phone.py` | the holocall treatment, baked into a copy of the take |
+| `community.py` | communities, their sectors, and the crowd-null area |
+| `area.py` | the outline buffer an area node or trigger component carries |
+| `splice.py` | cutting a vanilla take at a pause, and joining takes |
+| `gigs.py` | `--gig NN`, and that gig's config module by name |
 | `cr2w.py` | the header every generated resource carries |
 
 ## 0. Build gig 01 first
@@ -232,8 +236,8 @@ Game.GetQuestsSystem():SetFactStr("your_fact_name", 1)
 ```
 
 Read one back with `GetFactStr("your_fact_name")`. Facts persist in the save, so
-a fact you set for a test is still set after a reload. That matters more than it
-sounds: see gotcha 21.
+a fact you set for a test is still set after a reload. Gotcha 21 is what that
+costs when it is forgotten.
 
 Add the map pin only after that works, and follow `docs/map-pins-playbook.md`
 exactly. The most commonly missed step is activating the pin entry.

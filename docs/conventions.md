@@ -51,8 +51,23 @@ value any two generators share belongs there rather than in both.
 Per-mod journal entries under our own path, never editing base game journal files in place.
 
 ## Voice
-If the base game already voices a character, use the game's own voice lines
-for them: a whole line, or a line cut short at a pause. New characters get
-recorded by real people. Subtitles
-always. Audio resolves through a mod-supplied `locVoiceoverMap`, so Audioware is
-not a dependency. See `architecture.md`, "Voice".
+
+**Two rules, and they hold for every gig.**
+
+1. **A character the base game voices speaks only in the game's own
+   recordings**, whole or cut short at a pause. Nothing is generated for them
+   and nothing imitates them.
+2. **A character a gig invents is recorded by a real person**, and the only
+   processing applied is pitch and tone.
+
+Both gigs say so on their pages, in the same words, so that one practice is
+not described two ways:
+
+> Every word <the base-game speakers> say in this gig is a voice line from
+> Cyberpunk 2077 itself.
+
+> <the invented characters> are new characters, so real people recorded them,
+> with only the pitch and tone adjusted afterwards.
+
+Subtitles always. Audio resolves through a mod-supplied `locVoiceoverMap`, so
+Audioware is not a dependency. See `architecture.md`, "Voice".

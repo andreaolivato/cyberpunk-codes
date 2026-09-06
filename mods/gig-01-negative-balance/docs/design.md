@@ -445,8 +445,9 @@ What that cost and how it was paid:
   estate stays locked until the player opens the phone.
 - **The journal briefing is new** and overdue: vanilla street stories all
   carry one and this gig shipped without through six releases.
-- **Mama Welles is her own voice**, which retires the last imitation in the
-  gig. Her Misty report reads as Elena without naming her, and the ending is
+- **Mama Welles is her own voice**, so every character the base game voices
+  now speaks in the game's own recordings. Her Misty report reads as Elena
+  without naming her, and the ending is
   V starting a sentence and being cut off by "It's OK, V. You don't need to."
 
 Deleted with the branch: the second holocall and its video twin, and the four

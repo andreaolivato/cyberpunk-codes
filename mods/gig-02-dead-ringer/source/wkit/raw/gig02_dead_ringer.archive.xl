@@ -1,0 +1,204 @@
+# Dead Ringer: what the game is told to load, and why each key is here.
+#
+# THE ONLY HAND-AUTHORED FILE IN THIS MOD. Everything it names is written by a
+# generator under tools/gig02/. The reference is gig 01's own manifest, which
+# carries the full account of each key; the comments here record only what is
+# specific to this gig.
+
+journal:
+  - mod\dead_ringer\journal\gig02.journal
+localization:
+  # JOURNAL / UI STRINGS: the gig title, every objective, the map-pin captions,
+  # the two contacts, the SMS thread, and the text of the two things V reads
+  # (the merc's shard and the parlor's camera log).
+  #
+  # ALL NINETEEN LOCALES POINT AT THE ENGLISH FILE. The mod is English-only, and
+  # English beats a raw LocKey. Registering en-us alone is the specific
+  # half-broken state gig 01 shipped for a fortnight: working dialogue and raw
+  # LocKeys in the quest log for everyone not playing in English, invisible in
+  # testing because testing happens in English.
+  onscreens:
+    ar-ar:
+      - mod\dead_ringer\localization\en-us.json
+    cz-cz:
+      - mod\dead_ringer\localization\en-us.json
+    de-de:
+      - mod\dead_ringer\localization\en-us.json
+    en-us:
+      - mod\dead_ringer\localization\en-us.json
+    es-es:
+      - mod\dead_ringer\localization\en-us.json
+    es-mx:
+      - mod\dead_ringer\localization\en-us.json
+    fr-fr:
+      - mod\dead_ringer\localization\en-us.json
+    hu-hu:
+      - mod\dead_ringer\localization\en-us.json
+    it-it:
+      - mod\dead_ringer\localization\en-us.json
+    jp-jp:
+      - mod\dead_ringer\localization\en-us.json
+    kr-kr:
+      - mod\dead_ringer\localization\en-us.json
+    pl-pl:
+      - mod\dead_ringer\localization\en-us.json
+    pt-br:
+      - mod\dead_ringer\localization\en-us.json
+    ru-ru:
+      - mod\dead_ringer\localization\en-us.json
+    th-th:
+      - mod\dead_ringer\localization\en-us.json
+    tr-tr:
+      - mod\dead_ringer\localization\en-us.json
+    ua-ua:
+      - mod\dead_ringer\localization\en-us.json
+    zh-cn:
+      - mod\dead_ringer\localization\en-us.json
+    zh-tw:
+      - mod\dead_ringer\localization\en-us.json
+  # SCENE DIALOGUE. A scene line resolves its scnlocLocstringId through this,
+  # not through the scene's own embedded locStore, which the game ignores.
+  # Without it, choice hubs render blank rows and sections play silently.
+  #
+  # Written by tools/gig02/gen_scenes.py, which emits TWO resources: this map,
+  # which is a list of file paths, and the entries file it points at.
+  subtitles:
+    ar-ar: mod\dead_ringer\localization\subtitles.json
+    cz-cz: mod\dead_ringer\localization\subtitles.json
+    de-de: mod\dead_ringer\localization\subtitles.json
+    en-us: mod\dead_ringer\localization\subtitles.json
+    es-es: mod\dead_ringer\localization\subtitles.json
+    es-mx: mod\dead_ringer\localization\subtitles.json
+    fr-fr: mod\dead_ringer\localization\subtitles.json
+    hu-hu: mod\dead_ringer\localization\subtitles.json
+    it-it: mod\dead_ringer\localization\subtitles.json
+    jp-jp: mod\dead_ringer\localization\subtitles.json
+    kr-kr: mod\dead_ringer\localization\subtitles.json
+    pl-pl: mod\dead_ringer\localization\subtitles.json
+    pt-br: mod\dead_ringer\localization\subtitles.json
+    ru-ru: mod\dead_ringer\localization\subtitles.json
+    th-th: mod\dead_ringer\localization\subtitles.json
+    tr-tr: mod\dead_ringer\localization\subtitles.json
+    ua-ua: mod\dead_ringer\localization\subtitles.json
+    zh-cn: mod\dead_ringer\localization\subtitles.json
+    zh-tw: mod\dead_ringer\localization\subtitles.json
+  # SCENE VOICEOVER, keyed by the SAME RUID as the subtitle above. A
+  # locVoiceoverMap is a flat global stringId -> wem list with no scene or quest
+  # scoping, so registering ours here is all the scene system needs to play our
+  # audio natively. No script driver, no Audioware.
+  #
+  # Written by tools/gig02/gen_voice.py. AT THE TIME OF WRITING EVERY CLIP IS A
+  # PLACEHOLDER TONE, one beep per line, pitched by a hash of the line key. That
+  # is the proving stage: it exercises the whole route with no recording in
+  # existence. Real takes replace them file by file.
+  vomaps:
+    ar-ar: mod\dead_ringer\localization\vomap.json
+    cz-cz: mod\dead_ringer\localization\vomap.json
+    de-de: mod\dead_ringer\localization\vomap.json
+    en-us: mod\dead_ringer\localization\vomap.json
+    es-es: mod\dead_ringer\localization\vomap.json
+    es-mx: mod\dead_ringer\localization\vomap.json
+    fr-fr: mod\dead_ringer\localization\vomap.json
+    hu-hu: mod\dead_ringer\localization\vomap.json
+    it-it: mod\dead_ringer\localization\vomap.json
+    jp-jp: mod\dead_ringer\localization\vomap.json
+    kr-kr: mod\dead_ringer\localization\vomap.json
+    pl-pl: mod\dead_ringer\localization\vomap.json
+    pt-br: mod\dead_ringer\localization\vomap.json
+    ru-ru: mod\dead_ringer\localization\vomap.json
+    th-th: mod\dead_ringer\localization\vomap.json
+    tr-tr: mod\dead_ringer\localization\vomap.json
+    ua-ua: mod\dead_ringer\localization\vomap.json
+    zh-cn: mod\dead_ringer\localization\vomap.json
+    zh-tw: mod\dead_ringer\localization\vomap.json
+  # LIPSYNC. Merges an animLipsyncMapping into the base game's own .lipmap,
+  # saying which vanilla .anims set drives each actor's mouth. The mod ships no
+  # animation data: it borrows an existing animation of roughly the right length
+  # per line.
+  #
+  # The .anims live in lang_en_voice.archive, so a player on a different VOICE
+  # pack has no such files. The references are Soft, so they resolve to nothing
+  # and the mouths stay shut. Subtitles and audio are unaffected.
+  lipmaps:
+    ar-ar: mod\dead_ringer\localization\gig02.lipmap
+    cz-cz: mod\dead_ringer\localization\gig02.lipmap
+    de-de: mod\dead_ringer\localization\gig02.lipmap
+    en-us: mod\dead_ringer\localization\gig02.lipmap
+    es-es: mod\dead_ringer\localization\gig02.lipmap
+    es-mx: mod\dead_ringer\localization\gig02.lipmap
+    fr-fr: mod\dead_ringer\localization\gig02.lipmap
+    hu-hu: mod\dead_ringer\localization\gig02.lipmap
+    it-it: mod\dead_ringer\localization\gig02.lipmap
+    jp-jp: mod\dead_ringer\localization\gig02.lipmap
+    kr-kr: mod\dead_ringer\localization\gig02.lipmap
+    pl-pl: mod\dead_ringer\localization\gig02.lipmap
+    pt-br: mod\dead_ringer\localization\gig02.lipmap
+    ru-ru: mod\dead_ringer\localization\gig02.lipmap
+    th-th: mod\dead_ringer\localization\gig02.lipmap
+    tr-tr: mod\dead_ringer\localization\gig02.lipmap
+    ua-ua: mod\dead_ringer\localization\gig02.lipmap
+    zh-cn: mod\dead_ringer\localization\gig02.lipmap
+    zh-tw: mod\dead_ringer\localization\gig02.lipmap
+streaming:
+  # THE BASE GAME'S OWN BODY IN CHAR'S CHAIR, removed.
+  #
+  # The netrunner chair at the Dewdrop Inn has an ambient crowd NPC parked in
+  # it - a different woman every load - and this gig puts Char there. Both were
+  # rendering, one inside the other. Playtest, 2026-08-27, screenshot: two faces
+  # in one seat.
+  #
+  # THE NODE WAS FOUND, NOT GUESSED. Every sector covering the chair was
+  # extracted and searched for a node instance within a metre of it. Exactly one
+  # sits at 0.00 m: a `worldAISpotNode`, instance 151, in this sector. An AI spot
+  # is what a crowd NPC is placed on, so removing the spot removes the sitter and
+  # nothing else.
+  #
+  # `expectedNodes` IS A VERSION GUARD AND IT IS THE INSTANCE COUNT. If a patch
+  # changes this sector the count moves, the deletion is refused, and the worst
+  # case is the duplicate coming back rather than some unrelated node being cut.
+  # ArchiveXL also checks `type` against the node at that index, so a wrong index
+  # fails closed too.
+  sectors:
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-10_15_0_1.streamingsector
+      expectedNodes: 2600
+      nodeDeletions:
+        - index: 151
+          type: worldAISpotNode
+  blocks:
+    # THE ACCESS POINT ON THE PARLOR WALL, generated by tools/gig02/gen_sector.py.
+    #
+    # One named worldDeviceNode carrying the game's own physical access point,
+    # lifted whole off a working street router, on the south wall of Wakako's
+    # pachinko parlor. The player jacks into it and plays the game's own code
+    # grid; the gig watches for the breach. It replaced the arcade-cabinet relay
+    # this block used to hold on 2026-09-05, which was a shard case with an item
+    # in it. backlog.md 37 has the whole elimination.
+    #
+    # THE NODE IS NAMED IN THE LONG $/03_night_city/... FORM and the name is
+    # repeated in the sector's own nodeRefs. An unnamed node in a mod sector
+    # does not load at all, and the short #name form registers nothing.
+    - mod\worlds\03_night_city\_compiled\default\cc_g02_world.streamingblock
+  # THE CAST'S COMMUNITY, generated by tools/gig02/gen_community.py.
+  #
+  # Two AlwaysLoaded sectors: one holds the community area node and its six AI
+  # spots, the other the worldCommunityRegistryNode. That split is parts 2 and 3
+  # of the recipe in docs/gotchas.md 66, and gig 01's sixteen bench runs are
+  # behind it.
+  #
+  # WHAT IT REPLACED. Every speaking NPC in this gig used to be two bodies: a
+  # voice-only scene actor a kilometre out carrying the words and the lipsync,
+  # and a script spawn standing where the player looks. It is one body now and
+  # the scenes acquire it. docs/scene-playbook.md opens with the rule.
+    - mod\worlds\03_night_city\_compiled\default\cc_g02_cast.streamingblock
+quest:
+  phases:
+    # THE PARENT IS A SCOPE NAME, NOT A FILE PATH, and that is the whole of New
+    # Game Plus compatibility. ArchiveXL expands `cyberpunk2077.quest` to every
+    # root quest a session can run: the base game's, Phantom Liberty's
+    # standalone start, and the three roots the New Game Plus mod registers into
+    # the same scope. A phase parented to a literal path is simply not in the
+    # graph an NG+ session runs, and nothing says why.
+    #
+    # Needs ArchiveXL 1.22 or newer. See docs/gotchas.md 84.
+    - path: mod\dead_ringer\quest\gig02.questphase
+      parent: cyberpunk2077.quest

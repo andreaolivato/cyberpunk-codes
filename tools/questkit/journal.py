@@ -89,6 +89,11 @@ def contact(cid, conv_id, conv_title, avatar, name_key=None,
     # name_key exists because the default derives the LocKey from the id, and
     # cc_g01_nix would derive 'cc-g01-cc-g01-nix-name'. See the note by that
     # contact for why its id is prefixed at all.
+    #
+    # `entries` are the conversation's own messages and choice groups. A contact
+    # that only ever takes calls leaves it empty, which is what gig 01 does:
+    # the contact then exists purely so the phone can resolve it as a call
+    # addressee.
     return wrap({
         '$type': 'gameJournalContact',
         'avatarID': tweak(avatar),
@@ -136,6 +141,14 @@ def message(mid, suffix, delay=3.0, sender='NPC', important=0):
     pace a thread: a graph timer stalls while a menu is open and the phone IS
     a menu, so a graph-paced thread stops advancing exactly while it is being
     read (gotchas 3). Shape is vanilla's `mq030_01_msg_thanks`.
+
+    `important` defaults to 0, and that is the colour of the message. A message
+    flagged 1 renders GOLD, the game's styling for a line the player has to act
+    on now; an ordinary message, including a fixer offering work, is CYAN. Gig
+    01 ships 0 for its messages and 1 for the reply choice, and that pairing
+    reads correctly: the message is information, the reply is the thing to
+    press. Defaulting to 1 was measured wrong in play on 2026-08-26, on a gig
+    whose whole opening is a fixer sending a text.
     """
     return wrap({
         '$type': 'gameJournalPhoneMessage',

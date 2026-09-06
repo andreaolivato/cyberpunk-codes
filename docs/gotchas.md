@@ -386,7 +386,7 @@ Never renumber. Append.
     was built and every one of them spawns the same entity, because it sets both
     fields. Read a component count back rather than trusting that a spec field
     took: `GetCurrentAppearanceName()` and `GetComponents()` both answer, and
-    an hour of this session went on a test that had silently changed nothing.
+    an hour went on a test that had silently changed nothing.
 
 31. **An impression is not a measurement, and a `DO NOT` written on top of one
     will outlive the evidence.**
@@ -2002,3 +2002,428 @@ Never renumber. Append.
     another. `Gig01_Holocall.reds` state 2 is the worked example: wait for the
     second Talking, bounded by a timeout that proceeds anyway, so a call can
     never strand a quest.
+
+87. **`GodModeSystem` holds a TYPE, so a flag that records only "shielded" skips
+    the swap.** An NPC that has to be Invulnerable, then Immortal, then
+    Invulnerable again needs a field that says WHICH, compared every tick
+    against what the facts say it should be:
+
+    ```reds
+    // 0 none, 1 Invulnerable, 2 Immortal
+    if NotEquals(want, this.m_mode) {
+        if Equals(this.m_mode, 1) { gods.RemoveGodMode(id, gameGodModeType.Invulnerable, src); }
+        if Equals(this.m_mode, 2) { gods.RemoveGodMode(id, gameGodModeType.Immortal, src); }
+        if Equals(want, 1) { gods.AddGodMode(id, gameGodModeType.Invulnerable, src); }
+        if Equals(want, 2) { gods.AddGodMode(id, gameGodModeType.Immortal, src); }
+        this.m_mode = want;
+    }
+    ```
+
+    With a Bool the second `AddGodMode` is skipped, because the NPC is "already
+    shielded". He then keeps the shield he was given first. For a man who has to
+    be beaten down that means `Invulnerable` through the fight: no damage lands,
+    his health never falls, and whatever reads that health to declare him beaten
+    never fires. The quest stops there with an objective on screen.
+
+    Both types are held under the same SOURCE, so the one coming off has to be
+    named. Removing by source alone is not something this project has measured.
+
+    The difference between the two settings is the reason both are needed:
+    `Invulnerable` takes no damage at all, `Immortal` takes damage that cannot
+    finish him. Which one is wanted depends on whether anything downstream reads
+    his health, and in one gig it can be both at different moments.
+
+88. **The compiler is the cheapest way to find out what a method is called, and
+    `IsInCombat` is not on `ScriptedPuppet`.** A five-function probe file
+    compiled against `scc` settles a whole family of guesses in one round trip,
+    and the error text distinguishes the two failures that matter:
+
+    | error | means |
+    |---|---|
+    | `UNRESOLVED_METHOD` | that name does not exist here |
+    | `NO_MATCHING_OVERLOAD` | it exists, and takes different arguments |
+
+    For "has this NPC seen the player", the answer is
+    `npc.GetHighLevelStateFromBlackboard()` compared against
+    `gamedataNPCHighLevelState.Combat`. `ScriptedPuppet.IsInCombat` does not
+    exist in either form; `NPCPuppet` has an `IsInCombat` that reports
+    `NO_MATCHING_OVERLOAD` for a bare call, so it is a static taking the puppet.
+
+    `docs/scene-playbook.md` already recommends this under "Validating offline",
+    and it is worth restating here because the alternative is not a compile
+    error but a silent no-op in play: a wrong method that happens to resolve on
+    a base class does nothing and says nothing.
+
+89. **The player actor must be created LAST in a scene, or the game crashes.**
+    Measured 2026-08-26, on the first launch of gig 02.
+
+    `scnSceneResource` keeps two arrays, `actors` and `playerActors`, and they
+    SHARE ONE `actorId` SPACE. Vanilla always numbers the scene actors first:
+    Californication gives its player actor 3 after three scene actors 0..2.
+
+    Create the player first and the two arrays come out cross-numbered:
+
+    ```
+    actors[0]        actorId 1   Johnny
+    playerActors[0]  actorId 0   V
+    ```
+
+    A `scnscreenplayDialogLine.speaker` is a bare `scnActorId` with no array
+    discriminator, so anything resolving one by indexing `actors` reads
+    `actors[1]` of a one-element array. The performer symbols inherit the same
+    inversion: `#player` lands on performer 1 instead of 2.
+
+    **The evidence is a controlled pair.** Two scenes in the same gig, built by
+    the same generator, differing in nothing else: `gig02_wakako_call` (actor
+    first) played, and `gig02_johnny_open` (player first) took the game to
+    desktop on the frame its first section handed over. Gig 01 has the correct
+    order in all fourteen of its scenes, which is why it never met this.
+
+    NOTHING UPSTREAM COMPLAINS. The scene emits, WolvenKit converts it, the
+    archive packs, and ArchiveXL's log is clean: the journal merges, the quest
+    phase merges, the lipmap merges. The failure is at the moment the actor is
+    first addressed.
+
+    `questkit/scene.py` `validate()` now refuses to build such a scene, with the
+    fix in the message. It is a build error rather than a comment because there
+    is nothing to see in the generator: `add_player()` two lines too early looks
+    exactly like `add_player()` two lines too late.
+
+90. **A safe area makes an NPC unfightable, and it looks exactly like a broken
+    trigger.** Outside a club door, in a market, in a ripperdoc's shop, the game
+    holsters the player's weapon and refuses to let it come out. Anything a gig
+    means to be fought that stands inside one cannot be fought at all: the
+    marker is there, the man is there, and nothing the player does registers.
+
+    Gig 02 spawned its merc on `#q005_mrk_afterlife_entrance_mappin`, which is
+    the Afterlife door, and the first playtest of that leg reported the whole
+    area as unplayable.
+
+    **The game will answer directly, so nothing needs to reason about where the
+    line is:**
+
+    ```
+    GameInstance.GetSafeAreaManager(game).IsPointInSafeArea(point) -> Bool
+    ```
+
+    `SafeAreaManager` is a native system with that one script-visible method
+    (`orphans.swift`), and vanilla's own reaction and AI-condition code uses it
+    for the same question. `CCSharedWorld.InSafeArea` wraps it, gig 02's spawner
+    refuses any candidate point inside one, and the gig's dev menu reports both
+    the player's current position and each authored spot, so a bad spot is
+    visible before anyone punches at a man who cannot be hit.
+
+    The same call is reachable from CET Lua as
+    `Game.GetSafeAreaManager():IsPointInSafeArea(Vector4.new(x, y, z, 1.0))`.
+
+91. **`GetLookAtObject` with no line-of-sight flag returns the LAST target it
+    resolved, reporting the position that one had.** It does not return null
+    when it fails, so a tool built on it writes a line that is indistinguishable
+    from a successful reading.
+
+    ```
+    GetLookAtObject(instigator: wref<GameObject>, opt withLOS: Bool,
+                    opt ignoreTranparent: Bool) -> ref<GameObject>
+    ```
+
+    Gig 02's dev menu asked for `(player, false, false)`. Six captures in one
+    session came back with byte-identical coordinates, an empty display name and
+    a record lookup that threw, taken in two different rooms several minutes
+    apart. Playtest, 2026-08-26: "I did move between the takes." The stale
+    handle was an unnamed pachinko cabinet from nine minutes earlier.
+
+    **`(player, true, true)` fixes it**, and the same two captures then came back
+    as `Character.wakako_okada` at 2.1 m and `Character.q112_wakako_guard` at
+    1.8 m, in the right places.
+
+    **The tell is that the object cannot say what it is.** A live entity answers
+    `GetRecord()` and usually `GetDisplayName()`; a dead handle answers neither
+    and still answers `GetWorldPosition()`. Any tool reading a target should
+    refuse to record one with no name and no record rather than write it down.
+
+    Two habits that make the failure visible in the output rather than three
+    sessions later: write the distance from the player, because a target forty
+    metres away is not the one being pointed at, and write the entity id,
+    because two readings with one id are one body however different the names
+    look.
+
+92. **A synthetic speech route returns a different performance every call, and
+    a story mod cannot live on one.** This entry is history: nothing in this
+    project generates a voice any more, and the tools that did are gone. It is
+    kept because the finding is about the shape of a route rather than about
+    any one of them, and that shape decides whether a route can carry a story
+    mod at all.
+
+    The route used until 2026-09-05 returned a different read for the same
+    voice, the same settings and the same words. A take could be kept but never
+    remade, which forced the rule that a take is promoted by COPYING the file,
+    never by regenerating it.
+
+    **The difference is not "slightly different", it is a different person.**
+    Playtest, 2026-08-26: gig 02's V "sounds like a different person completely"
+    from gig 01's, on the same voice, the same model and byte-identical
+    settings.
+
+    A `seed` parameter pins the read for a fixed text, voice, settings and seed,
+    which is the difference between being able to record what produced a take
+    and not. It does not help with the case a story mod actually lives in.
+    Rewording a line changes the text, so the read changes with it, and a story
+    mod rewords lines constantly. Any route where an edit to the words gambles
+    the performance is the wrong one for this kind of work, however good it
+    sounds on the first take.
+
+    One practical rule outlived the route. An audition filename must never
+    become a production filename: `gen_voice` matches a line to its `.wem` by
+    name, so a take named after the audition that produced it leaves the line
+    with no audio and the build reports the whole gig as stale.
+
+93. **A seed the generator prints and never sends.** Gig 02's speech generator
+    grew a `SEEDS` table, a `--seed` flag and a `--seeds N` audition mode on
+    2026-08-26, and every run since printed the seed it was using. The shared
+    sender it calls built its request body from three named keys:
+
+    ```python
+    body = json.dumps({
+        'text': text,
+        'model_id': cfg['model_id'],
+        'voice_settings': cfg['settings'],
+    })
+    ```
+
+    `cfg['seed']` is not one of them. Every "pinned" take for two days was an
+    ordinary unseeded roll, including the batch of V's lines that was
+    regenerated specifically to pin her, and the console said `seed 5` for all
+    of them.
+
+    **Nothing could have caught this by listening.** A take generated on a seed
+    that was never sent sounds exactly like a take generated on one that was;
+    the two only diverge when somebody rewords a line and expects the same read
+    back. Found by reading the sender while checking an unrelated claim.
+
+    **What a seed does and does not buy, measured 2026-08-27** on one line, four
+    takes, same voice and settings:
+
+    | | length |
+    |---|---|
+    | unseeded, take 1 | 176684 bytes |
+    | unseeded, take 2 | 172844 bytes |
+    | seed 42, take 1 | 180524 bytes |
+    | seed 42, take 2 | 180524 bytes |
+
+    Two unseeded takes are different performances. Two seeded ones are the same
+    performance to the byte-count, and are still not byte-identical, so the read
+    is reproducible and the file is not. Compare lengths rather than hashes when
+    checking whether a seed took.
+
+    **The general shape, which is the part worth carrying:** a config dict
+    passed to a function that copies out the keys it knows will drop a new key
+    silently, and the caller has no way to find out. Either the sender rejects
+    unknown keys or it forwards them. Ours now forwards `seed` and nothing else,
+    which is the narrow fix; the wide one is that every option added at one end
+    of this pipeline needs looking at from the other.
+
+94. **A vanilla community is switched the way the game switches it: short
+    reference, entry name, entry phase name, and `Reactivate` to bring it
+    back.** Three playtests (2026-09-04) shot the merc outside Afterlife and
+    the game's own queue shot back, after two attempts to switch the two
+    communities that own spots at that door (`q005_com_afterlife_background`,
+    `q103_com_afterlife_crowd`). The attempts wrote the long path from the
+    sector's nodeRef table, no phase name, and `Activate`. Rogue's date
+    (`sq031_date.questphase`, nodes 443 and 444), which plays at that exact
+    door, writes `#q005_com_afterlife_background`, `communityEntryName`
+    `male_on_stairs_2`, `communityEntryPhaseName` `q005`, action `Reactivate`.
+    Gotcha 34's long form is for a mod's OWN names; the game's are named
+    short. Whether the shape was the whole cause is not established until the
+    next playtest, so the gig also carries a crowd null area
+    (`worldCrowdNullAreaNode`, enabled by `questCrowdManagerNodeType_EnableNullArea`,
+    the shape of The Union Strikes Back's node 11) and a script guard that
+    makes every NPC near the door friendly to V. The null area's polygon is
+    `outline.buffer`: uint32 count, one Vector4 (x, y, z, 1) per corner in the
+    node's local space, then the height, little-endian float32; the `points`
+    field is the class default square.
+
+95. **A body's loot list, and its "Pick Up Body" prompt, are one switch, and a
+    quest node holds it.** `questItemManagerNodeDefinition` carrying
+    `questSetLootInteractionAccess_NodeType` (`objectRef`, a gameEntityReference
+    to the body; `accessible`, a bool) turns the whole loot interaction on a
+    puppet on or off. Measured 2026-09-05 on gig 02's merc: off on the tick she
+    falls, an item put in her inventory at the fall is neither listed nor
+    takeable and the "Pick Up Body" prompt is gone; on after her last line, the
+    list appears with the item and Take, and the prompt stays away because the
+    interaction is only ever re-enabled once the beat wants it. No cached
+    vanilla phase uses the node; the field names came off the RED4ext class
+    layout and were right first time. The reference is the same shape every
+    other quest node addresses a community body with (`names` = the entry,
+    `reference` = the community node, type EntityRef), and a `Tag` reference
+    reaches a script-spawned body. `questkit.questgraph.add_loot_access`.
+
+96. **A marking on a mod's own AI spot is an invitation to the crowd system.**
+    `worldAISpotNode.markings` is what the crowd searches by when it seats a
+    pedestrian; a mod spot carrying `sit_chair` is a free seat. Gig 02 copied
+    the marking onto Char's netrunner chair to match the vanilla node, and a
+    stranger was in the chair before Char's community entry was switched on,
+    with Char standing beside it, on the very save where the vanilla seat spot
+    had been deleted through ArchiveXL and the log said the patch applied
+    (2026-09-05). A community entry names its spot outright, so its spots want
+    no markings at all.
+
+97. **A fact that gates a base-game character's default conversation gates
+    its START, so it closes nothing that is already open.** Measured three
+    times on this project: gig 01 on Mama Welles (`mama_is_talking`) and gig
+    02 on Wakako (`wakako_default_temp_off`, playtests 2026-08-26, 2026-08-27
+    and 2026-09-05). Her default scene opens its hub the moment V is in
+    range, and a fact set after that leaves the hub where it is; the game
+    merges every hub offered on one actor into one list, so a mod's scene on
+    the same body plays under her own options. Setting the fact earlier only
+    moves the race. The fix that holds is the one the Dewdrop Inn and the
+    parlor use: the game's community entry off for the leg, a body of your own
+    on the same spot in the same pose, your scene acquiring yours, and a
+    script that disposes the game's body if the switch leaves it standing.
+    The fact can stay as a second layer; it costs nothing.
+
+98. **An access point's "Jack in" volume is placed per appearance, and the
+    small router's is on the other side from the Arasaka panel's.** Measured
+    2026-09-05 on a mod-placed `accesspoint.ent` in the parlor. The same node,
+    same spot, same stored state (ON, initialized, attached, backdoor and
+    personal link slot all true when probed): with
+    `access_point_arasaka_access_point_b` facing the room (yaw 10 on a wall
+    whose face points at yaw 10) the prompt was there; with
+    `access_point_router_b` at the same yaw it drew the box and offered
+    nothing, and turned 180 in place with the dev menu's teleport button it
+    offered "Jack in". The looks share the components that matter (the
+    `personalLinkPlayerWorkspot`, the `personalLinkSlot`, the same
+    interaction definition); what differs is the interaction shape each
+    appearance binds to its "direct" layer (`access_point.app`), and a shape
+    on the wrong side of the mesh is a prompt inside the wall. `default`
+    draws nothing at all. Place a device, then turn it in place until the
+    prompt shows; the yaw that shows it is the one to ship.
+
+99. **A quest area on the minimap is a map pin whose node is a trigger area,
+    and only a trigger area.**
+
+    The game's dotted or shaded quest zones are ordinary `gameJournalQuestMapPin`
+    entries whose `reference` names a `worldTriggerAreaNode` (638 of the 4276
+    pins in the cooked journal, the `_tr_` names). ArchiveXL builds the outline
+    for a mod's pin the same way, in `ResolveMappinVolume`, but only when the
+    node instance casts to `worldAreaShapeNode`: a `worldDeviceNode` carrying a
+    `gameStaticTriggerAreaComponent` gives the pin a position and no area, and a
+    trigger node the loader cannot find gives `Can't resolve ... position` and a
+    marker at the world origin. Measured 2026-09-06 in three builds,
+    `backlog.md` 39; the working shape is in the map-pins playbook.
+
+100. **Two bodies asking for the same appearance name ARE the same look; the
+     light is what makes them look different.** Playtest, 2026-09-05: the same
+     character was reported as looking like two different people in two rooms,
+     one lit teal and one lit warm.
+
+     Both bodies asked for `slacker_wa_slacker_wa_03` and the look-at probe
+     confirmed it on the one that could be captured. That is not proof on its
+     own, because an appearance NAME can resolve to a random pick. Reading it
+     off disk is the proof: the character record's entity is
+     `base\characters\entities\citizen\citizen__youngster_wa.ent`, and its
+     appearance file maps that name to a fixed list of meshes with nothing
+     random in it (one skin tone, one hair, one top, one pair of trousers). A
+     name that maps to a fixed list is one look everywhere it is used; a name
+     that maps to a group is not, and the `.app` is where the difference is
+     written down.
+
+     Cropping the two screenshots then agreed with the file: the same knit
+     weave and the same neck strap on both. Nothing was changed.
+
+     **So the question "are these two the same look" is answered on disk, not
+     by looking**, and the dev menu gained a button that stands the look under
+     the crosshair in daylight for the times a person still wants to see it.
+     The route to the `.ent` and the `.app` is the one in
+     `gameplay-restrictions.md`: unbundle the appearance archive and read them.
+
+101. **A branch added to a quest phase does not exist in a save whose phase has
+     already gone past the node that enters it.** The build is right, the graph
+     is right, and the new branch simply never runs. Measured 2026-09-06 on a
+     dev bench that would not fire.
+
+     A quest graph node becomes live when its input socket receives a token. A
+     phase in a save is parked at whatever node it was waiting on, and the
+     nodes upstream of that point have already fired and will not fire again.
+     So a branch hung off an upstream node is entered only by a playthrough
+     that passes that node AFTER the branch was added.
+
+     Gig 02's dev arms are the worked example. They all hang off one node near
+     the top of the phase, before the gig starts, which is exactly the right
+     place for arms that must be usable from a pre-gig save. It also means a
+     NEW arm is dead in every save whose phase started under an older build:
+     the old arms still work, because that save entered them when it was made,
+     and the new one never gets a token.
+
+     **The tell is that the fact stays set.** An arm's first action is to clear
+     the fact it waited on. If the fact still holds the value after pressing,
+     nothing consumed it, and the run says nothing about whatever the arm was
+     testing.
+
+     **What to do:** test a new arm from a save whose phase starts fresh. A
+     pre-gig save re-runs the top of the phase on load and enters every arm,
+     including the new ones. Then progress to the beat under test and save
+     again from there.
+
+     The same rule is why a mid-save cannot be used to test any new branch,
+     objective or scene node added anywhere upstream of where it is parked.
+
+102. **A scene actor taken from a MOD'S OWN community must use the `community`
+     acquisition plan. `spawnSet` works until the first load and is silent
+     afterwards.** Measured on a bench 2026-09-06, `backlog.md` 38.
+
+     The symptom is a conversation that runs its full length with no audio, no
+     subtitle and a working skip, on every actor the scene takes from the world
+     and on none that the scene spawns itself. It is invisible in testing that
+     always plays from a fresh start, which is how it reached a release
+     candidate.
+
+     `spawnSet` resolves the body through
+     `worldCommunityRegistryNode.spawnSetNameToCommunityID`, the table of
+     registered name to community id in gotcha 69. That join does not survive a
+     save being restored with the community entries already active: the entries
+     are on, the bodies are standing there, and the lookup finds nothing. Since
+     `specRecordId` is 0 on both paths, an actor that is not found is not
+     spawned either, and the scene simply plays with nobody in it.
+
+     `community` names the community NODE instead:
+
+     ```
+     acquisitionPlan  community
+     communityParams  entryName = the community entry's name
+                      reference = the community node's NodeRef
+     spawnSetParams   empty
+     ```
+
+     It is also what vanilla does most: 62 of the 187 actors in a 108-scene
+     sample, against 45 on `spawnSet`. The reference is resolved as a real
+     world NodeRef rather than matched as a registered string, so a mod's node
+     takes the LONG spelling (gotcha 34).
+
+     **A vanilla spawn set is not affected**, which is why this can hide behind
+     a working example: the base game's registry and its communities are
+     restored together. Only a community the mod itself ships has the problem.
+
+103. **Removing a node from a quest phase makes every mid-gig save resume in
+     the WRONG PLACE, and it does not look like a broken save.** Gotcha 101 is
+     the mirror of this and the milder half: a branch ADDED is simply dead in an
+     old save. A node REMOVED is worse, because the save still resumes, just
+     somewhere else in the graph.
+
+     Playtest, 2026-09-06: three passes over gig 02's phase took out a set of
+     dev arms, then a scene and the fork that chose it, then one wait. A save
+     made before those passes then loaded into the middle of the gig and played
+     the fixer's CLOSING call, half a city away from the beat it was parked on,
+     with the old objective still on screen. Nothing announces it and nothing in
+     any log says the position no longer means what it meant.
+
+     **So after any change to a phase's shape, a mid-gig save is not evidence
+     about anything.** Two "the fix did not work" reports on that day were
+     taken on such saves and had to be thrown away.
+
+     **Test a phase change from a save taken BEFORE the gig starts**, and play
+     it through. That is the only save whose position cannot have moved, because
+     it has not got one yet.
+
+     The same applies to a player upgrading a released mod, which is why the
+     release notes say what a mid-gig save can and cannot carry across a version
+     that changed the graph.

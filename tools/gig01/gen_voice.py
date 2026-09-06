@@ -127,28 +127,28 @@ DEPOT_VO = 'mod\\negative_balance\\audio\\vo'
 #   v                       three lines CUT from V's vanilla recordings (trims;
 #                           both bodies), never joined fragments
 #
-# The full pick table with source stringIds and cut recipes is
-# mods/gig-01-negative-balance/docs/corpus-recast.md.
+# The source stringId and the cut recipe for each of these sits in the comment
+# beside the line in gen_scenes.py.
 CAST = {
     'elena':   {'gig01_elena_call': ['e01', 'e02', 'e03', 'e04',
                                      'e05', 'e06', 'e07', 'e07b', 'e08']},
     'hoshino': {'gig01_hoshino': ['h01', 'h02']},
-    # NIX SPEAKS ONLY IN HIS OWN RECORDINGS as of 2026-09-03. His generated
-    # takes (b02, b05) went with the minimal brief call, and his callback
-    # went entirely: it is a text message now. What is left is n01, a verified
-    # HEAD-TRIM of his own line "Should take me, I dunno... four, five
-    # hours? Le'ss say we meet in six at the Arasaka Memorial" - cut at the
-    # pause, read back before promotion. The video twin is byte-identical,
-    # enforced by check_holo_twins below.
+    # NIX SPEAKS ONLY IN HIS OWN RECORDINGS as of 2026-09-03. The takes
+    # written for him (b02, b05) went with the minimal brief call, and his
+    # callback went entirely: it is a text message now. What is left is n01, a
+    # verified HEAD-TRIM of his own line "Should take me, I dunno... four,
+    # five hours? Le'ss say we meet in six at the Arasaka Memorial" - cut at
+    # the pause and listened to before it was used. The video twin is
+    # byte-identical, enforced by check_holo_twins below.
     'nix':     {'gig01_nix_brief': ['n01', 'n02'],
                 'gig01_nix_brief_holo': ['n01', 'n02']},
-    # MAMA WELLES IS HER OWN VOICE as of 2026-09-03, which retires the last
-    # imitation of a real performer in this gig. m01/m02 were generated and
-    # are gone; m03 is a head-trim of her own "She's a nice girl. We exchanged
-    # numbers." and everything else she says is a whole vanilla take through
-    # vanilla_sid, which needs no entry here.
+    # MAMA WELLES IS HER OWN VOICE as of 2026-09-03, so no character the base
+    # game voices is spoken by anyone else. m01/m02 are gone; m03 is a
+    # head-trim of her own "She's a nice girl. We exchanged numbers." and
+    # everything else she says is a whole vanilla take through vanilla_sid,
+    # which needs no entry here.
     'mama':    {'gig01_epilogue': ['m03']},
-    # V keeps exactly three produced lines, all in Elena's call, each a
+    # V keeps exactly three custom lines, all in Elena's call, each a
     # verified TRIM of one of his own recordings, each in both bodies. Every
     # other V and Johnny line in the gig is a whole vanilla take.
     'v':       {'gig01_elena_call': ['v02', 'v04', 'v05']},
@@ -250,7 +250,7 @@ def main():
                                  % (scene, key))
             name = stem(scene, key)
             # A real take always wins over a placeholder, so the two can coexist
-            # while the voices are generated a few at a time.
+            # while the recordings arrive a few at a time.
             wav = os.path.join(AUDIO_SRC, name + '.wav')
             if not os.path.exists(wav):
                 wav = os.path.join(PLACEHOLDER_SRC, name + '.wav')

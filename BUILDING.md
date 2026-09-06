@@ -20,10 +20,23 @@ places, records and flow.
 | `questkit/journal.py` | journal handles, map-pin maths, objectives, contacts |
 | `questkit/voice.py` | WAV to WEM through Wwise, and the `locVoiceoverMap` writer |
 | `questkit/lipsync.py` | the vanilla lipsync catalogue and the length-matching scorer |
+| `questkit/community.py` | communities, their sectors, and the crowd-null area |
+| `questkit/area.py` | the outline buffer every area node and trigger carries |
+| `questkit/splice.py` | cutting a vanilla take at a pause, and joining takes |
+| `questkit/gigs.py` | `--gig NN`, and that gig's config module by name |
 
 Each questkit module takes a `configure(...)` call naming one mod's output paths
 and its LocKey prefix. A second gig imports them and writes only its own tables,
 dialogue and graph.
+
+The checkers sit at the top of `tools/` rather than in a gig folder, because
+each serves any gig through `--gig`:
+
+```powershell
+python tools\check_strings.py --gig 02
+python tools\check_phase.py   --gig 02
+python tools\check_devmenu.py --gig 02
+```
 
 The quest-graph builder keeps its graph in one module-level instance, so it
 builds one graph per process. That is why the generators are scripts rather

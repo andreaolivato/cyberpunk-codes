@@ -1,0 +1,61 @@
+# THE FEE, THE GAME'S OWN WAY (design call 2026-09-06). Four completion
+# rewards of the same kind Wakako's gigs carry, one per outcome, handed to
+# RPGManager.GiveReward at payout: the money notice, the level scaling of the
+# XP and the telemetry are then the game's.
+#
+# Each of her nine Westbrook gigs is one such record: eddies as a fixed sum
+# (3,800 to 16,600, read off the live TweakDB 2026-09-06), 1,000 level XP,
+# and 979 to 1,710 Street Cred XP. The XP is scaled to the player's level by
+# CalculateStreetStoryReward, which the game applies to any reward whose
+# `name` begins with `sts_`; the eddies are not scaled. One of hers
+# (sts_wbr_jpn_03) pays a different sum for the peaceful ending through a
+# second record, which is the shape these four follow.
+#
+# The base is sts_wbr_hil_01_completion (4,200 eddies, 1,000 XP, 1,136 Street
+# Cred); only the money changes. The currency entry and its quantity modifier
+# are the base's own inline records, cloned and given a new value, so no
+# record type has to be named here.
+
+QuestRewards.sts_cc_g02_qty_quiet_kill:
+  $base: QuestRewards.sts_wbr_hil_01_completion_inline5
+  value: 9300
+QuestRewards.sts_cc_g02_money_quiet_kill:
+  $base: QuestRewards.sts_wbr_hil_01_completion_inline4
+  quantityModifiers: [ QuestRewards.sts_cc_g02_qty_quiet_kill ]
+QuestRewards.sts_cc_g02_completion_quiet_kill:
+  $base: QuestRewards.sts_wbr_hil_01_completion
+  name: sts_cc_g02_completion_quiet_kill
+  currencyPackage: [ QuestRewards.sts_cc_g02_money_quiet_kill ]
+
+QuestRewards.sts_cc_g02_qty_quiet_spare:
+  $base: QuestRewards.sts_wbr_hil_01_completion_inline5
+  value: 7000
+QuestRewards.sts_cc_g02_money_quiet_spare:
+  $base: QuestRewards.sts_wbr_hil_01_completion_inline4
+  quantityModifiers: [ QuestRewards.sts_cc_g02_qty_quiet_spare ]
+QuestRewards.sts_cc_g02_completion_quiet_spare:
+  $base: QuestRewards.sts_wbr_hil_01_completion
+  name: sts_cc_g02_completion_quiet_spare
+  currencyPackage: [ QuestRewards.sts_cc_g02_money_quiet_spare ]
+
+QuestRewards.sts_cc_g02_qty_loud_kill:
+  $base: QuestRewards.sts_wbr_hil_01_completion_inline5
+  value: 4700
+QuestRewards.sts_cc_g02_money_loud_kill:
+  $base: QuestRewards.sts_wbr_hil_01_completion_inline4
+  quantityModifiers: [ QuestRewards.sts_cc_g02_qty_loud_kill ]
+QuestRewards.sts_cc_g02_completion_loud_kill:
+  $base: QuestRewards.sts_wbr_hil_01_completion
+  name: sts_cc_g02_completion_loud_kill
+  currencyPackage: [ QuestRewards.sts_cc_g02_money_loud_kill ]
+
+QuestRewards.sts_cc_g02_qty_loud_spare:
+  $base: QuestRewards.sts_wbr_hil_01_completion_inline5
+  value: 3500
+QuestRewards.sts_cc_g02_money_loud_spare:
+  $base: QuestRewards.sts_wbr_hil_01_completion_inline4
+  quantityModifiers: [ QuestRewards.sts_cc_g02_qty_loud_spare ]
+QuestRewards.sts_cc_g02_completion_loud_spare:
+  $base: QuestRewards.sts_wbr_hil_01_completion
+  name: sts_cc_g02_completion_loud_spare
+  currencyPackage: [ QuestRewards.sts_cc_g02_money_loud_spare ]

@@ -1,0 +1,579 @@
+{
+  "Header": {
+    "WolvenKitVersion": "8.20.0",
+    "WKitJsonVersion": "0.0.9",
+    "GameVersion": 2310,
+    "DataType": "CR2W",
+    "ArchiveFileName": "en-us.json"
+  },
+  "Data": {
+    "Version": 195,
+    "BuildVersion": 0,
+    "RootChunk": {
+      "$type": "JsonResource",
+      "cookingPlatform": "PLATFORM_PC",
+      "root": {
+        "HandleId": "0",
+        "Data": {
+          "$type": "localizationPersistenceOnScreenEntries",
+          "entries": [
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Wakako Okada",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-wakako-name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "I have a job for you.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-wakako-conv-title"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Trace is done.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-char-conv-title"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "V, my dear. I have a job for you, and it is one that will not keep. Call me the moment you read this.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-msg-01"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Call her.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-ch-01a"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "The details, as promised. A merc killed people under my protection on Jig-Jig Street, and now claims the order came from me. It did not. This creates uncertainty, and my clients rely on my word. The merc drinks outside Afterlife and boasts about the job to anyone who will listen. I will not have my name in a liar's mouth. Eliminate them.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-msg-04"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Gig type: Gun for Hire\nObjective: Eliminate the merc who claims Wakako Okada ordered the hit\nLocation: Afterlife, Watson\nDetails:\n\nA merc killed people under my protection on Jig-Jig Street. They claim the order came from me. It did not.\n\nThis creates uncertainty. My clients rely on my word, and doubt spreads quickly.\n\nThe merc drinks outside Afterlife and boasts about the job to anyone who will listen. I will not have my name in a liar's mouth. Eliminate them. Only me, no client. Quick, and quiet.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-gig-brief"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Merc's dead. Thing is, he had proof on him: a shard with the order and the payment. Your tag on it, your wording, your accounts.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-ch-02a"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Then the merc is no longer my concern. The shard is. Someone has used my name and my accounts, and I intend to know who. Take it to my netrunner in Kabuki. I am sending the location. Not a word of this to anyone.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-msg-02"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "The details. His name is Toji. He works my floor at night, and he keeps to a staircase in Japantown with Tyger Claw company. The location is attached. No one is to hear of this, V. Not the Claws, not my people. Quietly.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-msg-09"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Merc's alive, and he won't be talking. Thing is, he had proof on him: a shard with the order and the payment. Your tag on it, your wording, your accounts.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-ch-02b"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Alive is not what I asked for. We will speak of it. The shard is my concern now: someone has used my name and my accounts, and I intend to know who. Take it to my netrunner in Kabuki. I am sending the location. Not a word of this to anyone.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-msg-02b"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Packets are clean. Not a street spoof. The authorization checks out. Origin is local and it's hardwired: a relay. Trace ends at the pachinko parlor on Jig-Jig Street. Wakako's own floor. I'll call you when you're in.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-msg-03"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Here's the dump of data from the relay. Let me know what you find.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-ch-05a"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Got the dump. Give me half an hour.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-msg-05"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Decrypted the dump. Hardwired, own line, live every night for a month. Every packet signed with Wakako's tag, spoofed clean: it listens on her line, copies the tag, and sends new orders in her name.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-msg-06"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Pulled the parlor's cams for the nights it was live. Same guy at the port every time: a Tyger Claw, green hair slicked back, visor over the eyes, black suit coat, red gloves.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-msg-07"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "V. One of her own people is doing this. She won't like hearing it.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-msg-08"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Got it. Thanks, Char.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-ch-04a"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "DATAMINE: RELAY LOG",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-daemon-name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Extract the relay's traffic log and send the dump to Char.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-daemon-desc"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Dead Ringer",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-gig-title"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Listen to Johnny",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-obj-johnny"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Get to Afterlife",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-obj-afterlife"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Listen in on a group outside Afterlife",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-obj-group1"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Listen in on another group outside Afterlife",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-obj-group2"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Listen in on the last group outside Afterlife",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-obj-group3"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Take the merc out",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-obj-take-out"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Kill the merc",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-obj-kill-merc"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Listen to the merc",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-obj-listen-merc"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Take the merc's shard and read it",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-obj-get-shard"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Decide what to do with the merc",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-obj-decide"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Read the messages on his shard",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-obj-proof"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Tell Wakako what the shard says",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-obj-report"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Take the shard to Wakako's netrunner",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-obj-inn"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Give the shard to Char",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-obj-shard"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Wait for Char's message",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-obj-wait"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Get to Wakako's pachinko parlor",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-obj-parlor"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Breach the access point in the parlor",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-obj-relay"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Reply to Char",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-obj-reply-char"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Send the relay dump to Char",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-obj-send-dump"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Talk to Wakako",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-obj-wakako-met"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Kill Toji without being seen",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-obj-hit"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Kill Toji without being seen",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-obj-toji"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Kill Toji",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-obj-toji-loud"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Leave without being seen",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-obj-exfil"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Leave the area",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-obj-exfil-loud"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Call Wakako",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-obj-call-wakako"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Afterlife",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-pin-pin-afterlife"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Crowd outside Afterlife",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-pin-pin-group1"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Crowd outside Afterlife",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-pin-pin-group2"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Crowd outside Afterlife",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-pin-pin-group3"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Wakako's netrunner",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-pin-pin-inn"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Char",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-pin-pin-shard"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Pachinko parlor",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-pin-pin-parlor"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Wakako's office",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-pin-pin-wakako-met"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "The stairs",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-pin-pin-hit"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Toji",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-pin-pin-toji"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Toji",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-pin-pin-toji-loud"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "The way out",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-pin-pin-exfil-loud"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "The way out",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-pin-pin-exfil"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Wakako",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-wakako-short"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Yoko",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-yoko-short"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Char",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-char-name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Ideka",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-ideka-name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Merc",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-merc-name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Voice",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-queue-a-name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Voice",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-queue-b-name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Voice",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-queue-c-name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Voice",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-queue-d-name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Voice",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-queue-e-name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Doorman",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-huscle-name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Toji",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-toji-name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Communication shard",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-shard-item"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Pulled off a merc outside Afterlife. Two threads on it, both signed with Wakako Okada's tag.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-shard-item-desc"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "COMMS RECORD // AUTH: OKADA-W",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-shard-title"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "CHANNEL: contract-relay/wbr-jpn-04\nAUTH TAG: OKADA-W (verified)\nPARTY: [redacted] (contractor)\n\n[ 22:41:07 ] OKADA-W >> contractor\nThe matter in Jig-Jig Street is approved.\nProceed as discussed. Keep collateral minimal.\nPayment will be transferred on completion\n\n[ 03:12:55 ] OKADA-W >> contractor\nProof received.\nFunds are in your account.\nArrangement concluded.\n\nTRANSFER: 8,000 ED, ref 4C-77-KO, cleared 03:13:02\nORIGIN ACCOUNT: Okada holdings, Japantown\nSIGNATURE CHECK: PASS",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-shard-body"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Seen. This will not stay quiet now.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-hud-spotted"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Dead Ringer is waiting: finish the prologue first.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g02-blocked-side-content"
+            }
+          ]
+        }
+      }
+    },
+    "EmbeddedFiles": []
+  }
+}

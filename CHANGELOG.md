@@ -1,9 +1,30 @@
 # Changelog
 
-Negative Balance releases, newest first. The same changelog is on the mod's
-[Nexus page](https://www.nexusmods.com/cyberpunk2077/mods/32694).
+One section per gig, newest release first within each. The same entries are on
+each mod's Nexus Changelog tab.
 
 ---
+
+# Dead Ringer
+
+## 1.0.0 (2026-09-06)
+
+- **Added: Dead Ringer, a full side gig.** Somebody is issuing kill orders in
+  Wakako Okada's name. Five places, sixteen conversations, two endings.
+- **Added: every line is spoken and subtitled.** Wakako, V, Johnny and Yoko use
+  the game's own voice lines. Char and the merc are new characters, so real
+  people recorded them.
+- **Added: a breach on the pachinko parlor's wall.** The game's own code grid,
+  on an access point the mod ships.
+- **Added: the area you have to leave is drawn on the minimap**, the way the
+  game draws its own.
+- **Added: four payouts**, by what the merc got and by whether you were seen.
+
+---
+
+# Negative Balance
+
+Releases are on the [Nexus page](https://www.nexusmods.com/cyberpunk2077/mods/32694).
 
 ## 2.0.0 (2026-09-05)
 

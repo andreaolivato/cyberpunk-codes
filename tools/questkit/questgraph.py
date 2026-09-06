@@ -207,11 +207,16 @@ def add_pause_fact(fact, value=0, cmp='Greater'):
 
 
 def add_delay(seconds):
+    # EVERY FIELD IS A UInt32. A fractional `seconds` is a WolvenKit conversion
+    # error at build time (2026-09-04), so the fraction goes into
+    # `miliseconds`, spelled as the class spells it.
+    whole = int(seconds)
+    ms = int(round((seconds - whole) * 1000))
     nid = next(NID)
     b.node(nid, 'questPauseConditionNodeDefinition', {'condition': {'@handle': {
         '$type': 'questTimeCondition',
         'type': {'@handle': {'$type': 'questRealtimeDelay_ConditionType',
-                             'hours': 0, 'miliseconds': 0, 'minutes': 0, 'seconds': seconds}},
+                             'hours': 0, 'miliseconds': ms, 'minutes': 0, 'seconds': whole}},
     }}}, STD)
     return nid
 
@@ -386,6 +391,69 @@ def add_community(action, reference, entry=None, phase=None):
             }},
         }],
     }, STD)
+    return nid
+
+
+def add_crowd_null_area(reference, enable):
+    """Switch a crowd null area on or off: no crowd-system pedestrians inside it.
+
+    `questCrowdManagerNodeDefinition` holding a
+    `questCrowdManagerNodeType_EnableNullArea`, read field for field off node 11
+    of sts_std_rcr_01.questphase (enable 1) and node 5 of its openworld phase
+    (enable 0), which is how The Union Strikes Back clears the street in front
+    of its building and gives it back.
+
+    The area is a `worldCrowdNullAreaNode` in a sector; gig 02 ships its own in
+    the cast sector (gen_community.crowd_null_area_node) because the crowd
+    outside Afterlife is the crowd SYSTEM, not a community, and no community
+    switch touches it (2026-09-04). `reference` is the long-form NodeRef.
+    """
+    nid = next(NID)
+    b.node(nid, 'questCrowdManagerNodeDefinition', {
+        'type': {'@handle': {
+            '$type': 'questCrowdManagerNodeType_EnableNullArea',
+            'areaReference': {'$type': 'NodeRef', '$storage': 'string',
+                              '$value': reference},
+            'enable': 1 if enable else 0,
+        }},
+    }, STD)
+    return nid
+
+
+def add_loot_access(reference, entry, accessible, tag=None):
+    """Turn the loot interaction on a body on or off.
+
+    `questItemManagerNodeDefinition` holding a
+    `questSetLootInteractionAccess_NodeType`: `objectRef` (a gameEntityReference)
+    and `accessible`. Read off the RED4ext class layout (2026-09-05); no
+    cached vanilla phase uses it, so the field values are the class defaults
+    and the reference is the same shape every other quest node addresses a
+    community body with (names = entry, reference = community node). With
+    `tag`, the reference is by tag instead, which is how the pose lab's
+    spawned body is addressed.
+
+    Gig 02 switches the merc's loot off on the tick she falls and on when she
+    says to take the shard, so the shard can sit in her pocket from the fall
+    without being seen.
+    """
+    nid = next(NID)
+    if tag:
+        ref = {'$type': 'gameEntityReference',
+               'dynamicEntityUniqueName': cname(None), 'names': [cname(tag)],
+               'reference': {'$type': 'NodeRef', '$storage': 'uint64', '$value': '0'},
+               'sceneActorContextName': cname(None), 'slotName': cname(None),
+               'type': 'Tag'}
+    else:
+        ref = {'$type': 'gameEntityReference',
+               'dynamicEntityUniqueName': cname(None), 'names': [cname(entry)],
+               'reference': {'$type': 'NodeRef', '$storage': 'string', '$value': reference},
+               'sceneActorContextName': cname(None), 'slotName': cname(None),
+               'type': 'EntityRef'}
+    b.node(nid, 'questItemManagerNodeDefinition', {'type': {'@handle': {
+        '$type': 'questSetLootInteractionAccess_NodeType',
+        'objectRef': ref,
+        'accessible': 1 if accessible else 0,
+    }}}, STD)
     return nid
 
 

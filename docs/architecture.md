@@ -193,6 +193,13 @@ between a preference and a gate.
 **The recipe (game 2.31 + Phantom Liberty).** A quest map pin needs THREE
 things. It needed a fourth until 2026-08-14; see the correction below.
 
+A pin can also draw an AREA on the minimap rather than sit at a point, which is
+what the game's own "leave the area" objectives use. It is the same pin with a
+`worldTriggerAreaNode` as its target, in a sector of the mod's own that is
+always loaded. Solved 2026-09-06; the playbook's "A quest area drawn on the
+minimap" has the recipe and `backlog.md` 39 has the two builds that did not
+work first.
+
 1. **A `gameJournalQuestMapPin` entry** under the objective in our journal file,
    plus a `gameJournalPointOfInterestMappin` under `points_of_interest/...` for
    the gig icon.
@@ -410,6 +417,10 @@ So do not revive `tools/native/NegativeBalanceMappins`. It is a working RED4ext
 is done, by a dependency the mod already requires.
 
 ## Device / computer UI: SOLVED (native). See `computer-ui-playbook.md`.
+
+The playbook covers three machines now: a computer's own Files/Mails menu, a
+shard, and the breach-protocol access point, which is the code grid running on
+a wall box the mod ships (solved 2026-09-06, `backlog.md` 37).
 
 Mod content can be rendered by a base-game computer's own Files/Mails menu, with
 no custom widgets. Established 2026-08-11 for gig 01's office ledger
@@ -639,7 +650,22 @@ Two things about the mechanism, which is the part worth copying:
   scheme, so the scheme moved onto the terminal screen, into the journal
   briefing and into a fixer's text message, which is what the base game does
   with its own gigs anyway. `tools/vo_corpus.py` indexes and searches the
-  corpus; `tools/gig01/splice_takes.py` makes the cuts.
+  corpus; `tools/questkit/splice.py` makes the cuts, and each gig's
+  `splice_takes.py` is only that gig's list of them.
+
+  **Gig 02 was written to the rule from the first line rather than recast into
+  it**, which is the difference between the two gigs. Every line Wakako, Yoko,
+  V and Johnny say is a whole vanilla take pointed at by `stringId`, with seven
+  exceptions cut at a pause; the three invented characters were recorded by
+  people. The cost is the same and it is paid in the same place: the plot is
+  not spoken any more. What a character cannot be made to say goes into a
+  fixer's message, an objective's details text or a shard.
+
+  **A cut is chosen by duration and then LISTENED TO**, without exception. The
+  pause map offers several cut points and the tool picks the one whose remainder
+  is closest to the expected length, which is a guess about where the pause is.
+  Gig 01 once cut "Look, I'll pay." down to "Look" and the waveform looked
+  fine.
 
 - **A line that arrives on V's phone is a different asset, not the same asset
   played differently.** The base game ships four processed takes of a voiced
@@ -717,6 +743,32 @@ made it possible.
 **TweakDBIDs are case-sensitive and are not reliably discoverable from files on
 disk.** `Character.Mama_Welles` and her position were found with the CET dev
 menu's CAPTURE THE NPC I'M LOOKING AT probe; guessing either fails silently.
+
+## Paying the player: the game's own reward records (2026-09-06)
+
+A gig's fee can be handed over two ways, and the gigs do it differently because
+the second was found later.
+
+**Gig 01 pays directly**: `CCSharedRewards.Pay` gives `Items.money` and awards
+Street Cred. The eddies counter animates because the player's money changed, and
+Street Cred draws its own popup, so nothing of the mod's is drawn over either.
+It is the whole of what a mod needs to pay someone.
+
+**Gig 02 pays through a `QuestRewards` record** handed to
+`RPGManager.GiveReward`, which is the call the game's own quest reward node
+makes. That buys the level XP, the game's scaling of it, the money notice and
+the telemetry, all of which the direct route skips. Four records, one per
+outcome, cloned by `$base` off one of Wakako's own completion records so that no
+inline record type has to be named in YAML.
+
+**Keep a reward's `name` beginning with `sts_`**: it is what makes the game
+scale the XP to the player's level.
+
+`backlog.md` 40 has the numbers read off the live TweakDB, the YAML, and the
+proof that TweakXL resolves a `$base` on an inline record. Gig 01 has not moved
+and the move is not free: its fee is a skim off a dead man's network rather
+than a fixer closing a contract, and a completion record would add level XP the
+gig's economy was balanced without.
 
 ## Restricting the player: SOLVED. See `gameplay-restrictions.md`.
 

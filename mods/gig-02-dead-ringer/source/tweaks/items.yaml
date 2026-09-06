@@ -1,0 +1,50 @@
+# The two things V picks up: the merc's communication shard and the relay.
+#
+# ---------------------------------------------------------------------------
+# WHAT A READABLE SHARD IS MADE OF. None of it is guessable from field names,
+# and all of it was measured by gig 01 on 2026-08-22. Read
+# docs/shard-playbook.md before touching this file.
+#
+# THE TITLE ON SCREEN IS THE JOURNAL ENTRY'S TITLE, in both places it appears:
+# the CONTENTS line under the crosshair and the scanner panel on the right. It
+# is not the item's name. The vanilla shard's DisplayName is empty and it still
+# shows a title.
+#
+# THE JOURNAL PATH COMES FROM `itemSecondaryAction`, which names an ObjectAction
+# record whose `journalEntry` flat is the onscreen path. All 335 shards in the
+# game are built that way. `objectActions` IS NOT THAT LIST: the vanilla shard's
+# is [Drop, Disassemble] with no read action in it, and overriding it does
+# nothing useful while silently costing Disassemble.
+#
+# THE BASE IS `Items.Shard1`, the game's plain shard, which inherits no story at
+# all. Cloning a named shard instead brings its inline children along, still
+# pointing at the base's content.
+#
+# `displayName` / `localizedDescription` take a BARE ArchiveXL key with no
+# `LocKey#` prefix, which is the opposite convention from a Character record's
+# displayName in characters.yaml. That is not a mistake in either file: the
+# journal and the item database hash bare keys, and a Character record does not.
+# The strings live in tools/gig02/gen_localization.py.
+
+# ---------------------------------------------------------------------------
+# THE MERC'S SHARD, comic pp. 27 and 29.
+#
+# It is a real item rather than a popup because Wakako asks V to carry it to her
+# netrunner, so it has to exist in the inventory between two legs of the gig.
+# Gig02_Encounter puts it there when the merc talks.
+ObjectAction.cc_g02_shard_read:
+  $base: Items.generic_hanako_flowers_shard_inline0
+  journalEntry: onscreens/emails/quests/street_stories/cc_g02_dead_ringer/onscreens/cc_g02_shard_note
+
+Items.cc_g02_shard:
+  $base: Items.Shard1
+  displayName: cc-g02-shard-item
+  localizedDescription: cc-g02-shard-item-desc
+  # THE LINE THE WHOLE BEAT HANGS OFF. Without it the shard shows the base
+  # item's title in both panels and opens the base item's note.
+  itemSecondaryAction: ObjectAction.cc_g02_shard_read
+
+# ---------------------------------------------------------------------------
+# THE RELAY ITEM IS GONE (2026-09-05). The parlor beat is a breach of an access
+# point the mod places on the wall (tools/gig02/gen_sector.py); nothing is
+# picked up. `Items.cc_g02_relay` and its read action lived here until then.

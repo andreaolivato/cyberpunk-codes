@@ -29,8 +29,8 @@ Two more lessons are load-bearing in the implementation:
   overwrite each other and the source of a finding becomes unknowable.
 
 The extracted sectors are game data: gigabytes, rebuildable on demand, never
-committed, and kept OUTSIDE the repo tree (the repo syncs to OneDrive; the
-cache root below does not). Only the small index files land in
+committed, and kept OUTSIDE the repo tree, so that a folder sync or a backup
+does not try to carry them. Only the small index files land in
 `tools\_sector_cache`, which is gitignored like the other caches.
 """
 import argparse

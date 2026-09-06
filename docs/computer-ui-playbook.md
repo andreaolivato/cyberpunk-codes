@@ -2,7 +2,9 @@
 
 How to put mod content on a base-game computer's screen. Established
 2026-08-11 while moving gig 01's office ledger off on-screen messages and onto
-the real narrative computer. Everything here was read out of the decompiled
+the real narrative computer. Two more machines joined it later: the shard,
+whose recipe now lives in `shard-playbook.md`, and the breach-protocol access
+point, which is the code grid on a mod's own wall box (2026-09-06, below). Everything here was read out of the decompiled
 scripts, not guessed. An earlier attempt guessed `GetFiles`, `OnInstantiated`
 and `OnActionEngineering`, none of which exist, and broke the script bundle.
 
@@ -204,6 +206,52 @@ second trigger off `wasRead`, which IS persistent, see `CCG01PromoteRead` in
 
 `mods/gig-01-negative-balance/source/scripts/Gig01_OfficeComputer.reds`: ~150
 lines, three wraps, no UI classes touched, no trigger hook.
+
+---
+
+# The code grid: a breach on a mod's own access point
+
+The third way a mod gets the player interacting with a machine, and unlike the
+two below it is not text at all. The player jacks into a wall box and plays the
+game's own breach-protocol minigame; the quest waits for the breach.
+
+**The device is lifted whole from the game's own data, and WHICH ONE matters.**
+Lift a physical access point whose instance buffer holds the ENTITY CHUNK AND
+NOTHING ELSE, such as the street router `{ma_hey_spr_04_ap}`
+(exterior_-35_-20_0_0, node 316). Then the game builds the default controller
+state, which is what every open-world router runs on. A standalone QUEST access
+point carries its own persistent state, and that state can carry a personal-link
+interaction only its own quest completes: shipped that way the prompt reads
+"Install Software" and does nothing.
+
+**Turn it until the prompt appears.** The "Jack in" volume is placed per
+appearance, so a look that offers the prompt facing the room may offer nothing
+on a wall until the node is turned 180 in place. Gotcha 98.
+
+**Name the minigame from redscript.** The list of daemons comes from the
+controller state's `m_minigameDefinition`, which is protected and persistent, so
+a node with no stored state cannot carry it. An added method reaches it, the
+same rule this playbook uses for every other device private:
+
+```swift
+@addMethod(AccessPointControllerPS)
+public func CCGig02SetMinigame(id: TweakDBID) -> Void {
+    if this.m_minigameDefinition != id { this.m_minigameDefinition = id; }
+}
+```
+
+The daemon's caption and description come from a `MinigameAction` record's
+`objectActionUI`; clone the game's `minigame_v2.Kab08Minigame` shape in YAML.
+
+**Read the breach two ways.** `AccessPointControllerPS.IsBreached()` is the
+game's own flag, set on the minigame's Succeeded state, and it persists, so a
+reload after the breach reads true again. `FinalizeNetrunnerDive` is public and
+not final, so wrapping it catches the frame the grid closes. Tell your box from
+every other access point in the city by where it stands, which is this
+playbook's own rule for identifying a device.
+
+Built and played 2026-09-06. `backlog.md` 37 has the elimination and the
+generator is `tools/gig02/gen_sector.py`.
 
 ---
 

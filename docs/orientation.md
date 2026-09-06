@@ -47,7 +47,7 @@ them; your mod declares which it needs.
 | WolvenKit | converts resources to and from JSON, packs archives | the authoring pipeline |
 | CET | Lua console and overlay | development only, never ships |
 
-Merging matters more than it sounds. The old approach was to overwrite a
+Merging is what makes a mod survive a patch. The old approach was to overwrite a
 base-game file: one mod could do it, and a patch broke you. ArchiveXL merges, so
 several mods can extend the same resource. This mod ships no base-game file at
 all.
@@ -124,6 +124,9 @@ Two consequences:
 | holocall | an in-fiction phone call. 2D audio, so speaker position is irrelevant |
 | shard | a readable text item |
 | mappin | the engine's word for a map marker |
+| quest area | a map pin whose target is a trigger area, so the minimap draws its outline |
+| access point | the wall box you jack into for the breach-protocol code grid |
+| community | how the game places a group of NPCs: a spot each, a record each, switched by the quest |
 
 ## Next
 

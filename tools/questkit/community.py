@@ -31,6 +31,7 @@ time, and the gig cannot reach something it does not own (gotcha 73).
 """
 import math
 
+from . import area
 from . import cr2w
 
 # Personal Mechanics' own instance values, and the only ones a mod's community
@@ -423,10 +424,18 @@ class Community(object):
                                   WB['maxdist'], WB['ukfloat'], WB['uk10'],
                                   WB['uk11'], scale=span))
         refs.append(self.community_ref)
-        for node, pos, ref, inst_args in self.extra:
+        for extra in self.extra:
+            # (node, pos, ref, inst_args) or, with a facing, a fifth item.
+            node, pos, ref, inst_args = extra[:4]
+            extra_yaw = extra[4] if len(extra) > 4 else 0.0
+            # A fifth instance argument is Uk12, which every vanilla trigger
+            # area instance carries as 1 and everything else here as 0.
+            inst_args = list(inst_args)
+            uk12 = inst_args[4] if len(inst_args) > 4 else 0
             idx = len(nodes)
             nodes.append(node)
-            instances.append(instance(idx, pos, ref, *inst_args))
+            instances.append(instance(idx, pos, ref, *inst_args[:4], yaw=extra_yaw,
+                                      uk12=uk12))
             refs.append(ref)
         return sector(self.sector + '.streamingsector', nodes, instances, refs)
 
@@ -455,7 +464,7 @@ class Community(object):
         computed and then checked (`self_check`).
         """
         pts = [pos for e in self.entries for pos, _yaw in e.points]
-        pts += [pos for _n, pos, _r, _a in self.extra]
+        pts += [e[1] for e in self.extra]
         lo = tuple(min(p[i] for p in pts) - half for i in range(3))
         hi = tuple(max(p[i] for p in pts) + half for i in range(3))
         return lo, hi
@@ -592,8 +601,29 @@ class Community(object):
 
 
 # -------------------------------------------------------------- shared pieces
+def crowd_null_area_node(label, points, height=4.0):
+    """A `worldCrowdNullAreaNode`: the crowd system spawns nobody inside it.
+
+    Read off `{cs_crowd_null}` in exterior_-24_16_0_0 (2026-09-04). The outline
+    is written by questkit.area, which carries the buffer format; this node
+    keeps the unit square that vanilla ships in its `points` list.
+    `permanentlyEnabledByDefault: 0` means a quest turns it on:
+    questgraph.add_crowd_null_area.
+    """
+    return {
+        '$type': 'worldCrowdNullAreaNode',
+        'color': {'$type': 'Color', 'Alpha': 0, 'Blue': 0, 'Green': 0, 'Red': 0},
+        'debugName': cname('{%s}' % label),
+        'IsForBlockade': 0,
+        'isHostOnly': 0,
+        'isVisibleInGame': 1,
+        'outline': area.outline(points, height, points=area.UNIT_SQUARE),
+        'permanentlyEnabledByDefault': 0,
+    }
+
+
 def instance(index, pos, node_ref, max_dist, uk_float, uk10, uk11,
-             scale=(1, 1, 1), yaw=0.0):
+             scale=(1, 1, 1), yaw=0.0, uk12=0):
     return {
         'Id': '0',
         'NodeIndex': index,
@@ -609,7 +639,7 @@ def instance(index, pos, node_ref, max_dist, uk_float, uk10, uk11,
         'UkFloat1': uk_float,
         'Uk10': uk10,
         'Uk11': uk11,
-        'Uk12': 0,
+        'Uk12': uk12,
         'Uk13': '0',
         'Uk14': '0',
     }

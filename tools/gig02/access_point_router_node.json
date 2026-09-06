@@ -1,0 +1,501 @@
+{
+ "sector": "exterior_-35_-20_0_0",
+ "node": 316,
+ "data": {
+  "$type": "worldDeviceNode",
+  "alphaHackStreamingDistanceOverride": 0,
+  "appearanceName": {
+   "$type": "CName",
+   "$storage": "string",
+   "$value": "access_point_router_b"
+  },
+  "debugName": {
+   "$type": "CName",
+   "$storage": "string",
+   "$value": "{ma_hey_spr_04_ap}"
+  },
+  "deviceClassName": {
+   "$type": "CName",
+   "$storage": "string",
+   "$value": "None"
+  },
+  "deviceConnections": [
+   {
+    "$type": "worldDeviceConnections",
+    "deviceClassName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "VendingMachineControllerPS"
+    },
+    "nodeRefs": [
+     {
+      "$type": "NodeRef",
+      "$storage": "string",
+      "$value": "~/../vending_machine_1_prefabA6XN4BY"
+     }
+    ]
+   },
+   {
+    "$type": "worldDeviceConnections",
+    "deviceClassName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "ReflectorControllerPS"
+    },
+    "nodeRefs": [
+     {
+      "$type": "NodeRef",
+      "$storage": "string",
+      "$value": "~/../standing_reflector_a_prefab45CGQSQ"
+     },
+     {
+      "$type": "NodeRef",
+      "$storage": "string",
+      "$value": "~/../standing_reflector_a_001_prefab45CGQSQ"
+     },
+     {
+      "$type": "NodeRef",
+      "$storage": "string",
+      "$value": "~/../standing_reflector_a_002_prefab45CGQSQ"
+     }
+    ]
+   },
+   {
+    "$type": "worldDeviceConnections",
+    "deviceClassName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "SpeakerControllerPS"
+    },
+    "nodeRefs": [
+     {
+      "$type": "NodeRef",
+      "$storage": "string",
+      "$value": "~/../speaker_prefabMDP6IZA"
+     },
+     {
+      "$type": "NodeRef",
+      "$storage": "string",
+      "$value": "~/../speaker_001_prefabMDP6IZA"
+     }
+    ]
+   },
+   {
+    "$type": "worldDeviceConnections",
+    "deviceClassName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "BillboardDeviceControllerPS"
+    },
+    "nodeRefs": [
+     {
+      "$type": "NodeRef",
+      "$storage": "string",
+      "$value": "~/../ad_horizontal_prefabMPB5QDI"
+     },
+     {
+      "$type": "NodeRef",
+      "$storage": "string",
+      "$value": "~/../ad_horizontal_001_prefabMPB5QDI"
+     },
+     {
+      "$type": "NodeRef",
+      "$storage": "string",
+      "$value": "~/../billboard_3x4_001_prefabQI44TGI"
+     },
+     {
+      "$type": "NodeRef",
+      "$storage": "string",
+      "$value": "~/../ad_vertical_001_prefab5XFOBAY"
+     },
+     {
+      "$type": "NodeRef",
+      "$storage": "string",
+      "$value": "~/../ad_vertical_prefab5XFOBAY"
+     }
+    ]
+   },
+   {
+    "$type": "worldDeviceConnections",
+    "deviceClassName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "ForkliftControllerPS"
+    },
+    "nodeRefs": [
+     {
+      "$type": "NodeRef",
+      "$storage": "string",
+      "$value": "~/../scissors_lift_prefab5ADK7GY"
+     }
+    ]
+   },
+   {
+    "$type": "worldDeviceConnections",
+    "deviceClassName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "FuseBoxControllerPS"
+    },
+    "nodeRefs": [
+     {
+      "$type": "NodeRef",
+      "$storage": "string",
+      "$value": "~/../generator_prefabIPLTYTQ"
+     }
+    ]
+   },
+   {
+    "$type": "worldDeviceConnections",
+    "deviceClassName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "BasicDistractionDeviceControllerPS"
+    },
+    "nodeRefs": [
+     {
+      "$type": "NodeRef",
+      "$storage": "string",
+      "$value": "~/../ditr_coffee_machine_a_prefabHIOSNWI"
+     },
+     {
+      "$type": "NodeRef",
+      "$storage": "string",
+      "$value": "~/../plate_antenna_large_prefabKY3T34Q"
+     }
+    ]
+   },
+   {
+    "$type": "worldDeviceConnections",
+    "deviceClassName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "ActivatedDeviceControllerPS"
+    },
+    "nodeRefs": [
+     {
+      "$type": "NodeRef",
+      "$storage": "string",
+      "$value": "~/../activated_distraction_air_conditioner_prefabT6QSIUQ"
+     }
+    ]
+   }
+  ],
+  "entityLod": 0,
+  "entityTemplate": {
+   "DepotPath": {
+    "$type": "ResourcePath",
+    "$storage": "string",
+    "$value": "base\\gameplay\\devices\\masters\\access_points\\accesspoint.ent"
+   },
+   "Flags": "Soft"
+  },
+  "instanceData": {
+   "HandleId": "562",
+   "Data": {
+    "$type": "entEntityInstanceData",
+    "buffer": {
+     "BufferId": "17",
+     "Flags": 4063232,
+     "Type": "WolvenKit.RED4.Archive.Buffer.RedPackage, WolvenKit.RED4, Version=8.20.0.0, Culture=neutral, PublicKeyToken=null",
+     "Data": {
+      "Version": 4,
+      "Sections": 6,
+      "CruidIndex": 0,
+      "CruidDict": {
+       "0": "0"
+      },
+      "Chunks": [
+       {
+        "$type": "AccessPoint",
+        "accumulatedTimePasssed": 0,
+        "actionRestrictionCallbackID": null,
+        "actionRestrictionPlayerBB": null,
+        "activeProgramToUploadOnNPC": {
+         "$type": "TweakDBID",
+         "$storage": "uint64",
+         "$value": "0"
+        },
+        "activeStatusEffect": {
+         "$type": "TweakDBID",
+         "$storage": "uint64",
+         "$value": "0"
+        },
+        "advanceInteractionStateResolveDelayID": {
+         "$type": "gameDelayID"
+        },
+        "areaEffectsData": [],
+        "areaEffectsInFocusMode": [],
+        "audioResourceName": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "baseActionOperations": null,
+        "baseStateOperations": null,
+        "blackboard": null,
+        "breachViewTimeListener": null,
+        "cameraComponent": null,
+        "cameraZoomActive": 0,
+        "cameraZoomComponent": null,
+        "contentScale": {
+         "$type": "TweakDBID",
+         "$storage": "string",
+         "$value": "DeviceContentAssignment.ma_hey_spr_04"
+        },
+        "controller": null,
+        "controllerTypeName": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "AccessPointController"
+        },
+        "currentlyUploadingAction": null,
+        "currentPlayerTargetCallbackID": null,
+        "customCameraTarget": "ECCTV_All",
+        "debugOptions": {
+         "$type": "DebuggerProperties",
+         "debugName": {
+          "$type": "CName",
+          "$storage": "string",
+          "$value": "None"
+         },
+         "exclusiveMode": 0,
+         "factActivated": {
+          "$type": "CName",
+          "$storage": "string",
+          "$value": "None"
+         },
+         "layerIDs": []
+        },
+        "delayedUIRefreshID": {
+         "$type": "gameDelayID"
+        },
+        "delayedUpdateDeviceStateID": {
+         "$type": "gameDelayID"
+        },
+        "deviceState": "OFF",
+        "disableAreaIndicatorDelayActive": 0,
+        "disableAreaIndicatorID": {
+         "$type": "gameDelayID"
+        },
+        "disassemblableComponent": null,
+        "displayDescription": {
+         "unk1": "0",
+         "value": ""
+        },
+        "displayName": {
+         "unk1": "0",
+         "value": ""
+        },
+        "durabilityType": "INVULNERABLE",
+        "e3ObjectRevealed": 0,
+        "effectVisualization": null,
+        "forceDefeatReward": 0,
+        "forceRegisterInHudManager": 0,
+        "fxResourceMapper": null,
+        "gameplayRoleComponent": null,
+        "hasVisibilityForcedInAnimSystem": 0,
+        "hitInstigatorCooldownID": {
+         "$type": "gameDelayID"
+        },
+        "IKslotComponent": null,
+        "interaction": null,
+        "interactionAreaOperations": null,
+        "interactionIndicator": null,
+        "investigationData": [],
+        "isDead": 0,
+        "isHighlightedInFocusMode": 0,
+        "isInitialized": 0,
+        "isInsideLogicArea": 0,
+        "isLogicReady": 0,
+        "isPlayerAround": 0,
+        "isPlayerInBreachView": 0,
+        "isQhackUploadInProgerss": 0,
+        "isRevealed": 0,
+        "isScannerDataDirty": 0,
+        "isTargetedWithSmartWeapon": 0,
+        "isUIdirty": 1,
+        "isVisible": 0,
+        "killRewardDisabled": 0,
+        "lastEngineTime": 0,
+        "lastHitInstigatorID": {
+         "$type": "entEntityID",
+         "hash": "0"
+        },
+        "lastPingSourceID": {
+         "$type": "entEntityID",
+         "hash": "0"
+        },
+        "localization": null,
+        "markAsQuest": 0,
+        "networkGridBeamFX": {
+         "$type": "gameFxResource",
+         "effect": {
+          "DepotPath": {
+           "$type": "ResourcePath",
+           "$storage": "uint64",
+           "$value": "0"
+          },
+          "Flags": "Soft"
+         }
+        },
+        "networkGridBeamOffset": {
+         "$type": "Vector4",
+         "W": 0,
+         "X": 0,
+         "Y": 0,
+         "Z": 0
+        },
+        "networkName": "Local Network 1",
+        "objectActionsCallbackCtrl": null,
+        "onInputHintManagerInitializedChangedCallback": null,
+        "persistentState": null,
+        "personalLinkComponent": null,
+        "personalLinkFailsafeID": {
+         "$type": "gameDelayID"
+        },
+        "personalLinkHackSend": 0,
+        "playerSocket": {
+         "$type": "gamePlayerSocket"
+        },
+        "prereqListeners": [],
+        "receivedDamageHistory": [],
+        "renderSceneLayerMask": "Default",
+        "resourceLibraryComponent": null,
+        "scanningComponent": null,
+        "scanningTweakDBRecord": {
+         "$type": "TweakDBID",
+         "$storage": "uint64",
+         "$value": "0"
+        },
+        "screenDefinition": {
+         "$type": "SUIScreenDefinition",
+         "screenDefinition": {
+          "$type": "TweakDBID",
+          "$storage": "uint64",
+          "$value": "0"
+         },
+         "style": {
+          "$type": "TweakDBID",
+          "$storage": "uint64",
+          "$value": "0"
+         }
+        },
+        "slotComponent": null,
+        "sourceShootComponent": null,
+        "squadMemberComponent": null,
+        "statusEffectComponent": null,
+        "statusEffectListeners": [],
+        "stimBroadcaster": null,
+        "tags": {
+         "$type": "redTagList",
+         "tags": []
+        },
+        "targetShootComponent": null,
+        "ToggleZoomInteractionWorkspot": null,
+        "uiComponent": null,
+        "uiSlotComponent": null,
+        "updateID": {
+         "$type": "gameDelayID"
+        },
+        "updateRunning": 0,
+        "upload_program_listener_id": 0,
+        "visibilityCheckDistance": 16000,
+        "visionComponent": null,
+        "wasAnimationFastForwarded": 0,
+        "wasEngineeringSkillcheckTriggered": 0,
+        "wasLookedAtLast": 0,
+        "wasVisible": 0,
+        "willDieSoon": 0,
+        "workspotActivator": null,
+        "workspotMapper": null,
+        "ZoomStateMachineListenerID": null,
+        "ZoomUIListenerID": null
+       }
+      ]
+     }
+    }
+   }
+  },
+  "ioPriority": "Immediate",
+  "isHostOnly": 0,
+  "isVisibleInGame": 1,
+  "proxyScale": null,
+  "sourcePrefabHash": "8356080304397941149",
+  "tag": "None",
+  "tagExt": "None"
+ },
+ "node_data": {
+  "Id": "2517931026640",
+  "NodeIndex": 316,
+  "Position": {
+   "$type": "Vector4",
+   "W": 0,
+   "X": -2229.37915,
+   "Y": -1280.77527,
+   "Z": 18.0300007
+  },
+  "Orientation": {
+   "$type": "Quaternion",
+   "i": 0,
+   "j": 0,
+   "k": 0.831197441,
+   "r": 0.555977464
+  },
+  "Scale": {
+   "$type": "Vector3",
+   "X": 1,
+   "Y": 1,
+   "Z": 1
+  },
+  "Pivot": {
+   "$type": "Vector3",
+   "X": -2306.31616,
+   "Y": -677.961365,
+   "Z": 166.34938
+  },
+  "Bounds": {
+   "$type": "Box",
+   "Max": {
+    "$type": "Vector4",
+    "W": 0,
+    "X": -2229.37915,
+    "Y": -1280.77527,
+    "Z": 18.0300007
+   },
+   "Min": {
+    "$type": "Vector4",
+    "W": 0,
+    "X": -2229.37915,
+    "Y": -1280.77527,
+    "Z": 18.0300007
+   }
+  },
+  "QuestPrefabRefHash": {
+   "$type": "NodeRef",
+   "$storage": "string",
+   "$value": "$/03_night_city/#c_heywood/wellsprings/spr_ma_prefabLNUJM7A/ma_hey_spr_04_prefab3PCGZBY/ma_hey_spr_04_gameplay_prefabV3TKVMY/ma_hey_spr_04_devices_prefab5BB5YKY/ma_hey_spr_04_ap"
+  },
+  "UkHash1": {
+   "$type": "NodeRef",
+   "$storage": "uint64",
+   "$value": "0"
+  },
+  "CookedPrefabData": {
+   "DepotPath": {
+    "$type": "ResourcePath",
+    "$storage": "uint64",
+    "$value": "0"
+   },
+   "Flags": "Default"
+  },
+  "MaxStreamingDistance": 3690.5332,
+  "UkFloat1": 53.7016792,
+  "Uk10": 1024,
+  "Uk11": 10762,
+  "Uk12": 0,
+  "Uk13": "0",
+  "Uk14": "0"
+ },
+ "note": "The game's own working wall router {ma_hey_spr_04_ap} (appearance access_point_router_b, full entity chunk, no stored controller state), copied whole on 2026-09-05 for gen_sector.py. Game data, kept so a clone regenerates the sector without the game installed."
+}

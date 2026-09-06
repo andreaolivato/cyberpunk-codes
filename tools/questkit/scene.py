@@ -441,6 +441,18 @@ def entity_ref(unique_name=None, node_ref=None, tag=None):
             'slotName': cname(None), 'type': 'Tag' if tag else 'EntityRef'}
 
 
+def community_ref(node_ref, entry_name):
+    """gameEntityReference to one ENTRY of a community: `names` carries the
+    entry, `reference` the community node, type EntityRef. The shape every
+    workspot node in sts_std_rcr_01_scene uses for its receptionist and intern.
+    """
+    return {'$type': 'gameEntityReference',
+            'dynamicEntityUniqueName': cname(None),
+            'names': [cname(entry_name)],
+            'reference': noderef(node_ref), 'sceneActorContextName': cname(None),
+            'slotName': cname(None), 'type': 'EntityRef'}
+
+
 def quest_socket(name, kind):
     return {'HandleId': '@sock', 'Data': {
         '$type': 'questSocketDefinition', 'connections': [],
@@ -587,7 +599,13 @@ class Scene:
         if not pick and self.name in SCENE_ALIASES:
             pick = LIPSYNC_SETS.get(SCENE_ALIASES[self.name], {}).get(actor_name)
         if not pick:
-            return 4294967295, None
+            # ZERO, NOT None. `scnVoicetagId.id` is a uint64 and WolvenKit
+            # refuses the whole file if it is null - "Cannot get the value of a
+            # token type 'Null' as a number" - which stops the build with an
+            # error naming the scene and nothing else. An actor with no pick is
+            # a legitimate thing (a voice with no body), so it must produce a
+            # still mouth rather than a failed conversion.
+            return 4294967295, 0
         if pick['anims'] not in self.lipsync_sets:
             self.lipsync_sets.append(pick['anims'])
             self.lipsync_voicetags.append(pick['voicetag'])
@@ -824,6 +842,105 @@ class Scene:
             # Vanilla mirrors the acquisition reference here, the same way
             # add_body_double's spawnSet path does.
             'entityRef': dict(actor_ref),
+            'performerId': {'$type': 'scnPerformerId', 'id': aid + 1},
+        })
+        return aid
+
+    def add_community_actor(self, actor_name, entry, community_ref,
+                            appearance='default'):
+        """A speaking NPC taken from a community, THROUGH THE COMMUNITY NODE.
+
+        THE DIFFERENCE FROM add_spawnset_actor, and it is the whole point:
+        `spawnSet` finds the body through
+        `worldCommunityRegistryNode.spawnSetNameToCommunityID`, a table of
+        registered name to community id (gotcha 69). `community` names the
+        community NODE directly and never touches that table.
+
+        Copied field for field off `ma_wat_kab_02.scene`, and the plan is
+        vanilla's most common: 62 of the actors in a 108-scene sample use
+        `community`, against 45 for `spawnSet`. Read on 2026-09-06 while
+        chasing backlog 38, where every `spawnSet` actor in this gig goes
+        silent after a load and every actor the scene spawns itself is fine.
+
+        `community_ref` is a real world NodeRef and is resolved as one, so it
+        takes the LONG form for a mod's node (`$/mod/<sector>/#<name>`, gotcha
+        34), unlike the spawn-set reference which is matched as a string.
+
+        NOTHING IS SPAWNED here either: specRecordId is 0 on both paths, so the
+        actor is found or the scene has no speaker.
+        """
+        aid = self.next_actor
+        self.next_actor += 1
+        srref, voicetag = self._lipsync_for(actor_name)
+        self.actors.append({
+            '$type': 'scnActorDef',
+            'acquisitionPlan': 'community',
+            'actorId': actor_id(aid),
+            'actorName': actor_name,
+            'animSets': [],
+            'bodyCinematicAnimSets': [],
+            'communityParams': {'$type': 'scnCommunityParams',
+                                'entryName': cname(entry),
+                                'forceMaxVisibility': 0,
+                                'reference': noderef(community_ref)},
+            'cyberwareAnimSets': [],
+            'cyberwareCinematicAnimSets': [],
+            'deformationAnimSets': [],
+            'dynamicAnimSets': [],
+            'facialAnimSets': [],
+            'facialCinematicAnimSets': [],
+            'findActorInContextParams': {
+                '$type': 'scnFindEntityInContextParams',
+                'contextActorName': cname(None), 'contextualName': 'Player',
+                'forceMaxVisibility': 0, 'specRecordId': tdbid(None),
+                'voiceVagId': {'$type': 'scnVoicetagId', 'id': '0'}},
+            'findActorInWorldParams': {
+                '$type': 'scnFindEntityInWorldParams',
+                'actorRef': {'$type': 'gameEntityReference',
+                             'dynamicEntityUniqueName': cname(None), 'names': [],
+                             'reference': noderef(None),
+                             'sceneActorContextName': cname(None),
+                             'slotName': cname(None), 'type': 'EntityRef'},
+                'forceMaxVisibility': 0},
+            'holocallInitScn': resref(),
+            'lipsyncAnimSet': {'$type': 'scnLipsyncAnimSetSRRefId', 'id': srref},
+            'spawnDespawnParams': {
+                '$type': 'scnSpawnDespawnEntityParams',
+                'alwaysSpawned': 0,
+                'appearance': cname(None),
+                'dynamicEntityUniqueName': cname(None),
+                'findInWorld': 0,
+                'forceMaxVisibility': 0,
+                'isEnabled': 1,
+                'itemOwnerId': {'$type': 'scnPerformerId', 'id': 4294967040},
+                'keepAlive': 0,
+                'prefetchAppearance': 0,
+                'spawnMarker': cname(None),
+                'spawnMarkerNodeRef': noderef(None),
+                'spawnMarkerType': 'Local',
+                'spawnOffset': {
+                    '$type': 'Transform',
+                    'orientation': {'$type': 'Quaternion', 'i': 0, 'j': 0, 'k': 0, 'r': 1},
+                    'position': {'$type': 'Vector4', 'W': 0, 'X': 0, 'Y': 0, 'Z': 0}},
+                'spawnOnStart': 1,
+                'specRecordId': tdbid(None),
+                'validateSpawnPostion': 1},
+            'spawnSetParams': {'$type': 'scnSpawnSetParams', 'entryName': cname(None),
+                               'forceMaxVisibility': 0, 'reference': noderef(None)},
+            'spawnerParams': {'$type': 'scnSpawnerParams', 'forceMaxVisibility': 0,
+                              'reference': noderef(None)},
+            'specAppearance': cname(appearance),
+            'specCharacterRecordId': tdbid(None),
+            'voicetagId': {'$type': 'scnVoicetagId', 'id': voicetag},
+        })
+        self.performers.append({
+            '$type': 'scnPerformerSymbol',
+            'editorPerformerId': ruid(self.name + '/performer/' + actor_name),
+            'entityRef': {'$type': 'gameEntityReference',
+                          'dynamicEntityUniqueName': cname(None), 'names': [],
+                          'reference': noderef(community_ref),
+                          'sceneActorContextName': cname(None),
+                          'slotName': cname(None), 'type': 'EntityRef'},
             'performerId': {'$type': 'scnPerformerId', 'id': aid + 1},
         })
         return aid
@@ -1392,8 +1509,17 @@ class Scene:
         return did
 
     def add_workspot_node(self, unique_name, path=WORKSPOT_JOHNNY,
-                          entry=WORKSPOT_ENTRY, tag=None):
+                          entry=WORKSPOT_ENTRY, tag=None, community=None,
+                          jump_to_entry=1):
         """A node that puts a scene-spawned actor into a workspot IN PLACE.
+
+        `community=(node_ref, entry_name)` addresses a COMMUNITY actor instead
+        of a scene-spawned one: `names` carries the entry and `reference` the
+        community node, type EntityRef. That is how sts_std_rcr_01_scene puts
+        its intern in a pose where she stands (scnUseSceneWorkspotParamsV1,
+        playAtActorLocation 1, entry 2, names ["intern"], reference
+        #rcr_01_combat_com), read off the serialized scene 2026-09-03. Gig 02's
+        merc kneels this way.
 
         Vanilla ships two shapes and this is the one that needs no world node:
 
@@ -1467,8 +1593,10 @@ class Scene:
             'outputSockets': [osock(0, 0, []), osock(0, 1, [])],
             'questNode': {'HandleId': '@qn', 'Data': {
                 '$type': 'questUseWorkspotNodeDefinition',
-                'entityReference': (entity_ref(tag=tag) if tag
-                                    else entity_ref(unique_name=unique_name)),
+                'entityReference': (
+                    entity_ref(tag=tag) if tag
+                    else community_ref(*community) if community
+                    else entity_ref(unique_name=unique_name)),
                 'id': nid,
                 'paramsV1': {'HandleId': '@qp', 'Data': {
                     '$type': 'scnUseSceneWorkspotParamsV1',
@@ -1488,7 +1616,9 @@ class Scene:
                     'isWorkspotInfinite': 1,
                     'itemOverride': {'$type': 'workWorkspotItemOverride',
                                      'itemOverrides': [], 'propOverrides': []},
-                    'jumpToEntry': 1,
+                    # 1 skips the entry's enter animation and starts on the
+                    # pose (vanilla's shape). 0 plays the enter animation first.
+                    'jumpToEntry': jump_to_entry,
                     'maxAnimTimeLimit': 0,
                     'meshDissolvingEnabled': 1,
                     'movementType': 'Walk',
@@ -1526,7 +1656,8 @@ class Scene:
         return nid
 
     def add_world_workspot_node(self, unique_name, spot_ref,
-                                entry=WORKSPOT_ENTRY):
+                                entry=WORKSPOT_ENTRY, community=None,
+                                walk=False):
         """Put a scene actor into a `worldAISpotNode` THIS MOD SHIPS.
 
         The counterpart to add_workspot_node: that one plays the workspot
@@ -1555,6 +1686,10 @@ class Scene:
         string the sector registers unless there is a reason not to.
         """
         nid = self._nid()
+        # WALK: the AI takes the actor to the spot and plays the workspot's own
+        # entry animation, which is how every NPC in the city gets into a spot
+        # (2026-09-04). The default is Californication's: teleported and
+        # already in the pose on the first frame.
         self.nodes.append({
             '$type': 'scnQuestNode',
             'ffStrategy': 'automatic',
@@ -1564,25 +1699,33 @@ class Scene:
             'outputSockets': [osock(0, 0, []), osock(0, 1, [])],
             'questNode': {'HandleId': '@qn', 'Data': {
                 '$type': 'questUseWorkspotNodeDefinition',
-                'entityReference': entity_ref(unique_name=unique_name),
+                'entityReference': (community_ref(*community) if community
+                                    else entity_ref(unique_name=unique_name)),
                 'id': nid,
                 'paramsV1': {'HandleId': '@qp', 'Data': {
                     '$type': 'questUseWorkspotParamsV1',
                     # Californication's own values for the six that decide
                     # whether he walks over or is simply there.
+                    # WALK copies The Union Strikes Back's receptionist node
+                    # (sts_std_rcr_01_gameplay node 8) field for field: NO
+                    # entry id, so the workspot's own root sequence runs its
+                    # enter animation; idle mode off; finishAnimation and
+                    # repeatCommandOnInterrupt on. Ours had entryId 2, which
+                    # starts on the idle and looks like a snap (2026-09-04).
                     'changeWorkspot': 1,
-                    'enableIdleMode': 1,
-                    'instant': 1,
+                    'enableIdleMode': 0 if walk else 1,
+                    'instant': 0 if walk else 1,
                     'isWorkspotInfinite': 1,
-                    'jumpToEntry': 1,
-                    'teleport': 1,
+                    'jumpToEntry': 0 if walk else 1,
+                    'teleport': 0 if walk else 1,
                     'continueInCombat': 0,
                     'dangleResetSimulation': 0,
-                    'entryId': {'$type': 'workWorkEntryId', 'id': entry},
+                    'entryId': {'$type': 'workWorkEntryId',
+                                'id': 4294967295 if walk else entry},
                     'entryTag': cname(None),
                     'exitAnimName': cname(None),
                     'exitEntryId': {'$type': 'workWorkEntryId', 'id': 4294967295},
-                    'finishAnimation': 0,
+                    'finishAnimation': 1 if walk else 0,
                     'forceEntryAnimName': cname(None),
                     'function': 'UseWorkspot',
                     'isPlayer': 0,
@@ -1604,7 +1747,7 @@ class Scene:
                         'parallaxWeight': 1,
                         'tier': 'Tier3',
                         'vehicleProceduralCameraWeight': 1},
-                    'repeatCommandOnInterrupt': 0,
+                    'repeatCommandOnInterrupt': 1 if walk else 0,
                     'workExcludedGestures': [],
                     # The whole difference: a world node, not an instance in
                     # this scene's own table.
@@ -2044,6 +2187,40 @@ class Scene:
         and the quest phase waits on an exit that never fires. Cheaper to fail
         here than to find it standing in a bar.
         """
+        # THE PLAYER ACTOR IS CREATED LAST, AND GETTING THAT WRONG CRASHES THE
+        # GAME. Measured 2026-08-26 on gig 02's `gig02_johnny_open`, which took
+        # the game down the moment its first section handed over; the same
+        # gig's `gig02_wakako_call`, identical in every other respect, played
+        # fine and differed only in this.
+        #
+        # `actors` and `playerActors` are separate arrays that SHARE ONE actorId
+        # space, and vanilla always numbers the scene actors first: Californication
+        # gives its player actor 3 after three scene actors 0..2. Create the
+        # player first and the arrays come out cross-numbered -
+        #
+        #     actors[0]        actorId 1   Johnny
+        #     playerActors[0]  actorId 0   V
+        #
+        # so anything that resolves a `scnActorId` by indexing `actors` reads
+        # past the end of a one-element array. The performer symbols inherit the
+        # same inversion.
+        #
+        # It is a build error rather than a note because nothing about it is
+        # visible in the generator: the scene emits, WolvenKit converts it, the
+        # archive packs, the log is clean, and the game dies on the frame the
+        # actor is first addressed.
+        if self.player_actors:
+            player_ids = [a['actorId']['id'] for a in self.player_actors]
+            scene_ids = [a['actorId']['id'] for a in self.actors]
+            if scene_ids and min(player_ids) < max(scene_ids):
+                raise SystemExit(
+                    '%s: the player actor must be created LAST. Move '
+                    'add_player() below every add_actor()/add_johnny() call.\n'
+                    '  scene actors have ids %s, the player has %s\n'
+                    '  (vanilla numbers scene actors first; the inversion '
+                    'crashes the game, not the build)'
+                    % (self.name, scene_ids, player_ids))
+
         ids = {n['nodeId']['id'] for n in self.nodes}
         for n in self.nodes:
             nid = n['nodeId']['id']
@@ -2128,6 +2305,20 @@ class Scene:
                     raise SystemExit('%s: workspot node %d is Tag-addressed '
                                      'with no tag' % (self.name,
                                                       n['nodeId']['id']))
+                continue
+            if eref['names'] and eref['reference']['$value'] not in (None, 'None', ''):
+                # Community-addressed: the community node and the entry must
+                # both belong to one spawnSet actor of this scene.
+                ref = eref['reference']['$value']
+                ent = eref['names'][0]['$value']
+                ok = any(a.get('acquisitionPlan') == 'spawnSet'
+                         and ref in json.dumps(a) and ('"%s"' % ent) in json.dumps(a)
+                         for a in self.actors)
+                if not ok:
+                    raise SystemExit('%s: workspot node %d addresses community '
+                                     'entry %s of %s, which no spawnSet actor '
+                                     'here uses' % (self.name, n['nodeId']['id'],
+                                                    ent, ref))
                 continue
             uniq = eref['dynamicEntityUniqueName']['$value']
             names = {a['spawnDespawnParams']['dynamicEntityUniqueName']['$value']

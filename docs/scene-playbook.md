@@ -1,5 +1,63 @@
 # Scene playbook: conversations, choices and holocalls
 
+## Taking a body from your own community: use the `community` plan
+
+**A scene actor taken from a community THE MOD SHIPS must be acquired with
+`acquisitionPlan: community`, not `spawnSet`.** With `spawnSet` the
+conversation plays perfectly until the first save is reloaded and is silent
+ever after: no audio, no subtitle, full duration, skippable. Gotcha 102 has the
+mechanism and `backlog.md` 38 the bench that settled it.
+
+```
+acquisitionPlan  community
+communityParams  entryName = the community entry's name
+                 reference = the community node's NodeRef, LONG form
+spawnSetParams   empty
+```
+
+`spawnSet` is correct for a VANILLA spawn set, which is what the base game's
+own scenes use it for and what gig 01 takes Mama Welles from. It is the wrong
+one for a community of your own.
+
+## The rule: every NPC with a line is a SCENE ACTOR
+
+**Standing design rule, and it is not negotiable per-gig.** If an NPC says
+anything, that NPC is an actor in the scene that carries the line. Not a
+script-spawned body standing where the words happen to come out.
+
+**The reason is that everything else follows the actor and nothing follows the
+body.** Lip sync is attached to the scene actor. So are workspots, so is
+dialogue-choice routing, so is the camera. A gig that spawns a body separately
+and plays the words over it gets a person whose mouth never moves, who cannot
+be animated, and who the scene cannot address - and every one of those reads as
+broken to a player, one at a time, in separate bug reports.
+
+**The route when the NPC also has to be fought, walked to, or exist outside the
+conversation** is the one gig 01 uses for Hoshino: ship the body in a
+COMMUNITY, switch the community entry on from the quest phase, and have the
+scene ACQUIRE it:
+
+```
+s.add_spawnset_actor('hoshino', HOSHINO_ENTRY, HOSHINO_SPAWNSET)
+```
+
+`specRecordId` is 0 on that path, so the scene spawns nothing: it finds the body
+or it has no speaker. `gotchas.md` 69 is the recipe and sixteen bench runs are
+behind it.
+
+**What that replaced, and why it is not worth revisiting**: parking a voice-only
+actor a kilometre out and a hundred metres down, and making its lines 2D so they
+can still be heard. It works, it is what a first pass reaches for, and it costs
+the mouth, the animation and the ability to point a camera at anybody. Gig 01
+tried burying the duplicate under the floor first; the field report was that he
+"spawned out of nowhere ... half-way in a pillar" and vanished when the dialogue
+ended. That is what a second body looks like when the player can see it.
+
+**A voice-only actor is still correct for a speaker who is genuinely not
+present**: a holocall, a voice in a crowd nobody looks at, a line from off
+screen. The test is whether the player will LOOK at the speaker.
+
+
 Everything needed to author a `.scene` for a mod, and to put a holocall on
 screen. Established 2026-08-11 building gig 01's Batch C. **Read this before
 touching anything under `source/wkit/raw/mod/*/scenes/` or `tools/gig01/gen_scenes.py`.**
@@ -301,6 +359,45 @@ coordinates points the wrong way.
 is one function used for both directions, and `gen_scenes.nix_actor()` for the
 body that stands in the studio. `backlog.md` 3d has every measurement, and the
 benches that proved it were removed once they had nothing left to prove.
+
+### The caller in the studio and the body in the world are ONE character
+
+A video holocall stages a body in the holocall studio and films it. If that
+character also stands somewhere in the world, the player now sees the same
+person twice, in two rooms, minutes apart. Gig 02 does exactly that: Char sits
+in a chair on the way in and calls V from the studio later.
+
+**The same character means the same appearance name in every place that can
+pick one.** In gig 02 that turned out to be three places, and missing any one
+of them leaves a body that is a different person:
+
+- the `Character.*` TweakDB record, which is what the world spawn uses
+- the community entry that places the body in the world
+- the studio actor in the holocall scene
+
+**Then prove it is one look rather than one name**, because a name can resolve
+to a group. Read the record's entity and its `.app` off disk: a name that maps
+to a fixed list of meshes is the same body everywhere. Gotcha 100 is the whole
+method, and it exists because the same character was reported as looking like
+two different people.
+
+**Lighting explains a different COLOUR and nothing else.** A chair room lit
+teal and a studio lit warm will read as a different skin tone and a different
+hair colour on the same meshes, so do not chase a colour difference in the
+appearance.
+
+**A different GARMENT is never the light, and gig 02 has one that is still
+unexplained.** Every field named above carries the same appearance, the entity
+resolves that name, and the two bodies are still reported as dressed
+differently. The suspect is the entity's own `defaultAppearance`, which for
+this citizen entity is the literal string `random`: a body that does not receive
+an appearance rolls one of twenty. The test that tells the two apart is whether
+the caller's clothes change from one playthrough to the next. `backlog.md` 42
+carries it.
+
+**Camera height still follows the pose, not the character.** A body that SITS
+in the world is spawned standing in the studio unless it is put in a workspot
+there, so pick the setup whose camera matches the pose actually being filmed.
 
 ### The player declines, or never picks up
 

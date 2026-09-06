@@ -1,0 +1,390 @@
+{
+  "Header": {
+    "WolvenKitVersion": "8.20.0",
+    "WKitJsonVersion": "0.0.9",
+    "GameVersion": 2310,
+    "DataType": "CR2W",
+    "ArchiveFileName": "cc_g02_world.streamingsector"
+  },
+  "Data": {
+    "Version": 195,
+    "BuildVersion": 0,
+    "RootChunk": {
+      "$type": "worldStreamingSector",
+      "category": "Exterior",
+      "cookingPlatform": "PLATFORM_PC",
+      "externInplaceResource": {
+        "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "uint64",
+          "$value": "0"
+        },
+        "Flags": "Soft"
+      },
+      "level": 1,
+      "localInplaceResource": [],
+      "nodeData": {
+        "BufferId": "0",
+        "Flags": 4063232,
+        "Type": "WolvenKit.RED4.Archive.Buffer.worldNodeDataBuffer, WolvenKit.RED4, Version=8.20.0.0, Culture=neutral, PublicKeyToken=null",
+        "Data": [
+          {
+            "Id": "0",
+            "NodeIndex": 0,
+            "Position": {
+              "$type": "Vector4",
+              "W": 0,
+              "X": -663.5,
+              "Y": 822.33,
+              "Z": 20.9
+            },
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": -0.9961946980917455,
+              "r": 0.08715574274765814
+            },
+            "Scale": {
+              "$type": "Vector3",
+              "X": 1,
+              "Y": 1,
+              "Z": 1
+            },
+            "Pivot": {
+              "$type": "Vector3",
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "Bounds": {
+              "$type": "Box",
+              "Max": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -663.5,
+                "Y": 822.33,
+                "Z": 20.9
+              },
+              "Min": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -663.5,
+                "Y": 822.33,
+                "Z": 20.9
+              }
+            },
+            "QuestPrefabRefHash": {
+              "$type": "NodeRef",
+              "$storage": "string",
+              "$value": "$/03_night_city/#c_westbrook/japantown/#cc_g02_access_point"
+            },
+            "UkHash1": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "CookedPrefabData": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Default"
+            },
+            "MaxStreamingDistance": 164.710114,
+            "UkFloat1": 50,
+            "Uk10": 1056,
+            "Uk11": 10762,
+            "Uk12": 0,
+            "Uk13": "0",
+            "Uk14": "0"
+          }
+        ]
+      },
+      "nodeRefs": [
+        {
+          "$type": "NodeRef",
+          "$storage": "string",
+          "$value": "$/03_night_city/#c_westbrook/japantown/#cc_g02_access_point"
+        }
+      ],
+      "nodes": [
+        {
+          "HandleId": "0",
+          "Data": {
+            "$type": "worldDeviceNode",
+            "alphaHackStreamingDistanceOverride": 0,
+            "appearanceName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "access_point_router_b"
+            },
+            "debugName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "{cc_g02_access_point}"
+            },
+            "deviceClassName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "None"
+            },
+            "deviceConnections": [],
+            "entityLod": 0,
+            "entityTemplate": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "string",
+                "$value": "base\\gameplay\\devices\\masters\\access_points\\accesspoint.ent"
+              },
+              "Flags": "Soft"
+            },
+            "instanceData": {
+              "HandleId": "2001",
+              "Data": {
+                "$type": "entEntityInstanceData",
+                "buffer": {
+                  "BufferId": "2000",
+                  "Flags": 4063232,
+                  "Type": "WolvenKit.RED4.Archive.Buffer.RedPackage, WolvenKit.RED4, Version=8.20.0.0, Culture=neutral, PublicKeyToken=null",
+                  "Data": {
+                    "Version": 4,
+                    "Sections": 6,
+                    "CruidIndex": 0,
+                    "CruidDict": {
+                      "0": "0"
+                    },
+                    "Chunks": [
+                      {
+                        "$type": "AccessPoint",
+                        "accumulatedTimePasssed": 0,
+                        "actionRestrictionCallbackID": null,
+                        "actionRestrictionPlayerBB": null,
+                        "activeProgramToUploadOnNPC": {
+                          "$type": "TweakDBID",
+                          "$storage": "uint64",
+                          "$value": "0"
+                        },
+                        "activeStatusEffect": {
+                          "$type": "TweakDBID",
+                          "$storage": "uint64",
+                          "$value": "0"
+                        },
+                        "advanceInteractionStateResolveDelayID": {
+                          "$type": "gameDelayID"
+                        },
+                        "areaEffectsData": [],
+                        "areaEffectsInFocusMode": [],
+                        "audioResourceName": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "None"
+                        },
+                        "baseActionOperations": null,
+                        "baseStateOperations": null,
+                        "blackboard": null,
+                        "breachViewTimeListener": null,
+                        "cameraComponent": null,
+                        "cameraZoomActive": 0,
+                        "cameraZoomComponent": null,
+                        "contentScale": {
+                          "$type": "TweakDBID",
+                          "$storage": "uint64",
+                          "$value": "0"
+                        },
+                        "controller": null,
+                        "controllerTypeName": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "AccessPointController"
+                        },
+                        "currentlyUploadingAction": null,
+                        "currentPlayerTargetCallbackID": null,
+                        "customCameraTarget": "ECCTV_All",
+                        "debugOptions": {
+                          "$type": "DebuggerProperties",
+                          "debugName": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "None"
+                          },
+                          "exclusiveMode": 0,
+                          "factActivated": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "None"
+                          },
+                          "layerIDs": []
+                        },
+                        "delayedUIRefreshID": {
+                          "$type": "gameDelayID"
+                        },
+                        "delayedUpdateDeviceStateID": {
+                          "$type": "gameDelayID"
+                        },
+                        "deviceState": "OFF",
+                        "disableAreaIndicatorDelayActive": 0,
+                        "disableAreaIndicatorID": {
+                          "$type": "gameDelayID"
+                        },
+                        "disassemblableComponent": null,
+                        "displayDescription": {
+                          "unk1": "0",
+                          "value": ""
+                        },
+                        "displayName": {
+                          "unk1": "0",
+                          "value": ""
+                        },
+                        "durabilityType": "INVULNERABLE",
+                        "e3ObjectRevealed": 0,
+                        "effectVisualization": null,
+                        "forceDefeatReward": 0,
+                        "forceRegisterInHudManager": 0,
+                        "fxResourceMapper": null,
+                        "gameplayRoleComponent": null,
+                        "hasVisibilityForcedInAnimSystem": 0,
+                        "hitInstigatorCooldownID": {
+                          "$type": "gameDelayID"
+                        },
+                        "IKslotComponent": null,
+                        "interaction": null,
+                        "interactionAreaOperations": null,
+                        "interactionIndicator": null,
+                        "investigationData": [],
+                        "isDead": 0,
+                        "isHighlightedInFocusMode": 0,
+                        "isInitialized": 0,
+                        "isInsideLogicArea": 0,
+                        "isLogicReady": 0,
+                        "isPlayerAround": 0,
+                        "isPlayerInBreachView": 0,
+                        "isQhackUploadInProgerss": 0,
+                        "isRevealed": 0,
+                        "isScannerDataDirty": 0,
+                        "isTargetedWithSmartWeapon": 0,
+                        "isUIdirty": 1,
+                        "isVisible": 0,
+                        "killRewardDisabled": 0,
+                        "lastEngineTime": 0,
+                        "lastHitInstigatorID": {
+                          "$type": "entEntityID",
+                          "hash": "0"
+                        },
+                        "lastPingSourceID": {
+                          "$type": "entEntityID",
+                          "hash": "0"
+                        },
+                        "localization": null,
+                        "markAsQuest": 0,
+                        "networkGridBeamFX": {
+                          "$type": "gameFxResource",
+                          "effect": {
+                            "DepotPath": {
+                              "$type": "ResourcePath",
+                              "$storage": "uint64",
+                              "$value": "0"
+                            },
+                            "Flags": "Soft"
+                          }
+                        },
+                        "networkGridBeamOffset": {
+                          "$type": "Vector4",
+                          "W": 0,
+                          "X": 0,
+                          "Y": 0,
+                          "Z": 0
+                        },
+                        "networkName": "PARLOR FLOOR NET",
+                        "objectActionsCallbackCtrl": null,
+                        "onInputHintManagerInitializedChangedCallback": null,
+                        "persistentState": null,
+                        "personalLinkComponent": null,
+                        "personalLinkFailsafeID": {
+                          "$type": "gameDelayID"
+                        },
+                        "personalLinkHackSend": 0,
+                        "playerSocket": {
+                          "$type": "gamePlayerSocket"
+                        },
+                        "prereqListeners": [],
+                        "receivedDamageHistory": [],
+                        "renderSceneLayerMask": "Default",
+                        "resourceLibraryComponent": null,
+                        "scanningComponent": null,
+                        "scanningTweakDBRecord": {
+                          "$type": "TweakDBID",
+                          "$storage": "uint64",
+                          "$value": "0"
+                        },
+                        "screenDefinition": {
+                          "$type": "SUIScreenDefinition",
+                          "screenDefinition": {
+                            "$type": "TweakDBID",
+                            "$storage": "uint64",
+                            "$value": "0"
+                          },
+                          "style": {
+                            "$type": "TweakDBID",
+                            "$storage": "uint64",
+                            "$value": "0"
+                          }
+                        },
+                        "slotComponent": null,
+                        "sourceShootComponent": null,
+                        "squadMemberComponent": null,
+                        "statusEffectComponent": null,
+                        "statusEffectListeners": [],
+                        "stimBroadcaster": null,
+                        "tags": {
+                          "$type": "redTagList",
+                          "tags": []
+                        },
+                        "targetShootComponent": null,
+                        "ToggleZoomInteractionWorkspot": null,
+                        "uiComponent": null,
+                        "uiSlotComponent": null,
+                        "updateID": {
+                          "$type": "gameDelayID"
+                        },
+                        "updateRunning": 0,
+                        "upload_program_listener_id": 0,
+                        "visibilityCheckDistance": 16000,
+                        "visionComponent": null,
+                        "wasAnimationFastForwarded": 0,
+                        "wasEngineeringSkillcheckTriggered": 0,
+                        "wasLookedAtLast": 0,
+                        "wasVisible": 0,
+                        "willDieSoon": 0,
+                        "workspotActivator": null,
+                        "workspotMapper": null,
+                        "ZoomStateMachineListenerID": null,
+                        "ZoomUIListenerID": null
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "ioPriority": "Immediate",
+            "isHostOnly": 0,
+            "isVisibleInGame": 1,
+            "proxyScale": null,
+            "sourcePrefabHash": "8356080304397941149",
+            "tag": "None",
+            "tagExt": "None"
+          }
+        }
+      ],
+      "persistentNodeIndex": 0,
+      "persistentNodes": [],
+      "variantIndices": [
+        0
+      ],
+      "variantNodes": [],
+      "version": 62
+    },
+    "EmbeddedFiles": []
+  }
+}

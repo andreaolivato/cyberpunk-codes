@@ -433,17 +433,17 @@ previous run's audio.
 the real clip or lines will cut off or drag. Feed measured durations in as a JSON
 sidecar (line key → ms) produced when the audio is generated.
 
-### 2g. Generate the voices: DONE
+### 2g. Voice every line: DONE
 
-Every line is voiced. The voices were generated at the time this closed,
-disclosed on the mod page, and subtitles are always on. `tools/gig01/gen_voice.py`
-turns a wav into a `.wem` and a voiceover-map entry, and that half of the
-pipeline is the same for any custom audio, whatever produced the wav.
+Every line is voiced, the casting is stated on the mod page, and subtitles are
+always on. `tools/gig01/gen_voice.py` turns a wav into a `.wem` and a
+voiceover-map entry, and that half of the pipeline is the same for any custom
+audio, whatever produced the wav.
 
 **Superseded 2026-08-27:** every live line was re-recorded by a voice actor for
 1.4.0. The half described here did not change, which is the point of it.
 
-The route went through several generators before settling. Those notes are
+How the wavs were made changed several times before settling. Those notes are
 not kept here.
 
 ### 2i. Convert the caption beats: DONE 2026-08-13
@@ -790,7 +790,7 @@ with an empty animation name. Nothing errored: the actor was configured, the
 set resolved, the other four lines moved perfectly, and that one face sat still.
 
 **It had been like that since 1.2.0** and nobody could see it, because until
-this session the line played behind a static contact portrait.
+the call became a video the line played behind a static contact portrait.
 
 The duration turned out to be free. Vanilla baked a lipsync animation for that
 exact line, `f_30B57ED4CF7DF000` in `nix_default`, and it is 1533 ms against
@@ -2062,9 +2062,9 @@ it should be is a property of the room), the record lists, `CCGig01Places`, the
 latches, and the fact guard on the payout.
 
 **How it was verified.** `check-scripts-repo.ps1` compiles the repo through the
-vendoring; `check-clone.ps1` runs every generator on a clean export and compares
-byte for byte, and it caught the one real mistake in this pass: three new modules
-were untracked, so the export left them out and a clone got an ImportError. Same
+vendoring; a second check runs every generator on a clean tree and compares byte
+for byte, and it caught the one real mistake in this pass: three new modules had
+never been committed, so a fresh checkout got an ImportError. Same
 trap as `questkit/phone.py`, and the same check found it. The archive rebuilds to
 the same 2,256 KB.
 
@@ -4906,7 +4906,7 @@ who may enter from any direction. The pin stays without a route.
   the form to reach for when building rather than when reading history.
 
 
-## 21. Generators for a second gig need a subdirectory, and the export allowlist has to follow. DONE 2026-08-19
+## 21. Generators for a second gig need a subdirectory, and the packaging has to follow. DONE 2026-08-19
 
 `tools/gen_*.py` are one gig's generators rather than a library. Each hardcodes
 its mod folder, its LocKey prefix and its resource names, and gig 01 has taken
@@ -4916,20 +4916,19 @@ they import.
 The decision is a per-gig subdirectory, `tools/gig02/` and so on, rather than a
 per-gig suffix on flat names.
 
-Someone starting from a clone of the public repo is not affected either way, and
+Someone starting from a clone of this repo is not affected either way, and
 `new-gig.md` tells them to copy the generators they need and re-point their
 constants, or edit them in place. This item is about a repo holding more than
 one gig at once.
 
 ### Three things move with it
 
-**The export allowlist.** `tools/export-public.ps1` allows generators with a
-pattern that stops at the first slash, so nothing in a subdirectory ships at
-all. `tools/questkit/` hit exactly this and needed its own line; the comment
-above that line records what it cost, which was an export that shipped
-generators whose imports could not resolve. The break appears only for someone
-who clones the public repo, never here. A subdirectory needs its own allowlist
-line written at the same time as the subdirectory, not after.
+**The packaging.** Whatever selects which files are packaged has to learn
+about a new subdirectory at the moment it is created. `tools/questkit/` was the
+first one here, and until its rule was written the package carried generators
+whose imports could not resolve. The break never appears on the machine that
+built it, only in a fresh checkout, which is the reason the check below runs
+from one.
 
 **The sys.path hop.** A generator that imports `questkit` puts its own directory
 on `sys.path`, and today that directory is `tools/`. From `tools/gig02/` it
@@ -4943,8 +4942,8 @@ flat layout.
 
 ### How it gets verified
 
-`check-clone.ps1` already runs the generators from a fresh export with none of
-this machine's caches, which is precisely the condition a missing allowlist line
+A check already runs the generators from a fresh checkout with none of this
+machine's caches, which is precisely the condition a missing packaging rule
 fails under. Pointing it at the second gig's generators covers this without
 anything new being written, and it is the same check that caught the
 `rebuild_cache` split.
@@ -4958,7 +4957,7 @@ anything new being written, and it is the same check that caught the
 
 ### DONE 2026-08-19. Gig 01 moved first, so the layout could be tested
 
-Waiting for gig 02 would have meant writing an allowlist line for a directory
+Waiting for gig 02 would have meant writing a packaging rule for a directory
 that did not exist. Gig 01's generators moved to `tools/gig01/` instead, ten
 files: the seven that write a resource, plus `gen_lipsync`, `gen_voice` and
 `dump_dialogue`. `find_pin_anchors.py` and `vo_corpus.py` stayed flat: they read
@@ -4972,23 +4971,19 @@ one `dirname` deeper in all ten, and every output path is derived from it, so
 that line is the one to check first if a generator ever writes to the wrong
 tree.
 
-**Two export patterns, not one.** The allowlist needed `^tools/gig[0-9]{2}/.*\.py$`
-for the same reason `questkit` needed its own line. The denylist needed a change
-nobody had predicted: this repo keeps one generator out of the public tree, and
-its deny pattern was anchored to a flat path, so the move alone would have
-published it. Deny patterns match on the filename now, wherever in `tools/` a
-gig keeps the file. A per-gig subdirectory has to be read against BOTH lists,
-not just the allowlist.
+**A rule that selects by path breaks when the path changes**, and a per-gig
+subdirectory changes every one of them at once. Anything matching on
+`tools/<file>.py` has to be rewritten to match wherever in `tools/` a gig now
+keeps that file, and matching on the filename rather than the full path is what
+survives the next move.
 
-**What verified it.** `check-clone.ps1` exports a clean tree, deletes the
-caches, runs every generator and compares the output byte for byte. It passes,
-which is the same check that would have caught a missing allowlist line. Its
-generator directory is now a variable at the top.
+**What verified it.** A check makes a clean tree, deletes the caches, runs
+every generator and compares the output byte for byte. It passes. Its generator
+directory is now a variable at the top.
 
 **One thing it turned up.** `docs/dialogue.txt` was stale: it still carried
-`gig01_epilogue_standin`, the scene deleted with the stand-in in 19, and it
-ships in the public tree. Regenerating it as part of this dropped that scene and
-four lines, and the file now reads 60 spoken lines across 14 scenes. Nothing
+`gig01_epilogue_standin`, the scene deleted with the stand-in in 19.
+Regenerating it as part of this dropped that scene and four lines, and the file now reads 60 spoken lines across 14 scenes. Nothing
 shipped in the archive was affected; the .scene resources have been regenerated
 many times since, and all of them came out byte-identical here.
 
@@ -5703,7 +5698,8 @@ bigger now that they shoot back.
 ### What to try, in order
 
 - **Confirm it is not new.** One run on 1.2.3 with the same fight settles
-  whether this session caused it. Cheapest thing here and it should come first.
+  whether the current build caused it. Cheapest thing here and it should come
+  first.
 - **Read what the guards actually are.** `baseAttitudeGroup` on the shipped
   records, by the string-table route in `gameplay-restrictions.md` for the field
   names, then in game for the values.
@@ -6118,9 +6114,9 @@ known.
 The names in it are `#padre_holo`, `#nix_holo`, `#mama_welles_holo`: 59 of the
 329 are the holocall studio spawn sets. That is the table a scene's
 `acquisitionPlan: spawnSet` resolves through, which means **a scene acquires an
-actor from a COMMUNITY, not from a node**. Open question 3 in
-`node-research.md` was asking whether a scene can bind to a node this mod names,
-and the answer is that it does not work that way for anyone.
+actor from a COMMUNITY, not from a node**. The open question this answers was
+whether a scene can bind to a node the mod names, and it does not work that way
+for anyone.
 
 It also means the two-bodies problem has a route: a community we ship, plus a
 name in this table, is a body a scene can acquire.
@@ -6871,9 +6867,9 @@ The generator now renumbers every handle in document order as a final pass.
 
 ### Removing it
 
-`tools/gig01/gen_commlab.py` is untracked on purpose: `tools/gig[0-9]{2}/*.py`
-is on the public export allowlist, so committing it would ship it. Same reason
-`gen_pinlab.py` was never committed. The three deletes, the `.archive.xl` line
+`tools/gig01/gen_commlab.py` is untracked on purpose, so that a dev bench
+nobody else needs is not carried around with the generators that matter. Same
+reason `gen_pinlab.py` was never committed. The three deletes, the `.archive.xl` line
 and the `init.lua` block are listed in the generator's header, and no shipped
 generator is touched, so the rollback is a delete rather than a diff to read.
 
@@ -8478,3 +8474,956 @@ same sitting, though it is the same expansion and the same log line.
 ### Still to do
 
 - The fix is in the manifest only, so it ships with the next release.
+
+---
+
+## 33. Building a whole gig with no way to stand anywhere in it. 2026-08-26
+
+**The question a second gig asked that the first one never had to.** Gig 01 was
+built alongside play: thirty guard posts, an NPC's spawn offset, a shard's spot
+on a desk and every map-pin target were captured by walking to them in game and
+pressing a button. Gig 02 was built in one unattended pass with nobody able to
+load a save, so not one coordinate could be captured.
+
+That is not an exotic situation. It is the situation of anyone adapting this
+repo who does not own the same save, and it is worth writing down as a
+technique rather than as an apology.
+
+### The three answers, in the order they are worth reaching for
+
+**1. Anchor to a base-game node that IS the place, with a zero offset.**
+
+`tools/find_pin_anchors.py` exists to find the nearest always-loaded node to a
+target you already know. Turned around, its cache answers a different and more
+useful question: **what named nodes are there, and what are they called.** The
+three always-loaded sectors hold 5211 globally-named nodes, and a node's name
+usually says what it is. `#q005_mrk_afterlife_entrance_mappin` is the base
+game's own Afterlife entrance mappin. `#q112_mp_wakakos_pachinko_parlor` is the
+parlor. `#wakako_sm_okada_default` is the spot Wakako Okada stands on when
+nothing else is going on, which is her office by definition.
+
+Dump the index once and grep it by name:
+
+```python
+# tools/find_pin_anchors.py exposes nodes() as (name, pos, sector)
+[(n, p) for n, p, _ in nodes() if 'wakako' in n.lower()]
+```
+
+A pin anchored to such a node with a zero offset lands on the game's own marker
+rather than on the exact doorstep. That is a real loss and it is a small one.
+
+**2. Ask the voice corpus where a place is.**
+
+`tools/vo_corpus.py` was built to answer "how does this character talk". It also
+answers **"where is the place whose name I only know from a comic"**, because
+the corpus is every spoken line joined to the scene it belongs to.
+
+Searching it for "Dewdrop" returned two lines from
+`civ_low_f_04_enus_30_sts_std_arr_01_recepctionist_new`, one of them "Welcome to
+the Dewdrop Inn. Where every day begins with a smile." The scene id names the
+street story, `sts_std_arr_01`, and the always-loaded index then has
+`#sts_sm_std_arr_01_recepctionist_new` with its position. Santo Domingo, not the
+Japantown the comic's own location table had assumed.
+
+About a minute, from a name to a coordinate, with no game running.
+
+**3. Spawn onto navmesh instead of onto a coordinate.**
+
+`CCSharedWorld.Scatter` asks `FindPointInSphereOnlyHumanNavmesh` for a point a
+human can stand on and drops anyone it cannot place. A body placed that way is
+always reachable and always fightable; a body placed at a guessed coordinate is
+sometimes inside a wall, and a guard inside a wall cannot be fought, which
+stalls a room the player has to clear.
+
+Gig 01 replaced exactly this with thirty walked posts, and the reason is worth
+keeping in view: a navmesh query answers "somewhere near here" and keeps giving
+nearly the same answer, so a squad huddles. **Scatter is the right tool when
+nobody can walk the site and the wrong one when somebody can.**
+
+### What has no answer, and it is the one that matters
+
+**A body that is meant to be LOOKED at cannot be placed this way.** Scatter puts
+a fighter somewhere reachable, which is all a fighter needs. A character who
+stands in a doorway and talks needs a position, a facing, and usually a workspot,
+and all three are judged by eye.
+
+Gig 02's answer is to place nobody: every speaker except Johnny and the two
+combatants is an actor a kilometre away with its lines set to play in 2D, and
+the body the player looks at is the base game's own NPC already standing in that
+room. It works, the words land, the name is over the subtitle, **and the mouths
+do not move.**
+
+That is the standing cost of building without a save, and nothing in this
+register answers it. The fix is a capture pass, not a technique.
+
+### Also worth knowing
+
+- **The TweakDB string table settles "does this record exist" offline.**
+  Decompressing CET's `tweakdbstr.kark` (the route in
+  `docs/gameplay-restrictions.md`) answered three questions in one sitting:
+  `Character.wakako_okada` exists, `PhoneAvatars.Avatar_Wakako` exists, and
+  **there is no Yoko anywhere in it** - no character record, no avatar, no atlas
+  part, under either Yoko or Tsuru. A design call that depended on pointing at
+  her real avatar was closed as not achievable rather than shipped broken.
+- **A quest node's names can be read out of the scene that uses them.**
+  `base\quest\holocalls\wakako\wakako_holocall.scene` extracts and serialises in
+  a few seconds and carries `#wakako_holocall_setup`, `#wakako_holocall_camera`,
+  `wakako_holocall_lights` and `wakako_holocall_setup`. None of those is
+  guessable and a wrong one is a silent no-op, so this is the difference between
+  a staged holocall and an empty frame.
+- **The compiler settles what a method is called.** `IsInCombat` is not on
+  `ScriptedPuppet`; a five-function probe file compiled against `scc` found that
+  `GetHighLevelStateFromBlackboard()` against `gamedataNPCHighLevelState.Combat`
+  is what answers "has this NPC seen the player". `docs/scene-playbook.md`
+  already recommends this under "Validating offline" and it is cheaper than any
+  amount of reading.
+
+## 34. A god-mode shield with two states needs a three-state flag. 2026-08-26
+
+Gig 02's merc must be beaten and must not die, which is the inverse of gig 01's
+Hoshino and needs both of `GodModeSystem`'s settings rather than one:
+
+| when | shield | why |
+|---|---|---|
+| before V speaks to him | `Invulnerable` | a stray shot cannot open the beat |
+| the fight | `Immortal` | damage lands, death does not |
+| once he is down | `Invulnerable` | a shotgun cannot end the gig |
+
+Written the obvious way, with a `m_shielded: Bool` beside the `AddGodMode` call,
+the middle row never happens: the transition into the fight sees a shield
+already on and skips the add, so he keeps `Invulnerable`, takes no damage at
+all, his health never falls, the threshold that declares him beaten never fires,
+and the gig stops on "Beat the merc down" with a man who cannot be hurt.
+
+**The flag has to record WHICH shield, not WHETHER.** A small integer, compared
+against what the facts say it should be right now, with the old type removed by
+name before the new one is added. Both are held under the same source, so
+removing by source alone is not something this project has measured.
+
+Caught by reading rather than by playing, which is the only way it could have
+been caught: the failure needs a save where the merc has been spoken to, and
+testing starts from a pre-gig save and goes forward.
+
+## 35. The breach-protocol minigame on a mod's own item. Recipe found, BUILT AND UNPROVEN 2026-08-27
+
+**The question:** can a mod put the game's own hacking minigame, the code grid,
+on an object it ships? This register has carried it as research since the gig
+was designed, and the answer turns out to be documented in the shipped data
+rather than anywhere else.
+
+**The wiki does not know.** No page mentions the minigame. The Device Operations
+Container guide states that it cannot perform a device action, which rules out
+the one route a reader would try first. So this is a case for source 4, the
+shipped data itself.
+
+**`TriggerHackingMinigameEffector` is a real effector class**, and two shipped
+items carry an identical shape. `Items.q003_chip` is the Militech chip from The
+Pickup; `Items.mq015_wizardbook_encrypted` is Bartmoss's book. Both are built
+this way:
+
+| record | what it is |
+|---|---|
+| `Items.<x>_inline0` | an ObjectAction, with an effector to apply |
+| `Items.<x>_inline1` | the effector: `effectorClassName`, `factName`, `factValue`, `journalEntry`, `reward`, `showPopup` |
+
+The item points at the action through `itemSecondaryAction`, which is the same
+field a readable shard uses for its Read.
+
+**On a successful breach the effector sets a quest fact and opens a journal
+entry.** That is the whole join to a quest: a fact the phase can wait on and a
+piece of text the player gets for winning. Nothing has to be scripted.
+
+**How those record names were obtained**, because it is the reusable half: CET
+ships `tweakdbstr.kark`, the game ships the Kraken decompressor, and 187 MB of
+plain text comes out holding every record id and every flat name.
+`docs/gameplay-restrictions.md`, "Reproducing the list", carries the format.
+
+**WHAT IT DOES NOT GIVE IS VALUES.** They stay hashed. So an ObjectAction record
+carries both an `effector` flat and an `effectorToApply` flat, and which one the
+game reads could not be settled from disk. Gig 02 sets both, to the same record.
+
+**Built, not proven.** `mods/gig-02-dead-ringer/source/tweaks/items.yaml` ships
+it on the relay, behind a fallback: if the action never appears in the
+inventory, the script raises the item's note after twenty-five seconds and sets
+the same fact, so the beat completes either way. Whoever plays it first should
+say whether a grid appeared, and this entry gets closed on that answer.
+
+**Closed 2026-09-05: never seen to open, and removed.** In play the action
+never appeared and the fallback popup was empty. The relay is a plain readable
+shard now (`docs/shard-playbook.md`), which is the route the merc's shard
+proved. The recipe above stands as research; nothing in the project uses it.
+
+## 36. Finding one object in a room full of similar ones. SOLVED 2026-08-27
+
+**The problem, in a playtest's words:** "all objects are very near to one
+another, and there's no real understanding of what the user should look for."
+
+A search beat driven by proximity cannot work in a dense room, because
+everything in it is within any usable radius of everything else. The parlor had
+the relay, the counter and the room's own marker inside a handful of metres.
+
+**Proximity is the wrong question. What the player is LOOKING at is the right
+one.** `TargetingSystem.GetLookAtObject(player, true, true)` answers it, both
+flags mandatory (gotcha 91), sampled on a tick and counted while it keeps
+returning the same thing. Holding still for about a second and a half is then
+the interaction, which is a verb the player already knows from waiting for an
+NPC's name to resolve.
+
+Three things make it a beat rather than a mechanism:
+
+- **Something must tell the player what to look FOR.** A phone call one beat
+  earlier gives the test to apply, in this case that a relay has to be
+  hardwired, powered and always online.
+- **The wrong answers must answer.** Holding on something that is not it says
+  so, twice and then never again. Without that a player cannot rule anything
+  out, which is the difference between searching and wandering.
+- **There must be a floor under it.** Fifteen seconds standing at the object
+  finds it whatever the player is looking at. An objective completable exactly
+  one way is a stall waiting for the one player who does it differently.
+
+**Identify the object by POSITION, not by entity id.** The id needs the
+container's NodeRef to resolve, which is one more thing that can fail quietly; a
+coordinate is a number the script already has, and nothing else was within two
+and a half metres of it.
+
+**The tick has to run faster while this is live.** At one sample a second a hold
+is a coin toss. Gig 02 runs at four a second between arriving at the parlor and
+finding the relay, and at one a second everywhere else.
+
+## 37. The breach-protocol minigame on a mod's own ACCESS POINT. SOLVED 2026-09-06
+
+**The question:** can a mod place the game's own physical access point (the
+wall box with "Jack in") in a sector of its own and have the code grid play on
+it, so a quest can wait for the breach? Item 35 tried the minigame on an item
+and it never opened; this is the other route, the device the game itself uses.
+
+**What the shipped data says.** Thirteen `worldDeviceNode`s in the cached
+sectors carry `access_points\accesspoint.ent`. Every one has an instance
+buffer, and the two that stand alone with no connected devices
+(`{q112_01_market_security}`, `{q115_dvc_atrium_alt_access}`) carry a
+one-chunk buffer: `AccessPointController` with its `AccessPointControllerPS`.
+Both ship `deviceState: DISABLED`, because a quest switches them on;
+`hasNetworkBackdoor: 1`, `hasPersonalLinkSlot: 1`, `deviceName: LocKey#138`.
+
+**What the decompiled scripts say** (`cyberpunk/devices/masters/
+accessPointController.swift`): the breach is recorded by
+`SetIsBreached(true)` on the Succeeded state in `OnNPCBreachEvent`, read back
+by `public const quest func IsBreached()`, and `FinalizeNetrunnerDive(state)`
+is public and not final, so it can be wrapped. "Jack in" wants clearance 2
+and a powered device.
+
+**Built:** gig 02 lifts `{q112_01_market_security}` whole
+(`tools/gig02/access_point_node.json`), sets `deviceState`/`cachedDeviceState`
+ON and `isAuthorizationModuleOn` 0, gives it the mod's own NodeRef and puts it
+on the parlor's wall (gen_sector.py). The script polls `IsBreached()` on the
+device nearest the box and wraps `FinalizeNetrunnerDive`, either setting one
+fact. Unproven in play: whether the box renders and offers "Jack in", whether
+the grid opens, and whether the persistent state a mod node ships is honoured.
+The tell is the prompt: if there is none, the state values are the first
+suspect.
+
+**Half proven 2026-09-05.** The node renders, the game gives it a persistent
+state (the dev menu's probe read it back: ON, initialized, attached to game,
+backdoor and personal link slot true, interactive), and with the Arasaka
+appearance the "Jack in" prompt appeared. With `router_b` it did not until the node was turned 180 in place, which
+is gotcha 98: the prompt volume is placed per appearance. `default` drew
+nothing. Still unproven: the grid itself, and the breach reaching
+`IsBreached()`.
+
+**The dead prompt, 2026-09-05 evening.** With the small router look the
+prompt appeared only with the node turned 180 in place (gotcha 98), and then
+read "Install Software" and did nothing. The lifted quest device's stored
+state carries `personalLinkCustomInteraction: Interactions.InstallSoftware`,
+a personal-link interaction that only its own quest completes. The node is
+lifted from the game's own working street router instead
+(`{ma_hey_spr_04_ap}`, `tools/gig02/access_point_router_node.json`), which
+ships no stored controller state at all, so the game builds the default one.
+Unproven until played.
+
+**The daemon's label.** The grid names its programs from
+`MinigameAction` records' `objectActionUI` caption and description, and a
+device's definition (`m_minigameDefinition`, protected persistent on the
+controller state) lists them in `overrideProgramsList`; the game's own
+`minigame_v2.Kab08Minigame` is one definition, one program
+(`minigame_v2.FindAnna`). `source/tweaks/minigame.yaml` clones those three
+shapes as "ACCESS ENCRYPTED DATA", and `Gig02_Encounter` names the
+definition on the live device through an added method, since the node has no
+state to carry it. Unproven; the dev menu's "TWEAK FLATS" button reads the
+records back.
+
+**Played 2026-09-06, and it works.** The box renders on the parlor's south
+wall, offers "Jack in", opens the game's own code grid, and the breach reaches
+`IsBreached()`, which is what closes the objective. The daemon reads "ACCESS
+ENCRYPTED DATA".
+
+**The recipe, in one place.** Lift a node whose buffer holds the ENTITY CHUNK
+AND NOTHING ELSE. The game's own street router `{ma_hey_spr_04_ap}`
+(exterior_-35_-20_0_0, node 316) is one, and it is what shipped
+(`tools/gig02/access_point_router_node.json`, lifted by `gen_sector.py`). Give
+it the mod's own long-form NodeRef, place it against a wall, and turn it to
+face the wall rather than the room: the prompt volume is placed per appearance
+and this look wants yaw 180 from the wall's own facing, which is gotcha 98.
+Name the minigame definition on the live controller state from redscript
+(`@addMethod(AccessPointControllerPS)` writing `m_minigameDefinition`), because
+a node with no stored state cannot carry it. Read the breach two ways, polling
+`IsBreached()` and wrapping `FinalizeNetrunnerDive`, and tell our box from
+every other access point in the city by where it stands.
+
+**What NOT to lift, and this cost a day.** A standalone QUEST access point such
+as `{q112_01_market_security}` carries a one-chunk buffer holding the
+controller and its persistent state, and that state carries
+`personalLinkCustomInteraction: Interactions.InstallSoftware`, a personal-link
+interaction only its own quest completes. Shipped that way the prompt reads
+"Install Software" and pressing it does nothing. A lifted state is not neutral
+just because every field in it came from the game. The node file was deleted
+on 2026-09-06 once the router had shipped.
+
+## 38. Yoko's and Char's lines are mute after a RELOAD. SOLVED 2026-09-06
+
+**THE REPRODUCTION, 2026-09-06, and it changes the diagnosis.** One build,
+installed once, nothing swapped:
+
+1. Start the gig from scratch and finish the Afterlife leg.
+2. Save, before fast-travelling to the netrunner.
+3. Play straight on. Every line of Yoko's and Char's works, audio and subtitle.
+4. Reload that same save.
+5. Play the same leg again. Yoko and Char have no audio and no subtitle. Each
+   line still takes its time and can be skipped.
+
+**So it is the RELOAD, not the save.** The same save file gives a working leg
+when it is played through and a mute one when it is loaded first.
+
+**MORE PRECISELY, and this matters for testing: it is loading a save in which
+the cast entries were ALREADY ACTIVE.** Not every load does it. The
+playthrough that works also begins with a load, of a pre-gig save, and that one
+is fine. The entries are switched on just after the merc, so a save taken
+before that point reloads clean and the phase activates them afterwards during
+play; a save taken after it reloads broken. That is the shape the registry
+theory predicts: the join is built when the entries activate, and restoring a
+save with them already on does not rebuild it.
+
+The practical consequence is that a bench save has to be made AFTER the merc
+and BEFORE the Inn, and it has to be made under the build being tested
+(gotcha 101). That kills
+what this entry used to blame, which was saves carrying entities and community
+state from older builds while the cast list was still changing. The build did
+not change between step 3 and step 5.
+
+**The report it replaces.** Playtest, 2026-09-05, twice: loading a save taken
+at Afterlife and playing on to the Dewdrop Inn, every line of Yoko's and
+Char's is mute. Wakako's and the merc's lines were not reported mute, and both
+mute speakers are acquired from the mod's own spawn set
+(`gen_scenes.build_inn`, `build_handover`). The merc is acquired the same way,
+but his beat is BEFORE the save point, so he is never tested after a reload:
+the innocent-looking exception is just untested.
+
+**What is known.** The loaders' logs are clean. A line with no voice and no
+subtitle that still runs its duration is the shape of a scene whose actor was
+not acquired (`questkit.scene.add_spawnset_actor`: the actor is found or the
+scene has no speaker). The save carries entities from earlier builds: a probe
+listed this morning's deleted relay case still standing at its old spot. The
+cast list also changed between the builds the save and the test were made
+with (entries appended at the end, 2026-09-05), and community state is kept
+in the save by list position (gen_community.py, the note on Yoko's place).
+
+**ELIMINATED 2026-09-06, both by evidence rather than by argument.**
+
+- **"The bodies are gone after a load."** They are not. Playtest: after the
+  reload Char is in her chair, she is OURS, and her appearance is the pinned
+  one. Yoko is ours too, which the design call identified by a tell worth
+  keeping: the vanilla Kabuki vendor offers merchant options and ours offers
+  none, so the presence of a shop menu says whose body it is without any tool.
+- **"There are two of her after a load, and the scene takes the wrong one."**
+  There are not. The dev menu's 15 m listing was taken in a session where the
+  lines played (2026-09-05 21:15) and in one where they were mute (2026-09-06
+  14:23), and the two lists are the same bodies at the same coordinates to the
+  centimetre: one body at the chair at (-1184.43, 2045.15, 20.49), one at
+  (-1179.40, 2042.25, 20.07), one Street Vendor. Only the distances differ,
+  because the player stood somewhere else. The world is identical in the
+  working case and the broken one.
+
+**WHAT THE PAIRING RULES OUT, and it is most of the pipeline.** Yoko speaks in
+the GAME'S OWN recordings, pointed at by `vanilla_sid`. Char speaks in takes
+this mod ships as its own `.wem`. They go silent together. So the cause is not
+our audio conversion, not the `locVoiceoverMap`, not the subtitle resource and
+not the LocKeys: the game's own audio for the game's own line is not playing
+either. The line is not being performed at all.
+
+**WHAT IS LEFT.** A body existing and a body being BOUND to a scene are
+different things, and only one of them was measured. The body is world state
+and rides in the save. The binding the scene uses is a spawn-set lookup by
+NodeRef plus entry name (`acquisitionPlan: spawnSet`), which is community and
+quest state. Those can disagree after a load: the woman is standing there, she
+is ours, and the scene still cannot take her. That fits every observation
+above, including the one still untested below.
+
+**SETTLED 2026-09-06: it is every scene that TAKES its actor from this mod's
+own community, and only those.** Playtest after the reload, and the split is
+total:
+
+| Scene | How it gets its actor | After a reload |
+|---|---|---|
+| Yoko at the Inn | our community | mute |
+| Char at the chair | our community | mute |
+| Wakako in her office | our community | mute |
+| Char's holocall | the scene spawns her | **works** |
+| Wakako's closing calls | no world actor | **works** |
+
+Not one exception. Every `add_spawnset_actor` scene is silent and every
+`add_actor` scene is fine. The gig is otherwise untouched: the objectives move,
+the prompts appear, `Skip Ahead` works, and the screenshot of Wakako's office
+shows the scene RUNNING with no subtitle under it. So the scene plays and the
+actor is not in it.
+
+**Two things this rules out.**
+
+- **It is not the body being absent, and not a duplicate.** The 15 m listing is
+  identical in a working session and a broken one, to the centimetre.
+- **It is not the body being older than the load.** The entries were cycled off
+  and on (dev arms 12 then 11) BEFORE fast-travelling, so the body was spawned
+  fresh after the load, and the lines were still mute. Re-activating the
+  community entry does not repair it.
+
+**THE MECHANISM, and gotcha 69 names the join.** A scene acquires a community
+body through `worldCommunityRegistryNode.spawnSetNameToCommunityID`, a table of
+`CName -> community id`. The actor's `spawnSetParams.reference` is matched
+against the string registered in that table, and `specRecordId` is 0 on both
+paths, so the actor is found through that lookup or the scene has no speaker.
+That lookup is the only thing in the chain that a spawnDespawn actor does not
+use, and it is the only thing that distinguishes the mute scenes from the
+working ones.
+
+So the suspect is the registry join going stale across a load: the row is still
+there and the community it names is not the one the entries now belong to.
+Cycling the entries does not rebuild the row, which is why arms 12 and 11
+changed nothing.
+
+**WHY GIG 01 NEVER SAW THIS.** Its one shipped spawn-set actor, Mama Welles,
+is taken from a VANILLA spawn set (`#mama_welles`). Vanilla's registry and
+vanilla's communities are both part of the base world and restore together.
+Every one of gig 02's is taken from `SPAWNSET_NAME`, this mod's own community.
+The bug needs a mod-owned community, which gig 01 never used for a speaker.
+
+**SEVERITY: this blocks a release.** It needs no unusual save, no old build and
+no mid-scene reload. Any player who saves and reloads at any point before these
+beats gets a silent conversation, which is most players on most playthroughs.
+The reason it survived to here is that the whole gig had only ever been played
+straight through from a fresh start.
+
+**PREDICTIONS, cheap to confirm and worth confirming before any fix.** Toji is
+acquired the same way (`gen_scenes.build_kill`), so his last words should be
+mute after a load too; nobody has reported on him. The merc's three scenes are
+the same and sit before the usual save point, so a save and reload BEFORE
+Afterlife should silence him as well. If either speaks, this diagnosis is
+wrong.
+
+**THE RESEARCH, 2026-09-06, and it found a plan this project had never used.**
+A scene actor's `acquisitionPlan` has more values than the two this repo
+writes. A sample of 108 shipped Kabuki scenes, 187 actors, unbundled and read:
+
+| plan | actors |
+|---|---|
+| `community` | 62 |
+| `findInContext` | 59 |
+| `spawnSet` | 45 |
+| `findInWorld` | 13 |
+| `spawnDespawn` | 7 |
+| `spawner` | 1 |
+
+**`community` is vanilla's most common way of taking a body, and it does not
+use the registry table at all.** Read off `ma_wat_kab_02.scene`:
+
+```
+acquisitionPlan  community
+communityParams  entryName = the community entry's name
+                 reference = the community NODE's NodeRef
+spawnSetParams   empty
+specRecordId     0, on both paths, so the actor is found or there is no speaker
+```
+
+The reference is resolved as a real world NodeRef rather than matched as a
+registered string, so it takes the long spelling for a mod's node (gotcha 34).
+That is the whole difference from `spawnSet`, and it skips
+`spawnSetNameToCommunityID`, which is the join suspected of going stale.
+
+**THE BENCH, built 2026-09-06.** Two one-line scenes aimed at Yoko, identical
+but for the acquisition plan, on dev arms 16 and 17 (`gen_scenes._lab_acquire`).
+The subtitle is the entire signal: an actor that acquired speaks, one that did
+not is silent while the scene runs its time, which is the symptom itself.
+
+**RUN IT IN THE RIGHT WINDOW, and the first attempt did not.** An actor can be
+in one scene at a time, so a bench that asks for a body the gig is already
+holding is silent whatever the plan does, and the first run of this bench was
+pressed while Yoko was mid-conversation. That result means nothing. There is no
+way to see her without entering her 3 m trigger, so the window has to be taken
+AFTER her conversation rather than before it:
+
+1. Load a save, go to the Inn, and let Yoko's (mute) conversation finish.
+2. Do NOT hand the shard to Char. `cc_g02_trace_done` is what switches her and
+   Yoko off, and it only starts 30 in-game minutes after that handover, so
+   leaving it undone keeps both bodies in the world indefinitely.
+3. Her scene is guarded on `cc_g02_inn_reached == 0` and never fires twice, so
+   she is now present, active and unclaimed. Press 16, then 17.
+
+**A silent bench is ambiguous unless the arm is known to have fired.** Each arm
+clears `cc_g02_dev_crowd` as its first action, and the menu's bench panel shows
+that fact live: 0 means the arm ran, and the value still sitting there means it
+never fired.
+
+**THE FIRST TWO RUNS BOTH FIRED NOTHING, and that is gotcha 101.** Playtest
+2026-09-06: preconditions perfect (`inn_reached` 1, `trace_done` 0, both bodies
+listed within 20 m), both buttons pressed, and the readout showed the fact
+still holding 16 when 17 was pressed and still holding 17 afterwards. The arms
+are in the built phase, wired and waiting, and they were never entered: the
+save's phase passed the node they hang off long before this build existed. A
+new quest branch is dead in an old save. So the bench needs a playthrough that
+STARTS under the build being tested, and only then a save and a reload at the
+Inn.
+
+- **16 silent, 17 speaks.** The plan is the cause and the fix is to move the
+  four scenes to `add_community_actor`. One body, no design change.
+- **Both silent.** The plan is not the cause; the community itself is not
+  reachable after a load by any route, and the next suspect is the registry
+  node this project generates.
+- **Both speak.** The bench is not reproducing the bug and something about the
+  real scenes matters that the bench does not copy.
+
+**THE ANSWER, measured on the bench 2026-09-06.** On a playthrough started
+under the build being tested, at the Inn, after a save and a reload, with both
+bodies present and Yoko's own conversation already over:
+
+| bench | plan | arm fired | result |
+|---|---|---|---|
+| 16 | `spawnSet` | yes | **silent** |
+| 17 | `community` | yes | **subtitle** |
+
+Both arms were confirmed to have fired by the fact each clears on entry, so the
+silence of 16 is a real result rather than an arm that never ran. Repeated
+presses afterwards were inert, which is the one-shot-per-load behaviour and is
+itself a confirmation.
+
+**So a scene actor taken from a MOD'S OWN community must use the `community`
+acquisition plan.** `spawnSet` works until the first load and is silent
+afterwards, because it resolves through
+`worldCommunityRegistryNode.spawnSetNameToCommunityID` and that join does not
+survive a save being restored with the entries already active. `community`
+names the community node as a world NodeRef and never consults the table.
+
+**CONFIRMED FIXED IN PLAY, 2026-09-06.** The original reproduction was run
+again on the shipped change: start the gig, finish Afterlife, save before
+travelling to the netrunner, reload that save, go to the Inn. Yoko and Char
+speak, with audio and subtitles.
+
+**SHIPPED.** All twelve of this gig's world-acquired actors moved to
+`Scene.add_community_actor` (the two door groups, the merc's three scenes,
+Yoko, Char, Wakako and Toji). One body each, no design change, and nothing else
+about the scenes was touched. The bench's own control keeps `spawnSet` on
+purpose, since it is the thing being compared against.
+
+**Gig 01 is not affected** and needs no change: its one world-acquired speaker,
+Mama Welles, comes from a VANILLA spawn set, whose registry and community
+restore together.
+
+**TWO ROUTES TO A FIX, neither tried.** Kept for the record; the bench chose
+the first before either was built out.
+
+1. **Make the registry join survive**, which keeps the design as it is. This
+   needs research rather than a guess: ArchiveXL's community handling, the
+   registry node this project generates, and what a load does to a mod
+   community's id. `docs/sources.md` says which of those to read first.
+2. **Let the scenes spawn their own bodies**, which is proven to work today,
+   and switch the community entry off as the scene opens so there is still one
+   body. This reverses the 2026-09-03 call that made every speaker a single
+   community body, and it risks a visible swap at the moment the conversation
+   starts. It is the fallback if route 1 has no answer.
+
+**THE OLD CHECK, now answered.**
+After the reload, at the Dewdrop Inn: press "INN BODIES ON: vendor off, our
+Yoko and Char on (arm 11)", then talk to her again.
+
+- **She speaks.** The binding is what the load loses, and re-activating the
+  community entry restores it. The fix is then re-assertion rather than a node
+  that fires once.
+- **She is still mute.** The binding is not it either, and the next suspect is
+  the scene itself rather than anything around it.
+
+**A second reading worth taking in the same run, because it is free.** Wakako
+in her office is acquired the same way from the same community. If she is mute
+too, the statement is "every spawn-set actor after a load", which is one clean
+thing. If she speaks, something is specific to the two Inn entries, and the
+difference between them and her is where to look next.
+
+**The fix, once it is confirmed**, is re-assertion on load, which is the rule
+this project already applies to attitudes and shields: the encounter's tick
+reads the facts and puts the world into the state those facts imply, every
+tick, rather than trusting a node that ran once. What the phase does at a
+transition, something has to do again on every load.
+
+## 39. A mod's own trigger area as a quest area on the minimap. SOLVED 2026-09-06
+
+**The question.** The last leg of gig 02 ends when V leaves an area with many
+exits. A marker at the top of the stairs says nothing about where the area
+ends. The game draws a dotted outline on the minimap for some objectives; can
+a mod draw one for its own area?
+
+**What the game does.** The cooked journal (`base\journal\cooked_journal.journal`,
+71 MB serialised) holds 4276 quest map pins. 638 of them reference nodes
+named `_tr_`, trigger areas, with pin ids such as `mp_area` and `area_mappin`.
+The minimap has a controller for these: `MinimapQuestAreaMappinController`
+(`UI/mappins/minimapMappins.swift`) owns an `areaShapeWidget`, is chosen when
+the pin arrives with `MinimapQuestAreaInitData` (`UI/widgets/minimap/minimap.swift`,
+`CreateMappinUIProfile`), and hides itself unless the pin is tracked and
+`MappinUIUtils.IsPlayerInArea` says V is inside. So the outline is drawn for a
+quest pin whose target is a trigger area, only while V stands in it and the
+objective is the tracked one. That matches a "Leave the area" objective
+exactly. Nothing in the scripts ties it to a pin variant.
+
+**The shape.** `worldTriggerAreaNode.outline` is an `AreaShapeOutline`: a
+`buffer` of count (uint32), then X Y Z W per corner in the node's LOCAL space
+(float32, W 1), then the height (float32); `points` repeats the corners as
+Vector3. Read off `exterior_-10_18_0_0`'s `{cs_tr_vo}`, whose four `points`
+are a unit square while its buffer holds the real 5 to 7 m corners, so the
+buffer is the one that counts and both are written.
+
+**What was built.** `tools/gig02/hit_area.py` turns the 23 corners walked in
+play (the stairs sit 1 to 4 m outside that walked line, along the edge that
+closes it) into the convex hull of the corners, the stairs and the trash pile,
+pushed out 6 m: seven corners, every step inside, the top step 10 m outside.
+`gen_sector.area_node` writes it as a `worldTriggerAreaNode` in the gig's own
+sector, named `$/03_night_city/#c_westbrook/japantown/#cc_g02_hit_area`,
+with a `questTriggerNotifier_Quest` notifier, `isVisibleInGame` 1, and the
+same finite streaming distance as the access point beside it. The two way-out
+pins reference that node with zero offset, and the leaving test in the script
+uses the same seven corners with a 2 m margin, so what is drawn is what ends
+the leg.
+
+**What the test has to show.** Three outcomes, told apart by the ArchiveXL log
+(`red4ext\plugins\ArchiveXL\ArchiveXL.log`, the `[Journal]` lines, see the
+map-pins playbook) and the minimap after Toji dies:
+
+- outline on the minimap while V is on the stairs, gone once V is out: the
+  answer is yes, and gotcha 34's long-form rule holds for pins too;
+- a plain marker at the area's centroid and no outline: the pin resolves but
+  the engine does not treat a mod's trigger area as an area. Next knob: the
+  pin's variant (vanilla's area pins are mostly `ExclamationMarkVariant`);
+- `Can't resolve mappin ... position` or `reference`: the node is not
+  resident or not named when the pin activates; the sector's whole-map
+  streaming box was supposed to settle the first, and the long-form name the
+  second.
+
+**First test, 2026-09-06 09:08.** Outcome three. The ArchiveXL log:
+`Can't resolve mappin ... pin_exfil position`. The dev menu's node probe
+(`CCLab_NodeEntity`, backlog 11's recipe) on the stairs: the area's name
+resolves and NO entity stands behind it; the access point, the control, the
+same, but it is 1.3 km away and finitely streamed, so that says nothing. The
+map pin report (`CCLab_MappinReport`): the tracked quest pin sat at 0, 0, 0,
+`area=false`, 1301 m from V, which is what "the marker moved a kilometre
+away" was: a pin whose node yields no position falls to the world origin.
+So a bare `worldTriggerAreaNode` in the gig's Exterior sector does not become
+an entity, with the shard case's instance flags or with a vanilla trigger
+area's (Uk11 65024, Uk12 1, read off 1071 vanilla instances), and gig 01's
+generator note that "a trigger area's did not render" was the same finding.
+
+**Second test, built the same morning.** The area is now the one mod-shipped
+area known to instantiate: gig 01's security-area DEVICE (backlog 31: found,
+resolved, attached, `IsPlayerInside` true), a `worldDeviceNode` of
+`security_area_1.ent` whose instance buffer carries a
+`gameStaticTriggerAreaComponent` with the outline and a
+`SecurityAreaController` state, here with `securityAreaType` DISABLED and no
+connections, so it does nothing but exist. It rides as an extra node of the
+cast community's always-loaded sector under `$/mod/cc_g02_cast/#cc_g02_hit_area`
+(`gen_community.hit_area_node`, borrowing `tools/gig01/gen_security.py`'s
+builders), and the two way-out pins point at it. Whether the engine treats a
+device's trigger component as a quest AREA is the open half; the pin
+resolving to a position at all is the first thing to read.
+
+**Second test, 09:20.** The device resolved: ArchiveXL logged
+`resolved to NodeRef` for both way-out pins, and the map pin report put the
+tracked pin at the area's centroid, 11 m from V. `area=false`, no outline.
+The node probe still said "no entity", so `FindEntityByID` on a resolved
+node is not the test of whether a pin can use it; the ArchiveXL log is.
+
+**Why, from the source.** ArchiveXL's journal extension
+(`src/App/Extensions/Journal/Extension.cpp`) builds the cooked mappin it
+hands the game: position from the node instance plus the pin's offset, and,
+in `ResolveMappinVolume` (run for every pin that is not a point of interest),
+an outline with height IF the node instance casts to `worldAreaShapeNode`.
+A `worldTriggerAreaNode` is one; a `worldDeviceNode` is not, whatever
+component it carries. So the device could only ever give a position, and the
+first test's trigger node was the right class in the wrong place: the gig's
+Exterior sector, with a shard case's instance flags, where ArchiveXL found no
+instance at all.
+
+**Third test, built the same morning.** The trigger area node again, as an
+extra node of the cast community's always-loaded sector, beside the
+crowd-null area node that instantiates there, with the instance flags every
+vanilla trigger area carries (MaxStreamingDistance 2760, UkFloat1 90, Uk10
+1056, Uk11 65024, Uk12 1; questkit's instance writer learned Uk12 for it).
+Same name, so the pins are unchanged. If the pin resolves and `area=true`,
+the outline is ArchiveXL's and the question is closed; if it resolves with
+`area=false`, the cast is failing on our node and the node's fields are the
+next thing to compare against `{cs_tr_vo}` one by one; if it fails on
+`position` again, a trigger area in a mod sector is not instantiated by this
+route at all.
+
+**Third test, 09:37: it works.** The map pin report: the tracked pin at the
+area's centroid, 18 m from V, `area=true`. The minimap drew the seven-corner
+hull as a filled yellow polygon around V, which is the game's own quest area
+look (MinimapQuestAreaMappinController's root state is `Quest`, so it takes
+the quest colour; nothing in the mod chooses it). ArchiveXL logged the pin
+as resolved. The probe's "no entity" line for the node stayed the same, and
+is not what the pin uses.
+
+**The recipe, in one place** (also in the map-pins playbook): a
+`worldTriggerAreaNode` in a mod's ALWAYS-LOADED sector, long-form name, the
+outline in `outline.buffer` (count, X Y Z W per corner in the node's local
+space, height) with the corners repeated in `points`, a
+`questTriggerNotifier_Quest` notifier, `isVisibleInGame` 1, and an instance
+carrying a vanilla trigger area's flags (MaxStreamingDistance 2760, UkFloat1
+90, Uk10 1056, Uk11 65024, Uk12 1). A `gameJournalQuestMapPin` whose
+`reference` is that node, offset zero. The outline shows while the pin's
+objective is tracked and the player is inside; it does not need the pin's
+variant to be anything in particular (this one is QuestGiverVariant).
+
+**Correction.** A note made on 2026-09-05 said vanilla's dotted areas come
+from base-game area nodes "which a mod sector cannot register for pins". That
+was the pre-2026-08-17 belief; the map-pins playbook's own-anchors section
+records that a long-named node in a mod's always-loaded sector does resolve
+for a pin. The claim to test was never "does the node register" but "is it
+drawn as an area".
+
+## 40. Paying a gig fee the way the game pays one. SOLVED 2026-09-06
+
+**The question.** Gig 01 pays by handing the player `Items.money` and awarding
+Street Cred directly. That works, and it skips everything the game does around
+a completed gig: the level XP, the scaling, and the telemetry. What does a
+vanilla fixer gig actually hand out, and can a mod hand out the same shape?
+
+**What the shipped data says.** Each of Wakako's nine Westbrook gigs closes on
+one `QuestRewards.sts_wbr_*_completion` record, read off the live TweakDB with
+a dev-menu probe on 2026-09-06. Every one is the same shape: eddies as a fixed
+additive value (3,800 to 16,600 across the nine), 1,000 level XP, and 979 to
+1,710 Street Cred XP. The XP is scaled to the player's level by
+`CalculateStreetStoryReward`, which the game applies to any reward whose `name`
+begins with `sts_`; the eddies are not scaled, so the number in the record is
+the number the player sees. One of hers (`sts_wbr_jpn_03`) pays 30,000 for the
+peaceful ending against 15,040 for the other through a second record, which is
+how a gig with two outcomes does it.
+
+**What ships.** Four records in `mods/gig-02-dead-ringer/source/tweaks/
+rewards.yaml`, one per outcome (9,300 / 7,000 / 4,700 / 3,500 eddies by the
+merc's fate and whether V was seen), handed to `RPGManager.GiveReward`, which
+is what the game's own quest reward node calls. The money notice and the
+telemetry are then vanilla's, and the payout draws no text of the mod's own.
+
+**The clone trick, and it is the part worth copying.** A completion record
+holds its currency package and that package's quantity modifier as INLINE
+records, whose types are not names a modder can spell in YAML. So all three are
+cloned by `$base` off `sts_wbr_hil_01_completion` and its `_inline4` and
+`_inline5`, and only the money value is overridden. Nothing has to name an
+inline record type:
+
+```yaml
+QuestRewards.sts_cc_g02_qty_quiet_kill:
+  $base: QuestRewards.sts_wbr_hil_01_completion_inline5
+  value: 9300
+QuestRewards.sts_cc_g02_money_quiet_kill:
+  $base: QuestRewards.sts_wbr_hil_01_completion_inline4
+  quantityModifiers: [ QuestRewards.sts_cc_g02_qty_quiet_kill ]
+QuestRewards.sts_cc_g02_completion_quiet_kill:
+  $base: QuestRewards.sts_wbr_hil_01_completion
+  name: sts_cc_g02_completion_quiet_kill
+  currencyPackage: [ QuestRewards.sts_cc_g02_money_quiet_kill ]
+```
+
+**ALL FOUR TIERS CONFIRMED IN PLAY, 2026-09-06.** Each outcome was played and
+each paid its own number. Nothing about the fee is outstanding.
+
+**Whether TweakXL resolves a `$base` on an `_inline` record was the unproven
+half, and it does.** Read from the loader's own log on 2026-09-06
+(`red4ext\plugins\TweakXL\TweakXL-<date>.log`, not `r6\logs\`, which is where
+this register said to look): `rewards.yaml` is read, inheritance and mutations
+resolve, the import completes, and the record count rises by 35 across the
+gig's four YAML files. No line of ours is rejected. The 9,300 tier had already
+paid in play; the other three are the same three records with a different
+number in one flat.
+
+**KEEP THE NAME BEGINNING WITH `sts_`.** It is what makes the game scale the
+XP. A record named anything else pays the raw numbers.
+
+## 41. An objective whose wording can be swapped by a branch that is racing the main line. NOT REPRODUCED 2026-09-06
+
+**CLOSED 2026-09-06: played for, and not reproduced.** The kill was taken in
+front of the den with the Claws watching, as close to simultaneous as a person
+can make it, and the objective changed wording correctly every time. The exact
+instant is difficult to force by hand, so this is "not reproduced" rather than
+"cannot happen": the hole below is still real in the graph, and if the wording
+is ever reported as stuck after a kill, this entry is where to start. Nothing
+was changed.
+
+**The shape.** Gig 02's hit has two objectives that change wording when V is
+seen: "Kill Toji without being seen" becomes "Kill Toji", and "Leave the area
+unseen" becomes "Leave the area". Each is a side branch off the main line that
+waits on OR(seen, the-thing-is-done), then asks whether the thing is still
+undone, and only then closes one objective and opens the other. The branch has
+no output; it is expected to resolve because the main line always sets the
+second fact.
+
+**The hole, reasoned at the desk and not yet observed.** Both facts can go up
+in the same tick of `DeadRingerEncounter.Tick`: `cc_g02_spotted` is set where
+the Claws are checked, and `cc_g02_toji_dead` about eighty lines further down
+in the same pass. If the quest graph evaluates the branch's condition after
+BOTH have landed, the condition reads "Toji is already dead", takes its dead
+end, and the loud objective is never opened. The main line then reads
+`cc_g02_spotted` on its own, sees it set, and closes `obj_toji_loud`, an
+objective that was never opened. The quiet one stays in the journal.
+
+**What the player would see.** "Kill Toji without being seen" still sitting in
+the quest log after Toji is dead, with the leaving objective open underneath
+it, for the rest of the gig. The same shape applies to the leaving pair.
+
+**Whether it can happen depends on something not measured here:** whether the
+quest system evaluates a fact-driven pause the moment the fact is written or
+once at the end of the frame. If it is the moment, the branch always sees a
+living Toji and there is no bug at all.
+
+**The test.** One shot that kills Toji and alerts a Claw at the same instant,
+which in practice means shooting him in front of the den rather than from the
+walkway. Read the quest log immediately after: if "without being seen" is
+still there once he is dead, this is real.
+
+**The fix if it is real** is to stop asking the branch to decide. Close both
+objectives on the main line rather than picking one by the same fact the branch
+read, or drive the wording from a single condition node on the main line after
+the death, with no branch at all. Do not fix it before the test: closing an
+objective that was never Active may itself put a completed line in the journal,
+which would be a worse bug than the one being fixed.
+
+## 42. One character, two bodies, two outfits. NOT A BUG 2026-09-06
+
+**CLOSED 2026-09-06 by the design call, on a second look in game: the two are
+the same woman and the report is withdrawn.** The entry is kept because the
+elimination below is worth having, and because one line of it was wrong for a
+day and reached three shipped docs.
+
+**What was and was not measured.** The chair body was read three times and
+copied twice, and every reading says `slacker_wa_slacker_wa_03`. THE STUDIO
+BODY WAS NEVER READ. So this closes on judgement by eye, not on a measurement,
+and if the doubt ever comes back the reading is one button: teleport to the
+holocall studio floor spot while the call is up and press the dev menu's "READ
+the appearance of the body I'm looking at".
+
+**The report.** Playtest, 2026-09-05 and again 2026-09-06: Char sits in the
+netrunner chair at the Dewdrop Inn, and later calls V on video from the holocall
+studio. She was reported as dressed differently in the two places.
+
+**The wrong answer, recorded so it is not reached twice.** On 2026-09-05 this
+was closed as a lighting difference: the chair room is lit teal, the studio is
+lit warm, and two crops of the same knit looked like the same weave. That
+cannot be the explanation for a different GARMENT, and the report on 2026-09-06
+was explicit that the clothes differ. Light changes colour, not cloth.
+
+**What IS proven, all of it read off disk on 2026-09-06.**
+
+- The appearance name is pinned in all three places a body could pick one: the
+  `Character.cc_g02_char` record, the community entry that seats her, and the
+  scene actor that stands in the studio. All three say
+  `slacker_wa_slacker_wa_03`.
+- The shipped scene resource really carries it, in both fields the actor has:
+  `spawnDespawnParams.appearance` and `specAppearance`. So this is not a
+  generator that failed to write the value.
+- That name is real. The entity
+  (`base\characters\entities\citizen\citizen__youngster_wa.ent`) lists 20
+  appearance names and `slacker_wa_slacker_wa_03` is one of them, mapping to
+  `slacker_wa_03` in the `.app` beside it.
+- That target is a leaf with no randomness: 18 components, no `partsValues` and
+  no `partsOverrides`. Once resolved it is one outfit everywhere.
+- The chair body is confirmed to have resolved it. The dev menu's look-at probe
+  read `Character.cc_g02_char` / `slacker_wa_slacker_wa_03` off it three times
+  on 2026-09-05.
+
+**The suspect, and it is the one thing on this list nobody had looked at.** The
+entity's `defaultAppearance` is the literal string `random`. A body of this
+entity that does not receive an appearance does not fall back to a fixed look:
+it rolls one of the twenty. So a studio body whose appearance never reached it
+would be wearing a different outfit, and a different one each time.
+
+**The studio body has never been measured.** Every capture in the log is the
+chair body at (-1184.4, 2045.2). Nobody has read what the body in the studio is
+actually wearing, because it stands in a sector off the map and is only ever
+seen through the phone. The whole disagreement is between a measurement of one
+body and an inference about the other.
+
+**The test, and it needs no new tooling.** Play the call twice on two separate
+runs and compare the caller's clothes to each other, not to the chair.
+
+- **Different each time**: the appearance is not reaching the studio body and
+  `random` is picking. The fix is at the spawn, not in the data.
+- **The same wrong outfit every time**: something is applying a fixed
+  appearance that is not ours, and the record and the scene actor are then in
+  disagreement about which one wins.
+- **The same as the chair**: the difference is colour after all, and the
+  lighting reading was right.
+
+**THE BENCH, built 2026-09-06 and unplayed.** One CET button, "APPEARANCE A/B",
+outside the gig and on any save whose phase has started:
+
+- quest-phase dev arm 15 stages the holocall studio and rings V from Char's
+  contact, playing `gig02_lab_call`, a scene with NO dialogue whose only job is
+  to hold her in the studio for about 45 seconds. She is staged exactly as the
+  real call stages her: same record, same pinned appearance, same offset, same
+  yaw. A bench that differs from the thing it tests proves nothing.
+- `CCLab_SpawnInFront` puts a second body of `Character.cc_g02_char` three
+  metres in front of the player, facing back at him, with NO appearance on the
+  spec, so the record alone decides what it wears.
+
+Both arrive together, so the phone and the body beside it are seen under ONE
+light. That is the variable the 2026-09-05 reading blamed and never controlled
+for. A second button despawns the bodies.
+
+**Three readings, and each names its own cause.**
+
+| What the run shows | What it means |
+|---|---|
+| the phone and the body in front differ, under one light | the two spawn routes give different looks, and the light was never it |
+| they match | the difference is the light after all, and the 2026-09-05 reading was right |
+| the phone differs from ITSELF on a second run | nothing is reaching the studio body and `random` is picking one of twenty |
+
+The third is the one worth running twice for, and it is the cheapest to read.
+
+## 43. Three beats gig 02 built and then removed. CLOSED as a record, 2026-09-06
+
+These were designed, some of them built, and taken out again. They are here
+because the register is where this project keeps what it tried, and because
+each one is a shape another gig will be tempted by. None is a research
+question; nothing is open.
+
+**A hold-to-extract progress bar instead of the breach minigame.** The parlor
+beat was first designed as a scan of the machines followed by a held
+interaction against the big on-screen progress bar, on the reasoning that the
+code grid was unknown territory and a held bar reads as breaking into a machine
+without needing a puzzle. It was replaced once item 37 proved a mod can ship a
+working access point. The bar is still the right answer for a beat that wants
+tension without a minigame, and the gig before this one uses it for an upload;
+what it is not is a substitute for the game's own grid when the grid is
+available.
+
+**The Tyger Claws standing down when the target dropped.** The hit originally
+ended with every surviving Claw turning neutral the instant Toji died, on the
+reading that they had watched a sanctioned killing and knew better than to
+argue with it. It was cut after one playtest and the reason is worth keeping:
+they do not know V, they do not know who sent him, and the reaction to bullets
+is bullets. A crowd that lowers its guns because the QUEST knows the killing
+was sanctioned is the quest's knowledge leaking into the world. What replaced
+it is that nobody stands down: unseen, they never learn anything happened;
+seen, it stays a firefight.
+
+**Two bodies for every speaker.** Before the community work, each speaking NPC
+was a pair: a voice-only scene actor parked a kilometre out and a hundred
+metres down, carrying the words and the lipsync, plus a script-spawned body
+standing where the player looks. It works, and it is what a mod does before it
+can acquire a community body. The costs are that the two can disagree, that the
+mouth moves on a body nobody sees, and that the visible body is not owned by
+the scene, so its own conversation can win the approach. Gotcha 69 is the
+technique that replaced it and gotcha 102 is the acquisition plan that makes it
+survive a load.

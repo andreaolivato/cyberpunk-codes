@@ -21,7 +21,9 @@ The other consequence is that a line can only be voiced IF IT LIVES IN A SCENE.
 Text pushed from redscript is a caption with no RUID, so no voiceover map can
 ever key on it. See docs/architecture.md.
 """
+import hashlib  # write_tone pitches a placeholder by a hash of its line key
 import json  # noqa: F401
+import math    # write_tone
 import os
 import struct  # noqa: F401
 import subprocess  # noqa: F401

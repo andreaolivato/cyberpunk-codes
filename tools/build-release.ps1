@@ -71,7 +71,12 @@ $shipName = (($modDir.Name -split "-", 3)[2] -split "-" | ForEach-Object {
     $_.Substring(0, 1).ToUpper() + $_.Substring(1)
 }) -join ""
 
-if (-not $OutDir) { $OutDir = Join-Path $repo "dist" }
+# ONE FOLDER PER GIG (2026-09-06). dist\ held every Negative Balance zip in one
+# flat list, which was fine while there was one gig and stops being fine at two:
+# the zips are named after the mod, so a second gig's history interleaves with
+# the first's and the folder stops reading as a release history at all.
+$gigId = ($modDir.Name -replace '^(gig-\d+).*$', '$1')
+if (-not $OutDir) { $OutDir = Join-Path $repo "dist\$gigId" }
 New-Item -ItemType Directory -Force $OutDir | Out-Null
 
 Write-Host "Release: $shipName $Version"
@@ -128,6 +133,11 @@ $archives | ForEach-Object { Copy-Item $_.FullName $archiveDst -Force }
 # redscript
 Copy-Item (Join-Path $modDir.FullName "source\scripts\*") $scriptsDst -Recurse -Force
 Get-ChildItem $scriptsDst -Filter *.md -File | Remove-Item -Force
+# The pose lab, which is dev tooling: global functions the CET menu calls,
+# and the menu is already refused below. Its header carries the rule that
+# nothing the gig itself calls may live there, and the compile check is what
+# proves the rule still holds (2026-09-06).
+Get-ChildItem $scriptsDst -Filter *_Lab.reds -File | Remove-Item -Force
 # Shared helpers, vendored under a per-gig module. A release that shipped
 # them un-renamed would break the whole redscript bundle for any player who
 # also installs another of our gigs - see tools/vendor-shared.ps1.
@@ -153,8 +163,9 @@ foreach ($f in $staged) {
     if ($rel -notmatch '^(archive\\pc\\mod\\|r6\\scripts\\|r6\\tweaks\\)') {
         $problems += "unexpected path: $rel"
     }
-    # The dev menu, by any route.
+    # The dev menu and the pose lab, by any route.
     if ($rel -match 'cyber_engine_tweaks|cet-dev|_dev\\') { $problems += "dev tooling: $rel" }
+    if ($rel -match '_Lab\.reds$') { $problems += "dev tooling: $rel" }
     # Editor and log droppings.
     if ($f.Extension -in @(".log", ".bak", ".tmp")) { $problems += "junk file: $rel" }
 }

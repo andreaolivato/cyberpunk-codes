@@ -1,0 +1,55 @@
+# The breach on the parlor's access point: what the grid calls its daemon.
+#
+# DESIGN CALL 2026-09-05: the grid should say what solving it achieves. The
+# game's own quest breaches do that with a minigame definition of their own,
+# and `minigame_v2.Kab08Minigame` is the worked example: a definition whose
+# `overrideProgramsList` holds ONE program record (`Kab08Minigame_inline0`)
+# pointing at a quest action (`minigame_v2.FindAnna`), and the grid shows that
+# action's `objectActionUI` caption and description as the daemon
+# (hackingMinigameUtils.swift, MinigameGenerationRuleOverridePrograms). All
+# three record shapes below are those, cloned; the names came out of the
+# TweakDB string table (docs/gameplay-restrictions.md, "Reproducing the
+# list") and the values are inherited, because values cannot be read off disk.
+#
+# THE DEVICE HAS TO NAME THIS DEFINITION. A device's minigame is
+# `m_minigameDefinition` on its controller state, and the router node the gig
+# ships carries no stored state (gen_sector.py), so Gig02_Encounter sets it on
+# the live device through an added method (CCGig02SetMinigame) while the
+# breach objective is up. If the grid shows the ordinary datamine daemons, that
+# call did not land; if it shows the daemon below, everything here applied.
+#
+# `caption` and `description` are LocKey#<FNV1a64 of the bare key>, the
+# convention every Character record in characters.yaml uses. The strings are
+# in tools/gig02/gen_localization.py (daemon-name, daemon-desc).
+
+# What the daemon says. The base is the UI record of the game's own quest
+# datamine daemon (The Pickup's chip), so the icon and the record type are a
+# daemon's. FIRST ATTEMPT, 2026-09-05: `Interactions.Loot` as the base and
+# `minigame_v2.FindAnna` as the program's; the grid drew its "PROGRAM /
+# Program name" placeholder, which is what it does when the program is not
+# a daemon record at all (FindAnna's fields are a plain action's, and the
+# grid fetches daemons by their own type).
+Interactions.cc_g02_access_data:
+  $base: Interactions.NetworkDataMineLootQ003
+  caption: LocKey#370929053558320464
+  description: LocKey#2553088357511467206
+
+# The program the grid offers: the quest datamine daemon, re-labelled, and
+# carrying the gig's own fact as a third signal of the breach (the loot
+# daemons carry a fact name and value; the controller's special case for the
+# Q003 chip matches on the record id, so no chip is handed out).
+MinigameAction.cc_g02_access_data:
+  $base: MinigameAction.NetworkLootQ003
+  objectActionUI: Interactions.cc_g02_access_data
+  factName: cc_g02_ap_breached
+  factValue: 1
+
+# The one-entry program list, and the definition that carries it.
+minigame_v2.cc_g02_parlor_inline0:
+  $base: minigame_v2.Kab08Minigame_inline0
+  program: MinigameAction.cc_g02_access_data
+
+minigame_v2.cc_g02_parlor:
+  $base: minigame_v2.Kab08Minigame
+  overrideProgramsList:
+    - minigame_v2.cc_g02_parlor_inline0

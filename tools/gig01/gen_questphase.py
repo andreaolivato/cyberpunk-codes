@@ -1084,8 +1084,8 @@ objective_step('cc_g01_mama_talked', 'obj_mama', 'obj_bar', 'pin_bar')
 # THE ENDING, as a scene since 2026-08-13.
 #
 # It used to be two SCRIPTED CAPTIONS driven entirely from
-# Gig01_Encounter.Line(15) and Line(16) - which is why Johnny and V had
-# generated audio that nothing could play: a caption has no locstring RUID, so
+# Gig01_Encounter.Line(15) and Line(16) - which is why Johnny and V had audio
+# that nothing could play: a caption has no locstring RUID, so
 # the voiceover map has nothing to key on. Rebuilding the beat as a real scene is
 # the whole point of the exercise (BUILDING.md, "Audio toolchain").
 #
