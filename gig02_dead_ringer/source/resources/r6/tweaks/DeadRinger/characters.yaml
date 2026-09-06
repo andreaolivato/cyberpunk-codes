@@ -1,0 +1,118 @@
+Character.cc_g02_wakako:
+  $base: Character.wakako_okada
+  appearanceName: wakako_okada_default
+  displayName: LocKey#9849343552330629433
+  fullDisplayName: LocKey#9849343552330629433
+  skipDisplayArchetype: true
+
+Character.cc_g02_yoko:
+  $base: Character.wat_kab_netrunner_01
+  appearanceName: service__vendor_wa_vendor_asian_02
+  displayName: LocKey#1297990292505017833
+  fullDisplayName: LocKey#1297990292505017833
+  skipDisplayArchetype: true
+
+Character.cc_g02_char:
+  $base: Character.SlackerFemale
+  appearanceName: slacker_wa_slacker_wa_03
+  displayName: LocKey#17642806731671841792
+  fullDisplayName: LocKey#17642806731671841792
+  skipDisplayArchetype: true
+
+Character.cc_g02_ideka:
+  $base: Character.LightCrowd_japantown_wa
+  displayName: LocKey#13964536880637536916
+  fullDisplayName: LocKey#13964536880637536916
+  skipDisplayArchetype: true
+
+# wakako's doorman
+Character.cc_g02_huscle:
+  $base: Character.q112_wakako_guard
+  appearanceName: gang__tyger_mb_ozeki__lvl3_02
+  displayName: LocKey#15582622219031382
+  fullDisplayName: LocKey#15582622219031382
+  skipDisplayArchetype: true
+
+Character.cc_g02_queue_a:
+  $base: Character.LightCrowd_japantown_ma
+  appearanceName: crowd__districts_ma_rich_07
+  reactionPreset: ReactionPresets.NoReaction
+  baseAttitudeGroup: neutral
+  displayName: LocKey#1975290165512292963
+  fullDisplayName: LocKey#1975290165512292963
+  skipDisplayArchetype: true
+
+Character.cc_g02_queue_b:
+  $base: Character.LightCrowd_japantown_ma
+  appearanceName: crowd__districts_ma_rich_09
+  reactionPreset: ReactionPresets.NoReaction
+  baseAttitudeGroup: neutral
+  displayName: LocKey#9736963685951084832
+  fullDisplayName: LocKey#9736963685951084832
+  skipDisplayArchetype: true
+
+Character.cc_g02_queue_c:
+  $base: Character.LightCrowd_japantown_ma
+  appearanceName: crowd__districts_ma_rich_04
+  reactionPreset: ReactionPresets.NoReaction
+  baseAttitudeGroup: neutral
+  displayName: LocKey#149175854294850397
+  fullDisplayName: LocKey#149175854294850397
+  skipDisplayArchetype: true
+
+Character.cc_g02_queue_d:
+  $base: Character.LightCrowd_japantown_wa
+  appearanceName: crowd__districts_wa_casual_14
+  reactionPreset: ReactionPresets.NoReaction
+  baseAttitudeGroup: neutral
+  displayName: LocKey#9210354639909328274
+  fullDisplayName: LocKey#9210354639909328274
+  skipDisplayArchetype: true
+
+Character.cc_g02_queue_e:
+  $base: Character.LightCrowd_japantown_ma
+  appearanceName: crowd__districts_ma_teen_04
+  reactionPreset: ReactionPresets.NoReaction
+  baseAttitudeGroup: neutral
+  displayName: LocKey#9770969260198886463
+  fullDisplayName: LocKey#9770969260198886463
+  skipDisplayArchetype: true
+
+Character.cc_g02_merc:
+  $base: Character.wraiths_grunt2_ranged2_copperhead_ma
+  appearanceName: gang__wraith_ma_grunt__lvl2_02
+  displayName: LocKey#11645959053887079659
+  fullDisplayName: LocKey#11645959053887079659
+  skipDisplayArchetype: true
+  reactionPreset: ReactionPresets.NoReaction
+  baseAttitudeGroup: neutral
+  # eyes off
+  enableSensesOnStart: false
+
+Character.cc_g02_toji:
+  $base: Character.tyger_claws_gangster3_ranged3_sidewinder_ma
+  appearanceName: gang__tyger_ma_gangster__lvl3_04
+  # stronger
+  rarity: NPCRarity.Elite
+  displayName: LocKey#4365166979693360572
+  fullDisplayName: LocKey#4365166979693360572
+  skipDisplayArchetype: true
+
+# the merc's listeners
+Character.cc_g02_queue_f:
+  $base: Character.LightCrowd_japantown_ma
+  appearanceName: crowd__districts_ma_casual_02
+  reactionPreset: ReactionPresets.NoReaction
+  baseAttitudeGroup: neutral
+  displayName: LocKey#1975290165512292963
+  fullDisplayName: LocKey#1975290165512292963
+  skipDisplayArchetype: true
+
+Character.cc_g02_queue_g:
+  $base: Character.LightCrowd_japantown_wa
+  appearanceName: crowd__districts_ma_rich_02
+  reactionPreset: ReactionPresets.NoReaction
+  baseAttitudeGroup: neutral
+  displayName: LocKey#1975290165512292963
+  fullDisplayName: LocKey#1975290165512292963
+  skipDisplayArchetype: true

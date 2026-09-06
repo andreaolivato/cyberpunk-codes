@@ -9,3 +9,4 @@ To actually play a mod you also need RED4ext, ArchiveXL, TweakXL, Codeware and r
 My mods on Nexus Mods:
 
 - [Negative Balance](https://www.nexusmods.com/cyberpunk2077/mods/32694)
+- [Dead Ringer](https://www.nexusmods.com/cyberpunk2077/mods/33571)

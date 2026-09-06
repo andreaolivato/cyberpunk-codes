@@ -1,0 +1,19 @@
+Interactions.cc_g02_access_data:
+  $base: Interactions.NetworkDataMineLootQ003
+  caption: LocKey#370929053558320464
+  description: LocKey#2553088357511467206
+
+MinigameAction.cc_g02_access_data:
+  $base: MinigameAction.NetworkLootQ003
+  objectActionUI: Interactions.cc_g02_access_data
+  factName: cc_g02_ap_breached
+  factValue: 1
+
+minigame_v2.cc_g02_parlor_inline0:
+  $base: minigame_v2.Kab08Minigame_inline0
+  program: MinigameAction.cc_g02_access_data
+
+minigame_v2.cc_g02_parlor:
+  $base: minigame_v2.Kab08Minigame
+  overrideProgramsList:
+    - minigame_v2.cc_g02_parlor_inline0

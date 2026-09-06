@@ -1,0 +1,10 @@
+ObjectAction.cc_g02_shard_read:
+  $base: Items.generic_hanako_flowers_shard_inline0
+  journalEntry: onscreens/emails/quests/street_stories/cc_g02_dead_ringer/onscreens/cc_g02_shard_note
+
+Items.cc_g02_shard:
+  # plain shard
+  $base: Items.Shard1
+  displayName: cc-g02-shard-item
+  localizedDescription: cc-g02-shard-item-desc
+  itemSecondaryAction: ObjectAction.cc_g02_shard_read
