@@ -28,6 +28,14 @@ public abstract class CCSharedWorld {
         return Vector4.Distance2D(pos, anchor) <= radiusXY;
     }
 
+    public static func InSafeArea(game: GameInstance, point: Vector4) -> Bool {
+        let mgr: ref<SafeAreaManager> = GameInstance.GetSafeAreaManager(game);
+        if !IsDefined(mgr) {
+            return false;
+        }
+        return mgr.IsPointInSafeArea(point);
+    }
+
     public static func IsUsingDevice(game: GameInstance,
                                      player: ref<PlayerPuppet>) -> Bool {
         let bb: ref<IBlackboard> = GameInstance.GetBlackboardSystem(game)

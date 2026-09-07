@@ -53,6 +53,15 @@ each mod's Nexus Changelog tab.
 
 Releases are on the [Nexus page](https://www.nexusmods.com/cyberpunk2077/mods/32694).
 
+## 2.1.0 (2026-09-07)
+
+- **Changed: Elena and Hoshino are recorded by professional voice actors.**
+  Elena Ortega is played by Patti Knox, Hoshino by Lykeness.
+- **Changed: five of Elena's subtitles follow her new recording**, which
+  rewords them.
+- **Fixed: Hoshino looks at you while he speaks.**
+- **Fixed: Nix looks into the camera on his video call.**
+
 ## 2.0.0 (2026-09-05)
 
 - **Changed: V, Johnny, Mama Welles and Nix now use the game's own voice
