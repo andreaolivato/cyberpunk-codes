@@ -268,6 +268,39 @@
               "$type": "scnPerformerId",
               "id": 2
             }
+          },
+          {
+            "$type": "scnPerformerSymbol",
+            "editorPerformerId": "3382968631574573724",
+            "entityRef": {
+              "$type": "gameEntityReference",
+              "dynamicEntityUniqueName": {
+                "$type": "CName",
+                "$storage": "string",
+                "$value": "None"
+              },
+              "names": [],
+              "reference": {
+                "$type": "NodeRef",
+                "$storage": "string",
+                "$value": "#mama_welles_holocall_lookat"
+              },
+              "sceneActorContextName": {
+                "$type": "CName",
+                "$storage": "string",
+                "$value": "None"
+              },
+              "slotName": {
+                "$type": "CName",
+                "$storage": "string",
+                "$value": "None"
+              },
+              "type": "EntityRef"
+            },
+            "performerId": {
+              "$type": "scnPerformerId",
+              "id": 2
+            }
           }
         ],
         "sceneEventsDebugSymbols": [],
@@ -481,7 +514,158 @@
           }
         }
       ],
-      "props": [],
+      "props": [
+        {
+          "$type": "scnPropDef",
+          "animSets": [],
+          "cinematicAnimSets": [],
+          "communityParams": {
+            "$type": "scnCommunityParams",
+            "entryName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "None"
+            },
+            "forceMaxVisibility": 0,
+            "reference": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            }
+          },
+          "dynamicAnimSets": [],
+          "entityAcquisitionPlan": "findInNode",
+          "findEntityInEntityParams": {
+            "$type": "scnFindEntityInEntityParams",
+            "actorId": {
+              "$type": "scnActorId",
+              "id": 4294967295
+            },
+            "forceMaxVisibility": 0,
+            "itemID": {
+              "$type": "TweakDBID",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "ownershipTransferOptions": {
+              "$type": "scnPropOwnershipTransferOptions",
+              "dettachFromSlot": 1,
+              "removeFromInventory": 1,
+              "type": "TransferToWorkspotSystem_Automatic"
+            },
+            "performerId": {
+              "$type": "scnPerformerId",
+              "id": 4294967040
+            },
+            "slotID": {
+              "$type": "TweakDBID",
+              "$storage": "uint64",
+              "$value": "0"
+            }
+          },
+          "findEntityInNodeParams": {
+            "$type": "scnFindEntityInNodeParams",
+            "forceMaxVisibility": 0,
+            "nodeRef": {
+              "$type": "NodeRef",
+              "$storage": "string",
+              "$value": "#mama_welles_holocall_lookat"
+            }
+          },
+          "findEntityInWorldParams": {
+            "$type": "scnFindEntityInWorldParams",
+            "actorRef": {
+              "$type": "gameEntityReference",
+              "dynamicEntityUniqueName": {
+                "$type": "CName",
+                "$storage": "string",
+                "$value": "None"
+              },
+              "names": [],
+              "reference": {
+                "$type": "NodeRef",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "sceneActorContextName": {
+                "$type": "CName",
+                "$storage": "string",
+                "$value": "None"
+              },
+              "slotName": {
+                "$type": "CName",
+                "$storage": "string",
+                "$value": "None"
+              },
+              "type": "EntityRef"
+            },
+            "forceMaxVisibility": 0
+          },
+          "propId": {
+            "$type": "scnPropId",
+            "id": 0
+          },
+          "propName": "cc_g01_holocall_lookat",
+          "spawnDespawnParams": {
+            "$type": "scnSpawnDespawnEntityParams",
+            "alwaysSpawned": 0,
+            "appearance": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "None"
+            },
+            "dynamicEntityUniqueName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "None"
+            },
+            "findInWorld": 0,
+            "forceMaxVisibility": 0,
+            "isEnabled": 1,
+            "itemOwnerId": {
+              "$type": "scnPerformerId",
+              "id": 4294967040
+            },
+            "keepAlive": 0,
+            "prefetchAppearance": 0,
+            "spawnMarker": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "None"
+            },
+            "spawnMarkerNodeRef": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "spawnMarkerType": "Local",
+            "spawnOffset": {
+              "$type": "Transform",
+              "orientation": {
+                "$type": "Quaternion",
+                "i": 0,
+                "j": 0,
+                "k": 0,
+                "r": 1
+              },
+              "position": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": 0,
+                "Y": 0,
+                "Z": 0
+              }
+            },
+            "spawnOnStart": 0,
+            "specRecordId": {
+              "$type": "TweakDBID",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "validateSpawnPostion": 0
+          }
+        }
+      ],
       "referencePoints": [],
       "resouresReferences": {
         "$type": "scnSRRefCollection",
@@ -516,7 +700,7 @@
       "ridResources": [],
       "sceneCategoryTag": "dialoguesQuests",
       "sceneGraph": {
-        "HandleId": "29",
+        "HandleId": "35",
         "Data": {
           "$type": "scnSceneGraph",
           "endNodes": [
@@ -606,6 +790,123 @@
                         "voExpression": "Vo_Expression_Phone"
                       }
                     }
+                  },
+                  {
+                    "HandleId": "4",
+                    "Data": {
+                      "$type": "scnLookAtEvent",
+                      "basicData": {
+                        "$type": "scnLookAtBasicEventData",
+                        "basic": {
+                          "$type": "scnAnimTargetBasicData",
+                          "isStart": 1,
+                          "performerId": {
+                            "$type": "scnPerformerId",
+                            "id": 1
+                          },
+                          "staticTarget": {
+                            "$type": "Vector4",
+                            "W": 1,
+                            "X": 0,
+                            "Y": 0,
+                            "Z": 0
+                          },
+                          "targetActorId": {
+                            "$type": "scnActorId",
+                            "id": 4294967295
+                          },
+                          "targetOffsetEntitySpace": {
+                            "$type": "Vector4",
+                            "W": 0,
+                            "X": 0,
+                            "Y": 0,
+                            "Z": 0
+                          },
+                          "targetPerformerId": {
+                            "$type": "scnPerformerId",
+                            "id": 2
+                          },
+                          "targetPropId": {
+                            "$type": "scnPropId",
+                            "id": 4294967295
+                          },
+                          "targetSlot": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "(Root)"
+                          },
+                          "targetType": "Actor"
+                        },
+                        "removePreviousAdvancedLookAts": 1,
+                        "requests": [
+                          {
+                            "$type": "animLookAtRequestForPart",
+                            "attachLeftHandToRightHand": -1,
+                            "attachRightHandToLeftHand": -1,
+                            "bodyPart": {
+                              "$type": "CName",
+                              "$storage": "string",
+                              "$value": "Eyes"
+                            },
+                            "request": {
+                              "$type": "animLookAtRequest",
+                              "additionalParts": {
+                                "Elements": [
+                                  {
+                                    "$type": "animLookAtPartRequest",
+                                    "mode": 0,
+                                    "partName": {
+                                      "$type": "CName",
+                                      "$storage": "string",
+                                      "$value": "Head"
+                                    },
+                                    "suppress": 0,
+                                    "weight": 0.100000024
+                                  },
+                                  {
+                                    "$type": "animLookAtPartRequest",
+                                    "mode": 0,
+                                    "partName": {
+                                      "$type": "CName",
+                                      "$storage": "string",
+                                      "$value": "Chest"
+                                    },
+                                    "suppress": 0,
+                                    "weight": 2
+                                  }
+                                ]
+                              },
+                              "calculatePositionInParentSpace": 0,
+                              "debugInfo": "Scene preset: \"Eyes & Head\"",
+                              "followingSpeedFactorOverride": -1,
+                              "hasOutTransition": 0,
+                              "invalid": 0,
+                              "limits": {
+                                "$type": "animLookAtLimits",
+                                "backLimitDegrees": 210,
+                                "hardLimitDegrees": 270,
+                                "hardLimitDistance": 1000000,
+                                "softLimitDegrees": 360
+                              },
+                              "mode": 0,
+                              "outTransitionSpeed": 60,
+                              "priority": -1,
+                              "suppress": 0,
+                              "transitionSpeed": 80
+                            }
+                          }
+                        ]
+                      },
+                      "duration": 1000,
+                      "executionTagFlags": 0,
+                      "id": {
+                        "$type": "scnSceneEventId",
+                        "id": "2837584202196395827"
+                      },
+                      "scalingData": null,
+                      "startTime": 0,
+                      "type": "0"
+                    }
                   }
                 ],
                 "ffStrategy": "automatic",
@@ -654,13 +955,13 @@
               }
             },
             {
-              "HandleId": "4",
+              "HandleId": "5",
               "Data": {
                 "$type": "scnSectionNode",
                 "actorBehaviors": [],
                 "events": [
                   {
-                    "HandleId": "5",
+                    "HandleId": "6",
                     "Data": {
                       "$type": "scnDialogLineEvent",
                       "additionalSpeakers": {
@@ -697,6 +998,123 @@
                         "voContext": "Vo_Context_Quest",
                         "voExpression": "Vo_Expression_Spoken"
                       }
+                    }
+                  },
+                  {
+                    "HandleId": "7",
+                    "Data": {
+                      "$type": "scnLookAtEvent",
+                      "basicData": {
+                        "$type": "scnLookAtBasicEventData",
+                        "basic": {
+                          "$type": "scnAnimTargetBasicData",
+                          "isStart": 1,
+                          "performerId": {
+                            "$type": "scnPerformerId",
+                            "id": 1
+                          },
+                          "staticTarget": {
+                            "$type": "Vector4",
+                            "W": 1,
+                            "X": 0,
+                            "Y": 0,
+                            "Z": 0
+                          },
+                          "targetActorId": {
+                            "$type": "scnActorId",
+                            "id": 4294967295
+                          },
+                          "targetOffsetEntitySpace": {
+                            "$type": "Vector4",
+                            "W": 0,
+                            "X": 0,
+                            "Y": 0,
+                            "Z": 0
+                          },
+                          "targetPerformerId": {
+                            "$type": "scnPerformerId",
+                            "id": 2
+                          },
+                          "targetPropId": {
+                            "$type": "scnPropId",
+                            "id": 4294967295
+                          },
+                          "targetSlot": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "(Root)"
+                          },
+                          "targetType": "Actor"
+                        },
+                        "removePreviousAdvancedLookAts": 1,
+                        "requests": [
+                          {
+                            "$type": "animLookAtRequestForPart",
+                            "attachLeftHandToRightHand": -1,
+                            "attachRightHandToLeftHand": -1,
+                            "bodyPart": {
+                              "$type": "CName",
+                              "$storage": "string",
+                              "$value": "Eyes"
+                            },
+                            "request": {
+                              "$type": "animLookAtRequest",
+                              "additionalParts": {
+                                "Elements": [
+                                  {
+                                    "$type": "animLookAtPartRequest",
+                                    "mode": 0,
+                                    "partName": {
+                                      "$type": "CName",
+                                      "$storage": "string",
+                                      "$value": "Head"
+                                    },
+                                    "suppress": 0,
+                                    "weight": 0.100000024
+                                  },
+                                  {
+                                    "$type": "animLookAtPartRequest",
+                                    "mode": 0,
+                                    "partName": {
+                                      "$type": "CName",
+                                      "$storage": "string",
+                                      "$value": "Chest"
+                                    },
+                                    "suppress": 0,
+                                    "weight": 2
+                                  }
+                                ]
+                              },
+                              "calculatePositionInParentSpace": 0,
+                              "debugInfo": "Scene preset: \"Eyes & Head\"",
+                              "followingSpeedFactorOverride": -1,
+                              "hasOutTransition": 0,
+                              "invalid": 0,
+                              "limits": {
+                                "$type": "animLookAtLimits",
+                                "backLimitDegrees": 210,
+                                "hardLimitDegrees": 270,
+                                "hardLimitDistance": 1000000,
+                                "softLimitDegrees": 360
+                              },
+                              "mode": 0,
+                              "outTransitionSpeed": 60,
+                              "priority": -1,
+                              "suppress": 0,
+                              "transitionSpeed": 80
+                            }
+                          }
+                        ]
+                      },
+                      "duration": 1000,
+                      "executionTagFlags": 0,
+                      "id": {
+                        "$type": "scnSceneEventId",
+                        "id": "2979767681165051824"
+                      },
+                      "scalingData": null,
+                      "startTime": 0,
+                      "type": "0"
                     }
                   }
                 ],
@@ -746,13 +1164,13 @@
               }
             },
             {
-              "HandleId": "6",
+              "HandleId": "8",
               "Data": {
                 "$type": "scnSectionNode",
                 "actorBehaviors": [],
                 "events": [
                   {
-                    "HandleId": "7",
+                    "HandleId": "9",
                     "Data": {
                       "$type": "scnDialogLineEvent",
                       "additionalSpeakers": {
@@ -789,6 +1207,123 @@
                         "voContext": "Vo_Context_Quest",
                         "voExpression": "Vo_Expression_Phone"
                       }
+                    }
+                  },
+                  {
+                    "HandleId": "10",
+                    "Data": {
+                      "$type": "scnLookAtEvent",
+                      "basicData": {
+                        "$type": "scnLookAtBasicEventData",
+                        "basic": {
+                          "$type": "scnAnimTargetBasicData",
+                          "isStart": 1,
+                          "performerId": {
+                            "$type": "scnPerformerId",
+                            "id": 1
+                          },
+                          "staticTarget": {
+                            "$type": "Vector4",
+                            "W": 1,
+                            "X": 0,
+                            "Y": 0,
+                            "Z": 0
+                          },
+                          "targetActorId": {
+                            "$type": "scnActorId",
+                            "id": 4294967295
+                          },
+                          "targetOffsetEntitySpace": {
+                            "$type": "Vector4",
+                            "W": 0,
+                            "X": 0,
+                            "Y": 0,
+                            "Z": 0
+                          },
+                          "targetPerformerId": {
+                            "$type": "scnPerformerId",
+                            "id": 2
+                          },
+                          "targetPropId": {
+                            "$type": "scnPropId",
+                            "id": 4294967295
+                          },
+                          "targetSlot": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "(Root)"
+                          },
+                          "targetType": "Actor"
+                        },
+                        "removePreviousAdvancedLookAts": 1,
+                        "requests": [
+                          {
+                            "$type": "animLookAtRequestForPart",
+                            "attachLeftHandToRightHand": -1,
+                            "attachRightHandToLeftHand": -1,
+                            "bodyPart": {
+                              "$type": "CName",
+                              "$storage": "string",
+                              "$value": "Eyes"
+                            },
+                            "request": {
+                              "$type": "animLookAtRequest",
+                              "additionalParts": {
+                                "Elements": [
+                                  {
+                                    "$type": "animLookAtPartRequest",
+                                    "mode": 0,
+                                    "partName": {
+                                      "$type": "CName",
+                                      "$storage": "string",
+                                      "$value": "Head"
+                                    },
+                                    "suppress": 0,
+                                    "weight": 0.100000024
+                                  },
+                                  {
+                                    "$type": "animLookAtPartRequest",
+                                    "mode": 0,
+                                    "partName": {
+                                      "$type": "CName",
+                                      "$storage": "string",
+                                      "$value": "Chest"
+                                    },
+                                    "suppress": 0,
+                                    "weight": 2
+                                  }
+                                ]
+                              },
+                              "calculatePositionInParentSpace": 0,
+                              "debugInfo": "Scene preset: \"Eyes & Head\"",
+                              "followingSpeedFactorOverride": -1,
+                              "hasOutTransition": 0,
+                              "invalid": 0,
+                              "limits": {
+                                "$type": "animLookAtLimits",
+                                "backLimitDegrees": 210,
+                                "hardLimitDegrees": 270,
+                                "hardLimitDistance": 1000000,
+                                "softLimitDegrees": 360
+                              },
+                              "mode": 0,
+                              "outTransitionSpeed": 60,
+                              "priority": -1,
+                              "suppress": 0,
+                              "transitionSpeed": 80
+                            }
+                          }
+                        ]
+                      },
+                      "duration": 1000,
+                      "executionTagFlags": 0,
+                      "id": {
+                        "$type": "scnSceneEventId",
+                        "id": "2940000266633511429"
+                      },
+                      "scalingData": null,
+                      "startTime": 0,
+                      "type": "0"
                     }
                   }
                 ],
@@ -838,13 +1373,13 @@
               }
             },
             {
-              "HandleId": "8",
+              "HandleId": "11",
               "Data": {
                 "$type": "scnSectionNode",
                 "actorBehaviors": [],
                 "events": [
                   {
-                    "HandleId": "9",
+                    "HandleId": "12",
                     "Data": {
                       "$type": "scnDialogLineEvent",
                       "additionalSpeakers": {
@@ -881,6 +1416,123 @@
                         "voContext": "Vo_Context_Quest",
                         "voExpression": "Vo_Expression_Spoken"
                       }
+                    }
+                  },
+                  {
+                    "HandleId": "13",
+                    "Data": {
+                      "$type": "scnLookAtEvent",
+                      "basicData": {
+                        "$type": "scnLookAtBasicEventData",
+                        "basic": {
+                          "$type": "scnAnimTargetBasicData",
+                          "isStart": 1,
+                          "performerId": {
+                            "$type": "scnPerformerId",
+                            "id": 1
+                          },
+                          "staticTarget": {
+                            "$type": "Vector4",
+                            "W": 1,
+                            "X": 0,
+                            "Y": 0,
+                            "Z": 0
+                          },
+                          "targetActorId": {
+                            "$type": "scnActorId",
+                            "id": 4294967295
+                          },
+                          "targetOffsetEntitySpace": {
+                            "$type": "Vector4",
+                            "W": 0,
+                            "X": 0,
+                            "Y": 0,
+                            "Z": 0
+                          },
+                          "targetPerformerId": {
+                            "$type": "scnPerformerId",
+                            "id": 2
+                          },
+                          "targetPropId": {
+                            "$type": "scnPropId",
+                            "id": 4294967295
+                          },
+                          "targetSlot": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "(Root)"
+                          },
+                          "targetType": "Actor"
+                        },
+                        "removePreviousAdvancedLookAts": 1,
+                        "requests": [
+                          {
+                            "$type": "animLookAtRequestForPart",
+                            "attachLeftHandToRightHand": -1,
+                            "attachRightHandToLeftHand": -1,
+                            "bodyPart": {
+                              "$type": "CName",
+                              "$storage": "string",
+                              "$value": "Eyes"
+                            },
+                            "request": {
+                              "$type": "animLookAtRequest",
+                              "additionalParts": {
+                                "Elements": [
+                                  {
+                                    "$type": "animLookAtPartRequest",
+                                    "mode": 0,
+                                    "partName": {
+                                      "$type": "CName",
+                                      "$storage": "string",
+                                      "$value": "Head"
+                                    },
+                                    "suppress": 0,
+                                    "weight": 0.100000024
+                                  },
+                                  {
+                                    "$type": "animLookAtPartRequest",
+                                    "mode": 0,
+                                    "partName": {
+                                      "$type": "CName",
+                                      "$storage": "string",
+                                      "$value": "Chest"
+                                    },
+                                    "suppress": 0,
+                                    "weight": 2
+                                  }
+                                ]
+                              },
+                              "calculatePositionInParentSpace": 0,
+                              "debugInfo": "Scene preset: \"Eyes & Head\"",
+                              "followingSpeedFactorOverride": -1,
+                              "hasOutTransition": 0,
+                              "invalid": 0,
+                              "limits": {
+                                "$type": "animLookAtLimits",
+                                "backLimitDegrees": 210,
+                                "hardLimitDegrees": 270,
+                                "hardLimitDistance": 1000000,
+                                "softLimitDegrees": 360
+                              },
+                              "mode": 0,
+                              "outTransitionSpeed": 60,
+                              "priority": -1,
+                              "suppress": 0,
+                              "transitionSpeed": 80
+                            }
+                          }
+                        ]
+                      },
+                      "duration": 1000,
+                      "executionTagFlags": 0,
+                      "id": {
+                        "$type": "scnSceneEventId",
+                        "id": "3148926199950067490"
+                      },
+                      "scalingData": null,
+                      "startTime": 0,
+                      "type": "0"
                     }
                   }
                 ],
@@ -930,7 +1582,7 @@
               }
             },
             {
-              "HandleId": "10",
+              "HandleId": "14",
               "Data": {
                 "$type": "scnQuestNode",
                 "ffStrategy": "automatic",
@@ -982,13 +1634,13 @@
                   }
                 ],
                 "questNode": {
-                  "HandleId": "11",
+                  "HandleId": "15",
                   "Data": {
                     "$type": "questFactsDBManagerNodeDefinition",
                     "id": 6,
                     "sockets": [
                       {
-                        "HandleId": "12",
+                        "HandleId": "16",
                         "Data": {
                           "$type": "questSocketDefinition",
                           "connections": [],
@@ -1001,7 +1653,7 @@
                         }
                       },
                       {
-                        "HandleId": "13",
+                        "HandleId": "17",
                         "Data": {
                           "$type": "questSocketDefinition",
                           "connections": [],
@@ -1014,7 +1666,7 @@
                         }
                       },
                       {
-                        "HandleId": "14",
+                        "HandleId": "18",
                         "Data": {
                           "$type": "questSocketDefinition",
                           "connections": [],
@@ -1028,7 +1680,7 @@
                       }
                     ],
                     "type": {
-                      "HandleId": "15",
+                      "HandleId": "19",
                       "Data": {
                         "$type": "questSetVar_NodeType",
                         "factName": "cc_g01_ledger_send",
@@ -1041,7 +1693,7 @@
               }
             },
             {
-              "HandleId": "16",
+              "HandleId": "20",
               "Data": {
                 "$type": "scnQuestNode",
                 "ffStrategy": "automatic",
@@ -1093,15 +1745,15 @@
                   }
                 ],
                 "questNode": {
-                  "HandleId": "17",
+                  "HandleId": "21",
                   "Data": {
                     "$type": "questPauseConditionNodeDefinition",
                     "condition": {
-                      "HandleId": "18",
+                      "HandleId": "22",
                       "Data": {
                         "$type": "questFactsDBCondition",
                         "type": {
-                          "HandleId": "19",
+                          "HandleId": "23",
                           "Data": {
                             "$type": "questVarComparison_ConditionType",
                             "comparisonType": "Greater",
@@ -1114,7 +1766,7 @@
                     "id": 7,
                     "sockets": [
                       {
-                        "HandleId": "20",
+                        "HandleId": "24",
                         "Data": {
                           "$type": "questSocketDefinition",
                           "connections": [],
@@ -1127,7 +1779,7 @@
                         }
                       },
                       {
-                        "HandleId": "21",
+                        "HandleId": "25",
                         "Data": {
                           "$type": "questSocketDefinition",
                           "connections": [],
@@ -1140,7 +1792,7 @@
                         }
                       },
                       {
-                        "HandleId": "22",
+                        "HandleId": "26",
                         "Data": {
                           "$type": "questSocketDefinition",
                           "connections": [],
@@ -1158,13 +1810,13 @@
               }
             },
             {
-              "HandleId": "23",
+              "HandleId": "27",
               "Data": {
                 "$type": "scnSectionNode",
                 "actorBehaviors": [],
                 "events": [
                   {
-                    "HandleId": "24",
+                    "HandleId": "28",
                     "Data": {
                       "$type": "scnDialogLineEvent",
                       "additionalSpeakers": {
@@ -1204,7 +1856,7 @@
                     }
                   },
                   {
-                    "HandleId": "25",
+                    "HandleId": "29",
                     "Data": {
                       "$type": "scnDialogLineEvent",
                       "additionalSpeakers": {
@@ -1241,6 +1893,123 @@
                         "voContext": "Vo_Context_Quest",
                         "voExpression": "Vo_Expression_Phone"
                       }
+                    }
+                  },
+                  {
+                    "HandleId": "30",
+                    "Data": {
+                      "$type": "scnLookAtEvent",
+                      "basicData": {
+                        "$type": "scnLookAtBasicEventData",
+                        "basic": {
+                          "$type": "scnAnimTargetBasicData",
+                          "isStart": 1,
+                          "performerId": {
+                            "$type": "scnPerformerId",
+                            "id": 1
+                          },
+                          "staticTarget": {
+                            "$type": "Vector4",
+                            "W": 1,
+                            "X": 0,
+                            "Y": 0,
+                            "Z": 0
+                          },
+                          "targetActorId": {
+                            "$type": "scnActorId",
+                            "id": 4294967295
+                          },
+                          "targetOffsetEntitySpace": {
+                            "$type": "Vector4",
+                            "W": 0,
+                            "X": 0,
+                            "Y": 0,
+                            "Z": 0
+                          },
+                          "targetPerformerId": {
+                            "$type": "scnPerformerId",
+                            "id": 2
+                          },
+                          "targetPropId": {
+                            "$type": "scnPropId",
+                            "id": 4294967295
+                          },
+                          "targetSlot": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "(Root)"
+                          },
+                          "targetType": "Actor"
+                        },
+                        "removePreviousAdvancedLookAts": 1,
+                        "requests": [
+                          {
+                            "$type": "animLookAtRequestForPart",
+                            "attachLeftHandToRightHand": -1,
+                            "attachRightHandToLeftHand": -1,
+                            "bodyPart": {
+                              "$type": "CName",
+                              "$storage": "string",
+                              "$value": "Eyes"
+                            },
+                            "request": {
+                              "$type": "animLookAtRequest",
+                              "additionalParts": {
+                                "Elements": [
+                                  {
+                                    "$type": "animLookAtPartRequest",
+                                    "mode": 0,
+                                    "partName": {
+                                      "$type": "CName",
+                                      "$storage": "string",
+                                      "$value": "Head"
+                                    },
+                                    "suppress": 0,
+                                    "weight": 0.100000024
+                                  },
+                                  {
+                                    "$type": "animLookAtPartRequest",
+                                    "mode": 0,
+                                    "partName": {
+                                      "$type": "CName",
+                                      "$storage": "string",
+                                      "$value": "Chest"
+                                    },
+                                    "suppress": 0,
+                                    "weight": 2
+                                  }
+                                ]
+                              },
+                              "calculatePositionInParentSpace": 0,
+                              "debugInfo": "Scene preset: \"Eyes & Head\"",
+                              "followingSpeedFactorOverride": -1,
+                              "hasOutTransition": 0,
+                              "invalid": 0,
+                              "limits": {
+                                "$type": "animLookAtLimits",
+                                "backLimitDegrees": 210,
+                                "hardLimitDegrees": 270,
+                                "hardLimitDistance": 1000000,
+                                "softLimitDegrees": 360
+                              },
+                              "mode": 0,
+                              "outTransitionSpeed": 60,
+                              "priority": -1,
+                              "suppress": 0,
+                              "transitionSpeed": 80
+                            }
+                          }
+                        ]
+                      },
+                      "duration": 1000,
+                      "executionTagFlags": 0,
+                      "id": {
+                        "$type": "scnSceneEventId",
+                        "id": "2668460867783482913"
+                      },
+                      "scalingData": null,
+                      "startTime": 0,
+                      "type": "0"
                     }
                   }
                 ],
@@ -1290,13 +2059,13 @@
               }
             },
             {
-              "HandleId": "26",
+              "HandleId": "31",
               "Data": {
                 "$type": "scnSectionNode",
                 "actorBehaviors": [],
                 "events": [
                   {
-                    "HandleId": "27",
+                    "HandleId": "32",
                     "Data": {
                       "$type": "scnDialogLineEvent",
                       "additionalSpeakers": {
@@ -1333,6 +2102,123 @@
                         "voContext": "Vo_Context_Quest",
                         "voExpression": "Vo_Expression_Spoken"
                       }
+                    }
+                  },
+                  {
+                    "HandleId": "33",
+                    "Data": {
+                      "$type": "scnLookAtEvent",
+                      "basicData": {
+                        "$type": "scnLookAtBasicEventData",
+                        "basic": {
+                          "$type": "scnAnimTargetBasicData",
+                          "isStart": 1,
+                          "performerId": {
+                            "$type": "scnPerformerId",
+                            "id": 1
+                          },
+                          "staticTarget": {
+                            "$type": "Vector4",
+                            "W": 1,
+                            "X": 0,
+                            "Y": 0,
+                            "Z": 0
+                          },
+                          "targetActorId": {
+                            "$type": "scnActorId",
+                            "id": 4294967295
+                          },
+                          "targetOffsetEntitySpace": {
+                            "$type": "Vector4",
+                            "W": 0,
+                            "X": 0,
+                            "Y": 0,
+                            "Z": 0
+                          },
+                          "targetPerformerId": {
+                            "$type": "scnPerformerId",
+                            "id": 2
+                          },
+                          "targetPropId": {
+                            "$type": "scnPropId",
+                            "id": 4294967295
+                          },
+                          "targetSlot": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "(Root)"
+                          },
+                          "targetType": "Actor"
+                        },
+                        "removePreviousAdvancedLookAts": 1,
+                        "requests": [
+                          {
+                            "$type": "animLookAtRequestForPart",
+                            "attachLeftHandToRightHand": -1,
+                            "attachRightHandToLeftHand": -1,
+                            "bodyPart": {
+                              "$type": "CName",
+                              "$storage": "string",
+                              "$value": "Eyes"
+                            },
+                            "request": {
+                              "$type": "animLookAtRequest",
+                              "additionalParts": {
+                                "Elements": [
+                                  {
+                                    "$type": "animLookAtPartRequest",
+                                    "mode": 0,
+                                    "partName": {
+                                      "$type": "CName",
+                                      "$storage": "string",
+                                      "$value": "Head"
+                                    },
+                                    "suppress": 0,
+                                    "weight": 0.100000024
+                                  },
+                                  {
+                                    "$type": "animLookAtPartRequest",
+                                    "mode": 0,
+                                    "partName": {
+                                      "$type": "CName",
+                                      "$storage": "string",
+                                      "$value": "Chest"
+                                    },
+                                    "suppress": 0,
+                                    "weight": 2
+                                  }
+                                ]
+                              },
+                              "calculatePositionInParentSpace": 0,
+                              "debugInfo": "Scene preset: \"Eyes & Head\"",
+                              "followingSpeedFactorOverride": -1,
+                              "hasOutTransition": 0,
+                              "invalid": 0,
+                              "limits": {
+                                "$type": "animLookAtLimits",
+                                "backLimitDegrees": 210,
+                                "hardLimitDegrees": 270,
+                                "hardLimitDistance": 1000000,
+                                "softLimitDegrees": 360
+                              },
+                              "mode": 0,
+                              "outTransitionSpeed": 60,
+                              "priority": -1,
+                              "suppress": 0,
+                              "transitionSpeed": 80
+                            }
+                          }
+                        ]
+                      },
+                      "duration": 1000,
+                      "executionTagFlags": 0,
+                      "id": {
+                        "$type": "scnSceneEventId",
+                        "id": "2908067573567583518"
+                      },
+                      "scalingData": null,
+                      "startTime": 0,
+                      "type": "0"
                     }
                   }
                 ],
@@ -1382,7 +2268,7 @@
               }
             },
             {
-              "HandleId": "28",
+              "HandleId": "34",
               "Data": {
                 "$type": "scnEndNode",
                 "ffStrategy": "automatic",

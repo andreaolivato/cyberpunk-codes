@@ -646,8 +646,8 @@ about how it is written.
 **If the base game already voices a character, use the game's own voice lines
 for them.** V, Johnny, Mama Welles and Nix say whole vanilla lines, or lines
 cut short at a pause, pointed at by stringId. Nothing imitates them. Elena and
-Hoshino are new characters, so real people recorded them, with only the pitch
-and tone adjusted.
+Hoshino are new characters, so professional voice actors recorded them, and
+their takes ship as recorded.
 
 This is a writing rule before it is a technical one. A scene can only say what
 the game already recorded, which is why this gig moved its explaining onto a

@@ -952,8 +952,8 @@ class Scene:
 
         It never speaks. It is acquired from the world, receives the line's
         lipsync through `scnAdditionalSpeakerRole.OnlyLipsync`, which is all
-        - see BRIDGE_BODY_DOUBLE at the top of this file for the mechanism,
-        the vanilla precedent and the risk.
+        - see BRIDGE_SCENES at the top of this file for the mechanism, the
+        vanilla precedent and the risk.
 
         Two ways to find it, and they are not equally safe:
 
@@ -965,8 +965,8 @@ class Scene:
                     that NPC's ordinary conversation.
 
         `speaker` is the actorId whose lines this double should mouth. Nothing
-        else in the scene refers to it, so if BRIDGE_BODY_DOUBLE is off, or the
-        acquisition fails in game, the line plays exactly as it does today.
+        else in the scene refers to it, so while BRIDGE_SCENES is empty, or if
+        the acquisition fails in game, the line plays exactly as it does today.
 
         The lipsync set and voicetag are copied from the speaker's own pick -
         the double has to be looking in the same animation set, or the name the
@@ -1323,7 +1323,7 @@ class Scene:
             # THE BODY DOUBLE, attached by who is speaking rather than by hand.
             # role OnlyLipsync means this second actor gets the mouth movement
             # and nothing else - no audio, no subtitle, no speaker name. See
-            # add_body_double and BRIDGE_BODY_DOUBLE.
+            # add_body_double and BRIDGE_SCENES.
             double = self.doubles.get(self.lines[idx]['speaker']['id'])
             speakers = [] if double is None else [{
                 '$type': 'scnAdditionalSpeaker', 'actorId': actor_id(double),

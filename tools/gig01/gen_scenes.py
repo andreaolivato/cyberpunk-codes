@@ -341,7 +341,7 @@ def build_elena():
     # recordings, which reworded eight of these lines; the comic is still the
     # order, the beats and the intent.
     s1 = s.section([
-        E("V? Sorry, I... I didn't know if you'd answer. "
+        E("V? Sorry, I didn't know you'd answer. "
           "My name's Elena Ortega.", 'e01'),
     ], holocall=True)
     # The comic's "Wrong hour for a friendly call." is V thinking out loud as the
@@ -365,7 +365,7 @@ def build_elena():
         male="Like Mama Welles. Thought I'd recognize the name.",
         key='v02')])
     s3 = s.section([
-        E("V, I think I'm in big trouble, and I didn't know who else to "
+        E("V, I think I'm in big trouble, and I don't know who else to "
           "call. I remember Jackie saying that you don't turn your back on "
           "people.", 'e03'),
     ], holocall=True)
@@ -376,12 +376,12 @@ def build_elena():
     v3 = s.section([s.add_line(v, "Go on, then. Let's hear it.", key='v03',
                                vanilla_sid=0x19124b2278623000)])
     s4 = s.section([
-        E("I work in finance with community accounts and I noticed "
+        E("I work in finance with the community accounts and I noticed "
           "something. People's debts are just zeroing out. They're not "
-          "filing disputes or appeals. It's just gone.", 'e04'),
+          "filing disputes or appeals. They're just gone.", 'e04'),
         E("When a debtor dies, their account should freeze, but instead "
-          "it's clearing, like, immediately. I thought it was a glitch, but "
-          "it's not. It's just happened too many times.", 'e05'),
+          "it's been clearing, like, immediately. I thought it was a glitch, "
+          "but it's not. It's just happened too many times.", 'e05'),
         E("I wasn't authorized to see it. I only noticed because I handle "
           "reconciliations. When I told my boss, my access was revoked and "
           "security walked me out of the building. I just think something's "
@@ -430,8 +430,8 @@ def build_elena():
         male="Lay low somewhere. They'll be lookin' for your family and "
              "friends... You understand?", key='v05')])
     s5b = s.section([
-        E("Maybe... maybe I could go to El Coyote? Mama Welles would take "
-          "me in.", 'e07b'),
+        E("Uh, maybe... maybe I could go to El Coyote? Mama Welles would "
+          "take me in.", 'e07b'),
     ], holocall=True)
     # HUB 2 of 2. He is deciding where this goes; the button stays short.
     c5 = s.choice([s.add_option("Good idea.", 'o05')])
@@ -689,10 +689,54 @@ def build_nix_brief(holo=False):
     s.link(wait, s3)
     s.link_section(s3, v3)
     s.link_section(v3, out)
+
+    # THE VIDEO VARIANT ONLY. The plain one plays behind a contact portrait
+    # with no body anywhere, and its marker is not in a sector that loads.
+    if holo:
+        lookat = s.add_lookat_prop('cc_g01_holocall_lookat', HOLO_LOOKAT_REF)
+        for sec in s.sections():
+            s.look_at(sec, nix, lookat, start_time=0)
     return s
 
 
 # ========================================================= scene 3: Hoshino
+# WHERE NIX LOOKS ON THE VIDEO CALL. The studio's quest sector carries one of
+# these per contact, a marker entity standing exactly where that contact's
+# camera is, and `wakako_holocall.scene` is where vanilla aims a caller at one.
+#
+# IT IS MAMA WELLES'S BECAUSE THE CAMERA IS. gen_questphase opens her lights,
+# her setup and her camera for this call on purpose: the 59 setups differ in
+# camera height because each is framed on its contact's pose, and
+# `#nix_holocall_camera` sits at 0.75 because the real Nix sits cross-legged.
+# Our Nix stands. The marker has to match the camera in use, not the character,
+# or the eyes go somewhere the lens is not. Checked in the studio sector
+# (`quest_ec82d0423d8f1435`): both this and `#nix_holocall_lookat` are there.
+#
+# NO WORKSPOT WITH IT, and that is the design call rather than an oversight.
+# Gig 02 changed the pose and the eyes in one pass; here only the eyes move, so
+# the framing that has shipped since 1.2.0 is untouched.
+HOLO_LOOKAT_REF = '#mama_welles_holocall_lookat'
+
+
+# EYES ON V, copied from gig 02's gen_scenes.py, which took it off
+# `wakako_okada_default.scene`. A workspot fixes where a body is and which way
+# the torso faces; the head and the eyes go on playing the idle's own drift, so
+# a correctly placed speaker still looks past the player. `scnLookAtEvent` is
+# what turns them, one per section at t=0 with `removePreviousAdvancedLookAts`
+# set, and vanilla's own Wakako conversation carries ten of them on that shape.
+#
+# NOTHING RELEASES IT AT THE END. No section in that scene clears the look-at on
+# its way out; the scene ending is what ends it.
+def face_player(s, actor):
+    """Hold an actor's eyes on V for every section of the scene.
+
+    Call it AFTER the section links, the same rule gig 02's copy carries.
+    """
+    player = s.player_performer()
+    for sec in s.sections():
+        s.look_at(sec, actor, player, start_time=0)
+
+
 def build_hoshino():
     """The estate. Two ways to open: name what he signed, or say nothing at all.
     They end in the same place - a choice of tone, not of outcome, which is the
@@ -834,10 +878,11 @@ def build_hoshino():
     # by the actor definitions. Which of these two you hear is the whole result
     # of the experiment.
     v = s.add_player()
-    # The Hoshino the player is looking at is the one Gig01_Encounter spawned at
-    # CCGig01Places.Hoshino() with tag `cc_g01_hoshino` - he has to exist long
-    # before this scene, because V has to find him and then shoot him. This
-    # double is the only way his mouth can move; see add_body_double.
+    # No-op while BRIDGE_SCENES is empty, the same standing the Johnny beats'
+    # double has. He is acquired from the world by the actor above, so his own
+    # mouth moves and nothing here has to lend him one; this is kept because the
+    # machinery is one constant away from being usable again. See
+    # add_body_double and BRIDGE_SCENES.
     s.add_body_double(hoshino, 'hoshino_body', tag='cc_g01_hoshino')
 
     # HIS LINES ARE 2D, WHICH IS WHAT LETS THE BODY STAND A KILOMETRE AWAY.
@@ -914,6 +959,11 @@ def build_hoshino():
     s.link_section(s2, c1)
     s.link_choice(c1, [v1])
     s.link_section(v1, out)
+
+    # He looks at the man who walked into his house. Without this he delivers
+    # both lines to the middle distance, which is what a community idle does
+    # with a head nobody has aimed.
+    face_player(s, hoshino)
     return s
 
 

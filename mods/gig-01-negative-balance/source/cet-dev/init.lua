@@ -289,7 +289,6 @@ local presets = {
     { name = "Estate garden", pos = { x = 340.924, y = 1033.924, z = 225.956, w = 1.0 } },
     { name = "Hoshino", pos = { x = 300.102, y = 1054.556, z = 229.928, w = 1.0 } },
     { name = "Hoshino's terminal", pos = { x = 284.852, y = 1023.697, z = 224.928, w = 1.0 } },
-} },
 }
 
 local PRESET_FILE = "presets.lua"
