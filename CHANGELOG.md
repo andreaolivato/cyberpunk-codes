@@ -7,6 +7,16 @@ each mod's Nexus Changelog tab.
 
 # Dead Ringer
 
+## 1.0.2 (2026-09-08)
+
+- **Fixed: the merc outside Afterlife could become impossible to attack.** He
+  turned back into a bystander three minutes after the gig asked you to take
+  him out, and loading a save was the only way back. Reported by brahmanax and
+  saturnfcb.
+- **Fixed: the merc could also drop to the ground, or stop being a target, the
+  moment the order was given.** This one struck at random and a reload did not
+  clear it.
+
 ## 1.0.1 (2026-09-07)
 
 - **Fixed: video calls could connect to an empty frame, with nobody in it.**

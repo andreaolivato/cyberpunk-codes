@@ -629,12 +629,16 @@ public class DeadRingerEncounter extends ScriptableSystem {
             .GetStatPoolValue(Cast<StatsObjectID>(this.m_mercId),
                               gamedataStatPoolType.Health, false);
 
-        if armed && !down {
+        if qs.GetFactStr("cc_g02_lead_heard") > 0 && !armed && !down {
             this.m_mercTicks += 1;
+            // 60s
+            if this.m_mercTicks > 60 {
+                qs.SetFactStr("cc_g02_merc_armed", 1);
+                armed = true;
+            }
         }
-        let stuck: Bool = this.m_mercTicks > 180;
 
-        if !down && armed && !stuck && hp <= CCGig02Combat.MercDownAt() {
+        if !down && armed && hp > 0.0 && hp <= CCGig02Combat.MercDownAt() {
             qs.SetFactStr("cc_g02_merc_down", 1);
             down = true;
             NPCPuppet.ChangeHighLevelState(merc, gamedataNPCHighLevelState.Relaxed);
@@ -730,8 +734,8 @@ public class DeadRingerEncounter extends ScriptableSystem {
         let gods: ref<GodModeSystem> = GameInstance.GetGodModeSystem(game);
 
         if IsDefined(agent) && IsDefined(playerAgent) {
-            if armed && !down && !stuck {
-                let untouched: Bool = hp >= 99.0;
+            if armed && !down {
+                let untouched: Bool = hp >= 99.0 || hp <= 0.0;
                 if untouched {
                     agent.SetAttitudeGroup(n"neutral");
                     agent.SetAttitudeTowards(playerAgent, EAIAttitude.AIA_Neutral);
@@ -757,7 +761,7 @@ public class DeadRingerEncounter extends ScriptableSystem {
 
         if IsDefined(gods) {
             let want: Int32 = 1;
-            if stuck || this.m_mercKilled {
+            if this.m_mercKilled {
                 want = 0;
             } else {
                 if killArmed || (armed && !down) {
