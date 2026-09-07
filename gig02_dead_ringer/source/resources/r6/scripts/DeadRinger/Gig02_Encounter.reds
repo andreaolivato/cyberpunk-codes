@@ -60,6 +60,8 @@ public class DeadRingerEncounter extends ScriptableSystem {
     private let m_apPin: NewMappinID;
     private let m_apPinOn: Bool;
     private let m_exfilDone: Bool;
+    private let m_afterlifeTicks: Int32;
+    private let m_clearTicks: Int32;
     private let m_shardTries: Int32;
 
     private func OnAttach() -> Void {
@@ -194,6 +196,10 @@ public class DeadRingerEncounter extends ScriptableSystem {
         if qs.GetFactStr("cc_g02_done") > 0 {
             this.HidePins(game);
             this.Payout(qs);
+            let p: ref<PlayerPuppet> = ps.GetLocalPlayerMainGameObject() as PlayerPuppet;
+            if IsDefined(p) && ArraySize(this.m_claws) > 0 {
+                this.ReleaseClaws(game, p, true);
+            }
             if qs.GetFactStr("cc_g02_paid") == 0 {
                 this.ScheduleTick(2.0);
             }
@@ -213,6 +219,7 @@ public class DeadRingerEncounter extends ScriptableSystem {
         let pos: Vector4 = player.GetWorldPosition();
 
         this.Arrivals(qs, pos);
+        this.AfterlifeClear(game, qs, pos);
         this.HoldWakako(qs, pos);
         this.Groups(game, qs, pos);
         this.Merc(game, qs, player, pos);
@@ -225,6 +232,23 @@ public class DeadRingerEncounter extends ScriptableSystem {
         this.Hit(game, qs, player, pos);
 
         this.ScheduleTick(1.0);
+    }
+
+    private func AfterlifeClear(game: GameInstance, qs: ref<QuestsSystem>,
+                                pos: Vector4) -> Void {
+        if qs.GetFactStr("cc_g02_wakako_2") == 0
+            || qs.GetFactStr("cc_g02_afterlife_clear") > 0 {
+            return;
+        }
+        if CCGig02StartRules.IsFastTravelling(game) {
+            return;
+        }
+        this.m_afterlifeTicks += 1;
+        if Vector4.Distance(pos, CCGig02Places.Afterlife()) > 100.0
+            // 10 min cap
+            || this.m_afterlifeTicks > 600 {
+            qs.SetFactStr("cc_g02_afterlife_clear", 1);
+        }
     }
 
     private func Arrivals(qs: ref<QuestsSystem>, pos: Vector4) -> Void {
@@ -884,7 +908,8 @@ public class DeadRingerEncounter extends ScriptableSystem {
         }
 
         if qs.GetFactStr("cc_g02_exfil_done") > 0 {
-            this.ReleaseClaws(game, player, qs.GetFactStr("cc_g02_closed") > 0);
+            this.SiteClear(qs, pos);
+            this.ReleaseClaws(game, player, qs.GetFactStr("cc_g02_site_clear") > 0);
             return;
         }
 
@@ -961,6 +986,18 @@ public class DeadRingerEncounter extends ScriptableSystem {
         }
 
         this.m_hitSpawned = true;
+    }
+
+    private func SiteClear(qs: ref<QuestsSystem>, pos: Vector4) -> Void {
+        if qs.GetFactStr("cc_g02_closed") == 0
+            || qs.GetFactStr("cc_g02_site_clear") > 0 {
+            return;
+        }
+        this.m_clearTicks += 1;
+        // 80m, 5 min cap
+        if this.OutsideHitArea(pos, 80.0) || this.m_clearTicks > 300 {
+            qs.SetFactStr("cc_g02_site_clear", 1);
+        }
     }
 
     private func ReleaseClaws(game: GameInstance, player: ref<PlayerPuppet>,

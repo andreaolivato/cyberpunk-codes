@@ -7,6 +7,33 @@ each mod's Nexus Changelog tab.
 
 # Dead Ringer
 
+## 1.0.1 (2026-09-07)
+
+- **Fixed: video calls could connect to an empty frame, with nobody in it.**
+  It happened whenever the holocall studio had not been used yet on that save,
+  which is most of the time early in a playthrough.
+- **Fixed: people on a video call now sit facing you and hold your eye.**
+  Wakako and Char stood side-on to the camera, barely lit, looking past you.
+  Reported by porkhammer.
+- **Fixed: Wakako, Char and Yoko now look at you when they talk to you in
+  person.**
+- **Changed: Char's video call is framed differently from Wakako's**, instead
+  of using the same chair and the same pose.
+- **Fixed: the Tyger Claws and Toji no longer vanish in front of you when the
+  gig ends.** They are removed once you are clear of the staircase. Reported
+  by porkhammer.
+- **Fixed: the crowd outside Afterlife no longer changes after talking with
+  Johnny.** It reverts to the default one only after you leave the area for
+  good.
+- **Changed: the merc outside Afterlife has swapped places with the two people
+  listening to him**, so you see his face as you walk up rather than his back.
+- **Changed: the wait after you send Char the relay dump is 20 minutes instead
+  of 30.** Reported by porkhammer.
+- **Changed: the message shown when the gig is not ready yet now correctly
+  mentions the quest *Playing for Time*.** It used to say "finish the
+  prologue", which is way too early: the gig opens when the city's fixers are
+  ready. Reported by Petzman.
+
 ## 1.0.0 (2026-09-06)
 
 - **Added: Dead Ringer, a full side gig.** Somebody is issuing kill orders in
