@@ -9480,5 +9480,10 @@ symptom "V lowers the weapon" is the exact signature of one (gotcha 90), the
 third group stands about six metres from the Afterlife door, and a safe area
 had already eaten this leg once during development. It was left alone: the two
 causes above account for the reports, and the mod's own safe-area check on all
-three group spots has never come back positive. Worth re-opening only if
-reports continue after 1.0.2.
+three group spots has never come back positive.
+
+**Closed on the second of those, 2026-09-08.** Playtest: "the merc is well
+outside the afterlife safe area". So the check agrees with the ground, and the
+signature that made this look strong belongs to the friendly attitude group
+instead: an NPC the game will not lock on to reads, from behind the crosshair,
+much like a weapon that will not come out.
