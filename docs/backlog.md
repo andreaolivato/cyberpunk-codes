@@ -9427,3 +9427,58 @@ mouth moves on a body nobody sees, and that the visible body is not owned by
 the scene, so its own conversation can win the approach. Gotcha 69 is the
 technique that replaced it and gotcha 102 is the acquisition plan that makes it
 survive a load.
+
+## 44. A merc three players could not attack, and nothing here could reproduce. SOLVED 2026-09-08
+
+**The question.** Three reports against gig 02's 1.0.1, within a day of each
+other: the gig gives the order to take the merc out and he cannot be attacked.
+One report said the weapon lowered itself, one said the crosshair would not
+hold him, one said only that nothing worked. Every run on the development
+machine was fine.
+
+**The report that carried the answer** was the one that said what the player
+did next: they reloaded a save from before the gig and did it again without
+stopping, and it worked. That is a statement about TIME, not about place or
+build, and it points at something that is not persisted.
+
+**Cause one, and it explains the reload.** The shield's dead man's handle
+(scene playbook, section 5) was built inverted. It counted ticks while the
+kill order was ALREADY given, so it could never fire on the upgrade save it
+was written for, and it fired on every healthy run instead: three minutes
+after the objective opened, the merc went back to the `friendly` attitude
+group, which the game will not lock on to. The counter is a script field, so
+loading any save handed back a fresh three minutes. That is exactly the
+reported workaround. Reproduced here once the clock was known: take the order,
+wait, try to shoot.
+
+Why it never showed in testing: the development route walks out of the third
+conversation and shoots him inside ten seconds. Three minutes is only reachable
+by a player who does something else first, which is most players and none of
+the test runs.
+
+**Cause two, and it explains the reports that read as immediate.** The merc's
+health was read with no guard, and a stat pool read on a body still resolving
+answers 0 (gotcha 106). The likeliest tick in the gig for that is the one after
+the third conversation releases him, which is the same tick the order is given.
+On such a tick the mod both declared him beaten, latching `cc_g02_merc_down`
+into the save with no shot fired, and stopped writing the attitude that keeps
+him targetable. Random, invisible, and not fixed by waiting.
+
+Gig 01 had already found and fixed the identical read on Hoshino three weeks
+earlier, and recorded it in a comment in its own encounter file and nowhere a
+second gig would look: not in `gotchas.md`, not in a playbook. So gig 02 was
+written straight past it. That is the reason this entry exists: a finding
+recorded only where it was paid for protects exactly one gig.
+
+**What changed.** The clock now waits on the fact that may never arrive and
+gives the kill order itself if it does not, so nothing reads a clock during a
+fight. Both health tests carry `hp > 0.0`, and an unreadable value counts as
+untouched. Gotcha 106 and a scene-playbook section carry the general form.
+
+**What was NOT the cause, and was the first suspect.** A safe area. The
+symptom "V lowers the weapon" is the exact signature of one (gotcha 90), the
+third group stands about six metres from the Afterlife door, and a safe area
+had already eaten this leg once during development. It was left alone: the two
+causes above account for the reports, and the mod's own safe-area check on all
+three group spots has never come back positive. Worth re-opening only if
+reports continue after 1.0.2.

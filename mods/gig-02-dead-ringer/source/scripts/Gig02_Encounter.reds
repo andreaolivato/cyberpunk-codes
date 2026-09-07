@@ -116,8 +116,8 @@ public class DeadRingerEncounter extends ScriptableSystem {
     // the threshold below never fired and the gig stopped at "Beat the merc
     // down" with a man who could not be hurt.
     private let m_mercMode: Int32;
-    // Counts ticks since V reached the queue with the merc still standing. THE
-    // DEAD MAN'S HANDLE: see the comment by ReleaseMerc.
+    // Counts ticks since the third conversation ended with the kill order not
+    // yet given. THE DEAD MAN'S HANDLE: see the comment on it inside Merc().
     private let m_mercTicks: Int32;
     // Ticks since V told him to go. Not persisted: a reload before the call to
     // Wakako puts him back on the floor and starts the count again, which is
@@ -1141,26 +1141,59 @@ public class DeadRingerEncounter extends ScriptableSystem {
             .GetStatPoolValue(Cast<StatsObjectID>(this.m_mercId),
                               gamedataStatPoolType.Health, false);
 
-        // THE CLOCK, and it is the dead man's handle.
+        // THE DEAD MAN'S HANDLE, AND IT USED TO BE WIRED TO THE WRONG FACT.
         //
-        // `cc_g02_merc_down` is set below, by this file. But `cc_g02_merc_armed`
-        // is set by a QUEST NODE, and a save made before this version existed is
-        // past that node forever: the fact can never arrive, he stays
-        // Invulnerable and friendly, and the gig cannot be finished. Nothing in
-        // normal testing finds that, because testing starts from a clean save
-        // and goes forward.
+        // `cc_g02_merc_down` is set below, by this file. `cc_g02_merc_armed` is
+        // set by a QUEST NODE, and a save made before this version existed is
+        // past that node forever: the fact can never arrive, so he stays
+        // friendly, shielded, and the gig cannot be finished. Nothing in normal
+        // testing finds that, because testing starts from a clean save and goes
+        // forward.
         //
-        // So being here starts a clock. Three minutes with the merc standing and
-        // nothing having happened means nothing is going to, and the shield is
-        // dropped. A real fight takes seconds. NOT PERSISTED, so a reload
-        // restarts it, which is right: a reload respawns him too.
-        if armed && !down {
+        // THE CLOCK THAT USED TO STAND HERE COUNTED ONLY WHILE `armed` WAS
+        // ALREADY SET, so it could never fire for the save it was written for.
+        // What it did fire on was an ordinary fight: three minutes after the
+        // objective opened it put the merc back into the friendly attitude
+        // group, which is the group the game will not lock on to, and it
+        // re-asserted that every tick. Three reports on 1.0.1 of a merc who
+        // could not be attacked; one of them cleared it by reloading and going
+        // straight to him, which fits, because the counter is not persisted and
+        // a load hands back a fresh three minutes. Reproduced here 2026-09-08
+        // by taking the kill order and then waiting.
+        //
+        // THE RELEASE ALSO HAD TO RELEASE. Dropping the shield was the whole
+        // intent and the same condition put him back in the friendly group, so
+        // the rescue left him unshielded and unlockable, which is worse than
+        // the state it was rescuing.
+        //
+        // So the clock now waits on the objective's OWN fact. The third
+        // conversation is over, the order is to take him out, and if the graph
+        // has not said so within a minute then it is not going to, so the
+        // script says it and the fight can happen. Nothing else reads a clock
+        // any more: from here on he is fightable exactly when the gig says he
+        // is.
+        if qs.GetFactStr("cc_g02_lead_heard") > 0 && !armed && !down {
             this.m_mercTicks += 1;
+            if this.m_mercTicks > 60 {
+                qs.SetFactStr("cc_g02_merc_armed", 1);
+                armed = true;
+            }
         }
-        let stuck: Bool = this.m_mercTicks > 180;
 
         // STAGE ONE: beaten down.
-        if !down && armed && !stuck && hp <= CCGig02Combat.MercDownAt() {
+        //
+        // `hp > 0.0` GUARDS A READING, NOT A STATE. `GetStatPoolValue` on a body
+        // that is still resolving answers 0, and a scene has just handed this
+        // one back, which is the likeliest tick in the whole gig for that to
+        // happen. Without the guard that reading is a third of his health and
+        // then some, so `cc_g02_merc_down` latches with nobody having touched
+        // him: he goes to the floor unhit, and because the fact is in the save
+        // it never comes back. Gig 01 paid for this on Hoshino and the note is
+        // in its own encounter file; the same guard, for the same reason.
+        //
+        // He is Immortal while the fight is on, so a live reading can never be
+        // 0 here and nothing legitimate is lost.
+        if !down && armed && hp > 0.0 && hp <= CCGig02Combat.MercDownAt() {
             qs.SetFactStr("cc_g02_merc_down", 1);
             down = true;
             NPCPuppet.ChangeHighLevelState(merc, gamedataNPCHighLevelState.Relaxed);
@@ -1324,7 +1357,7 @@ public class DeadRingerEncounter extends ScriptableSystem {
         // is a targetable or a hostile merc for the rest of the visit. It is two
         // calls a second.
         if IsDefined(agent) && IsDefined(playerAgent) {
-            if armed && !down && !stuck {
+            if armed && !down {
                 // HE DOES NOT START IT. He has no reason to: as far as he
                 // knows the job was legitimate and V is a stranger who asked
                 // him a question. Playtest, 2026-08-26: "they should not attack
@@ -1358,7 +1391,16 @@ public class DeadRingerEncounter extends ScriptableSystem {
                 // stops touching his attitude at all. Health below full is the
                 // signal, because it cannot be anything other than V: nothing
                 // else in this scene can hurt him.
-                let untouched: Bool = hp >= 99.0;
+                // AN UNREADABLE HEALTH COUNTS AS UNTOUCHED, which is the safe
+                // direction. A body still resolving reads 0 (see the guard on
+                // the down test above), and 0 is not 99, so the old test called
+                // him touched and skipped the line below. Skipping it leaves
+                // the friendly attitude the other branch writes every tick,
+                // and friendly is the group the game will not lock on to: the
+                // objective says take him out and the crosshair will not hold
+                // him. He cannot actually be at zero health here, because he
+                // is Immortal for the whole of this branch.
+                let untouched: Bool = hp >= 99.0 || hp <= 0.0;
                 if untouched {
                     agent.SetAttitudeGroup(n"neutral");
                     agent.SetAttitudeTowards(playerAgent, EAIAttitude.AIA_Neutral);
@@ -1402,13 +1444,12 @@ public class DeadRingerEncounter extends ScriptableSystem {
             //   before V speaks   Invulnerable   a stray shot cannot start it
             //   the fight         Immortal       damage lands, death does not
             //   he is down        Invulnerable   a shotgun cannot end the gig
-            //   the clock ran out none           see m_mercTicks above
             // Immortal only while the fight is on. Once he is down he talks,
             // and goes back to a shield that ignores everything, so a shotgun
             // cannot end the gig over a man who has already answered.
             //   the kill is armed Immortal       the hit is read, Kill does the rest
             let want: Int32 = 1;
-            if stuck || this.m_mercKilled {
+            if this.m_mercKilled {
                 want = 0;
             } else {
                 if killArmed || (armed && !down) {

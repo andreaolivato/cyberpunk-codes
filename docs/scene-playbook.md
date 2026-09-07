@@ -2026,6 +2026,31 @@ A real conversation takes seconds, so this never fires on a normal run. Keep it
 in a field rather than a fact, so a reload restarts it: a reload respawns the
 NPC as well, and the question is being asked again from the start.
 
+**Two ways to build this so that it does the opposite of its job.** Gig 02
+copied the section above and hit both, and they reached players in 1.0.1.
+
+**The clock must count while the fact is MISSING.** Look at which fact the test
+above reads: `hoshino_met` is the one that is already there, and
+`hoshino_talked` is the one that may never arrive. Gig 02 counted while its
+arriving fact was already set, which inverts the whole thing. It could never
+fire on the save it exists for, because on that save the fact never arrives and
+the clock never starts. The only run it could fire on was a healthy one, where
+it waited three minutes and then broke a fight that was working.
+
+Write the condition so that it reads as "the thing before has happened and the
+thing after has not", and check it against a save where the second fact is
+never coming.
+
+**The release has to actually release.** Dropping the shield is only half of
+the state. Gig 02 derived attitude from the same condition, so when the clock
+fired the NPC lost the shield and went back to the `friendly` group in the same
+pass, and `friendly` is the group the game will not lock on to. The rescue
+produced an NPC who could not be shielded and could not be attacked either,
+which is worse than the state it was rescuing.
+
+Every field in the lifecycle table below has to reach the fought state, not
+just god mode. Run the clock's outcome through that table before shipping it.
+
 ### What it gives you
 
 The NPC is a fixture until you talk to him and a person afterwards. Every ending

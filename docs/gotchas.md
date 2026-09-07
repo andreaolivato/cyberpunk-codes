@@ -2506,3 +2506,44 @@ Never renumber. Append.
      ArchiveXL logs appearances. A CET probe that resolves a NodeRef and
      reports whether an entity answers is the only way to see it, and pressing
      it repeatedly through one failure is what turns a symptom into a time.
+
+106. **A stat pool read on a body that is still resolving answers 0, and that
+     is indistinguishable from "nearly dead".**
+
+     ```
+     GameInstance.GetStatPoolsSystem(game)
+         .GetStatPoolValue(Cast<StatsObjectID>(id), gamedataStatPoolType.Health, false)
+     ```
+
+     Health comes back as a percentage, so 100 is untouched. On a tick where the
+     entity is not fully resolved the same call returns 0. Nothing about the
+     return value says which of the two it is.
+
+     Every test written against that number is therefore wrong on those ticks,
+     and in the direction that hurts: `hp < 99.0` reads as "he has been shot",
+     `hp <= 33.0` reads as "he has been beaten down". Both fire with nobody
+     having touched the NPC.
+
+     The window is small and it is not random. It opens where a body changes
+     hands: the tick after a scene releases its actor, the tick after a
+     community places one, the first ticks after a load. A quest that arms a
+     fight at the end of a conversation is asking the question at the worst
+     moment available.
+
+     **Guard the READING, not the state.** `hp > 0.0` before anything that
+     treats a low number as damage, and treat an unreadable value as untouched
+     wherever the safe direction is "nothing has happened yet":
+
+     ```reds
+     if !down && armed && hp > 0.0 && hp <= DownAt() { ... }
+     let untouched: Bool = hp >= 99.0 || hp <= 0.0;
+     ```
+
+     A shielded NPC cannot legitimately read 0, so nothing real is lost.
+
+     **Both gigs shipped this, three weeks apart.** Gig 01 marked Hoshino
+     provoked before anyone touched him, spending a one-shot hostility flip on
+     nothing. Gig 02 latched `cc_g02_merc_down` into the save with no shot
+     fired, and skipped the line that keeps the merc targetable, so the
+     objective said to take him out and the crosshair would not hold him. The
+     second one reached players. Gotcha 21 is the family this belongs to.
