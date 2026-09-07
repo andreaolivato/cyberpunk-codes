@@ -149,15 +149,57 @@ BRIEF_PATH = QUEST + '/cc_g02_briefing'
 
 # ------------------------------------------------------------ the studio
 #
-# Mama Welles's setup, gig 01's measured pairing for a plain spawned NPC on
-# `#holocall_marker` at yaw 0. See git history (2026-08-26) for why Wakako's
-# own setup is wrong for a body that is not hers.
+# WAKAKO'S OWN SETUP, 2026-09-07, and this reverses a decision from 2026-08-26.
+#
+# It was hers, then it was swapped to Mama Welles's, on the finding that
+# "vanilla does not put its Wakako on the studio's floor spot at all: her own
+# holocall scene acquires her from a spawn set, so her camera is aimed at
+# wherever that spawn set stands her, and ours is a plain spawned NPC at
+# `#holocall_marker`, a different place and a different pose, so her camera
+# frames neither." Every word of that is true. What was missing was a way to
+# put our body where her camera looks.
+#
+# THAT IS WHAT THE WORLD WORKSPOT NODE DOES. `{wakako_holocall_workspot}` is a
+# `worldAISpotNode` in the studio's quest sector, read off disk 2026-09-07 at
+# (5895.207, 6136.237, 0.000) yaw -65, playing
+# `generic__sit_chair_table_lean_front__sit_around__01.workspot`. That is the
+# spot the spawn set stands her on, and `{wakako_holocall_camera}` sits 0.9 m
+# away at height 0.929 aimed at it. `gen_scenes.studio_pose` teleports our
+# actor onto that node, so all three now agree.
+#
+# SHE SITS. The camera height is the giveaway: 0.929 is a seated frame, where
+# Mama Welles's is 1.52 for a standing one. A playtest screenshot of the real
+# Wakako holocall shows her seated behind a desk, leaning forward, looking
+# into the lens; ours was standing, side-on and barely lit, because it was
+# framed and lit for somebody else's pose.
+#
+# CHAR RIDES THE SAME SETUP, and a seated frame suits her: she is a netrunner
+# in a chair everywhere else in this gig.
+#
+# ONE SET PER SPEAKER, 2026-09-07. Char used to ride Wakako's, which put the
+# two women in the same chair in the same pose two beats apart and read as one
+# recycled shot (playtest: "feels weird"). A contact's four names are a set and
+# they are only correct together, so a second speaker takes a second set.
+#
+# CHAR IS BLUE MOON'S. Every seated setup in the studio was surveyed by camera
+# height and workspot resource: El Capitan and Padre are literally Wakako's
+# spot and pose with the camera a few centimetres higher, so they would have
+# changed nothing. Blue Moon's is `rogue__sit_bench_lean_back__sit_around__01`
+# on a different spot at yaw -145, camera 1.037, and it LEANS BACK where
+# Wakako leans forward. It is framed for a slim woman, and it matches how the
+# player last saw Char, reclining in the netrunner's chair at the Inn.
+#
+# ALL FIVE NAMES PER SET ARE READ OUT OF THAT CONTACT'S OWN
+# `<contact>_holocall.scene`, never extrapolated: a wrong one is a silent
+# no-op. The two workspot names live in gen_scenes.
 STUDIO_PREFAB = '#holocalls_studio'
 LIGHTS_REF = '#holocalls_studio_lighting'
-LIGHTS_VARIANT = 'mama_welles_holocall_lights'
-SETUP_REF = '#mama_welles_holocall_setup'
-SETUP_VARIANT = 'mama_welles_holocall_setup'
-CAMERA_REF = '#mama_welles_holocall_camera'
+
+# (lights variant, setup ref, setup variant, camera ref)
+WAKAKO_STUDIO = ('wakako_holocall_lights', '#wakako_holocall_setup',
+                 'wakako_holocall_setup', '#wakako_holocall_camera')
+CHAR_STUDIO = ('blue_moon_holocall_lights', '#blue_moon_holocall_setup',
+               'blue_moon_holocall_setup', '#blue_moon_holocall_camera')
 
 STUDIO_SECONDS = 20
 DIAL_SECONDS = 3
@@ -213,30 +255,56 @@ def close_objective(oid):
          in_sock='Succeeded')
 
 
-def wakako_call(prefix, scene_name, entry, exit_, contact=None):
+def wakako_call(prefix, scene_name, entry, exit_, contact=None,
+                studio=None):
     """One outgoing video call, to Wakako unless `contact` says otherwise:
-    open the studio, dial, speak, hang up. The fallback is a worse picture,
-    not a different route: a call issued as Video with the camera never
-    switched on draws an empty frame and connects normally."""
+    dial, wait for the studio, speak, hang up.
+
+    THE DIAL COMES BEFORE THE WAIT, and that ordering is the whole fix of
+    2026-09-07. It looks like a detail and it decides whether the player sees
+    a person or an empty frame.
+
+    WHAT LOADS THE STUDIO IS THE CALL NODE, not the prefab variants. The
+    studio is a `category: Quest` sector with no streaming box, and
+    `questCallContact_NodeType` is the only thing here that carries
+    `prefabNodeRef: #holocalls_studio`, which is what asks for it. Showing the
+    variants only says which pieces should exist ONCE the sector is there; on
+    a sector nobody has asked for, it does nothing at all.
+
+    So the old order could not work on a cold studio:
+
+        variants on   ->  nothing, the sector is not loaded
+        wait 20 s for the camera  ->  it cannot arrive, nobody asked
+        give up, skip switching the camera on
+        place the call  ->  THIS loads the studio, camera appears, too late
+        talk to an empty frame
+
+    MEASURED, not reasoned. The dev menu's holocall probe was pressed three
+    times during one failed call: `claim` 0 and the camera absent, `claim` 0
+    and still absent, then `claim` 2 (the giveup won) and the camera PRESENT.
+    It arrives immediately after the giveup because the giveup is immediately
+    followed by the call.
+
+    It worked on a late save because a vanilla holocall earlier in that
+    session had already pulled the studio in, so the camera was sitting there
+    when the wait looked for it. That is also why calling Regina first did not
+    help: her studio unloads again when her call ends.
+
+    Vanilla's own `wakako_holocall.scene` has this order: its phone node
+    carrying `#holocalls_studio` comes first and its camera waits come after.
+
+    The wait now sits in the gap where the phone is already dialling, which is
+    where it belongs. The giveup stays as a safety net rather than as the
+    thing that fires every time; a call issued as Video with the camera never
+    switched on still connects and draws an empty frame, which is a worse
+    picture and not a broken gig."""
     global chain
     contact = contact or WAKAKO_CONTACT
+    lights_variant, setup_ref, setup_variant, camera_ref = studio or WAKAKO_STUDIO
     step(add_setvar(prefix + '_claim', 0))
     step(add_setvar(prefix + '_video', 0))
-    step(add_prefab_variant(LIGHTS_REF, LIGHTS_VARIANT, True))
-    step(add_prefab_variant(SETUP_REF, SETUP_VARIANT, True))
-
-    studio = add_race2(chain[-1],
-                       (add_pause_node_loaded(CAMERA_REF), 'In', 'Out'),
-                       (add_delay(STUDIO_SECONDS), 'In', 'Out'),
-                       prefix + '_claim')
-    got = add_toggle_component(CAMERA_REF, 'RenderToTextureCamera', True)
-    b.connect((studio, 'True'), (got, 'In'))
-    lit = add_setvar(prefix + '_video', 1)
-    b.connect((got, 'Out'), (lit, 'In'))
-    join = add_setvar(prefix + '_step', 1)
-    b.connect((lit, 'Out'), (join, 'In'))
-    b.connect((studio, 'False'), (join, 'In'))
-    chain.append((join, 'Out'))
+    step(add_prefab_variant(LIGHTS_REF, lights_variant, True))
+    step(add_prefab_variant(setup_ref, setup_variant, True))
 
     # PhoneSystem's own call fact persists at Talking once a call has been
     # answered, so it is cleared before every call.
@@ -249,15 +317,30 @@ def wakako_call(prefix, scene_name, entry, exit_, contact=None):
                                 video=True, prefab=STUDIO_PREFAB,
                                 restrict=False)
 
+    # THE PHONE STARTS DIALLING, and the sector starts arriving with it.
     step(call('IncomingCall'))
+
+    studio = add_race2(chain[-1],
+                       (add_pause_node_loaded(camera_ref), 'In', 'Out'),
+                       (add_delay(STUDIO_SECONDS), 'In', 'Out'),
+                       prefix + '_claim')
+    got = add_toggle_component(camera_ref, 'RenderToTextureCamera', True)
+    b.connect((studio, 'True'), (got, 'In'))
+    lit = add_setvar(prefix + '_video', 1)
+    b.connect((got, 'Out'), (lit, 'In'))
+    join = add_setvar(prefix + '_step', 1)
+    b.connect((lit, 'Out'), (join, 'In'))
+    b.connect((studio, 'False'), (join, 'In'))
+    chain.append((join, 'Out'))
+
     step(add_delay(DIAL_SECONDS))
     step(call('StartCall'))
     step(add_setvar(prefix + '_talking', 1))
     scene_at(scene_name, ANCHOR_STUDIO, entry, exit_)
     step(call('EndCall'))
-    step(add_toggle_component(CAMERA_REF, 'RenderToTextureCamera', False))
-    step(add_prefab_variant(SETUP_REF, SETUP_VARIANT, False))
-    step(add_prefab_variant(LIGHTS_REF, LIGHTS_VARIANT, False))
+    step(add_toggle_component(camera_ref, 'RenderToTextureCamera', False))
+    step(add_prefab_variant(setup_ref, setup_variant, False))
+    step(add_prefab_variant(LIGHTS_REF, lights_variant, False))
     step(add_setvar(prefix + '_done', 1))
 
 
@@ -266,7 +349,8 @@ def char_call(scene_name, entry, exit_):
     studio recipe as Wakako's, with our Char record on the floor spot. She
     was audio, on the argument that one exchange of advice does not earn the
     studio; the same woman on the phone as in the chair is the point now."""
-    wakako_call('cc_g02_callc', scene_name, entry, exit_, contact=CHAR_CONTACT)
+    wakako_call('cc_g02_callc', scene_name, entry, exit_, contact=CHAR_CONTACT,
+                studio=CHAR_STUDIO)
 
 
 # ===========================================================================
@@ -367,6 +451,7 @@ step(add_journal('gameJournalPhoneMessage', MSG_01), in_sock='Active')
 # message preview once.
 step(add_journal('gameJournalPhoneChoiceGroup', CHOICE_GROUP, notify=0),
      in_sock='Active')
+
 step(add_pause_journal('gameJournalPhoneChoiceEntry', CHOICE_CALL))
 step(add_setvar('cc_g02_called', 1))
 
@@ -607,8 +692,30 @@ b.connect(ANSWER_KILL_END, (ANSWER_JOIN, 'In'))
 b.connect(ANSWER_SPARE_END, (ANSWER_JOIN, 'In'))
 chain = [(ANSWER_JOIN, 'Out')]
 
-# The merc goes; Char arrives at the Dewdrop Inn. Yoko is the base game's own
-# NPC and is acquired by her scene, so nothing of ours is switched on for her.
+# Char arrives at the Dewdrop Inn, and the Afterlife door goes back to normal
+# on its OWN BRANCH.
+#
+# THE DOOR IS A SIDE BRANCH AND MUST STAY ONE. Waiting for the player to walk
+# away is right for the door and wrong for everything else: putting that wait
+# on the main line stopped the whole gig at this point, so Johnny never
+# commented on the message and the objective never moved (playtest
+# 2026-09-07). The rule is the one the seen-while-alive fork below already
+# follows: a wait that exists to hide something has no business gating the
+# story. Gotcha 104, including how to prove it on the built graph.
+#
+# WHICH HALF GOES WHERE IS DECIDED BY WHAT THE PLAYER CAN SEE. The Afterlife
+# swaps happen where he is standing, so they wait. The Dewdrop Inn swaps are a
+# kilometre away in Kabuki and nobody can watch them, so they run at once and
+# are certain to be done before he arrives.
+AFTERLIFE_FORK = chain[-1]
+
+# --- the branch: the door, once V is 100 m from it -------------------------
+# `cc_g02_afterlife_clear` is set by Gig02_Encounter.AfterlifeClear, which
+# holds during a fast travel and gives up after ten minutes so this can never
+# be left half done. It has no output on purpose: nothing downstream waits.
+DOOR_WAIT = add_pause_fact('cc_g02_afterlife_clear')
+b.connect(AFTERLIFE_FORK, (DOOR_WAIT, 'In'))
+chain = [(DOOR_WAIT, 'Out')]
 step(add_community('Deactivate', CAST_REF, entry='merc'))
 for _who in ('queue_a', 'queue_b', 'queue_c', 'queue_d', 'queue_e', 'queue_f', 'queue_g'):
     step(add_community('Deactivate', CAST_REF, entry=_who))
@@ -617,7 +724,12 @@ for _ref, _phase, _entries in VANILLA_DOOR_CROWD:
     for _who in _entries:
         step(add_community('Reactivate', _ref, entry=_who, phase=_phase))
 step(add_crowd_null_area(gen_community.CROWD_NULL_REF, False))
-# YOKO: the game's vendor off, ours on, for the leg (2026-09-05).
+
+# --- back to the story -----------------------------------------------------
+chain = [AFTERLIFE_FORK]
+# YOKO: the game's vendor off, ours on, for the leg (2026-09-05). Yoko is the
+# base game's own NPC and is acquired by her scene, so nothing of ours is
+# switched on for her beyond this body.
 step(add_community('Deactivate', VANILLA_YOKO[0], entry=VANILLA_YOKO[1], phase=VANILLA_YOKO[2]))
 step(add_community('Activate', CAST_REF, entry='yoko'))
 step(add_community('Activate', CAST_REF, entry='char'))
@@ -692,10 +804,14 @@ step(add_pause_journal('gameJournalPhoneChoiceEntry', CHOICE_SEND_DUMP))
 close_objective('obj_send_dump')
 step(add_journal('gameJournalPhoneMessage', MSG_05), in_sock='Active')
 open_objective('obj_wait2')
-# ON THE WORLD CLOCK (design call 2026-09-05), the same wait as her verdict
-# at the Inn, and for the same reason: a realtime delay does not run while
-# the phone is open (gotcha 3).
-step(add_game_delay(minutes=30))
+# ON THE WORLD CLOCK (design call 2026-09-05), for the same reason as her
+# verdict at the Inn: a realtime delay does not run while the phone is open
+# (gotcha 3).
+#
+# TWENTY MINUTES, NOT THIRTY (playtest 2026-09-07): a second half-hour so
+# soon after the first one reads as the gig stalling rather than as time
+# passing. The two waits are deliberately no longer the same length.
+step(add_game_delay(minutes=20))
 # THREE TEXTS, paced by the journal's own delays (6 s and 5 s), then V's
 # reply is a pick in the thread, the way the report to Wakako is.
 step(add_journal('gameJournalPhoneMessage', MSG_06), in_sock='Active')
@@ -868,6 +984,16 @@ chain = [(END_SAID, 'Out')]
 # Let the last line land before the completion banner draws over it.
 step(add_delay(3))
 step(add_journal_quest(QUEST, track=0), in_sock='Succeeded')
+# THE CAST GOES ONLY ONCE V IS AWAY FROM THE STAIRCASE (playtest 2026-09-07:
+# "once the gig is over, the tyger claws just vanish into thin air"). Toji is
+# the community's, so switching the cast off here deleted his body in front of
+# a player still standing at the top of the stairs; the six Claws around him
+# are the script's and went at the same moment. `cc_g02_site_clear` is set by
+# Gig02_Encounter.SiteClear, which is where the distance and the cap that stops
+# this waiting for ever are both written down. It is set before this point in
+# every run that does not park on the stairs, so nothing normally waits here at
+# all.
+step(add_pause_fact('cc_g02_site_clear'))
 for _who in CAST:
     step(add_community('Deactivate', CAST_REF, entry=_who))
 

@@ -568,6 +568,7 @@ class Scene:
         self.entry_points = []
         self.exit_points = []
         self.performers = []
+        self.props = []               # scnPropDef, see add_lookat_prop
         # Workspots: the scene's own animation resources, so an actor can be put
         # into one without a world node. See add_workspot_node().
         self.workspots = []            # scnWorkspotData_ExternalWorkspotResource
@@ -2052,6 +2053,210 @@ class Scene:
             'type': '0',
         }})
 
+    def sections(self):
+        """Every section node id in this scene, in the order they were made."""
+        return [n['nodeId']['id'] for n in self.nodes
+                if n['$type'] == 'scnSectionNode']
+
+    # A PERFORMER ID IS ENCODED, NOT SEQUENTIAL, and getting it wrong is a
+    # silent no-op. Read off two vanilla scenes 2026-09-07:
+    #
+    #   wakako_okada_default  actors 0,1 -> 1, 257;  player actor 2 -> 513;
+    #                         prop 0 -> 2
+    #   q112_00c_wakako       actors 0..6 -> 1,257,513,769,1025,1281,1537;
+    #                         player actor 7 -> 1793;  props 0,1 -> 2, 258
+    #
+    # So it is `index * 256 + kind`, kind 1 for an actor and 2 for a prop.
+    # The `performersDebugSymbols` rows this file already writes use `aid + 1`,
+    # which agrees only for actor 0. Nothing reads those rows, so it has never
+    # mattered; an event that NAMES a performer is a different matter.
+    @staticmethod
+    def actor_performer(actor_id):
+        return actor_id * 256 + 1
+
+    @staticmethod
+    def prop_performer(prop_id):
+        return prop_id * 256 + 2
+
+    def player_performer(self):
+        """The encoded performer id of this scene's player actor.
+
+        For aiming a `look_at` at V. `add_player` must have been called.
+        """
+        if not self.player_actors:
+            raise SystemExit('%s: player_performer needs add_player first'
+                             % self.name)
+        return self.actor_performer(self.player_actors[0]['actorId']['id'])
+
+    def add_lookat_prop(self, prop_name, node_ref):
+        """Declare a world node as a PROP, so an event can aim at it.
+
+        This is how vanilla gives a holocall caller something to look at.
+        `wakako_holocall.scene` declares one actor and one prop, and the prop
+        is `#wakako_holocall_lookat`, a marker entity standing exactly where
+        the studio camera is, acquired with `entityAcquisitionPlan: findInNode`.
+
+        AN EARLIER PASS DECLARED ONLY A `performersDebugSymbols` ROW for it, on
+        the reading that that table is what a performer id resolves through. It
+        is not, it is what its name says, and the row alone changed nothing in
+        play: the caller sat correctly posed, lit and framed, and went on
+        looking past the lens (playtest 2026-09-07). The prop is the
+        declaration that counts.
+
+        Returns the performer id to pass to `look_at`.
+        """
+        pid = len(self.props)
+        perf = self.prop_performer(pid)
+        self.props.append({
+            '$type': 'scnPropDef',
+            'animSets': [],
+            'cinematicAnimSets': [],
+            'communityParams': {'$type': 'scnCommunityParams',
+                                'entryName': cname(None), 'forceMaxVisibility': 0,
+                                'reference': noderef(None)},
+            'dynamicAnimSets': [],
+            'entityAcquisitionPlan': 'findInNode',
+            'findEntityInEntityParams': {
+                '$type': 'scnFindEntityInEntityParams',
+                'actorId': actor_id(4294967295),
+                'forceMaxVisibility': 0,
+                'itemID': tdbid(None),
+                'ownershipTransferOptions': {
+                    '$type': 'scnPropOwnershipTransferOptions',
+                    'dettachFromSlot': 1, 'removeFromInventory': 1,
+                    'type': 'TransferToWorkspotSystem_Automatic'},
+                'performerId': {'$type': 'scnPerformerId', 'id': 4294967040},
+                'slotID': tdbid(None)},
+            'findEntityInNodeParams': {
+                '$type': 'scnFindEntityInNodeParams',
+                'forceMaxVisibility': 0,
+                'nodeRef': noderef(node_ref)},
+            'findEntityInWorldParams': {
+                '$type': 'scnFindEntityInWorldParams',
+                'actorRef': {'$type': 'gameEntityReference',
+                             'dynamicEntityUniqueName': cname(None), 'names': [],
+                             'reference': noderef(None),
+                             'sceneActorContextName': cname(None),
+                             'slotName': cname(None), 'type': 'EntityRef'},
+                'forceMaxVisibility': 0},
+            'propId': {'$type': 'scnPropId', 'id': pid},
+            'propName': prop_name,
+            'spawnDespawnParams': {
+                '$type': 'scnSpawnDespawnEntityParams',
+                'alwaysSpawned': 0, 'appearance': cname(None),
+                'dynamicEntityUniqueName': cname(None), 'findInWorld': 0,
+                'forceMaxVisibility': 0, 'isEnabled': 1,
+                'itemOwnerId': {'$type': 'scnPerformerId', 'id': 4294967040},
+                'keepAlive': 0, 'prefetchAppearance': 0,
+                'spawnMarker': cname(None), 'spawnMarkerNodeRef': noderef(None),
+                'spawnMarkerType': 'Local',
+                'spawnOffset': {'$type': 'Transform',
+                                'orientation': _yaw_quat(0.0),
+                                'position': {'$type': 'Vector4', 'W': 0,
+                                             'X': 0, 'Y': 0, 'Z': 0}},
+                'spawnOnStart': 0, 'specRecordId': tdbid(None),
+                'validateSpawnPostion': 0},
+        })
+        self.performers.append({
+            '$type': 'scnPerformerSymbol',
+            'editorPerformerId': ruid(self.name + '/prop/' + str(node_ref)),
+            'entityRef': {'$type': 'gameEntityReference',
+                          'dynamicEntityUniqueName': cname(None), 'names': [],
+                          'reference': noderef(node_ref),
+                          'sceneActorContextName': cname(None),
+                          'slotName': cname(None), 'type': 'EntityRef'},
+            'performerId': {'$type': 'scnPerformerId', 'id': perf},
+        })
+        return perf
+
+    def look_at(self, section, actor, target_performer, start_time=0,
+                duration=1000):
+        """Turn an actor's eyes, head and chest onto a target performer.
+
+        EVERY FIELD IS COPIED FROM `wakako_holocall.scene`, node 56, event 0,
+        which is the game's own way of making the caller look down the lens.
+        It is the "Eyes & Head" preset the editor writes: the request is on
+        Eyes, with Head at weight 0.1 and Chest at weight 2 as additional
+        parts. Do not tune those three numbers by reasoning about them; they
+        are one preset and they are what vanilla ships.
+
+        `actor` is an actor id as returned by add_actor; `target_performer` is
+        what `add_lookat_prop` returned. The encoding above is applied here so
+        callers pass plain ids.
+
+        A WORKSPOT ALONE DOES NOT DO THIS. The workspot fixes where the body
+        is, how it sits and which way the torso faces; the head and eyes keep
+        playing the idle's own wandering. Gig 02 shipped a call with the spot
+        right and no look-at, and the result was a correctly framed woman
+        looking off past the camera (playtest 2026-09-07).
+        """
+        node = self._node(section)
+        if node['$type'] != 'scnSectionNode':
+            raise SystemExit('%s: look_at needs a section, got %s'
+                             % (self.name, node['$type']))
+        node['events'].append({'HandleId': '@ev', 'Data': {
+            '$type': 'scnLookAtEvent',
+            'basicData': {
+                '$type': 'scnLookAtBasicEventData',
+                'basic': {
+                    '$type': 'scnAnimTargetBasicData',
+                    'isStart': 1,
+                    'performerId': {'$type': 'scnPerformerId',
+                                    'id': self.actor_performer(actor)},
+                    'staticTarget': {'$type': 'Vector4', 'W': 1, 'X': 0, 'Y': 0, 'Z': 0},
+                    'targetActorId': actor_id(4294967295),
+                    'targetOffsetEntitySpace': {'$type': 'Vector4', 'W': 0,
+                                                'X': 0, 'Y': 0, 'Z': 0},
+                    'targetPerformerId': {'$type': 'scnPerformerId',
+                                          'id': target_performer},
+                    'targetPropId': {'$type': 'scnPropId', 'id': 4294967295},
+                    'targetSlot': cname('(Root)'),
+                    'targetType': 'Actor',
+                },
+                'removePreviousAdvancedLookAts': 1,
+                'requests': [{
+                    '$type': 'animLookAtRequestForPart',
+                    'attachLeftHandToRightHand': -1,
+                    'attachRightHandToLeftHand': -1,
+                    'bodyPart': cname('Eyes'),
+                    'request': {
+                        '$type': 'animLookAtRequest',
+                        'additionalParts': {'Elements': [
+                            {'$type': 'animLookAtPartRequest', 'mode': 0,
+                             'partName': cname('Head'), 'suppress': 0,
+                             'weight': 0.100000024},
+                            {'$type': 'animLookAtPartRequest', 'mode': 0,
+                             'partName': cname('Chest'), 'suppress': 0,
+                             'weight': 2},
+                        ]},
+                        'calculatePositionInParentSpace': 0,
+                        'debugInfo': 'Scene preset: "Eyes & Head"',
+                        'followingSpeedFactorOverride': -1,
+                        'hasOutTransition': 0,
+                        'invalid': 0,
+                        'limits': {'$type': 'animLookAtLimits',
+                                   'backLimitDegrees': 210,
+                                   'hardLimitDegrees': 270,
+                                   'hardLimitDistance': 1000000,
+                                   'softLimitDegrees': 360},
+                        'mode': 0,
+                        'outTransitionSpeed': 60,
+                        'priority': -1,
+                        'suppress': 0,
+                        'transitionSpeed': 80,
+                    },
+                }],
+            },
+            'duration': duration,
+            'executionTagFlags': 0,
+            'id': {'$type': 'scnSceneEventId',
+                   'id': ruid('ev-lookat/%s/%d/%d/%d'
+                              % (self.name, section, actor, start_time))},
+            'scalingData': None,
+            'startTime': start_time,
+            'type': '0',
+        }})
+
     def fire_event(self, section, target, start_time=0):
         """Fire a terminal quest node from a section at a given time.
 
@@ -2145,7 +2350,7 @@ class Scene:
                                  'vpEntries': self.loc_vp},
                     'notablePoints': [],
                     'playerActors': self.player_actors,
-                    'props': [],
+                    'props': self.props,
                     'referencePoints': [],
                     'resouresReferences': {
                         '$type': 'scnSRRefCollection',

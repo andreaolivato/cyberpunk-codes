@@ -202,13 +202,26 @@ SIT_MARKINGS = []
 # A looked-at position is worth as much as a walked one for this purpose:
 # something was standing on it, so it is ground an NPC can stand on.
 MERC_POS = (-1470.163, 1044.159, 22.722)
-# HE FACES HIS LISTENERS, 2026-09-04: two bodies a step in front of him, on
-# the -X side of the post (the side the queue is on), and he faces the middle
-# of the three. Playtest: 283 degrees had him talking to nobody.
-_G3C = (MERC_POS[0] - 0.9, MERC_POS[1])
-MERC_YAW = face(MERC_POS, _G3C)
-_G3 = [(MERC_POS[0] - 1.3, MERC_POS[1] - 0.75, MERC_POS[2]),
-       (MERC_POS[0] - 1.3, MERC_POS[1] + 0.75, MERC_POS[2])]
+# HE FACES HIS LISTENERS, 2026-09-04: two bodies a step in front of him, and
+# he faces the middle of the pair. Playtest: 283 degrees had him talking to
+# nobody.
+#
+# THE TWO SIDES ARE SWAPPED, 2026-09-07 (playtest). He used to hold the
+# captured post with the pair on the -X side, which is the side the player
+# walks in from: the player met the merc's back, and the two listeners had
+# their faces to him. Now the LISTENERS hold the post and he stands where they
+# were, so the player comes up behind the listeners and the man doing the
+# talking is the one facing them. He faces +X, towards the pair and the bins
+# they are gathered by.
+#
+# BOTH SPOTS ARE KNOWN GROUND. The post is a capture, and the -X spot is where
+# two bodies have been standing since 2026-09-04, so neither side of the swap
+# is a new guess about what an NPC can stand on.
+MERC_STAND = (MERC_POS[0] - 1.3, MERC_POS[1], MERC_POS[2])
+_G3 = [(MERC_POS[0], MERC_POS[1] - 0.75, MERC_POS[2]),
+       (MERC_POS[0], MERC_POS[1] + 0.75, MERC_POS[2])]
+_G3C = (MERC_POS[0], MERC_POS[1])
+MERC_YAW = face(MERC_STAND, _G3C)
 
 _G1 = [(GROUP_POS['group1'][0] - 0.7, GROUP_POS['group1'][1] + 0.9,
         GROUP_POS['group1'][2]),
@@ -227,11 +240,11 @@ CAST = [
     # THE MERC, with the third group outside Afterlife.
     # Plain stand-around idles for the three (playtest 2026-09-05: 06 and 08
     # hold the arms out as if around something that is not there).
-    ('merc', 'Character.cc_g02_merc', MERC_POS, MERC_YAW, stand_around(1)),
+    ('merc', 'Character.cc_g02_merc', MERC_STAND, MERC_YAW, stand_around(1)),
     # HIS LISTENERS (2026-09-04): a man and a woman a step in front of him.
-    ('queue_f', 'Character.cc_g02_queue_f', _G3[0], face(_G3[0], MERC_POS[:2]),
+    ('queue_f', 'Character.cc_g02_queue_f', _G3[0], face(_G3[0], MERC_STAND[:2]),
      stand_around(2)),
-    ('queue_g', 'Character.cc_g02_queue_g', _G3[1], face(_G3[1], MERC_POS[:2]),
+    ('queue_g', 'Character.cc_g02_queue_g', _G3[1], face(_G3[1], MERC_STAND[:2]),
      stand_around(3)),
 
 
@@ -417,7 +430,7 @@ KNEEL = depot('base', 'workspots', 'archetype', 'homeless', 'common', 'ground',
 MERC_KNEEL_REF = community.Community.ref(SECTOR, 'cc_g02_merc_kneel_spot')
 MERC_KNEEL = (community.Community.ai_spot_node(None, 'cc_g02_merc_kneel_spot',
                                                KNEEL, []),
-              MERC_POS, MERC_KNEEL_REF,
+              MERC_STAND, MERC_KNEEL_REF,
               (community.WB['maxdist'], community.WB['ukfloat'],
                community.WB['uk10'], community.WB['uk11']),
               MERC_YAW)

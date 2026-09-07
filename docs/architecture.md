@@ -140,8 +140,33 @@ plausible-looking name.**
 
 | fact | means | where it is READ in vanilla | where it is SET |
 |---|---|---|---|
-| `q101_enable_side_content` | the prologue is over, side content is allowed | `open_world\minor_activities\open_world_minor_activities.questphase`, the root of ALL 436 minor activities, and every fixer phase (`dakota`, `dyno`, `el_capitan`, `mr_hands`, `padre`, `wakako`) | `main_quests\part1\q101\phases\q101_p2_meet_takemura.questphase`, in the same cluster as `radio_on` and the weather reset. `ep1\quest\ep1.questphase` also sets it itself for a Phantom Liberty standalone start |
+| `q101_enable_side_content` | the fixers are open for business | `open_world\minor_activities\open_world_minor_activities.questphase` and six of the seven fixer phases: `dakota`, `dyno`, `el_capitan`, `mr_hands`, `padre`, `wakako`. `reggie` is the exception and is NOT gated on it, which is why Regina hands out Watson work in Act 1 while nobody else hands out anything | `main_quests\part1\q101\phases\q101_p2_meet_takemura.questphase`, node 28, in the same cluster as `radio_on` and the weather reset. `ep1\quest\ep1.questphase` also sets it for a Phantom Liberty standalone start |
 | `q115_point_of_no_return` | Nocturne Op55N1 has begun | `street_stories.questphase`, `open_world_minor_activities.questphase`, the fixer root | `main_quests\part1\q115\phases\q115_00_hanako.questphase` |
+
+**IT IS NOT "THE PROLOGUE IS OVER", and this row used to say that it was.**
+Searching all 2,860 shipped `.questphase` files on 2026-09-07 found exactly one
+place that sets it in a playthrough: the phase above.
+
+**Within that phase it is EARLIER than the phase's name suggests.** Node 28 is
+fed by node 5, a `questJournalQuestEntry_NodeType` on
+`quests/main_quest/act_01/q101_resurrection/takemura/call_takemura`, so the
+flag flips when the objective CALL TAKEMURA appears, not when the meeting that
+follows it is finished. A first reading took the phase name for the moment and
+said the Tom's Diner meeting; a playtest on that objective started a gig that
+should still have been waiting, which is how the error was caught. The only other setters
+are the nine `quest\test\*` performance maps and one sub-graph of `mq048` that
+also sets `q000_done`, `q001_done`, `q005_done` and `q101_done` and teleports
+the player, so it is a developer skip rather than a route through the story.
+
+Hours of Act 1 sit between the end of the prologue and that moment. Calling it
+"the prologue" cost a Nexus bug report: a player past the prologue, running
+Watson content, read a mod page and an in-game message telling him to finish
+something he had finished hours earlier.
+
+The useful way to say it, because a player can check it: this fact is what
+Wakako herself waits on. Her phase gates her on being inside `#westbrook_tr`
+AND this fact AND content not locked. So a gig of ours that waits on it becomes
+available at the same moment her own gigs do, and not before.
 
 `q101_enable_side_content` is the single most compatible gate available:
 

@@ -158,6 +158,131 @@ def wakako_studio(s):
                        yaw=STUDIO_YAW, force_visible=True)
 
 
+# THE POSE ON THE PHONE, AND WHY IT COMES FROM A WORLD NODE.
+#
+# Playtest 2026-09-07: "neither Wakako nor Char looks at V during the
+# holocalls, they are just using the standard NPC idle animations". They were,
+# and nothing in the scene was telling them otherwise.
+#
+# READ OFF DISK 2026-09-07, and it settles where a holocall body's pose
+# actually comes from. The studio's quest sector (base,
+# quest_ec82d0423d8f1435.streamingsector) carries 90 `worldAISpotNode`s, one
+# per contact, and node 434 is `{mama_welles_holocall_workspot}`: an AI spot
+# playing `generic__stand_bar_lean_front__stand_around__05.workspot`, standing
+# where that contact's camera is framed. Vanilla's own holocall scene does
+# NOTHING to arrange this. `ma_std_arr_03_holocall_brief.scene` contains three
+# dialogue lines, six fact writes and not one camera, look-at or workspot
+# event: the whole staging is the spot node, and the body is spawned into it
+# by the setup prefab.
+#
+# This mod spawns its own body instead, because the character has to be ours,
+# and it was landing at the marker with no spot and no workspot. So it played
+# whatever its record idles as, which is what was seen on the phone.
+#
+# Pointing the actor at the SAME node vanilla uses takes the position, the
+# facing and the pose together, which is why it is a world node rather than a
+# workspot resource played in place: the camera we select is
+# `#mama_welles_holocall_camera`, and this is the spot that camera is aimed at.
+#
+# ENTRY 2 is the resource's idle. Its `workspotTree` root is `workSequence`
+# id 1 and id 2 is the sequence holding the random loop of anim clips, read
+# off the serialized workspot. Both resources named below number it that way.
+#
+# WAKAKO'S OWN SPOT, 2026-09-07, and the first attempt used Mama Welles's.
+# That put the body in a pose but still side-on to the lens and barely lit,
+# because it was Mama Welles's pose under Mama Welles's lights in front of a
+# camera aimed at her floor spot. A playtest screenshot of the REAL Wakako
+# holocall settled what hers looks like: seated behind a desk, leaning
+# forward, looking into the lens.
+#
+# Her three nodes agree with each other and now we agree with them:
+#
+#   {wakako_holocall_workspot}  (5895.207, 6136.237, 0.000) yaw -65,
+#                               generic__sit_chair_table_lean_front__
+#                               sit_around__01.workspot
+#   {wakako_holocall_camera}    (5896.108, 6136.414, 0.929), aimed at it
+#   {wakako_holocall_lookat}    the same point as the camera
+#
+# The camera height is the giveaway: 0.929 frames a SEATED body, where Mama
+# Welles's 1.52 frames a standing one. gen_questphase selects her lights, her
+# setup and her camera; this teleports the actor onto her spot. The pose is
+# hers, so the frame is hers.
+#
+# IF IT IS WRONG IN PLAY, the node not resolving means the actor stays at the
+# marker, which is a metre off her camera's aim. That is a worse fallback than
+# the old pairing had, and it is the price of matching the vanilla frame.
+
+# AND THE EYES, 2026-09-07. The workspot alone was not enough: it put her in
+# the chair, in the pose, correctly lit and correctly framed, and she looked
+# off past the lens the whole way through (playtest screenshot). A workspot
+# fixes the body; the head and the eyes go on playing the idle's own drift.
+#
+# `wakako_holocall.scene` is where vanilla does it, and none of the shape is
+# guessable. The target is declared as a PROP: that scene has one actor and
+# one `scnPropDef`, `#wakako_holocall_lookat`, a marker entity standing
+# exactly where the camera is, acquired with `findInNode`.
+#
+# THE FIRST ATTEMPT DECLARED ONLY A DEBUG-SYMBOL ROW for it and changed
+# nothing in play. `performersDebugSymbols` is what its name says. The prop is
+# the declaration, and the performer id it answers to is encoded rather than
+# sequential: `index * 256 + kind`, kind 2 for a prop. See
+# `questkit.scene.add_lookat_prop`.
+#
+# BOTH of that scene's sections carry the same event, `isStart` 1 at t=0, so
+# it is fired per section rather than once for the scene. Copied.
+#
+# ONE PAIR PER SPEAKER, and it has to match the set gen_questphase opens for
+# that call: the camera is aimed at the spot, so a body on somebody else's
+# spot is out of frame. Char is Blue Moon's (see gen_questphase for why).
+#
+# ENTRY 2 IS THE IDLE IN BOTH RESOURCES, checked rather than assumed:
+# `generic__sit_chair_table_lean_front__sit_around__01` and
+# `rogue__sit_bench_lean_back__sit_around__01` both put the root sequence at
+# id 1 and the random idle loop at id 2.
+
+# (workspot node, look-at node)
+WAKAKO_POSE = ('#wakako_holocall_workspot', '#wakako_holocall_lookat')
+CHAR_POSE = ('#blue_moon_holocall_workspot', '#blue_moon_holocall_lookat')
+
+
+# EYES ON V, for a character standing in front of him rather than on his
+# phone. Same event as the holocall and the same per-section firing; only the
+# target changes, from a marker in the studio to the player.
+#
+# VANILLA'S OWN WAKAKO CONVERSATION IS THE MODEL. `wakako_okada_default.scene`
+# carries twelve of these and ten point at the player, one per section at t=0
+# with `removePreviousAdvancedLookAts` set. The other two are an acting beat
+# in the middle of a long section: she looks at NOBODY (performer 4294967040)
+# or at herself for about a second, then back to V.
+#
+# THERE IS NO RELEASE AT THE END, checked rather than assumed: no section in
+# that scene clears the look-at on its way out. The scene ending is what ends
+# it, so nothing here has to unwind anything.
+def face_player(s, actor):
+    """Hold an actor's eyes on V for every section of the scene.
+
+    Call it AFTER the section links, the same rule as studio_pose.
+    """
+    player = s.player_performer()
+    for sec in s.sections():
+        s.look_at(sec, actor, player, start_time=0)
+
+
+def studio_pose(s, actor_name, actor, first_section, pose=None):
+    """Put a holocall body in that contact's studio spot and on the lens.
+
+    Call it AFTER the section links: output sockets are written in order and
+    the scene builder's own validation enforces that.
+    """
+    workspot, lookat_ref = pose or WAKAKO_POSE
+    s.fire_workspot(first_section,
+                    s.add_world_workspot_node(actor_name, workspot),
+                    start_time=0)
+    lookat = s.add_lookat_prop('cc_g02_holocall_lookat', lookat_ref)
+    for sec in s.sections():
+        s.look_at(sec, actor, lookat, start_time=0)
+
+
 # ==================================================== 1: the hire
 def build_wakako_call():
     """V rings her back and she hires him in five of her own gig lines.
@@ -208,6 +333,7 @@ def build_wakako_call():
     s.link_section(s3, s4)
     s.link_section(s4, s5)
     s.link_section(s5, out)
+    studio_pose(s, 'wakako', w, s1)
     return s
 
 
@@ -529,6 +655,7 @@ def build_inn():
     s.link_choice(c1, [s4])
     s.link_section(s4, s5)
     s.link_section(s5, out)
+    face_player(s, y)
     return s
 
 
@@ -558,6 +685,7 @@ def build_handover():
     s.link_choice(c1, [s1])
     s.link_section(s1, s2)
     s.link_section(s2, out)
+    face_player(s, c)
     return s
 
 
@@ -593,6 +721,7 @@ def build_char_call():
     s.link(start, s1)
     s.link_section(s1, s2)
     s.link_section(s2, out)
+    studio_pose(s, 'char', c, s1, pose=CHAR_POSE)
     return s
 
 
@@ -652,6 +781,7 @@ def build_office():
     s.link_section(s2, s3)
     s.link_section(s3, s4)
     s.link_section(s4, out)
+    face_player(s, w)
     return s
 
 
@@ -680,6 +810,7 @@ def build_close_clean():
     s.link_section(s1, s2)
     s.link_section(s2, s3)
     s.link_section(s3, out)
+    studio_pose(s, 'wakako', w, s1)
     return s
 
 
@@ -708,6 +839,7 @@ def build_close_loud():
     s.link_section(s1, s2)
     s.link_section(s2, s3)
     s.link_section(s3, out)
+    studio_pose(s, 'wakako', w, s1)
     return s
 
 

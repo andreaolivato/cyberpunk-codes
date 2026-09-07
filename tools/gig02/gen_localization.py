@@ -136,7 +136,12 @@ STRINGS = {
     # pick in Char's thread, before her acknowledgement.
     'ch-05a': "Here's the dump of data from the relay. Let me know what you "
               "find.",
-    'msg-05': "Got the dump. Give me half an hour.",
+    # TWENTY MINUTES, AND IT HAS TO MATCH THE GRAPH (playtest 2026-09-07:
+    # "the message from Char still says half an hour"). The wait after the
+    # dump was cut to 20 in gen_questphase and this text was left behind.
+    # Char's OTHER "half an hour", at the handover, is correct and stays: it
+    # is a recorded line and the wait it promises is still 30.
+    'msg-05': "Got the dump. Give me twenty minutes.",
     # THE VERDICT IN THREE TEXTS AND A REPLY (design call 2026-09-05, the
     # wording reviewed then): what the box is, who touches it, what it means.
     'msg-06': "Decrypted the dump. Hardwired, own line, live every night for "
@@ -314,7 +319,31 @@ STRINGS = {
     # nothing awkward about the money.
     # Shown once per save if the gig is holding itself back. It is the one gate
     # a player can act on: see Gig02_Start.reds.
-    'blocked-side-content': 'Dead Ringer is waiting: finish the prologue first.',
+    #
+    # IT NAMES THE RIGHT MOMENT NOW, and the moment took two goes to get
+    # right (playtest 2026-09-07). It first said "finish the prologue first",
+    # read by a player who had finished the prologue hours earlier and was
+    # doing NCPD hustles in Watson: a working gate looking like a broken
+    # install. The second try said the Tom's Diner meeting with Takemura,
+    # which is LATER than the truth.
+    #
+    # WHAT THE DATA SAYS. `q101_enable_side_content` is set by node 28 of
+    # `q101_p2_meet_takemura.questphase`, and node 28 is fed by node 5, a
+    # `questJournalQuestEntry_NodeType` on
+    # `quests/main_quest/act_01/q101_resurrection/takemura/call_takemura`. So
+    # it flips when the objective CALL TAKEMURA appears, not when the meeting
+    # that follows it is over. Confirmed from the other side: a save sitting
+    # on that objective started the gig.
+    #
+    # IT NAMES THE QUEST AS WELL AS THE BEAT (design call 2026-09-07). The
+    # quest is `q101_resurrection`, whose title LocKey#8529 resolves to
+    # "Playing for Time" in the shipped string table, and the objective the
+    # flag hangs off reads "Talk to Takemura." (LocKey#8550) in the player's
+    # journal. The quest title is the part that sits on screen throughout, so
+    # it is the anchor; the beat says where inside it.
+    'blocked-side-content': 'Dead Ringer is waiting: it opens with the rest of '
+                            "the city's gigs, when the story asks you to call "
+                            'Takemura during the "Playing for Time" quest.',
 }
 
 

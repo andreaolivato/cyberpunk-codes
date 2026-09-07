@@ -107,6 +107,8 @@ local STEPS = {
     { fact = "cc_g02_exfil_armed",      who = "GRAPH",  what = "he is down: the objective now asks V to leave without being seen" },
     { fact = "cc_g02_exfil_done",       who = "SCRIPT", what = "get 70 m from the bottom step. BEING SEEN also sets it, so a firefight cannot strand the objective" },
     { fact = "cc_g02_closed",           who = "GRAPH",  what = "one of the two closing calls is playing. Which one is decided by cc_g02_spotted" },
+    { fact = "cc_g02_afterlife_clear",  who = "SCRIPT", what = "V is 100 m from the Afterlife door, so our seven bodies may be swapped back for the game's own unseen. Held during a fast travel; also set by a ten-minute cap so the phase cannot stall" },
+    { fact = "cc_g02_site_clear",       who = "SCRIPT", what = "V is 80 m clear of the staircase, so the Claws and Toji may be removed unseen. Also set by a five-minute cap, so the phase cannot wait for ever" },
     { fact = "cc_g02_done",             who = "GRAPH",  what = "the gig is over and paid" },
 }
 
@@ -194,7 +196,9 @@ local FACTS = {
     "cc_g02_toji_dead",
     "cc_g02_exfil_armed",
     "cc_g02_exfil_done",
+    "cc_g02_afterlife_clear",
     "cc_g02_closed",
+    "cc_g02_site_clear",
     "cc_g02_done",
     "cc_g02_paid",
     -- The two holocall blocks' own bookkeeping. READ THESE, do not set them.
@@ -1137,6 +1141,84 @@ registerForEvent("onDraw", function()
         local ok, res = pcall(fn)
         log(string.format("  %-28s %s", label, ok and tostring(res) or ("FAILED: " .. tostring(res))))
     end
+    -- =======================================================================
+    -- THE HOLOCALL PROBE
+    -- =======================================================================
+    --
+    -- WHY IT EXISTS. Nothing the game writes says whether a piece of the
+    -- holocall studio is loaded: RED4ext logs plugins, redscript logs
+    -- compiling, TweakXL logs records, ArchiveXL logs appearances. So three
+    -- explanations of one bug were wrong in a row on 2026-09-07 before this
+    -- was built.
+    --
+    -- WHAT IT ALREADY PROVED, first run, and it is why the breadcrumbs print
+    -- FIRST: `cc_g02_call1_claim` is which arm of the studio race won, 1 for
+    -- "the camera loaded" and 2 for "the 20-second giveup". A late save read
+    -- claim 1 and video 1, and Wakako was on the phone. An early save read
+    -- claim 2 and video 0, and the frame was empty. So the call is not
+    -- failing: the camera never arrives in time and the call goes ahead
+    -- without a feed.
+    --
+    -- WHAT IS STILL UNKNOWN is WHICH pieces are missing on that save, which
+    -- is what the node rows below are for. The first version of them asked
+    -- the wrong question and answered false to everything, including nodes
+    -- that were demonstrably present, so the rows are worth nothing unless
+    -- `#holocalls_studio` reads true during a call that WORKS. Check that
+    -- control row first; if it is false the probe is still lying.
+    local HOLO_REFS = {
+        { "#holocalls_studio",          "the studio (control: true when a call works)" },
+        { "#wakako_holocall_setup",     "WAKAKO bundle" },
+        { "#wakako_holocall_camera",    "WAKAKO camera  <- the race waits on this" },
+        { "#wakako_holocall_workspot",  "WAKAKO chair" },
+        { "#regina_holocall_camera",    "control: Regina" },
+        { "#vik_holocall_camera",       "control: Vik" },
+        { "#blue_moon_holocall_camera", "CHAR rides this one" },
+    }
+
+    -- THREE SIGNALS PER REF, because which one the game answers is itself
+    -- unknown. `GlobalNodeRef.IsDefined` is the only documented one; the two
+    -- entity lookups are the ones that say whether it is actually streamed.
+    -- Errors are printed, never swallowed.
+    local function holoRow(refStr)
+        local ok, nodeRef = pcall(function() return CreateNodeRef(refStr) end)
+        if not ok then return "CreateNodeRef failed" end
+        local okG, g = pcall(function()
+            return ResolveNodeRef(nodeRef, GlobalNodeID.GetRoot())
+        end)
+        if not okG then return "resolve failed: " .. tostring(g):sub(1, 40) end
+        local defined, ent, byHash = "?", "?", "?"
+        local a, b = pcall(function() return GlobalNodeRef.IsDefined(g) end)
+        defined = a and tostring(b) or "err"
+        a, b = pcall(function() return Game.FindEntityByID(g) ~= nil end)
+        ent = a and tostring(b) or "err"
+        a, b = pcall(function() return Game.FindEntityByID(entEntityID.new({ hash = g.hash })) ~= nil end)
+        byHash = a and tostring(b) or "err"
+        return string.format("defined=%-5s entity=%-5s byHash=%-5s", defined, ent, byHash)
+    end
+
+    if ImGui.Button("HOLO PROBE: what of the studio is loaded -> log") then
+        -- BREADCRUMBS FIRST. Both logs are capped at 8 KB and the third run of
+        -- the first version was lost to that, so the part that has already
+        -- answered a question is written before the part that has not.
+        log("=== holocall probe ===")
+        local qs = Game.GetQuestsSystem()
+        local crumbs = {}
+        for _, f in ipairs({ "cc_g02_called", "cc_g02_call1_claim", "cc_g02_call1_step",
+                             "cc_g02_call1_video", "cc_g02_call1_talking",
+                             "cc_g02_call1_done" }) do
+            crumbs[#crumbs + 1] = f:gsub("cc_g02_call1_", ""):gsub("cc_g02_", "")
+                                  .. "=" .. tostring(qs:GetFactStr(f))
+        end
+        log("  " .. table.concat(crumbs, "  "))
+        log("  claim 1 = the camera loaded, 2 = the 20 s giveup won")
+        for _, row in ipairs(HOLO_REFS) do
+            log(string.format("  %-28s %-46s %s", row[1], holoRow(row[1]), row[2]))
+        end
+        log("=== end of probe ===")
+    end
+    ImGui.Text("Press DURING a call. Compare a save where it works with one where it does not.")
+    ImGui.Separator()
+
     if ImGui.Button("AP PROBE: the shipped box's state -> log") then
         local dev = findAP()
         if dev == nil then log("ap: no AccessPoint entity within 3 m of the box's spot (stand next to it)") else

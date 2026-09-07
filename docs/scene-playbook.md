@@ -285,25 +285,226 @@ cannot add a branch to a base-game scene.
 
 So for anything outgoing, and arguably for everything, own the whole call:
 
-1. **Open the studio.** It is a Quest sector with no streaming box and does not
-   load by proximity. Show `#holocalls_studio_lighting` /
+1. **Name the pieces.** Show `#holocalls_studio_lighting` /
    `<contact>_holocall_lights` and `#<contact>_holocall_setup` /
-   `<contact>_holocall_setup` with `questTogglePrefabVariant_NodeType`. The
-   second brings the camera, lookat and workspot into existence.
-2. **Switch on `RenderToTextureCamera`** on that setup's camera node, with
+   `<contact>_holocall_setup` with `questTogglePrefabVariant_NodeType`. This
+   says which pieces should exist. It does NOT load the studio: see the order
+   warning below.
+2. **Issue the call with `questCallContact_NodeType`**, carrying
+   `prefabNodeRef: #holocalls_studio`. That field points the phone at the feed
+   and a script-issued `questTriggerCallRequest` has no equivalent. **It is
+   also what asks for the studio sector**, so it must come BEFORE any wait on
+   a node inside that sector. **Caller and addressee are JOURNAL PATHS**, so
+   your own contact works, and that is what keeps the base-game conversation
+   out of it in both directions.
+3. **Wait for the camera node**, `questNodeLoadingCondition` on
+   `#<contact>_holocall_camera`, raced against a timeout so a studio that never
+   arrives cannot stall the gig.
+4. **Switch on `RenderToTextureCamera`** on that setup's camera node, with
    `questEntityManagerToggleComponent_NodeType`. Read the state back.
-3. **Issue the call with `questCallContact_NodeType`**, carrying
-   `prefabNodeRef: #holocalls_studio`. That field is what points the phone at
-   the feed and a script-issued `questTriggerCallRequest` has no equivalent.
-   **Caller and addressee are JOURNAL PATHS**, so your own contact works, and
-   that is what keeps the base-game conversation out of it in both directions.
-4. **Spawn your own body** as the SCENE's actor, offset (0, 0, 0) from
+5. **Spawn your own body** as the SCENE's actor, offset (0, 0, 0) from
    `#holocall_marker`, with `forceMaxVisibility` set. Without it the room
    renders into the phone and the body does not, because an NPC that far from
    the player is culled.
-5. **Speak** as any holocall line, with the scene's own lipsync set. The
+6. **Put it in that contact's workspot**, with `add_world_workspot_node` on
+   `#<contact>_holocall_workspot`, fired at t=0 of the call's first section.
+   Skip it and the body plays whatever its record idles as, which does not
+   face the camera.
+7. **Aim its eyes at that contact's look-at marker**, with `add_lookat_prop`
+   on `#<contact>_holocall_lookat` and a `look_at` on EVERY section. Skip it
+   and the body is correctly posed and looking past the lens.
+8. **Speak** as any holocall line, with the scene's own lipsync set. The
    speaker and the body on camera being the same actor is what makes the
    lipsync land without borrowing anything.
+
+**DIAL BEFORE YOU WAIT, and this is the order the recipe used to get wrong.**
+Showing the prefab variants does not pull the studio in. The studio is a
+`category: Quest` sector with no streaming box, and the call node's
+`prefabNodeRef` is the only thing here that asks for it. Waiting for the
+camera before placing the call is therefore waiting for something nobody has
+requested: the wait runs its full timeout, the camera is never switched on,
+and the call connects to an empty frame.
+
+It hides well, because it only fails on a COLD studio. Any session where a
+vanilla holocall has already happened has the sector resident, the wait
+completes at once, and everything looks correct. Gig 02 shipped this way and
+it worked on every late-game save it was tested on.
+
+Measured 2026-09-07 with the dev menu's holocall probe, pressed three times
+during one failed call: the camera absent, absent again, then present the
+moment the timeout fired and the call went out. Vanilla's own
+`wakako_holocall.scene` has the phone node carrying `#holocalls_studio` before
+its camera waits, which is the same order.
+
+### The checklist, because it took four passes to get right
+
+Every one of these was shipped missing at least once, and each failure looks
+different in play. Confirmed working in gig 02 on 2026-09-07, Wakako and Char.
+
+| # | Thing | What it costs to omit |
+|---|---|---|
+| 1 | the contact's lights variant | the caller is barely lit |
+| 2 | the contact's setup variant | no camera, no spot, no marker |
+| 3 | placing the call BEFORE waiting on the camera | an empty frame, on a cold studio only |
+| 4 | the contact's camera, `RenderToTextureCamera` on | an empty frame |
+| 5 | `add_world_workspot_node` on the contact's spot | a default idle, off-frame |
+| 6 | `add_lookat_prop` + `look_at` per section | eyes wander past the lens |
+
+**All five names belong to ONE contact and are only correct together.** Take
+them from that contact's own `base\quest\holocalls\<contact>\
+<contact>_holocall.scene`, which names the two prefab variants, and from the
+studio's quest sector, which carries the three nodes. Never extrapolate a name
+from the pattern: a wrong one is a silent no-op.
+
+**Give a second speaker a second contact's set.** Two callers on one set are
+two people in the same chair in the same pose, and a player notices. Survey
+the studio's `worldAISpotNode`s by workspot resource before choosing: many
+contacts share one spot and one pose and differ only in camera height, so
+picking between those changes nothing on screen.
+
+**Match the pose to the character, and read the camera height to know what
+the pose is.** A camera at 0.93 frames someone seated, one at 1.52 someone
+standing. Choosing a setup because "my character stands" chooses a pose
+rather than a character, and it is how the wrong one gets picked.
+
+**The body still needs `forceMaxVisibility`** (step 4 above) whatever else is
+done: the studio is kilometres away and an NPC that far off is culled.
+
+### Where a holocall body's pose comes from
+
+The scene does not arrange it. `ma_std_arr_03_holocall_brief.scene` was
+serialized and counted node by node: three `scnDialogLineEvent`, six fact
+writes, two end nodes, and no camera, look-at or workspot event anywhere in its
+graph. `#<contact>_holocall_lookat` appears only as a performer in
+`debugSymbols`; nothing references it.
+
+The staging is a world node. The studio's quest sector (base,
+`quest_ec82d0423d8f1435.streamingsector`) carries 90 `worldAISpotNode`s, one
+per contact, named `{<contact>_holocall_workspot}`. Each names its own
+workspot resource and stands where that contact's camera is aimed:
+`{mama_welles_holocall_workspot}` plays
+`generic__stand_bar_lean_front__stand_around__05.workspot`,
+`{ncpd_dispatcher_holocall_workspot}` plays a sit-at-a-table one. Vanilla
+spawns the caller into that spot from the setup prefab, and the pose is all
+there is. `lookAtTarget` is 0 on all 90, so the spot node is not doing a
+look-at either.
+
+A mod spawning its own body gets none of that. Pointing the scene actor at the
+same node takes the position, the facing and the pose together, which is why
+this is a world node rather than a workspot resource played in place: the
+camera is aimed at the spot, not at `#holocall_marker`.
+
+**Use the setup belonging to the CHARACTER being filmed, not one that happens
+to suit a standing body.** Gig 02 shipped a Wakako call staged on Mama Welles's
+setup, on the earlier reasoning that a mod's own body cannot reach the spot the
+real Wakako is spawned on, so the safest choice was the setup whose camera
+frames a plain standing NPC at the marker. The world workspot node removes that
+constraint: the body CAN be put on the character's own spot, so it should be.
+
+What the mismatch looks like in play is a body that is side-on to the lens and
+barely lit, because the lights, the camera and the pose all belong to somebody
+else. All three are per contact and they only agree with each other.
+
+**A second speaker needs a second contact's set.** Two callers on one set are
+two people in the same chair in the same pose, and a player notices.
+Survey the studio by workspot resource before picking: several contacts share
+one spot and one pose and differ only in where the camera sits, so choosing
+between those changes nothing. Gig 02 gives Wakako her own and Char Blue
+Moon's, which leans back where Wakako leans forward.
+
+Read the camera height first, because it tells you the pose before you open
+anything else. `{wakako_holocall_camera}` sits at 0.929 and she is seated at a
+desk; `{mama_welles_holocall_camera}` sits at 1.52 and she stands at a bar.
+Picking a setup by "my character stands" is picking the pose, not the
+character, and it is how the wrong one gets chosen.
+
+### The eyes are a separate event, and the workspot does not do them
+
+This is not holocall-only. It is how any scene actor holds anyone's gaze,
+including a character standing in front of V.
+
+A caller on the right spot in the right pose still looks off past the lens.
+The workspot fixes the body: where it is, how it sits, which way the torso
+faces. The head and the eyes go on playing the idle's own drift.
+
+`wakako_holocall.scene` is where vanilla turns them, with `scnLookAtEvent`,
+and every part of the shape matters:
+
+- **The target is a PROP.** That scene declares one actor and one
+  `scnPropDef`: `#wakako_holocall_lookat`, a marker entity standing where the
+  camera is, acquired with `entityAcquisitionPlan: findInNode`. Declaring only
+  a `performersDebugSymbols` row for it changes nothing in play, which was
+  measured the hard way: that table is what its name says.
+- **A performer id is encoded, not sequential.** `index * 256 + kind`, kind 1
+  for an actor and kind 2 for a prop. Read off two scenes:
+  `wakako_okada_default` numbers actors 0 and 1 as 1 and 257, its player actor
+  2 as 513, and its one prop as 2; `q112_00c_wakako` numbers seven actors
+  1 to 1537, its player actor as 1793, and props 0 and 1 as 2 and 258. An
+  event naming a performer by a sequential index aims at nothing, silently.
+- **It is fired PER SECTION.** Both of that scene's sections carry the same
+  event with `isStart` 1 at t=0. Firing it once for the scene is not what
+  vanilla does.
+- **The request is the editor's "Eyes & Head" preset**: the request is on
+  Eyes, with Head at weight 0.1 and Chest at weight 2 as additional parts.
+  Copy the three numbers rather than reasoning about them.
+
+`questkit.scene.add_lookat_prop` and `Scene.look_at` emit both halves.
+An earlier pass of this playbook said a holocall scene contains no look-at
+event, which was read off `ma_std_arr_03_holocall_brief.scene`, an NCPD
+dispatcher brief. That scene really has none. A contact with a face the
+player talks to does.
+
+#### Looking at V instead of a marker: the default for anyone who talks to him
+
+**Every scene actor who addresses the player gets one. This is settled, not a
+preference.** Confirmed in game 2026-09-07 on Wakako in her office, Char at the
+Inn and Yoko at her stall, and on the four holocalls before them.
+
+The target is the PLAYER performer and nothing else changes.
+`Scene.player_performer` returns its id and `gen_scenes.face_player` fires one
+per section, which is the shape `wakako_okada_default.scene` uses: twelve
+look-at events, ten at the player, one per section at t=0 with
+`removePreviousAdvancedLookAts` set.
+
+**It tracks rather than snaps.** The request carries `transitionSpeed` 80 and
+a following-speed override, so the head follows V as he moves.
+
+**It is looser than the fixed stare a holocall gives**, and that is the
+preset doing its job rather than something to fix. Playtest 2026-09-07 called
+it "a bit less strong than fixed eye contact but still good". A holocall body
+is seated at a known distance with the target dead ahead, so the same request
+holds the gaze completely; in the world V moves, and the eyes lead while the
+head follows at a tenth of the weight. If a beat ever needs a harder stare, the
+knob is the Head weight in `additionalParts`, which vanilla sets to 0.1
+against Chest at 2. Raise it deliberately and for one scene, and know that you
+have left vanilla's preset.
+
+**There is no release at the end**, checked rather than assumed: no section in
+that scene clears the look-at on its way out, so the scene ending is what ends
+it. The two events in it that aim at NOBODY (performer 4294967040) or at the
+speaker herself are an acting beat in the middle of a long section, about a
+second of looking away before returning to V. That is the idiom for a glance
+away, not for cleanup.
+
+**Do not give it to NPCs who are not talking to V.** A scene the player
+overhears, like two people in a queue, keeps its actors looking at each other.
+Gig 02's three overheard conversations have no player actor at all, which is
+the test: no player actor, no look-at.
+
+**A body the script has knocked down is not a candidate either**, or at least
+not a known one. Gig 02's merc begs from the floor in a Defeated fall held
+with Bleeding rather than from a workspot, and whether a look-at survives that
+state has not been measured. Try it on its own if you need it.
+
+**The entry id is the resource's idle sequence, not a fixed number.** Serialize
+the `.workspot` and read its `workspotTree`: for the Mama Welles one the root
+is `workSequence` id 1 and id 2 is the sequence holding the random loop of anim
+clips, so entry 2. Another resource can number them differently.
+
+**Fire it as a side branch, never on the main flow.** A workspot that never
+starts on the main flow is a scene that never reaches its exit point, which is
+a quest phase that waits on that exit point for the rest of the playthrough.
+As a side branch the worst case is the body idling the way it did before.
 
 ### Keeping the contact's own dialogue out of your call
 
@@ -1474,6 +1675,14 @@ It does three things, and each one is above in this file:
 | where he stands, and which way he faces | `spawnOffset.position` + `yaw_to_face_player`, on an `around_player` marker |
 | that he can be seen at all | a workspot fired at t=0 of the FIRST section |
 | that he does not pop when he goes | `scneventsVFXEvent` playing `johnny_teleport_start` on the LAST section, 250 ms before it ends |
+
+**A fourth thing belongs on any actor who is TALKING TO V, and this call does
+not do it:** a look-at on the player, one per section. See "Looking at V
+instead of a marker" above. `yaw_to_face_player` points the body; it does not
+move the head or the eyes, so without the look-at a character standing in
+front of V talks past his shoulder. It is not folded into `stage_johnny`
+because that call is also used for a character who is present without
+addressing the player.
 
 **This used to be a six-step split between a scene and a script**, with the
 speaker buried under the floor and a second body lifted into place. That is

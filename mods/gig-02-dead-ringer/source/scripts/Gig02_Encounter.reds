@@ -189,6 +189,13 @@ public class DeadRingerEncounter extends ScriptableSystem {
 
     // ---- the way out -------------------------------------------------------
     private let m_exfilDone: Bool;
+    // Ticks since the report to Wakako, while the door is still ours. See
+    // AfterlifeClear. Not persistent: a reload starts the count again, which
+    // is right, because the player is looking at the street again too.
+    private let m_afterlifeTicks: Int32;
+    // Ticks since the closing call ended, counted only while the staircase is
+    // still occupied. THE CAP IS THE POINT: see SiteClear below.
+    private let m_clearTicks: Int32;
 
     // ---- readers -----------------------------------------------------------
     // A journal entry may not resolve on the first tick after a load, so both
@@ -410,6 +417,15 @@ public class DeadRingerEncounter extends ScriptableSystem {
         if qs.GetFactStr("cc_g02_done") > 0 {
             this.HidePins(game);
             this.Payout(qs);
+            // A LAST SWEEP FOR THE STAIRCASE. In a normal run the phase only
+            // reaches `done` after `site_clear`, and Hit() has already deleted
+            // the bodies on the tick that set it. This covers the one route
+            // that skips that: the dev menu setting `done` by hand. Without it
+            // six men would stand on the stairs for the rest of the session.
+            let p: ref<PlayerPuppet> = ps.GetLocalPlayerMainGameObject() as PlayerPuppet;
+            if IsDefined(p) && ArraySize(this.m_claws) > 0 {
+                this.ReleaseClaws(game, p, true);
+            }
             // ...but keep ticking until it has actually landed. Payout refuses
             // when there is no player yet, which is the state one tick after a
             // load, and a single attempt that lost that race would be a gig
@@ -437,6 +453,7 @@ public class DeadRingerEncounter extends ScriptableSystem {
         let pos: Vector4 = player.GetWorldPosition();
 
         this.Arrivals(qs, pos);
+        this.AfterlifeClear(game, qs, pos);
         this.HoldWakako(qs, pos);
         this.Groups(game, qs, pos);
         this.Merc(game, qs, player, pos);
@@ -456,6 +473,57 @@ public class DeadRingerEncounter extends ScriptableSystem {
     // Each of these is gated on the objective before it, so a player who
     // happens to walk past Wakako's parlor on the way to Afterlife does not
     // complete a leg he has not reached yet.
+    // ======================================================== the Afterlife
+    //
+    // MAY THE DOOR GO BACK TO NORMAL YET.
+    //
+    // Sending the report to Wakako is the end of the Afterlife leg, and the
+    // quest phase then switches seven of our bodies off, puts the game's own
+    // door crowd back, and lifts the crowd-null area. That used to happen on
+    // the frame the report was sent (playtest 2026-09-07: "the NPCs who were
+    // there disappear with no warning and the old ones come back"). The
+    // player is usually still standing at the door when he sends it.
+    //
+    // So the phase waits on this fact, and this is the only thing that sets
+    // it: V is 100 m from the door. That is off the Afterlife's own street
+    // either way he leaves, and the objective at this point sends him to
+    // Kabuki, a kilometre off, so in practice nothing waits at all.
+    //
+    // FAST TRAVEL, and this is the case worth being careful about. A fast
+    // travel is exactly when a player leaves the area, so the distance test
+    // is about to become true; it is also when the world is being torn down
+    // and rebuilt and the player's position is not worth reading. So the
+    // check is HELD while one is in progress, the same signal and the same
+    // fail-open rule as `CCGig02StartRules.IsFastTravelling` was written for
+    // in Gig02_Start: a missing blackboard answers false, and the caller
+    // never defers for ever. Once the loading screen is finished the position
+    // is the destination, the test passes on the next tick, and the swap
+    // happens where nobody can see it.
+    //
+    // THE CAP IS INSURANCE AGAINST A BROKEN CHECK, not against a stubborn
+    // player. A player who never leaves cannot continue the gig anyway, since
+    // the next objective is in another district. What the cap covers is this
+    // test being wrong in a way nobody has thought of, which would otherwise
+    // strand the phase on a node that never completes. Ten minutes of ticks
+    // is far longer than the walk to a vehicle, so reaching it means the
+    // distance test is not working, and one visible swap is a better outcome
+    // than a gig that cannot finish.
+    private func AfterlifeClear(game: GameInstance, qs: ref<QuestsSystem>,
+                                pos: Vector4) -> Void {
+        if qs.GetFactStr("cc_g02_wakako_2") == 0
+            || qs.GetFactStr("cc_g02_afterlife_clear") > 0 {
+            return;
+        }
+        if CCGig02StartRules.IsFastTravelling(game) {
+            return;
+        }
+        this.m_afterlifeTicks += 1;
+        if Vector4.Distance(pos, CCGig02Places.Afterlife()) > 100.0
+            || this.m_afterlifeTicks > 600 {
+            qs.SetFactStr("cc_g02_afterlife_clear", 1);
+        }
+    }
+
     private func Arrivals(qs: ref<QuestsSystem>, pos: Vector4) -> Void {
         if qs.GetFactStr("cc_g02_called") > 0
             && qs.GetFactStr("cc_g02_afterlife_reached") == 0
@@ -1610,13 +1678,20 @@ public class DeadRingerEncounter extends ScriptableSystem {
         // Claws are OURS, spawned by SpawnHit and not persistent, so nothing
         // of the game's is touched; but the hostile attitude below was
         // re-asserted every tick for as long as this system ticked, which is
-        // until the fee lands. Now it stops at `exfil_done`, each man goes
-        // back to the neutral attitude his record starts with, and once the
-        // closing call is over (`closed`) the bodies are deleted. V is 70 m
-        // up the stairs by then. Toji is the community's and is switched off
-        // by the phase with the rest of the cast.
+        // until the fee lands. Now it stops at `exfil_done` and each man goes
+        // back to the neutral attitude his record starts with.
+        //
+        // THE BODIES ARE DELETED LATER, AND THAT IS THE 2026-09-07 FIX. They
+        // used to go the moment the closing call ended, on the reading that V
+        // was 70 m up the stairs by then. He is not: leaving needs 2 m past
+        // the edge of the den, and the call and Johnny's last line take about
+        // half a minute after that, so a player standing at the top of the
+        // staircase watched six men blink out of existence (playtest
+        // 2026-09-07, killed Toji from above with every guard left alive).
+        // Now the deleting waits for SiteClear.
         if qs.GetFactStr("cc_g02_exfil_done") > 0 {
-            this.ReleaseClaws(game, player, qs.GetFactStr("cc_g02_closed") > 0);
+            this.SiteClear(qs, pos);
+            this.ReleaseClaws(game, player, qs.GetFactStr("cc_g02_site_clear") > 0);
             return;
         }
 
@@ -1806,6 +1881,46 @@ public class DeadRingerEncounter extends ScriptableSystem {
     // established with the compiler as an oracle: `IsInCombat` is not on
     // ScriptedPuppet at all, and NPCPuppet's is a static that takes the puppet.
     // See docs/scene-playbook.md, "Validating offline".
+    // IS V FAR ENOUGH AWAY THAT A BODY DISAPPEARING CANNOT BE SEEN.
+    //
+    // The staircase is 90 m of open ground with a clear view from the top, and
+    // everything the gig has left to do after the kill happens while V is
+    // still standing on it: leaving needs 2 m past the edge of the den, and
+    // the closing call and Johnny's last line run for about half a minute
+    // after that. So "the gig is over" is not the same question as "may the
+    // bodies go", and this is the second question.
+    //
+    // EIGHTY METRES PAST THE EDGE of the same hull the way-out objective
+    // uses. The hull already carries 12 m of padding around the ground walked
+    // in play, so this is about 90 m from anywhere anyone stands: the street
+    // at the top or the road at the bottom, both of which put the den behind
+    // geometry rather than merely far away. It was 60 for one build (design
+    // call 2026-09-07: make it 80).
+    //
+    // THE TEST IS THE POLYGON, NOT A BEARING. `OutsideHitArea` is a
+    // point-in-polygon test plus the distance to the nearest edge, so this is
+    // 80 m past the boundary whichever way V leaves. Height is ignored on
+    // purpose: a roof directly above the staircase counts as INSIDE, because
+    // from up there the bodies are in plain view.
+    //
+    // AND A CAP, because the alternative is a gig whose last step never runs.
+    // The quest phase waits on this fact before switching the cast off, so a
+    // player who parks at the top of the stairs and never moves would leave
+    // Toji standing there and the phase unfinished. Roughly five minutes of
+    // ticks and it gives up and lets the cleanup happen wherever V is, which
+    // is the same trade the fast-travel deferral in Gig02_Start makes: the
+    // worst case is one body vanishing in view, never a gig that cannot end.
+    private func SiteClear(qs: ref<QuestsSystem>, pos: Vector4) -> Void {
+        if qs.GetFactStr("cc_g02_closed") == 0
+            || qs.GetFactStr("cc_g02_site_clear") > 0 {
+            return;
+        }
+        this.m_clearTicks += 1;
+        if this.OutsideHitArea(pos, 80.0) || this.m_clearTicks > 300 {
+            qs.SetFactStr("cc_g02_site_clear", 1);
+        }
+    }
+
     private func ReleaseClaws(game: GameInstance, player: ref<PlayerPuppet>,
                               remove: Bool) -> Void {
         let mine: ref<AttitudeAgent> = player.GetAttitudeAgent();

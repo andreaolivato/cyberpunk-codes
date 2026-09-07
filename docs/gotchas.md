@@ -2427,3 +2427,82 @@ Never renumber. Append.
      The same applies to a player upgrading a released mod, which is why the
      release notes say what a mid-gig save can and cannot carry across a version
      that changed the graph.
+
+104. **A wait that exists to hide something must hang off the main line, not
+     sit in it. In it, it stops the whole gig.** A `questPauseCondition` in the
+     main chain holds back everything downstream of it, and "everything" means
+     the conversations, the objectives and the ending, not just the thing the
+     wait was written for.
+
+     Playtest, 2026-09-07: a gig switched seven of its own bodies off at a
+     landmark the moment the player sent a message, swapping the base game's
+     crowd back in front of him. The fix was to wait until he was 100 m away.
+     Written as one more step in the chain, it stopped the gig dead at that
+     message: the companion never spoke his next line, the objective never
+     moved to the next district, and nothing downstream ran. Standing where the
+     message is sent, the wait never clears, so the gig has no way forward.
+
+     **The two jobs are unrelated and only one of them is the story.** Hiding a
+     swap is bookkeeping. It has no business deciding whether the player can
+     continue, and it is easy to write as though it does, because both are
+     "things that happen after the message".
+
+     **Fork it.** Keep a reference to the node the chain is on, hang the wait
+     and its cleanup off that node, then set the chain back and carry on with
+     the story. The branch needs no output: it resolves whenever it resolves,
+     and a phase ends with an unfinished branch quite happily.
+
+     **Split the work by what the player can SEE.** In the same example the
+     swaps at the landmark had to wait, because he is standing there, while the
+     swaps a kilometre away in the next district ran at once and were certain
+     to be done before he arrived. Deferring those too would have risked a
+     character missing from a scene for no gain.
+
+     **Cap any such wait**, for the reason in gotcha 21's family: a signal
+     nobody has watched across a whole save should not be the only way a step
+     completes. A cap is insurance against the check being wrong, not against a
+     slow player.
+
+     **Prove it on the built graph rather than by reading it.** Delete the wait
+     node from the graph in memory and ask whether the story's nodes are still
+     reachable from the fork. If they are, the wait cannot stall the gig
+     whatever happens to the condition. Reading a generator top to bottom will
+     not show this: the bug looks exactly like correct sequencing.
+
+105. **Showing a prefab variant does not load the sector it lives in. Whatever
+     ASKS for the sector has to run first, or every wait on a node inside it
+     runs its full timeout.** The failure is silent and it only appears on a
+     cold sector, so it survives testing.
+
+     Gig 02's holocalls, 2026-09-07. The studio is a `category: Quest` sector
+     with no streaming box. The gig showed the contact's prefab variants, then
+     waited on `questNodeLoadingCondition` for that contact's camera, then gave
+     up after 20 seconds, then placed the call. The call node is the only one
+     carrying `prefabNodeRef: #holocalls_studio`, and that is what asks for the
+     sector, so the camera could not arrive until after the wait had already
+     failed. The call then connected with the camera never switched on, which
+     draws an EMPTY FRAME.
+
+     **It passed every test for weeks** because a session that has already had
+     one vanilla holocall has the studio resident: the wait completes at once
+     and the picture is correct. It only fails on a save where nothing has
+     opened the studio yet, which is most players' first call.
+
+     **Three wrong explanations came before the right one**, and each was
+     plausible: the sector was slow to stream, the notification fired before
+     anyone was listening, the character had not been met. All three were
+     ruled out by pressing a probe three times during one failed call and
+     watching WHEN the camera appeared: absent, absent, then present at the
+     instant the timeout fired. Nothing else distinguishes "slow" from "not
+     asked for".
+
+     **The rule.** Put the node that requests a sector before any wait on that
+     sector's contents, and check vanilla's own order rather than assuming
+     yours. `wakako_holocall.scene` has its phone node first and its camera
+     waits after.
+
+     **And the diagnostic.** No log records whether a world node is loaded:
+     RED4ext logs plugins, redscript logs compiling, TweakXL logs records,
+     ArchiveXL logs appearances. A CET probe that resolves a NodeRef and
+     reports whether an entity answers is the only way to see it, and pressing
+     it repeatedly through one failure is what turns a symptom into a time.
