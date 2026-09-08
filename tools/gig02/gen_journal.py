@@ -37,9 +37,11 @@ from gig02_config import (                                          # noqa: E402
     RAW_MOD, LOCKEY_PREFIX, QUEST_ID, ANCHOR_POS, GROUP_POS, CHAR_POS,
     STAIR, TRASH,
     ANCHOR_AFTERLIFE, ANCHOR_INN, ANCHOR_PARLOR, ANCHOR_OFFICE, ANCHOR_HIT,
+    LEAN_PROMPT, SIT_PROMPT,
 )
 from questkit import cr2w                                           # noqa: E402
 import hit_area                                                     # noqa: E402
+import gen_community                                                # noqa: E402
 
 # THE WAY-OUT PINS POINT AT THE HIT AREA NODE (test, 2026-09-06): a quest pin
 # on a trigger area is what vanilla draws as a dotted area on the minimap
@@ -47,6 +49,21 @@ import hit_area                                                     # noqa: E402
 # at the area's centroid. See backlog 39 for what the test has to show.
 AREA_REF = hit_area.AREA_REF
 ANCHOR_POS[AREA_REF] = hit_area.position()
+
+# THE TWO WAITING SPOTS, and each one is its own anchor. A marker the mod
+# ships is the wiki's answer to "how do I name a place": Object Spawner's node
+# reference calls a static marker "useful if you need a NodeRef as a reference
+# point", best placed in an AlwaysLoaded sector, and the custom fast travel
+# guide walks the same recipe as numbered steps. Both of these sit in the
+# cast sector, which is already AlwaysLoaded level 1.
+#
+# SO THE OFFSET IS ZERO, which is the whole reason to ship one. Every other
+# pin here either sits on a vanilla anchor or is measured out from one by a
+# vector that has to be kept in step by hand.
+LEAN_MARKER_REF = gen_community.LEAN_MARKER_REF
+SIT_MARKER_REF = gen_community.SIT_MARKER_REF
+ANCHOR_POS[LEAN_MARKER_REF] = LEAN_PROMPT
+ANCHOR_POS[SIT_MARKER_REF] = SIT_PROMPT
 
 OUT = os.path.join(RAW_MOD, 'journal', 'gig02.journal.json')
 
@@ -67,6 +84,10 @@ PIN_POS = {
     'pin_inn': (-1179.864, 2037.655, 20.087),
     # Char's chair, 9 m in from Yoko and captured in game.
     'pin_shard': CHAR_POS,
+    # The railing outside Yoko's and the chair outside the parlor door, each
+    # on the marker it owns. Captured in game 2026-09-08.
+    'pin_wait': LEAN_PROMPT,
+    'pin_wait2': SIT_PROMPT,
     'pin_parlor': ANCHOR_POS[ANCHOR_PARLOR],
     # Named after the objective it hangs off: questkit derives a pin's id
     # from its objective's, so `obj_wakako_met` owns `pin_wakako_met`.
@@ -126,7 +147,7 @@ OBJECTIVES = [
     # Beat 9, in two objectives: hand the shard to Char, then wait for her
     # message. There is no second visit to the chair; the verdict is a text.
     ('obj_shard',     'obj-shard',     ANCHOR_INN),
-    ('obj_wait',      'obj-wait',      None),
+    ('obj_wait',      'obj-wait',      LEAN_MARKER_REF),
     # Beat 10.
     ('obj_parlor',    'obj-parlor',    ANCHOR_PARLOR),
     # Beat 11, in three: scan, pull out, crack. THE PIN IS ON THE PARLOR AND
@@ -137,7 +158,7 @@ OBJECTIVES = [
     # the parlor's wall. Then Char's answer by text.
     ('obj_relay',     'obj-relay',     None),
     ('obj_send_dump', 'obj-send-dump', None),
-    ('obj_wait2',     'obj-wait',      None),
+    ('obj_wait2',     'obj-wait',      SIT_MARKER_REF),
     ('obj_reply_char', 'obj-reply-char', None),
     # Beat 13.
     ('obj_wakako_met', 'obj-wakako-met', ANCHOR_OFFICE),

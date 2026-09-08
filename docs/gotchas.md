@@ -2547,3 +2547,88 @@ Never renumber. Append.
      fired, and skipped the line that keeps the merc targetable, so the
      objective said to take him out and the crosshair would not hold him. The
      second one reached players. Gotcha 21 is the family this belongs to.
+
+107. **A scene's choice hub attaches to the SCREEN by default, and in a scene
+     whose only actor is the player that means it follows him.**
+
+     `scnChoiceNode` carries `mode`, and `attachToScreen` is not a range of
+     zero: it is no place at all. Every prompt in a conversation scene hangs off
+     the person being talked to, so the person is the anchor and this never
+     shows. The first prompt aimed at a PLACE is the first one that can.
+
+     Playtest 2026-09-08: a prompt meant for a railing in Kabuki was on screen
+     while V stood talking to somebody at the Dewdrop Inn, a kilometre away.
+     Tightening `customActivationRange` changed nothing, because a shape needs
+     something in the world to be a shape around.
+
+     **Write `mode: attachToWorld` and give `atwParams.entityPosition` a real
+     offset from the scene's own marker.** Vanilla's `mq019_01_notell_motel`
+     carries one hub of each kind, five `attachToActor` and one `attachToWorld`,
+     and the world one pairs a real position with `preset: small`,
+     `customActivationRange: 1.5` and `activationYawLimit: 90`.
+
+     **The range has to reach where the player ENDS UP, not where he is
+     offered it.** Second playtest, same day: at 1.2 m the prompt appeared on
+     the approach and vanished on arrival, because the pose sat 1.43 m past the
+     marker and V walked out the far side of the circle. Measure the distance
+     between the two spots and clear it. A yaw limit is worth turning off for a
+     prompt at a railing or a window: the player is facing the view, not the
+     marker behind his heels.
+
+108. **Cutting a scene does not take the player out of a workspot that scene
+     put him in. He is stuck, and only a reload frees him.**
+
+     `add_cut_control` is the right way to disarm a race's losing arm, and it
+     is what vanilla does. What it does not do is unwind what the cut node was
+     in the middle of. A scene that has seated or leaned the player exits him
+     from the pose on its way out; cut it and there is no way out, because the
+     fact its exit was waiting on is never written and nothing else was ever
+     going to write it.
+
+     Playtest 2026-09-08: V leaned on a railing, the wait resolved, the
+     objective moved on, and he could not stand up.
+
+     **Anything that puts the PLAYER in a pose needs a way out that does not
+     depend on the scene finishing.** Two, in fact, because they cover different
+     failures:
+
+     - the quest graph writes the release fact itself once the beat is over, so
+       a scene still holding on it can finish
+     - a script sends the workspot's own exit signal as a backstop, for the
+       save made mid-pose and for the scene that never reached its exit
+
+     ```
+     GameInstance.GetWorkspotSystem(game)
+         .SendFastExitSignal(player, dirLS, false, false, false, true)
+     ```
+
+     **Bound the backstop by PLACE.** `IsActorInWorkspot` is true of a man
+     driving a car as well as a man on a railing, and pulling the player out of
+     a vehicle is a far worse bug than the one being fixed. Gig 02 refuses
+     unless the player is within 4 m of one of the two captured poses.
+
+109. **`questSetFadeInOut_NodeType.duration` is SECONDS, and 0 is an instant
+     cut rather than an engine default.**
+
+     The node is carried by `questRenderFxManagerNodeDefinition` and it is how
+     vanilla fades, including either side of a wait. It always comes in a PAIR,
+     one `fadeIn: 0` and one `fadeIn: 1`, with `fadeColor` all zeros for black.
+
+     Copying the Claire races is what made this wrong. Both race phases carry
+     four fades between them and every one is `duration: 0`, so matching them
+     field for field looked like matching vanilla. Playtest 2026-09-08: "no
+     animation, no fade... it seemed a bit abrupt". It is a black rectangle
+     appearing and vanishing.
+
+     **Count across the corpus rather than copying one example.** The 30 shipped
+     quest phases that use the node carry durations of 0, 0.25, 0.3, 0.5, 1, 2,
+     3 and 4, which settles that the field is a real fade time. Zero is right
+     for a cut inside a race and wrong for a rest. `q101_p2_v_room`, V waking up
+     in his own apartment, uses 1 second each way and is the reference for a
+     fade that covers time passing.
+
+     **Never put a pause between the two halves.** A fade-out whose fade-in is
+     waiting on something that does not happen is a black screen for the rest of
+     the playthrough, which is worse than any beat it was hiding. Only fixed
+     delays and fact writes belong between them.
+

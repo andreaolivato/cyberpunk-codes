@@ -58,7 +58,8 @@ from questkit.questgraph import (                                   # noqa: F401
     add_addvar, add_pause_facts, add_condition_fact, add_race2,
     add_pause_node_loaded, add_prefab_variant, add_toggle_component,
     add_call_contact,
-    add_community, add_crowd_null_area, add_loot_access,
+    add_community, add_crowd_null_area, add_loot_access, add_cut_control,
+    add_fade,
     ANCHOR_PLAYER,
 )
 
@@ -225,6 +226,86 @@ def scene(name, entry, exit_):
 def scene_at(name, anchor, entry, exit_):
     step(add_scene(SCENES + name + '.scene', anchor, [entry], [exit_]),
          in_sock=entry, out_sock=exit_)
+
+
+def waiting_spot(scene_name, marker_ref, entry, exit_, taken_fact,
+                 release_fact, shift_fact, claim_fact, minutes):
+    """A wait the player can either sit out or take a place for.
+
+    THE SHAPE IS THE CLAIRE RACES'. `sq024` pins a spot under an objective it
+    names `wait_for_claire`, two of them a sit and two a lean, and taking the
+    spot is what moves the beat on. The one difference is that no clock runs
+    there: Claire arrives BECAUSE V took the place. Both of ours are real
+    waits, because Char needs the time, so the clock has to be satisfied
+    rather than ignored.
+
+    So: the scene that offers the prompt hangs off a SIDE BRANCH and gates
+    nothing. Gotcha 104 is what happens otherwise, and the rule it left is
+    that a wait which exists to hide something has no business stopping the
+    story. A player who never finds the railing simply waits, exactly as
+    before this existed.
+
+    The main line races the world clock against the pose being released, and
+    whichever wins cuts the scene. Cutting matters in the arm where the clock
+    won: the scene would still be sitting on its choice hub with the prompt
+    up, offering a wait that is already over.
+    """
+    fork = chain[-1]
+    scene_node = add_scene(SCENES + scene_name + '.scene', marker_ref,
+                           [entry], [exit_])
+    b.connect(fork, (scene_node, entry))
+
+    # ---- what the player sees once the place is taken ---------------------
+    #
+    # A SECOND SIDE BRANCH, and it is the beat itself. The scene puts V in the
+    # pose and writes `<taken>`; this holds on that, and then does what the
+    # Claire races do at the same moment: hold, fade out, move the world on,
+    # fade in.
+    #
+    # Playtest 2026-09-08, before this existed: "it seemed immediate, I didn't
+    # have time to understand what happened". The lean, the clock and the
+    # message all landed on one frame.
+    #
+    # THE FADE IS A PAIR WITH NOTHING BLOCKING BETWEEN THE HALVES. Every node
+    # between the two below is a delay or a fact write, so the fade-in cannot
+    # be missed. A pause in there would be a black screen for the rest of the
+    # playthrough.
+    #
+    # THE FADE TIMES ARE THE PROLOGUE'S, one second out and one and a half
+    # back, which is what V's own apartment uses when he wakes up in it.
+    # Zero, which is what the Claire races use and what this carried until
+    # 2026-09-08, is an instant cut and reads as a black rectangle.
+    #
+    # `<shift>` is what `Gig02_Encounter.Waits` watches: it moves the time of
+    # day on by what is LEFT of the wait, which the graph cannot work out for
+    # itself, and it happens behind the black.
+    posed = add_pause_fact(taken_fact)
+    b.connect(fork, (posed, 'In'))
+    hold = add_delay(3.0)
+    b.connect((posed, 'Out'), (hold, 'In'))
+    dark = add_fade(False, 1.0)
+    b.connect((hold, 'Out'), (dark, 'In'))
+    shift = add_setvar(shift_fact, 1)
+    b.connect((dark, 'Out'), (shift, 'In'))
+    behind = add_delay(2.0)
+    b.connect((shift, 'Out'), (behind, 'In'))
+    let_go = add_setvar(release_fact, 1)
+    b.connect((behind, 'Out'), (let_go, 'In'))
+    stand = add_delay(1.0)
+    b.connect((let_go, 'Out'), (stand, 'In'))
+    light = add_fade(True, 1.5)
+    b.connect((stand, 'Out'), (light, 'In'))
+
+    step(add_setvar(claim_fact, 0))
+    who = add_race2(chain[-1],
+                    (add_game_delay(minutes=minutes), 'In', 'Out'),
+                    (add_pause_fact(release_fact), 'In', 'Out'),
+                    claim_fact)
+    cut = add_cut_control()
+    b.connect((who, 'True'), (cut, 'In'))
+    b.connect((who, 'False'), (cut, 'In'))
+    b.connect((cut, 'CutSource'), (scene_node, 'CutDestination'))
+    chain.append((cut, 'Out'))
 
 
 def objective_step(gate_fact, done_obj, next_obj=None, next_pin=None):
@@ -750,11 +831,18 @@ step(add_setvar('cc_g02_to_char', 1))
 step(add_pause_fact('cc_g02_char_near'))
 scene_at('gig02_handover', ANCHOR_INN, 'handover_in', 'handover_out')
 close_objective('obj_shard')
-open_objective('obj_wait')
+open_objective('obj_wait', 'pin_wait')
 
 # HALF AN IN-GAME HOUR ON THE WORLD CLOCK, then her message. A realtime delay
 # stalls while a menu is open (gotcha 3) and the phone is a menu.
-step(add_game_delay(minutes=30))
+#
+# THE RAILING OUTSIDE YOKO'S IS THE OTHER WAY THROUGH IT (design call
+# 2026-09-08). Lean on it and Gig02_Encounter moves the clock on by what is
+# left, so the half hour passes rather than being skipped, and Char's "give me
+# half an hour" is still true when V stands up.
+waiting_spot('gig02_lean', gen_community.LEAN_MARKER_REF, 'lean_in',
+             'lean_out', 'cc_g02_lean_taken', 'cc_g02_lean_release',
+             'cc_g02_lean_shift', 'cc_g02_wait1_claim', minutes=30)
 step(add_journal('gameJournalContact', CHAR_CONTACT, notify=0), in_sock='Active')
 step(add_journal('gameJournalPhoneConversation', CHAR_CONV, notify=0),
      in_sock='Active')
@@ -803,7 +891,7 @@ step(add_journal('gameJournalPhoneChoiceGroup', CHOICE_GROUP_5, notify=0), in_so
 step(add_pause_journal('gameJournalPhoneChoiceEntry', CHOICE_SEND_DUMP))
 close_objective('obj_send_dump')
 step(add_journal('gameJournalPhoneMessage', MSG_05), in_sock='Active')
-open_objective('obj_wait2')
+open_objective('obj_wait2', 'pin_wait2')
 # ON THE WORLD CLOCK (design call 2026-09-05), for the same reason as her
 # verdict at the Inn: a realtime delay does not run while the phone is open
 # (gotcha 3).
@@ -811,7 +899,11 @@ open_objective('obj_wait2')
 # TWENTY MINUTES, NOT THIRTY (playtest 2026-09-07): a second half-hour so
 # soon after the first one reads as the gig stalling rather than as time
 # passing. The two waits are deliberately no longer the same length.
-step(add_game_delay(minutes=20))
+#
+# THE CHAIR OUTSIDE THE PARLOR DOOR is this one's place to take.
+waiting_spot('gig02_sit', gen_community.SIT_MARKER_REF, 'sit_in', 'sit_out',
+             'cc_g02_sit_taken', 'cc_g02_sit_release', 'cc_g02_sit_shift',
+             'cc_g02_wait2_claim', minutes=20)
 # THREE TEXTS, paced by the journal's own delays (6 s and 5 s), then V's
 # reply is a pick in the thread, the way the report to Wakako is.
 step(add_journal('gameJournalPhoneMessage', MSG_06), in_sock='Active')

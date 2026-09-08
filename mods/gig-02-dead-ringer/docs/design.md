@@ -259,6 +259,40 @@ walkway above, pushed out by 12 m, shipped as a trigger area the way-out pin
 points at. The same corners drive the script's own test, generated rather than
 copied. `map-pins-playbook.md` has the recipe.
 
+## The two waits, and the place to take during each
+
+Twice the gig asks the player to wait: half an in-game hour while Char runs the
+trace, and twenty minutes while she reads the relay dump. Both are measured on
+the world clock rather than on the player's, so the wait keeps running while
+the phone is open and the HUD clock shows it passing.
+
+**Each wait has somewhere to be.** A railing outside Yoko's stall in Kabuki,
+and a chair outside the pachinko parlor in Japantown. The objective's map pin
+points at it and is labelled "Waiting Spot", which is the game's own label
+for the same thing.
+
+Walk up and take it. V leans on the rail, or drops into the chair, and holds
+it for a few seconds. The screen fades, the clock moves on by what is left of
+the wait, and he is standing again as it fades back and the message arrives.
+The fade is the game's own, the same one it uses either side of a wait in the
+Claire races.
+
+**It is offered, never required.** A player who does not find the spot, or does
+not want it, waits exactly as before: the objective is the same, the message
+arrives on the same clock. The quest runs the two against each other and takes
+whichever comes first, which is the rule the gig follows everywhere a wait
+exists to cover something: a wait must not be able to stop the story.
+
+**The shape is the base game's.** Four legs of the Claire races carry an
+objective named for waiting, each pinned at a place to take, two of them a sit
+and two a lean. The one difference is that no clock runs there: Claire arrives
+because V took the place. Here the time is real, because Char needs it, so
+taking the place moves the clock rather than skipping past it. Char says half
+an hour, and half an hour is what has passed.
+
+The poses are the game's own player animations, one for leaning forward on a
+rail and one for sitting back in a chair.
+
 ## Reward
 
 
@@ -268,14 +302,22 @@ vanilla's.
 
 | Merc | Toji | Eddies | XP | Street Cred |
 |---|---|---|---|---|
-| killed | unseen | 9,300 | 1,000 | 1,136 |
-| spared | unseen | 7,000 | 1,000 | 1,136 |
-| killed | seen | 4,700 | 1,000 | 1,136 |
-| spared | seen | 3,500 | 1,000 | 1,136 |
+| killed | unseen | 15,000 | 1,000 | 1,136 |
+| spared | unseen | 11,300 | 1,000 | 1,136 |
+| killed | seen | 7,600 | 1,000 | 1,136 |
+| spared | seen | 5,600 | 1,000 | 1,136 |
 
-The numbers are set against Wakako's own nine Westbrook gigs, which pay 3,800
-to 16,600. `backlog.md` 40 has how they were read and why the records are
+The numbers depend on Wakako's own nine Westbrook gigs, which pay 3,800 to
+16,600. `backlog.md` 40 has how they were read and why the records are
 clones.
+
+**The top tier sits near the top of her range on purpose.** What V is paid
+for is not the killing, which she could buy anywhere. It is that nobody
+hears about it. A fixer buying silence about a man who forged her own
+authorization pays what silence costs, and each thing that goes wrong takes
+a share of that off: sparing the merc leaves someone alive who can talk, and
+being seen at the staircase means the killing was public after she asked for
+the opposite.
 
 ## Where the mod deliberately differs from the comic
 

@@ -241,6 +241,14 @@ STRINGS = {
     'pin-pin-inn': "Wakako's netrunner",
     'pin-pin-shard': 'Char',
     'pin-pin-parlor': 'Pachinko parlor',
+    # THE GAME'S OWN LABEL FOR THIS. Two of the four `wait_for_claire`
+    # objectives in `sq024` pin a place to sit and call it "Waiting Spot";
+    # the other two pin a place to lean and call it "Meeting Place". The
+    # first fits both of ours, because nobody is being met at either. Title
+    # case is vanilla's too: "Waiting Spot", "Meeting Place", "Sit Here",
+    # "Wait Here" are all capitalised that way in the shipped strings.
+    'pin-pin-wait': 'Waiting Spot',
+    'pin-pin-wait2': 'Waiting Spot',
     'pin-pin-wakako-met': "Wakako's office",
     'pin-pin-hit': 'The stairs',
     'pin-pin-toji': 'Toji',

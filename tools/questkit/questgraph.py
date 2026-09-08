@@ -274,6 +274,41 @@ def add_game_delay(hours=0, minutes=0, days=0, seconds=0):
 # suppressed to work.
 
 
+def add_fade(fade_in, duration):
+    """Fade the screen to black, or back from it. The game's own way.
+
+    `questRenderFxManagerNodeDefinition` carrying `questSetFadeInOut_NodeType`,
+    read off the shipped quest phases on 2026-09-08.
+
+    **`duration` IS SECONDS AND 0 IS AN INSTANT CUT, not a default.** That
+    correction cost a playtest. The two Claire races carry four fades between
+    them and every one is `duration` 0, so copying them looked like copying
+    vanilla; in play it is a black rectangle appearing and vanishing. Playtest,
+    2026-09-08: "no animation, no fade... it seemed a bit abrupt".
+
+    Counting across the 30 shipped phases that use the node settles it: the
+    durations are 0, 0.25, 0.3, 0.5, 1, 2, 3 and 4, so the field is a real fade
+    time. The prologue's `q101_p2_v_room`, which is V waking up in his own
+    apartment, uses 1 second each way, and that is the reference for a fade
+    that covers a rest rather than a cut.
+
+    A fade is a PAIR and never a single node. The colour is all zeros, black.
+
+    NEVER PUT A PAUSE BETWEEN THE TWO. A fade-out whose fade-in is waiting on
+    something that does not happen is a black screen for the rest of the
+    playthrough, which is worse than any beat it was hiding.
+    """
+    nid = next(NID)
+    b.node(nid, 'questRenderFxManagerNodeDefinition', {'type': {'@handle': {
+        '$type': 'questSetFadeInOut_NodeType',
+        'duration': duration,
+        'fadeColor': {'$type': 'Color', 'Alpha': 0, 'Blue': 0, 'Green': 0,
+                      'Red': 0},
+        'fadeIn': 1 if fade_in else 0,
+    }}}, STD)
+    return nid
+
+
 def add_pause_journal(class_name, real_path, state='Succeeded'):
     nid = next(NID)
     b.node(nid, 'questPauseConditionNodeDefinition', {'condition': {'@handle': {

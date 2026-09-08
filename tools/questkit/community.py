@@ -248,6 +248,33 @@ class Community(object):
             }},
         }
 
+    def marker_node(self, label):
+        """`worldStaticMarkerNode`: a named point, and nothing else.
+
+        THE WIKI'S OWN ANSWER to "how do I aim a scene or a quest node at a
+        place rather than at a person". Object Spawner's node reference, on
+        Static Marker: "Places a static marker node. Useful if you need a
+        NodeRef as a reference point. Usually best placed in an AlwaysLoaded
+        Sector." The custom fast travel guide then walks the same recipe as
+        numbered steps and treats the always-loaded sector as an ordinary
+        requirement. `map-pins-playbook.md` carries both, and the game's own
+        always-loaded sectors hold 4,500 of these and no entity nodes at all.
+
+        Field for field off `{mikoshi_cs_perf_test}`, node 0 of
+        always_loaded_0, minus everything that falls to a class default. The
+        inner `worldSpawnPointMarker` owns a HandleId of its own, which is the
+        second of the playbook's two traps: handles are file-wide, so this one
+        is a placeholder that `renumber_handles` rewrites. The first trap,
+        `variantIndices` being `[0]` however many nodes there are, is already
+        handled in `sector()`.
+        """
+        return {
+            '$type': 'worldStaticMarkerNode',
+            'data': {'HandleId': '1', 'Data': {'$type': 'worldSpawnPointMarker',
+                                               'type': 0}},
+            'debugName': cname('{%s}' % label),
+        }
+
     def area_node(self):
         """`worldCompiledCommunityAreaNode_Streamable`: the plain cooked class
         plus `streamingDistance`. The cooked one is what the game's own cooker

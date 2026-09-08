@@ -88,6 +88,19 @@ public abstract class CCGig02Places {
         return new Vector4(-1183.542114, 2045.510010, 20.487000, 1.0);
     }
 
+    // THE TWO WAITING SPOTS, where V's feet end up in the pose. Captured in
+    // game 2026-09-08 and copied from LEAN_POSE and SIT_POSE in gig02_config.py;
+    // change both together. Only used to bound the safety net that takes V out
+    // of a pose he was left in, so being a metre out is harmless and being in
+    // the wrong district is not.
+    public static func LeanPose() -> Vector4 {
+        return new Vector4(-1177.941000, 2033.495000, 20.078000, 1.0);
+    }
+
+    public static func SitPose() -> Vector4 {
+        return new Vector4(-653.355000, 828.668000, 19.350000, 1.0);
+    }
+
     // LOCATION 3: the pachinko parlor floor, Japantown. Comic pp. 56-68.
     public static func Parlor() -> Vector4 {
         return new Vector4(-657.332031, 826.690979, 19.521999, 1.0);

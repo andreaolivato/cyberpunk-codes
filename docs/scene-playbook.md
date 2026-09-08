@@ -2080,6 +2080,119 @@ of those four set without the others.
 Measured across eight rounds of playtesting on 2026-08-21. `docs/backlog.md` 22
 carries the dead ends, including two that compile and do nothing.
 
+## A PLACE TO WAIT: a prompt on a railing, a pose, and a fade
+
+Built for gig 02 and played clean on 2026-09-08 three ways: taking the spot,
+waiting it out in normal play, and skipping time from the menu. The recipe
+below is the whole thing, and the four traps in it are gotchas 107 to 109 plus
+104.
+
+**What it is.** A quest asks the player to wait. Instead of only standing
+around, he can walk to a marked spot, press a prompt, and watch V lean on a
+railing or sit in a chair while the screen fades, the clock moves and the wait
+ends.
+
+**Vanilla does this and it is worth copying rather than inventing.** Four legs
+of `sq024`, the Claire races, carry an objective the game names
+`wait_for_claire`, each pinned at a place to take. Two are a sit and two are a
+lean. Their pins read "Waiting Spot" and "Meeting Place", and elsewhere
+"Sit Here" and "Wait Here". Their objective text writes the beat out in full:
+"Sit on the bench and wait for Claire.", "Lean against the wall and wait for
+Claire.", "Lean on the barrier and wait for Takemura."
+
+**One difference decides the shape.** No clock runs in the races: Claire
+arrives BECAUSE V took the place. If your wait is a real `questGameTimeDelay`,
+taking the place has to satisfy it rather than bypass it, and the graph has to
+work whether or not the player ever finds the spot.
+
+### The seven pieces
+
+| # | piece | where |
+|---|---|---|
+| 1 | two positions, captured in game: the PROMPT and the POSE | a config table |
+| 2 | a `worldStaticMarkerNode` at the prompt | an AlwaysLoaded sector |
+| 3 | a `worldAISpotNode` at the pose, carrying a `player__` workspot | the same sector |
+| 4 | a scene: prompt, pose, hold | `gen_scenes` |
+| 5 | the beat: hold, fade, clock, release, fade | the quest graph |
+| 6 | the race, so the wait can also just elapse | the quest graph |
+| 7 | a script backstop that stands the player up | redscript |
+
+**1. Two positions, and they are not the same point.** The prompt is where the
+player stands to be offered it. The pose is where V's feet end up, a step
+nearer the railing. Capture both, and capture the POSE's yaw, because that is
+which way V faces while he is in it.
+
+**2. The marker is the wiki's own answer to naming a place.** Object Spawner's
+node reference, on Static Marker: "Places a static marker node. Useful if you
+need a NodeRef as a reference point. Usually best placed in an AlwaysLoaded
+Sector." The custom fast travel guide walks the same recipe as numbered steps.
+It does two jobs at once: it is the scene's `sceneLocation`, so the prompt
+appears there, and it is the objective's pin anchor with a zero offset.
+`map-pins-playbook.md` has the sector shape and the two authoring traps.
+
+**3. The pose is a `player__` workspot and the game ships one for this.** Every
+`.workspot` path the base game's sectors reference is 1,317 files, 37 of them
+named `player__`, and they include a rail lean, a bar-stool sit, a chair sit
+and a plain standing wait. They live in `memoryresident_1_general.archive`.
+Naming one on an AI spot the mod ships is enough; nothing has to be extracted.
+
+**4. The scene has no lines in it.** V says nothing while he waits, the same
+way he says nothing on Claire's rail. What it carries is:
+
+```
+start -> choice(in_world=True) -> section -> set <taken> -> wait <release> -> end
+                                     |
+                                     +-- events socket: the player workspot
+```
+
+The choice hub MUST be `in_world`, the range must reach the pose and not just
+the marker, and the workspot node goes on the events socket so the scene is
+never waiting on it. Gotcha 107 and the fire-and-forget note in
+`fire_workspot`.
+
+**5 and 6. The graph owns the pacing, and vanilla's nodes do the work.**
+
+```
+fork --> scene node                              (side branch, gates nothing)
+     |
+     +-> pause <taken> -> delay 3 s -> fade out -> set <shift>
+                       -> delay 2 s -> set <release> -> delay 1 s -> fade in
+     |
+     +-> race( game delay , pause <release> ) -> cut( scene, both arms )
+```
+
+- `questRenderFxManagerNodeDefinition` / `questSetFadeInOut_NodeType` is the
+  fade. Seconds, in a pair, and 0 is a cut. Gotcha 109.
+- `questTimeManagerNodeDefinition` / `questShiftTime_NodeType` moves the clock
+  by an amount, and `questSetTime_NodeType` sets a time of day. Reach for these
+  before writing a script. Gig 02 uses a script only because it wants the
+  REMAINDER of the wait rather than its whole length, which a graph cannot
+  work out.
+- The scene hangs off a side branch and gates nothing, so a player who never
+  finds the spot is unaffected. Gotcha 104 is what happens otherwise.
+- The race is what lets both routes work. Cut both arms and the scene when
+  either wins, or the prompt outlives the wait.
+
+**7. Stand the player up from script as well.** Cutting the scene does not take
+him out of the pose. Gotcha 108, and it is the difference between a feature and
+a ruined save.
+
+### What to check in play
+
+Take them in order. Each answer is what makes the next question worth asking.
+
+1. The pin appears, and carries its label.
+2. No prompt anywhere except at the spot.
+3. The prompt survives walking right up to it.
+4. V is in the pose, in the right place, facing the right way.
+5. The fade reads as time passing rather than as a cut.
+6. The clock has moved.
+7. V is standing afterwards, and the prompt is gone.
+
+Then play the same wait twice more without taking the spot: once in normal
+play, once skipping time from the menu. All three routes were clean for gig
+02 on 2026-09-08.
+
 ## Validating offline
 
 There is no substitute for playing it, but two checks catch most of it:

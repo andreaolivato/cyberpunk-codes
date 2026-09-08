@@ -166,3 +166,57 @@ STAIR = [
     (-381.087, 1233.990, 23.428),   # 7  the bottom, where Toji is
 ]
 TRASH = (-391.116, 1284.479, 25.910)
+
+
+# ===========================================================================
+# THE TWO WAITING SPOTS, captured in game 2026-09-08
+# ===========================================================================
+#
+# Each of the gig's two waits has a place to take instead of walking in
+# circles: a railing outside Yoko's stall in Kabuki, and a chair outside the
+# pachinko parlor in Japantown. The design call, 2026-09-08.
+#
+# THE SHAPE IS VANILLA'S, and the Claire races are the worked example. Four
+# legs of `sq024` carry an objective the game names `wait_for_claire`, and the
+# pin on each is a place to take: `01d_wait_for_claire_sit_mappin` and
+# `01d_wait_for_claire_Seat_mappin` label their pin "Waiting Spot",
+# `01c_wait_for_claire_Lean_mappin` and `00c_wait_for_claire_Lean_mappin`
+# label theirs "Meeting Place". Two sits and two leans, under a wait.
+#
+# ONE DIFFERENCE, and it decides how ours is built. Claire arrives BECAUSE V
+# took the spot: no clock is running there and there is nothing to shorten.
+# Both of ours are real `questGameTimeDelay` waits, because Char needs the
+# time to run the trace. So taking the spot has to satisfy the wait rather
+# than pass it, and it moves the world clock with it so that Char's "give me
+# half an hour" is still true when V stands up.
+#
+# PROMPT and POSE are two different points. The prompt is where the player
+# stands to be offered it; the pose is where V's feet end up, which for a lean
+# is a step nearer the railing and for a sit is at the chair. The yaw on the
+# POSE is the one that matters: it is which way V faces while he is in it.
+#
+# KEEP IN STEP WITH `CCGig02Places` in Gig02_DeadRinger.reds.
+LEAN_PROMPT = (-1178.536, 2034.795, 20.078)
+LEAN_POSE = (-1177.941, 2033.495, 20.078)
+LEAN_YAW = -142.8
+
+SIT_PROMPT = (-653.176, 827.874, 19.350)
+SIT_POSE = (-653.355, 828.668, 19.350)
+SIT_YAW = -151.7
+
+# THE TWO POSES, and both are the game's own PLAYER poses rather than an NPC
+# pose borrowed onto V. Every `.workspot` path the base game's sectors
+# reference was byte-searched out of the extracted set on 2026-09-08: 1,317
+# distinct files, 37 of them named `player__`, and two of those are this
+# request word for word. They come out of `memoryresident_1_general.archive`,
+# which is where workspots live and where the merc's kneel came from.
+LEAN_WORKSPOT = ('common', 'rail',
+                 'player__stand_rail_lean_front__stand_around__01.workspot')
+# THE SEAT IS A CHAIR, NOT A STOOL (screenshots, 2026-09-08). The spot outside
+# the parlor door is a red plastic garden chair with a back and armrests,
+# against the shutter wall between the doorway and the rubbish bags, and it is
+# the only seat there. So the barstool pose is wrong: it rests V's arms on a
+# bar that is not there. `player__sit_chair__sit_around__01.workspot` is the
+# more upright fallback if leaning back does not sit well in a plastic chair.
+SIT_WORKSPOT = ('player', 'chair',
+                'player__sit_chair_lean_back__sit_around__01.workspot')

@@ -76,7 +76,11 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from questkit import area, community                                # noqa: E402
-from gig02_config import RAW, STAIR, TRASH, GROUP_POS, CHAR_POS     # noqa: E402,F401
+from gig02_config import (                                          # noqa: E402,F401
+    RAW, STAIR, TRASH, GROUP_POS, CHAR_POS,
+    LEAN_PROMPT, LEAN_POSE, LEAN_YAW, LEAN_WORKSPOT,
+    SIT_PROMPT, SIT_POSE, SIT_YAW, SIT_WORKSPOT,
+)
 
 # A depot path is BUILT, never typed: `\w`, `\a`, `\0` and `\t` are all eaten
 # by something between here and the file. Gotcha 28.
@@ -476,10 +480,70 @@ for _key, _parts in LAB_POSES:
                       LAB_YAW))
 
 
+# ===========================================================================
+# THE TWO WAITING SPOTS: where V leans, and where V sits
+# ===========================================================================
+#
+# One AI spot each, at the captured pose position, carrying the pose. These
+# are NOT for an NPC: nothing is spawned into them and no community entry
+# names them. They exist so that a scene can point a use-workspot node at a
+# PLACE, which is `add_world_workspot_node`'s whole purpose, and so the pose
+# happens at the railing and at the chair rather than wherever V is standing.
+#
+# GOTCHA 72 SAYS `common` AND NEVER `master`, and that finding is about an NPC
+# being handed a pose by a community spot. These two are handed to the PLAYER
+# by a scene, which is a different path, and the poses are the game's own
+# player ones. `common\rail` and `player\chair` are where they live.
+LEAN_SPOT_REF = community.Community.ref(SECTOR, 'cc_g02_lean_spot')
+LEAN_SPOT = (community.Community.ai_spot_node(
+                 None, 'cc_g02_lean_spot',
+                 depot('base', 'workspots', *LEAN_WORKSPOT), []),
+             LEAN_POSE, LEAN_SPOT_REF,
+             (community.WB['maxdist'], community.WB['ukfloat'],
+              community.WB['uk10'], community.WB['uk11']),
+             LEAN_YAW)
+
+SIT_SPOT_REF = community.Community.ref(SECTOR, 'cc_g02_sit_spot')
+SIT_SPOT = (community.Community.ai_spot_node(
+                None, 'cc_g02_sit_spot',
+                depot('base', 'workspots', *SIT_WORKSPOT), []),
+            SIT_POSE, SIT_SPOT_REF,
+            (community.WB['maxdist'], community.WB['ukfloat'],
+             community.WB['uk10'], community.WB['uk11']),
+            SIT_YAW)
+
+
+# THE TWO PROMPTS, and the marker is the documented way to name a place.
+#
+# One `worldStaticMarkerNode` at each PROMPT position, which is a step back
+# from the pose. Each does two jobs that would otherwise need two different
+# borrowed anchors: it is the marker the waiting scene plays at, so the [F]
+# prompt appears at the railing and at the chair rather than at whatever
+# vanilla node happens to be nearest, and it is the anchor the objective's map
+# pin sits on with a zero offset.
+#
+# THEY ARE SEPARATE FROM THE POSE SPOTS ON PURPOSE. The prompt belongs about a
+# metre and a half from where V's feet end up, and a node doing both jobs
+# cannot be nudged for either without moving the other.
+LEAN_MARKER_REF = community.Community.ref(SECTOR, 'cc_g02_lean_marker')
+LEAN_MARKER = (community.Community.marker_node(None, 'cc_g02_lean_marker'),
+               LEAN_PROMPT, LEAN_MARKER_REF,
+               (community.WB['maxdist'], community.WB['ukfloat'],
+                community.WB['uk10'], community.WB['uk11']))
+
+SIT_MARKER_REF = community.Community.ref(SECTOR, 'cc_g02_sit_marker')
+SIT_MARKER = (community.Community.marker_node(None, 'cc_g02_sit_marker'),
+              SIT_PROMPT, SIT_MARKER_REF,
+              (community.WB['maxdist'], community.WB['ukfloat'],
+               community.WB['uk10'], community.WB['uk11']))
+
+
 def build():
     return community.Community(SECTOR, entries(), spawnset=SPAWNSET_NAME,
                                phase=PHASE, period=PERIOD,
-                               extra=[CROWD_NULL, MERC_KNEEL, HIT_AREA_NODE] + LAB_SPOTS)
+                               extra=[CROWD_NULL, MERC_KNEEL, HIT_AREA_NODE,
+                                      LEAN_SPOT, SIT_SPOT,
+                                      LEAN_MARKER, SIT_MARKER] + LAB_SPOTS)
 
 
 if __name__ == '__main__':

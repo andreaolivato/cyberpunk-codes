@@ -893,6 +893,94 @@ def build_end_loud():
     return s
 
 
+# ==================================================== 17-18: the two waits
+#
+# THE SHAPE IS THE CLAIRE RACES', and both halves of it are theirs. Four legs
+# of `sq024` carry an objective the game names `wait_for_claire`, pinned at a
+# place to take: two of them a sit, two of them a lean. The player walks to the
+# pin, presses, and the beat moves.
+#
+# THE WORDING IS THE GAME'S OWN, and it is not "Sit down". Vanilla writes
+# this beat out in full every time it uses it: "Sit on the bench and wait
+# for Claire.", "Sit on the couch and wait for Claire.", "Lean against the
+# wall and wait for Claire.", "Lean on the barrier and wait for Takemura.",
+# "Sit and wait for River.". The place and the reason both go in the line,
+# so a player reading the prompt knows what pressing it commits him to.
+#
+# NEITHER SCENE HAS A LINE IN IT, and that is the point rather than an
+# omission. V says nothing while he waits, the same way he says nothing on
+# Claire's rail. What each one carries is a prompt, a pose and a hold.
+#
+# HOW THE HOLD WORKS, because a scene cannot run for half an in-game hour:
+#
+#   1. the choice hub offers the prompt AT THE MARKER, which is what
+#      `in_world=True` buys: the default hub attaches to the screen and, in
+#      a scene whose only actor is the player, follows him around the city
+#      (playtest 2026-09-08, the prompt was up at the Inn)
+#      THE RANGE HAS TO REACH THE POSE, NOT JUST THE PROMPT. Playtest
+#      2026-09-08: at 1.2 m it appeared on the way in and then vanished as
+#      V got to the railing, because the pose is 1.43 m past the marker and
+#      he was walking out the far side of the circle. 2.5 m covers the walk
+#      up and the spot itself, and the yaw limit is off because a man at a
+#      railing is facing the view rather than the marker behind his heels.
+#   2. the section fires the pose onto V and sets `cc_g02_*_taken`
+#   3. Gig02_Encounter sees that fact, moves the world clock on by what is
+#      left of the wait, and sets `cc_g02_*_release`
+#   4. the scene has been holding on that fact; it ends, and V stands up
+#
+# THE POSE IS FIRED ON THE EVENTS SOCKET, which is fire and forget. If it
+# never lands, V stands at the railing for a moment and everything else still
+# happens; the alternative wiring stalls the scene, and a scene that never
+# reaches its exit is a quest phase that waits on that exit for the rest of
+# the playthrough.
+def build_lean():
+    """The railing outside Yoko's stall, while Char runs the trace."""
+    s = Scene('gig02_lean', gen_community.LEAN_MARKER_REF)
+    s.add_player()
+
+    start = s.start('lean_in')
+    c1 = s.choice([s.add_option("Lean on the railing and wait for Char.", key='o10')],
+                  in_world=True, radius=2.5, yaw_limit=360)
+    s1 = s.section([], tail_ms=1200)
+    taken = s.add_fact_node('cc_g02_lean_taken', 1)
+    release = s.add_wait_fact_node('cc_g02_lean_release')
+    out = s.end('lean_out')
+
+    s.link(start, c1)
+    s.link_choice(c1, [s1])
+    s.link_section_quest(s1, taken)
+    # AFTER the section is linked: sockets are written in (name, ordinal)
+    # order and validate() enforces it.
+    s.fire_workspot(s1, s.add_world_workspot_node(
+        None, gen_community.LEAN_SPOT_REF, player=True), start_time=0)
+    s.link_quest(taken, release)
+    s.link(release, out)
+    return s
+
+
+def build_sit():
+    """The chair outside the parlor, while Char reads the relay dump."""
+    s = Scene('gig02_sit', gen_community.SIT_MARKER_REF)
+    s.add_player()
+
+    start = s.start('sit_in')
+    c1 = s.choice([s.add_option("Sit down and wait for Char.", key='o11')], in_world=True,
+                  radius=2.5, yaw_limit=360)
+    s1 = s.section([], tail_ms=1200)
+    taken = s.add_fact_node('cc_g02_sit_taken', 1)
+    release = s.add_wait_fact_node('cc_g02_sit_release')
+    out = s.end('sit_out')
+
+    s.link(start, c1)
+    s.link_choice(c1, [s1])
+    s.link_section_quest(s1, taken)
+    s.fire_workspot(s1, s.add_world_workspot_node(
+        None, gen_community.SIT_SPOT_REF, player=True), start_time=0)
+    s.link_quest(taken, release)
+    s.link(release, out)
+    return s
+
+
 ALL_BUILDERS = (
     build_wakako_call, build_johnny_open,
     build_talk_a, build_talk_b, build_group3,
@@ -902,6 +990,7 @@ ALL_BUILDERS = (
     build_char_call,
     build_office,
     build_close_clean, build_close_loud, build_end, build_end_loud,
+    build_lean, build_sit,
     # DEV. Reached only by the CET menu's appearance A/B arm, never by the gig.
     # It ships because the quest phase names it and a phase naming a scene that
     # is not there is a graph that stops at that node.

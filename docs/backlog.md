@@ -9251,6 +9251,16 @@ number in one flat.
 **KEEP THE NAME BEGINNING WITH `sts_`.** It is what makes the game scale the
 XP. A record named anything else pays the raw numbers.
 
+**RESCALED 2026-09-08, and the four values above are the old ones.** The gig
+now pays 15,000 / 11,300 / 7,600 / 5,600 for the same four outcomes. The
+design call: 9,300 reads as the going rate for a killing, and what Wakako is
+buying is silence about a man who forged her authorization, which is worth
+more than the killing. The ratios between the four tiers are unchanged, so
+the shape of the choice is the same and only the scale moved. The top tier
+is now 15,000 against her own range of 3,800 to 16,600, which is where a job
+she cannot afford to have talked about belongs. Nothing about the records
+changed: same three clones per tier, same one flat overridden.
+
 ## 41. An objective whose wording can be swapped by a branch that is racing the main line. NOT REPRODUCED 2026-09-06
 
 **CLOSED 2026-09-06: played for, and not reproduced.** The kill was taken in

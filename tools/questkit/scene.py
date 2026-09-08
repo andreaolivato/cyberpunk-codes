@@ -1404,8 +1404,29 @@ class Scene:
         })
         return nid
 
-    def choice(self, option_indices):
-        """An on-screen dialogue hub. One output socket per option, in order."""
+    def choice(self, option_indices, in_world=False, radius=1.2,
+               yaw_limit=120, offset=(0.0, 0.0, 0.0)):
+        """A dialogue hub. One output socket per option, in order.
+
+        `in_world=True` PINS THE HUB TO A PLACE instead of to whoever is
+        talking, which is what a prompt on a railing needs.
+
+        THE DEFAULT IS `attachToScreen`, AND THAT IS NOT A RANGE OF ZERO,
+        IT IS NO PLACE AT ALL. Playtest 2026-09-08: the prompt for the
+        railing in Kabuki was already on screen while V was still talking to
+        Char at the Inn. A screen-attached hub in a scene whose only actor
+        is the player is offered wherever the player is, and no shape param
+        narrows it, because there is nothing in the world for the shape to
+        be around. Every scene here until now attached to a person, so the
+        person was the anchor and this never showed.
+
+        `mq019_01_notell_motel.scene` carries one hub of each kind: five
+        `attachToActor` and one `attachToWorld`. The world one sets a real
+        `entityPosition` in the scene marker's own space and pairs it with
+        `preset: small`, `customActivationRange: 1.5` and an
+        `activationYawLimit` of 90. `offset` here is that position, and it
+        is (0, 0, 0) when the scene's marker IS the spot.
+        """
         nid = self._nid()
         self.nodes.append({
             '$type': 'scnChoiceNode',
@@ -1422,8 +1443,9 @@ class Scene:
                           'customEntityRadius': 0,
                           'entityOrientation': {'$type': 'Quaternion', 'i': 0, 'j': 0,
                                                 'k': 0, 'r': 1},
-                          'entityPosition': {'$type': 'Vector3', 'X': 0, 'Y': 0, 'Z': 0},
-                          'visualizerStyle': 'inWorld'},
+                          'entityPosition': {'$type': 'Vector3', 'X': offset[0],
+                                            'Y': offset[1], 'Z': offset[2]},
+                          'visualizerStyle': 'onScreen' if in_world else 'inWorld'},
             'choiceFlags': '0',
             'choiceGroup': cname(None),
             'choicePriority': 0,
@@ -1452,7 +1474,7 @@ class Scene:
                 '$type': 'scnChoiceNodeNsMappinParams',
                 'locationType': 'Nameplate',
                 'mappinSettings': tdbid('MappinUISettings.SceneDialogNPCSettings')}},
-            'mode': 'attachToScreen',
+            'mode': 'attachToWorld' if in_world else 'attachToScreen',
             'nodeId': node_id(nid),
             'options': [{
                 '$type': 'scnChoiceNodeOption',
@@ -1480,8 +1502,10 @@ class Scene:
             'reminderParams': None,
             'shapeParams': {'HandleId': '@shape', 'Data': {
                 '$type': 'scnInteractionShapeParams',
-                'activationBaseLength': 1, 'activationHeight': 3, 'activationYawLimit': 160,
-                'customActivationRange': 1.5, 'customIndicationRange': 1.5,
+                'activationBaseLength': 1, 'activationHeight': 3,
+                'activationYawLimit': yaw_limit if in_world else 160,
+                'customActivationRange': radius if in_world else 1.5,
+                'customIndicationRange': radius if in_world else 1.5,
                 'offset': {'$type': 'Vector3', 'X': 0, 'Y': 0, 'Z': 0},
                 'preset': 'small',
                 'rotation': {'$type': 'Quaternion', 'i': 0, 'j': 0, 'k': 0, 'r': 1}}},
@@ -1658,7 +1682,7 @@ class Scene:
 
     def add_world_workspot_node(self, unique_name, spot_ref,
                                 entry=WORKSPOT_ENTRY, community=None,
-                                walk=False):
+                                walk=False, player=False):
         """Put a scene actor into a `worldAISpotNode` THIS MOD SHIPS.
 
         The counterpart to add_workspot_node: that one plays the workspot
@@ -1685,6 +1709,20 @@ class Scene:
         own node short while naming it long; this project names its own nodes
         long. Which form the engine prefers is not established, so pass the same
         string the sector registers unless there is a reason not to.
+
+        `player=True` PUTS V IN THE POSE instead of an actor, which is how the
+        base game seats him. Read off `mq019_01_notell_motel.scene` on
+        2026-09-08: `isPlayer` goes to 1 and the entity reference is the plain
+        NodeRef `#player`, type EntityRef, with no names and no unique name.
+        `playerParams` below is already the block vanilla carries beside it and
+        needs nothing added; `applyCameraParams: 0` leaves the camera limits
+        unapplied, which is vanilla's own default on that node.
+
+        Vanilla reaches the pose through a scene workspot INSTANCE with an
+        origin marker rather than through a world node. This one keeps the
+        world node, because the pose belongs to the railing and to the chair
+        rather than to wherever V happens to have stopped, and because a mod's
+        own AI spot is the one route gotcha 69 measured.
         """
         nid = self._nid()
         # WALK: the AI takes the actor to the spot and plays the workspot's own
@@ -1700,7 +1738,8 @@ class Scene:
             'outputSockets': [osock(0, 0, []), osock(0, 1, [])],
             'questNode': {'HandleId': '@qn', 'Data': {
                 '$type': 'questUseWorkspotNodeDefinition',
-                'entityReference': (community_ref(*community) if community
+                'entityReference': (entity_ref(node_ref='#player') if player
+                                    else community_ref(*community) if community
                                     else entity_ref(unique_name=unique_name)),
                 'id': nid,
                 'paramsV1': {'HandleId': '@qp', 'Data': {
@@ -1729,7 +1768,7 @@ class Scene:
                     'finishAnimation': 1 if walk else 0,
                     'forceEntryAnimName': cname(None),
                     'function': 'UseWorkspot',
-                    'isPlayer': 0,
+                    'isPlayer': 1 if player else 0,
                     'maxAnimTimeLimit': 0,
                     'meshDissolvingEnabled': 1,
                     'movementType': 'Walk',

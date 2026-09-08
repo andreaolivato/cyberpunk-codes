@@ -7,6 +7,14 @@ each mod's Nexus Changelog tab.
 
 # Dead Ringer
 
+## 1.0.3 (2026-09-08)
+
+- **Added: somewhere to wait out both of Char's waits.** A railing outside
+  Yoko's stall and a chair outside the pachinko parlor, marked on your map as
+  Waiting Spot. Lean or sit and the time passes. Suggested by 1RuggedGamer.
+- **Changed: Wakako pays more.** 15,000 eddies at the top instead of 9,300,
+  and the other three endings scale with it. Suggested by 1RuggedGamer.
+
 ## 1.0.2 (2026-09-08)
 
 - **Fixed: the merc outside Afterlife could become impossible to attack.** He

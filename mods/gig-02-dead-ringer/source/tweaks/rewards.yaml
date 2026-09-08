@@ -18,7 +18,7 @@
 
 QuestRewards.sts_cc_g02_qty_quiet_kill:
   $base: QuestRewards.sts_wbr_hil_01_completion_inline5
-  value: 9300
+  value: 15000
 QuestRewards.sts_cc_g02_money_quiet_kill:
   $base: QuestRewards.sts_wbr_hil_01_completion_inline4
   quantityModifiers: [ QuestRewards.sts_cc_g02_qty_quiet_kill ]
@@ -29,7 +29,7 @@ QuestRewards.sts_cc_g02_completion_quiet_kill:
 
 QuestRewards.sts_cc_g02_qty_quiet_spare:
   $base: QuestRewards.sts_wbr_hil_01_completion_inline5
-  value: 7000
+  value: 11300
 QuestRewards.sts_cc_g02_money_quiet_spare:
   $base: QuestRewards.sts_wbr_hil_01_completion_inline4
   quantityModifiers: [ QuestRewards.sts_cc_g02_qty_quiet_spare ]
@@ -40,7 +40,7 @@ QuestRewards.sts_cc_g02_completion_quiet_spare:
 
 QuestRewards.sts_cc_g02_qty_loud_kill:
   $base: QuestRewards.sts_wbr_hil_01_completion_inline5
-  value: 4700
+  value: 7600
 QuestRewards.sts_cc_g02_money_loud_kill:
   $base: QuestRewards.sts_wbr_hil_01_completion_inline4
   quantityModifiers: [ QuestRewards.sts_cc_g02_qty_loud_kill ]
@@ -51,7 +51,7 @@ QuestRewards.sts_cc_g02_completion_loud_kill:
 
 QuestRewards.sts_cc_g02_qty_loud_spare:
   $base: QuestRewards.sts_wbr_hil_01_completion_inline5
-  value: 3500
+  value: 5600
 QuestRewards.sts_cc_g02_money_loud_spare:
   $base: QuestRewards.sts_wbr_hil_01_completion_inline4
   quantityModifiers: [ QuestRewards.sts_cc_g02_qty_loud_spare ]

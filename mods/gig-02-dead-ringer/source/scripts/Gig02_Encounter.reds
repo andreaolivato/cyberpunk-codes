@@ -197,6 +197,20 @@ public class DeadRingerEncounter extends ScriptableSystem {
     // still occupied. THE CAP IS THE POINT: see SiteClear below.
     private let m_clearTicks: Int32;
 
+    // The world-clock stamp taken when each of the two waits opened, so that
+    // taking the railing or the chair moves the clock on by what is LEFT of
+    // the wait rather than by its whole length. 0 means not latched, which is
+    // the state one tick after a load: the skip then does nothing and only the
+    // release fires, so a reloaded save loses the clock jump and nothing else.
+    private let m_wait1Stamp: Float;
+    private let m_wait2Stamp: Float;
+    // Whether each pose's clock move has already been made. The graph holds
+    // its `_shift` fact up for a couple of seconds behind the black, and
+    // this tick runs every second, so without these the world would move
+    // twice.
+    private let m_leanShifted: Bool;
+    private let m_sitShifted: Bool;
+
     // ---- readers -----------------------------------------------------------
     // A journal entry may not resolve on the first tick after a load, so both
     // readers retry rather than swallow a null. Bounded, so a path that is
@@ -461,11 +475,156 @@ public class DeadRingerEncounter extends ScriptableSystem {
         this.QueueShield(game, qs, player);
         this.InnKeeper(game, qs, player);
         this.ParlorKeeper(game, qs, player);
+        this.Waits(game, qs, player, pos);
         this.Readers(game, qs);
         this.AccessPoint(game, qs, player, pos);
         this.Hit(game, qs, player, pos);
 
         this.ScheduleTick(1.0);
+    }
+
+    // ==================================================== the two waiting spots
+    //
+    // Each of the gig's two waits has a place to take: the railing outside
+    // Yoko's stall, and the chair outside the parlor door. The scene puts V in
+    // the pose and sets `*_taken`; this moves the world clock on by what is
+    // left of the wait and sets `*_release`, which is what the scene has been
+    // holding on. It ends, and V stands up.
+    //
+    // THE CLOCK IS MOVED RATHER THAN THE WAIT SKIPPED, so Char's "give me half
+    // an hour" is still true when V is back on his feet. The quest graph races
+    // its own game-time delay against the release fact, so whether a jumped
+    // clock also satisfies a pending delay does not matter: the race is
+    // decided by whichever arrives first and the loser is cut.
+    //
+    // THE WINDOW IS THE WAIT ITSELF, so a fact set by hand from the dev menu
+    // outside it does nothing.
+    // THE PACING IS THE QUEST GRAPH'S, NOT THIS FILE'S (2026-09-08). It holds
+    // four seconds on the pose, fades out, asks for the clock move by writing
+    // `_shift`, waits behind the black, releases the pose, and fades back in.
+    // That is what the Claire races do at the same moment, node for node.
+    //
+    // WHAT IS LEFT HERE is the one thing a graph cannot work out: how much of
+    // the wait is still owed. The graph knows the wait is 30 minutes; only this
+    // knows how long the player has already spent on it.
+    private func Waits(game: GameInstance, qs: ref<QuestsSystem>,
+                       player: ref<PlayerPuppet>, pos: Vector4) -> Void {
+        let ts: ref<TimeSystem> = GameInstance.GetTimeSystem(game);
+        if !IsDefined(ts) {
+            return;
+        }
+
+        // ---- the railing, while Char runs the trace --------------------------
+        if qs.GetFactStr("cc_g02_char_near") > 0
+                && qs.GetFactStr("cc_g02_trace_done") == 0 {
+            if this.m_wait1Stamp == 0.0 {
+                this.m_wait1Stamp = ts.GetGameTimeStamp();
+            }
+            if qs.GetFactStr("cc_g02_lean_shift") > 0 && !this.m_leanShifted {
+                this.m_leanShifted = true;
+                this.SkipAhead(ts, this.m_wait1Stamp, 1800.0);
+            }
+        } else {
+            // THE BEAT IS OVER AND V MAY STILL BE IN THE POSE. Playtest
+            // 2026-09-08: he leaned, the message arrived, the objective moved on,
+            // and he could not get up. The quest graph cuts the scene when the
+            // wait resolves, and a cut scene does not take the player out of the
+            // pose it put him in, so the fact the scene was holding on was never
+            // written and nothing else was ever going to write it.
+            this.LetGo(qs, "cc_g02_lean_taken", "cc_g02_lean_release");
+        }
+
+        // ---- the chair, while Char reads the dump ----------------------------
+        if qs.GetFactStr("cc_g02_ap_breached") > 0
+                && qs.GetFactStr("cc_g02_char_named") == 0 {
+            if this.m_wait2Stamp == 0.0 {
+                this.m_wait2Stamp = ts.GetGameTimeStamp();
+            }
+            if qs.GetFactStr("cc_g02_sit_shift") > 0 && !this.m_sitShifted {
+                this.m_sitShifted = true;
+                this.SkipAhead(ts, this.m_wait2Stamp, 1200.0);
+            }
+        } else {
+            this.LetGo(qs, "cc_g02_sit_taken", "cc_g02_sit_release");
+        }
+
+        this.StandUp(game, qs, player, pos);
+    }
+
+    // Write the release for a pose whose beat has passed, so that a scene still
+    // holding on it can finish. Cheap, idempotent, and it costs nothing on the
+    // overwhelming majority of ticks where no pose was ever taken.
+    private func LetGo(qs: ref<QuestsSystem>, taken: String, release: String) -> Void {
+        if qs.GetFactStr(taken) > 0 && qs.GetFactStr(release) == 0 {
+            qs.SetFactStr(release, 1);
+        }
+    }
+
+    // TAKE V OUT OF THE POSE, rather than trusting the scene to do it.
+    //
+    // The scene ending is supposed to be enough and on the happy path it is.
+    // This is for the paths where it is not: the graph cut the scene, or the
+    // save was made in the pose, or the scene never reached its exit. Being
+    // stuck in a workspot with no way out ends a playthrough, so it is worth a
+    // few lines that usually do nothing.
+    //
+    // BOUNDED TWO WAYS, because `IsActorInWorkspot` is true of a man in a car
+    // as well as a man on a railing, and yanking the player out of a vehicle
+    // would be a far worse bug than the one this fixes:
+    //
+    //   * only once the pose's own release has been written, so it can only
+    //     fire on a beat that actually put him somewhere
+    //   * only within 4 m of that pose's captured position, so a workspot
+    //     anywhere else in the city is not ours to end
+    private func StandUp(game: GameInstance, qs: ref<QuestsSystem>,
+                         player: ref<PlayerPuppet>, pos: Vector4) -> Void {
+        let atLean: Bool = qs.GetFactStr("cc_g02_lean_release") > 0
+            && this.Near(pos, CCGig02Places.LeanPose(), 4.0);
+        let atSit: Bool = qs.GetFactStr("cc_g02_sit_release") > 0
+            && this.Near(pos, CCGig02Places.SitPose(), 4.0);
+        if !atLean && !atSit {
+            return;
+        }
+        let ws: ref<WorkspotGameSystem> = GameInstance.GetWorkspotSystem(game);
+        if !IsDefined(ws) || !ws.IsActorInWorkspot(player) {
+            return;
+        }
+        // The signal the game sends a puppet to leave a workspot early. The
+        // last argument blends into a walk rather than snapping upright.
+        ws.SendFastExitSignal(player, new Vector3(0.0, 0.0, 0.0), false, false,
+                              false, true);
+    }
+
+    // Move the time of day forward by whatever is left of `wanted` seconds,
+    // counted from `stamp`. The game's own Skip Time button does the same
+    // thing through the same call, one whole hour at a time
+    // (`hubMenuTimeSkipController`, `SetGameTimeByHMS` with the reason
+    // `ui_menu_timeskip`); this one works in minutes and carries its own
+    // reason so anything reading that field can tell the two apart.
+    //
+    // THE REMAINDER IS CLAMPED TO THE WAIT'S OWN LENGTH, which is what makes
+    // this safe rather than merely correct. `GetGameTimeStamp` is a number
+    // this project has not measured the units of, and clamping means the worst
+    // a wrong unit can do is move the clock too little, or not at all. It can
+    // never overshoot, and the story moves on either way because the release
+    // fact is what the graph is racing.
+    private func SkipAhead(ts: ref<TimeSystem>, stamp: Float, wanted: Float) -> Void {
+        let left: Float = wanted;
+        if stamp > 0.0 {
+            left = wanted - (ts.GetGameTimeStamp() - stamp);
+        }
+        if left > wanted {
+            left = wanted;
+        }
+        if left <= 0.0 {
+            return;
+        }
+        let now: GameTime = ts.GetGameTime();
+        let total: Int32 = GameTime.Hours(now) * 3600 + GameTime.Minutes(now) * 60
+            + GameTime.Seconds(now) + Cast<Int32>(left);
+        let day: Int32 = total % 86400;
+        ts.SetGameTimeByHMS(day / 3600, (day % 3600) / 60, day % 60,
+                            n"cc_g02_waiting_spot");
     }
 
     // ======================================================== arrivals
@@ -2072,7 +2231,7 @@ public class DeadRingerEncounter extends ScriptableSystem {
         // The fee used to be a flat 3,000 eddies and 300 Street Cred through
         // the shared pay call, doubled if the merc died.
         // Four completion records of the kind Wakako's gigs carry, in
-        // tweaks/rewards.yaml: 9,300 / 7,000 / 4,700 / 3,500 eddies by outcome,
+        // tweaks/rewards.yaml: 15,000 / 11,300 / 7,600 / 5,600 eddies by outcome,
         // 1,000 level XP and 1,136 Street Cred XP on all four, the XP scaled
         // to the player's level by the game because the record name begins
         // with `sts_`. RPGManager.GiveReward is what the quest reward node
