@@ -31,6 +31,16 @@ public abstract class CCGig02Places {
         return new Vector4(-1183.542114, 2045.510010, 20.487000, 1.0);
     }
 
+    // railing
+    public static func LeanPose() -> Vector4 {
+        return new Vector4(-1177.941000, 2033.495000, 20.078000, 1.0);
+    }
+
+    // chair by the parlor door
+    public static func SitPose() -> Vector4 {
+        return new Vector4(-653.355000, 828.668000, 19.350000, 1.0);
+    }
+
     public static func Parlor() -> Vector4 {
         return new Vector4(-657.332031, 826.690979, 19.521999, 1.0);
     }

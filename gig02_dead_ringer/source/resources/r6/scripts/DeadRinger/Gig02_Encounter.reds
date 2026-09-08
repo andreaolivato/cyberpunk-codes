@@ -62,6 +62,12 @@ public class DeadRingerEncounter extends ScriptableSystem {
     private let m_exfilDone: Bool;
     private let m_afterlifeTicks: Int32;
     private let m_clearTicks: Int32;
+    // railing
+    private let m_wait1Stamp: Float;
+    // chair
+    private let m_wait2Stamp: Float;
+    private let m_leanShifted: Bool;
+    private let m_sitShifted: Bool;
     private let m_shardTries: Int32;
 
     private func OnAttach() -> Void {
@@ -227,11 +233,92 @@ public class DeadRingerEncounter extends ScriptableSystem {
         this.QueueShield(game, qs, player);
         this.InnKeeper(game, qs, player);
         this.ParlorKeeper(game, qs, player);
+        this.Waits(game, qs, player, pos);
         this.Readers(game, qs);
         this.AccessPoint(game, qs, player, pos);
         this.Hit(game, qs, player, pos);
 
         this.ScheduleTick(1.0);
+    }
+
+    private func Waits(game: GameInstance, qs: ref<QuestsSystem>,
+                       player: ref<PlayerPuppet>, pos: Vector4) -> Void {
+        let ts: ref<TimeSystem> = GameInstance.GetTimeSystem(game);
+        if !IsDefined(ts) {
+            return;
+        }
+
+        if qs.GetFactStr("cc_g02_char_near") > 0
+                && qs.GetFactStr("cc_g02_trace_done") == 0 {
+            if this.m_wait1Stamp == 0.0 {
+                this.m_wait1Stamp = ts.GetGameTimeStamp();
+            }
+            if qs.GetFactStr("cc_g02_lean_shift") > 0 && !this.m_leanShifted {
+                this.m_leanShifted = true;
+                // 30 game min
+                this.SkipAhead(ts, this.m_wait1Stamp, 1800.0);
+            }
+        } else {
+            this.LetGo(qs, "cc_g02_lean_taken", "cc_g02_lean_release");
+        }
+
+        if qs.GetFactStr("cc_g02_ap_breached") > 0
+                && qs.GetFactStr("cc_g02_char_named") == 0 {
+            if this.m_wait2Stamp == 0.0 {
+                this.m_wait2Stamp = ts.GetGameTimeStamp();
+            }
+            if qs.GetFactStr("cc_g02_sit_shift") > 0 && !this.m_sitShifted {
+                this.m_sitShifted = true;
+                // 20 game min
+                this.SkipAhead(ts, this.m_wait2Stamp, 1200.0);
+            }
+        } else {
+            this.LetGo(qs, "cc_g02_sit_taken", "cc_g02_sit_release");
+        }
+
+        this.StandUp(game, qs, player, pos);
+    }
+
+    private func LetGo(qs: ref<QuestsSystem>, taken: String, release: String) -> Void {
+        if qs.GetFactStr(taken) > 0 && qs.GetFactStr(release) == 0 {
+            qs.SetFactStr(release, 1);
+        }
+    }
+
+    private func StandUp(game: GameInstance, qs: ref<QuestsSystem>,
+                         player: ref<PlayerPuppet>, pos: Vector4) -> Void {
+        let atLean: Bool = qs.GetFactStr("cc_g02_lean_release") > 0
+            && this.Near(pos, CCGig02Places.LeanPose(), 4.0);
+        let atSit: Bool = qs.GetFactStr("cc_g02_sit_release") > 0
+            && this.Near(pos, CCGig02Places.SitPose(), 4.0);
+        if !atLean && !atSit {
+            return;
+        }
+        let ws: ref<WorkspotGameSystem> = GameInstance.GetWorkspotSystem(game);
+        if !IsDefined(ws) || !ws.IsActorInWorkspot(player) {
+            return;
+        }
+        ws.SendFastExitSignal(player, new Vector3(0.0, 0.0, 0.0), false, false,
+                              false, true);
+    }
+
+    private func SkipAhead(ts: ref<TimeSystem>, stamp: Float, wanted: Float) -> Void {
+        let left: Float = wanted;
+        if stamp > 0.0 {
+            left = wanted - (ts.GetGameTimeStamp() - stamp);
+        }
+        if left > wanted {
+            left = wanted;
+        }
+        if left <= 0.0 {
+            return;
+        }
+        let now: GameTime = ts.GetGameTime();
+        let total: Int32 = GameTime.Hours(now) * 3600 + GameTime.Minutes(now) * 60
+            + GameTime.Seconds(now) + Cast<Int32>(left);
+        let day: Int32 = total % 86400;
+        ts.SetGameTimeByHMS(day / 3600, (day % 3600) / 60, day % 60,
+                            n"cc_g02_waiting_spot");
     }
 
     private func AfterlifeClear(game: GameInstance, qs: ref<QuestsSystem>,
