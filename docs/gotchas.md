@@ -2632,3 +2632,42 @@ Never renumber. Append.
      the playthrough, which is worse than any beat it was hiding. Only fixed
      delays and fact writes belong between them.
 
+
+110. **"Jack in" on an access point is an Intelligence check, and the number it
+     asks for belongs to the DEVICE.**
+
+     `GameplaySkillCondition.GetRequiredLevel` returns whatever fixed level has
+     been written into it, and until something writes one it falls through to
+     `RPGManager.CheckDifficultyToStatValue`: the `attribute_checks` curve, read
+     at the device's own power level (from its content assignment) against the
+     check's difficulty. No term in that is the player's, so the requirement is
+     the same on a level 50 netrunner and on a fresh save, and a mod that lifts
+     a street device whole (backlog 37) inherits that district's number with it.
+
+     Gig 02 shipped the game's own Wellsprings router on the parlor wall and it
+     asked for Intelligence 10. Three players reported the box reading 3/10 or
+     5/10, which is a quest objective that cannot be finished.
+
+     **Do not answer it by switching the check off.** `PushSkillCheckActions`
+     (scriptableDeviceBasePS.swift) offers the `ActionHacking` interaction only
+     while the hacking slot is ACTIVE, so a slot marked inactive takes "Jack in"
+     with it and leaves a box that cannot be used at all.
+
+     Write the fixed level instead. `GetSkillCheckContainer().GetHackingSlot()
+     .GetBaseSkill().TrySetRequiredLevel(3)` sets it to the lowest an attribute
+     goes in this game, which every build passes. It writes only while the level
+     is unset, so it is idempotent and safe to call every tick, and it is
+     persistent.
+
+     It also makes the grid easier: `ResolveDive` seeds the code grid's own
+     level from the same required level (`BumpNetrunnerMinigameLevel`).
+
+     **Draw the prompt again after changing the number.** A device builds what
+     it offers when the player ENTERS its interaction area, and the activation
+     event is what queues `DetermineInteractionState` (interactiveDevice.swift).
+     A save made standing at the box therefore comes back with the old number
+     already on screen, and a requirement written a tick later is not seen until
+     the player walks away and back. `RefreshInteraction(gamedeviceRequestType.
+     Direct, player)` is the game's own way to ask for the rebuild, it queues
+     the work rather than doing it in place, and one call on the tick the number
+     changes is enough.

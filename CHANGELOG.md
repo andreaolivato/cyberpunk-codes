@@ -7,6 +7,12 @@ each mod's Nexus Changelog tab.
 
 # Dead Ringer
 
+## 1.0.4 (2026-09-10)
+
+- **Fixed: the access point on the pachinko parlor wall asked for Intelligence
+  10.** It asks for 3 now, which every character has from the start. Reported
+  by JRainor, lmprezzion and MercCommander1.
+
 ## 1.0.3 (2026-09-08)
 
 - **Added: somewhere to wait out both of Char's waits.** A railing outside

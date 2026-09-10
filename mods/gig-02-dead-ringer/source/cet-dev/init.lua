@@ -1255,6 +1255,36 @@ registerForEvent("onDraw", function()
                 apTry("GetClearance", function() return ps:GetClearance() end)
                 apTry("IsLogicReady (entity)", function() return dev:IsLogicReady() end)
                 apTry("GetInteractionState", function() return ps:IsInteractive() end)
+                -- WHAT "JACK IN" ASKS FOR (2026-09-10). The requirement belongs
+                -- to the device rather than to the player, so it reads the same
+                -- on any save: 10 as the box was lifted, 3 once the gig has
+                -- written its own answer over it. The gig only writes while the
+                -- breach objective is up, so read this DURING the parlor leg.
+                local slot = nil
+                apTry("skill check: hacking slot", function()
+                    local c = ps:GetSkillCheckContainer()
+                    if c == nil then return "no container" end
+                    slot = c:GetHackingSlot()
+                    if slot == nil then return "no hacking slot" end
+                    return "present"
+                end)
+                if slot ~= nil then
+                    apTry("skill check: active", function() return slot:IsActive() end)
+                    apTry("skill check: difficulty", function() return slot:GetDifficulty() end)
+                    -- NO GAME INSTANCE FROM LUA. The redscript signature is
+                    -- `GetRequiredLevel(gi)`, and passing one here is refused
+                    -- with "requires 0 parameter(s)" (probe, 2026-09-10): the
+                    -- game hands that argument in itself.
+                    apTry("Intelligence asked for", function()
+                        return slot:GetBaseSkill():GetRequiredLevel()
+                    end)
+                    apTry("Intelligence V has", function()
+                        return slot:GetBaseSkill():GetPlayerSkill(Game.GetPlayer())
+                    end)
+                    apTry("skill check: passes", function()
+                        return slot:GetBaseSkill():Evaluate(Game.GetPlayer())
+                    end)
+                end
             end
         end
     end

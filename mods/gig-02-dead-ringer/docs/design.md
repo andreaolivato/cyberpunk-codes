@@ -223,6 +223,11 @@ access point the mod ships on the wall, with the daemon named from the mod's
 own records. The gig watches for the breach and nothing else. `backlog.md` 37
 has the recipe and the two shapes that render but do not work.
 
+**Any build can open it.** Jacking in is an Intelligence check, and the level
+an access point asks for is its own rather than the player's, so the box the gig
+lifted arrived asking for 10. It asks for 3, the lowest an attribute goes, so a
+character who never spent a point can still finish the leg.
+
 **The box stays on that wall** whether or not the gig is running, because it is
 part of the mod rather than something switched on for the leg. The mod page
 says so.

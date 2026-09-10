@@ -8778,6 +8778,22 @@ interaction only its own quest completes. Shipped that way the prompt reads
 just because every field in it came from the game. The node file was deleted
 on 2026-09-06 once the router had shipped.
 
+**The box also asks for Intelligence, and a lifted device brings its own
+number.** "Jack in" is a hacking skill check, and the level it demands is the
+device's own: the `attribute_checks` curve read at its power level against the
+check's difficulty, with no term in it that belongs to the player
+(`RPGManager.CheckDifficultyToStatValue`). The router lifted for gig 02 brought
+Wellsprings' number with it and asked for 10, so on 2026-09-10 three players
+reported the objective unfinishable at 3/10 and 5/10. The gig now writes a
+fixed requirement of 3 on the live controller state, next to where it names the
+minigame, and gotcha 110 has the shape. Played 2026-09-10: the prompt reads 3,
+the grid opens, and a save made standing at the box comes back with the new
+number drawn.
+
+Anyone following this recipe wants that line too, and wants to test it on a
+character with low attributes. The requirement does not vary with the player, so
+a build that can already pass it shows nothing.
+
 ## 38. Yoko's and Char's lines are mute after a RELOAD. SOLVED 2026-09-06
 
 **THE REPRODUCTION, 2026-09-06, and it changes the diagnosis.** One build,

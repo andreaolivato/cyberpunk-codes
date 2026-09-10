@@ -1797,6 +1797,25 @@ public class DeadRingerEncounter extends ScriptableSystem {
                     // device ships no stored state, so its minigame is named
                     // here, every tick the objective is up. Idempotent.
                     ps.CCGig02SetMinigame(t"minigame_v2.cc_g02_parlor");
+                    // ANY BUILD CAN OPEN THIS BOX (2026-09-10). "Jack in" is
+                    // an Intelligence check, and the number it asks for is the
+                    // device's, not the player's, so it does not come down on
+                    // a low-Intelligence save. Three players reported the box
+                    // asking for 10 and reading 3/10 or 5/10, which is the
+                    // objective refusing to open at all.
+                    //
+                    // THE PROMPT IS DRAWN ONCE, when the player enters the
+                    // box's area (interactiveDevice.swift: the activation
+                    // event is what queues DetermineInteractionState), so a
+                    // save made standing at the box already has the old number
+                    // on screen. The device is asked to draw it again on the
+                    // one tick the requirement changes.
+                    if ps.CCGig02EaseBreach() {
+                        let boxDevice: ref<AccessPoint> = dev as AccessPoint;
+                        if IsDefined(boxDevice) {
+                            boxDevice.CCGig02RefreshPrompt();
+                        }
+                    }
                     if ps.IsBreached() {
                         qs.SetFactStr("cc_g02_ap_breached", 1);
                         return;
@@ -2319,6 +2338,65 @@ public func CCLab_StripAll(npc: ref<GameObject>, keep: String) -> Int32 {
 public func CCGig02SetMinigame(id: TweakDBID) -> Void {
     if this.m_minigameDefinition != id {
         this.m_minigameDefinition = id;
+    }
+}
+
+// THE BOX ASKS FOR THE LOWEST INTELLIGENCE THERE IS. "Jack in" on an access
+// point is a hacking skill check, and three things follow from the decompiled
+// scripts:
+//
+//   - the check cannot simply be switched off. `PushSkillCheckActions`
+//     (scriptableDeviceBasePS.swift) offers `ActionHacking` only while the
+//     hacking slot is ACTIVE, so a slot marked inactive takes the prompt with
+//     it and the box becomes scenery.
+//   - the number it asks for is the DEVICE'S. `GameplaySkillCondition.
+//     GetRequiredLevel` reads `RPGManager.CheckDifficultyToStatValue`, which
+//     is the `attribute_checks` curve read at the device's own power level
+//     (from its content assignment) against the check's difficulty. Nothing
+//     in it is the player's, so it does not come down on a fresh save. The
+//     box the gig ships is the game's own street router lifted whole
+//     (backlog 37), and it brought that district's number with it: players
+//     reported 10.
+//   - the same function takes a fixed answer. `TrySetRequiredLevel` writes
+//     `m_requiredLevel` only while it is unset, which it is until something
+//     sets it (`SetProperties` leaves -1), so this is idempotent and survives
+//     a save. 3 is the lowest an attribute goes in this game, so every build
+//     passes it, including one that never spent a point.
+//
+// `ResolveDive` seeds the code grid's own level from the same required level
+// (`BumpNetrunnerMinigameLevel`), so the grid the player then plays is the
+// easy one rather than the district's.
+//
+// Returns true on the one call that changes the number, so the caller can have
+// the prompt drawn again.
+@addMethod(AccessPointControllerPS)
+public func CCGig02EaseBreach() -> Bool {
+    let container: ref<BaseSkillCheckContainer> = this.GetSkillCheckContainer();
+    if !IsDefined(container) {
+        return false;
+    }
+    let slot: ref<HackingSkillCheck> = container.GetHackingSlot();
+    if !IsDefined(slot) {
+        return false;
+    }
+    let check: ref<GameplaySkillCondition> = slot.GetBaseSkill();
+    if !IsDefined(check) {
+        return false;
+    }
+    let before: Int32 = check.GetRequiredLevel(this.GetGameInstance());
+    check.TrySetRequiredLevel(3);
+    return check.GetRequiredLevel(this.GetGameInstance()) != before;
+}
+
+// DRAW THE PROMPT AGAIN. `RefreshInteraction` is the game's own way of asking
+// a device to rebuild what it offers (interactiveDevice.swift), and it queues
+// the work rather than doing it in place, so calling it from the tick is safe.
+@addMethod(AccessPoint)
+public func CCGig02RefreshPrompt() -> Void {
+    let player: ref<GameObject> = GameInstance.GetPlayerSystem(this.GetGame())
+        .GetLocalPlayerMainGameObject();
+    if IsDefined(player) {
+        this.RefreshInteraction(gamedeviceRequestType.Direct, player);
     }
 }
 
