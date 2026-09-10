@@ -955,6 +955,12 @@ public class DeadRingerEncounter extends ScriptableSystem {
                 let ps: ref<AccessPointControllerPS> = dev.GetDevicePS() as AccessPointControllerPS;
                 if IsDefined(ps) {
                     ps.CCGig02SetMinigame(t"minigame_v2.cc_g02_parlor");
+                    if ps.CCGig02EaseBreach() {
+                        let boxDevice: ref<AccessPoint> = dev as AccessPoint;
+                        if IsDefined(boxDevice) {
+                            boxDevice.CCGig02RefreshPrompt();
+                        }
+                    }
                     if ps.IsBreached() {
                         qs.SetFactStr("cc_g02_ap_breached", 1);
                         return;
@@ -1257,6 +1263,35 @@ public func CCLab_StripAll(npc: ref<GameObject>, keep: String) -> Int32 {
 public func CCGig02SetMinigame(id: TweakDBID) -> Void {
     if this.m_minigameDefinition != id {
         this.m_minigameDefinition = id;
+    }
+}
+
+@addMethod(AccessPointControllerPS)
+public func CCGig02EaseBreach() -> Bool {
+    let container: ref<BaseSkillCheckContainer> = this.GetSkillCheckContainer();
+    if !IsDefined(container) {
+        return false;
+    }
+    let slot: ref<HackingSkillCheck> = container.GetHackingSlot();
+    if !IsDefined(slot) {
+        return false;
+    }
+    let check: ref<GameplaySkillCondition> = slot.GetBaseSkill();
+    if !IsDefined(check) {
+        return false;
+    }
+    let before: Int32 = check.GetRequiredLevel(this.GetGameInstance());
+    // lowest attribute
+    check.TrySetRequiredLevel(3);
+    return check.GetRequiredLevel(this.GetGameInstance()) != before;
+}
+
+@addMethod(AccessPoint)
+public func CCGig02RefreshPrompt() -> Void {
+    let player: ref<GameObject> = GameInstance.GetPlayerSystem(this.GetGame())
+        .GetLocalPlayerMainGameObject();
+    if IsDefined(player) {
+        this.RefreshInteraction(gamedeviceRequestType.Direct, player);
     }
 }
 
