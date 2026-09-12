@@ -308,8 +308,12 @@ public class DeadRingerEncounter extends ScriptableSystem {
     // tick for that reason: the community places bodies asynchronously, so a
     // single look on the frame the objective changed finds nobody. The quest
     // phase also has to have ACTIVATED the entry first.
-    private func FindInCommunity(entry: CName) -> EntityID {
+    //
+    // `aliveOnly` false also returns a corpse, a live body first if there is
+    // one. Placing wants a live man; the kill check wants whichever is there.
+    private func FindInCommunity(entry: CName, aliveOnly: Bool) -> EntityID {
         let none: EntityID;
+        let dead: EntityID;
         let game: GameInstance = this.GetGameInstance();
         let nref: NodeRef = CreateNodeRef(CCGig02Combat.CommunityRef());
         let root: GlobalNodeRef;
@@ -326,10 +330,18 @@ public class DeadRingerEncounter extends ScriptableSystem {
         let i: Int32 = 0;
         while i < ArraySize(objects) {
             let puppet: ref<ScriptedPuppet> = objects[i] as ScriptedPuppet;
-            if IsDefined(puppet) && ScriptedPuppet.IsAlive(puppet) {
-                return puppet.GetEntityID();
+            if IsDefined(puppet) {
+                if ScriptedPuppet.IsAlive(puppet) {
+                    return puppet.GetEntityID();
+                }
+                if !aliveOnly && !EntityID.IsDefined(dead) {
+                    dead = puppet.GetEntityID();
+                }
             }
             i += 1;
+        }
+        if EntityID.IsDefined(dead) {
+            return dead;
         }
         return none;
     }
@@ -1250,7 +1262,7 @@ public class DeadRingerEncounter extends ScriptableSystem {
             // is not loading, he is simply not found and this retries next
             // tick. `cc_g02_merc_placed` is what tells those apart in the dev
             // menu.
-            this.m_mercId = this.FindInCommunity(CCGig02Combat.MercEntry());
+            this.m_mercId = this.FindInCommunity(CCGig02Combat.MercEntry(), true);
             if EntityID.IsDefined(this.m_mercId) {
                 this.m_mercSpawned = true;
                 qs.SetFactStr("cc_g02_merc_placed", 1);
@@ -1851,15 +1863,36 @@ public class DeadRingerEncounter extends ScriptableSystem {
             // Toji back up alive on the street he was killed on. Gotcha 21: a
             // latch is exercised once by testing, always in the clean
             // direction, so this path has to be reasoned about at the desk.
+            //
+            // AND THEN CARRY ON, 2026-09-12. This used to `return`, which
+            // skipped everything below it for the rest of the session: the
+            // way out, the stand-down and the site clear. A save made after
+            // the kill and reloaded sat on "Leave the area" for ever, because
+            // nothing was left running to notice V leaving. The site counts
+            // as spawned with nobody in it; every lookup below tolerates that.
             if qs.GetFactStr("cc_g02_toji_dead") > 0 {
+                this.m_hitSpawned = true;
+            } else {
+                this.SpawnHit(game);
                 return;
             }
-            this.SpawnHit(game);
-            return;
         }
 
         let toji: ref<ScriptedPuppet> =
             GameInstance.FindEntityByID(game, this.m_tojiId) as ScriptedPuppet;
+
+        // THE BODY REMEMBERED AT THE TRIGGER MAY NOT BE THE BODY ON THE STEP
+        // (Nexus reports, 2026-09-10 to 2026-09-12). The id is taken once, in
+        // SpawnHit, and the game owns the body from then on: it can re-place
+        // him, or remove the corpse the moment he dies, and either leaves this
+        // holding an id that resolves to nothing. While the kill is still
+        // awaited, an id that does not resolve is looked up again from the
+        // community, alive or dead. The death event below is what actually
+        // catches the kill now; this keeps the fallback honest.
+        if !IsDefined(toji) && qs.GetFactStr("cc_g02_toji_dead") == 0 {
+            this.m_tojiId = this.FindInCommunity(CCGig02Combat.TojiEntry(), false);
+            toji = GameInstance.FindEntityByID(game, this.m_tojiId) as ScriptedPuppet;
+        }
 
         // SEEN, ON THE WAY IN OR THE WAY OUT (playtest 2026-09-05: killed
         // Toji unseen, seen while leaving, and got the quiet ending). This
@@ -2010,6 +2043,41 @@ public class DeadRingerEncounter extends ScriptableSystem {
         }
     }
 
+    // TOJI IS DEAD, SAID BY HIS OWN BODY. Called from the death event wrapper
+    // at the bottom of this file (marker: CCGig02TojiDeathWrap), which fires
+    // for any weapon, from any range, whether or not the site trigger has
+    // fired yet, and before the game does anything with the corpse. The tick's
+    // own check in Hit() stays as the fallback.
+    //
+    // Three Nexus reports in two days (2026-09-10 to 2026-09-12) had the
+    // objective never move after the kill: a sniper from the street above, a
+    // quickhack from range, a shot from the roofs behind him. Each defeated
+    // the tick a different way, and this catches all of them at the source.
+    //
+    // ONLY ONCE THE ORDER HAS BEEN GIVEN. His entry is switched on when the
+    // office conversation ends, so nothing before `wakako_met` can be him
+    // except a body the dev menu's look lab spawned from his record, and
+    // shooting one of those must not advance the gig.
+    //
+    // THE SITE COUNTS AS REACHED. A kill from outside the trigger's 30 m
+    // would otherwise leave the objective on "Go to the stairs" until V
+    // walked in, with the man already dead. `dead` is written before
+    // `reached`, gotcha 17: the graph reads the answer the moment it passes
+    // the question, so the answer has to be there first.
+    public static func TojiDied(game: GameInstance) -> Void {
+        let qs: ref<QuestsSystem> = GameInstance.GetQuestsSystem(game);
+        if !IsDefined(qs)
+            || qs.GetFactStr("cc_g02_wakako_met") == 0
+            || qs.GetFactStr("cc_g02_toji_dead") > 0 {
+            return;
+        }
+        qs.SetFactStr("cc_g02_toji_met", 1);
+        qs.SetFactStr("cc_g02_toji_dead", 1);
+        if qs.GetFactStr("cc_g02_hit_reached") == 0 {
+            qs.SetFactStr("cc_g02_hit_reached", 1);
+        }
+    }
+
     private func HostileToV(game: GameInstance, player: ref<PlayerPuppet>,
                             toji: ref<ScriptedPuppet>) -> Void {
         let mine: ref<AttitudeAgent> = player.GetAttitudeAgent();
@@ -2038,11 +2106,30 @@ public class DeadRingerEncounter extends ScriptableSystem {
         // Not spawned here: he has a line, so he is a scene actor, and a scene
         // actor that also has to be killed comes from the community. The Claws
         // around him have no lines and stay a script spawn.
-        this.m_tojiId = this.FindInCommunity(CCGig02Combat.TojiEntry());
+        this.m_tojiId = this.FindInCommunity(CCGig02Combat.TojiEntry(), true);
         if !EntityID.IsDefined(this.m_tojiId) {
-            // Nowhere the navmesh will take him this tick. Try again on the
-            // next one rather than marking the site spawned with no target in
-            // it, which would be a hit with nobody to kill.
+            // ALREADY DEAD WHEN THE TRIGGER FIRED (Nexus reports 2026-09-10
+            // to 2026-09-12: a quickhack from range, a shot from a roof).
+            // The trigger only fires within 30 m of either end of the stairs
+            // and 25 m above them, and he is on his step from the moment
+            // Wakako gives the order, so a kill from outside it happened
+            // before this ever looked. Searching for a LIVE man every tick
+            // then never ends, and a reload runs the same search. The death
+            // event below now writes the fact at the kill itself; this is
+            // the fallback for a save made before that build, and it places
+            // no Claws, because there is nobody left for them to guard.
+            let qs: ref<QuestsSystem> = GameInstance.GetQuestsSystem(game);
+            let corpse: EntityID = this.FindInCommunity(CCGig02Combat.TojiEntry(), false);
+            if EntityID.IsDefined(corpse) {
+                this.m_tojiId = corpse;
+                qs.SetFactStr("cc_g02_toji_placed", 1);
+                qs.SetFactStr("cc_g02_toji_met", 1);
+                qs.SetFactStr("cc_g02_toji_dead", 1);
+                this.m_hitSpawned = true;
+            }
+            // Otherwise nowhere the navmesh will take him this tick. Try
+            // again on the next one rather than marking the site spawned
+            // with no target in it, which would be a hit with nobody to kill.
             return;
         }
         GameInstance.GetQuestsSystem(game).SetFactStr("cc_g02_toji_placed", 1);
@@ -2430,6 +2517,22 @@ protected cb func OnHit(evt: ref<gameHitEvent>) -> Bool {
     let r: Bool = wrappedMethod(evt);
     if Equals(this.GetRecordID(), CCGig02Combat.MercRecord()) {
         DeadRingerEncounter.MercWasHit(this.GetGame());
+    }
+    return r;
+}
+
+// TOJI'S DEATH, SEEN FROM HIS OWN BODY (2026-09-12). The same shape as the
+// merc's hit above: the game's own death event, filtered by record so it
+// costs a comparison on any other body. It fires whatever killed him and
+// wherever V is standing, and it fires before the corpse can be re-placed,
+// removed or replaced by a loot bag, which is what the once-a-second check
+// in Hit() needed and did not always get. DeadRingerEncounter.TojiDied
+// carries the reasoning. Marker: CCGig02TojiDeathWrap.
+@wrapMethod(NPCPuppet)
+protected cb func OnDeath(evt: ref<gameDeathEvent>) -> Bool {
+    let r: Bool = wrappedMethod(evt);
+    if Equals(this.GetRecordID(), CCGig02Combat.TojiRecord()) {
+        DeadRingerEncounter.TojiDied(this.GetGame());
     }
     return r;
 }

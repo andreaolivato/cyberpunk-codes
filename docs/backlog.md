@@ -9513,3 +9513,79 @@ outside the afterlife safe area". So the check agrees with the ground, and the
 signature that made this look strong belongs to the friendly attitude group
 instead: an NPC the game will not lock on to reads, from behind the crosshair,
 much like a weapon that will not come out.
+
+## 45. A kill three players made and the gig did not see. SOLVED 2026-09-12
+
+Three Nexus reports in two days on gig 02, all the same: Toji dead, the
+objective still "Kill Toji". One from a roof behind him with a sniper, one
+with a quickhack from range, one from the street above the staircase. The
+development route (walk to the pin at the top, sneak down, shoot him with a
+gun that leaves a body) had never shown it. Reproduced in playtest on
+2026-09-12 by killing him from the roofs behind his step.
+
+**How the kill was noticed, and the three things it needed.** Once a second,
+the encounter script found the body it had been told about and asked whether
+it was dead. That needed, all at once:
+
+1. the site trigger already fired: the script only started looking once V had
+   been within 30 m horizontally of either end of the stairs and no more than
+   25 m above it, and Toji is on his step from the moment Wakako gives the
+   order, a district away;
+2. the body it remembered still being the body on the step: the id was taken
+   once, when the trigger fired, and never looked up again;
+3. that body still existing a second after the shot.
+
+**Three ways a player defeated it.** A kill from outside the trigger failed
+the first, and could never recover: when V then walked in, the objective
+became "Kill Toji" on a dead man, and the script went looking for a LIVE Toji
+to remember, found none, and kept looking every second for the rest of the
+save. A reload ran the same search. The quickhack report is this exactly:
+"the same distance twice, a different angle", one approach crossing the
+trigger and the other not. The rooftop report is the same hole. The
+street-above report found only the loot bag where the body had been, which
+is what the game leaves when it has removed a corpse, so the second look
+found nothing to call dead; whether the weapon or the game's own cleanup
+removed it, the once-a-second check needed it and did not get it.
+
+**A fourth, found at the desk while reading the first three.** A save made
+after the kill and reloaded stopped the script early on every tick, at a
+guard meant to stop it standing a dead Toji back up. The guard returned
+before the code that notices V leaving and the code that lets the cast go,
+so "Leave the area" never closed. Gotcha 21's shape: a latch a playtest only
+ever exercises in the clean direction.
+
+**What changed.** The kill is reported by Toji's own body now: the game's
+death event, wrapped on `NPCPuppet.OnDeath` and filtered on his character
+record, the same shape as the merc's hit already used in this gig. It fires
+for any weapon, at any range, before or after the trigger, and before the
+game does anything with the corpse. It also marks the site reached, so a
+kill from outside the trigger moves the objective on without V walking in,
+and places no guards on the stairs, since there is nobody left for them to
+guard. The polling check stays as the fallback and looks the body up again
+if the id it holds resolves to nothing; a Toji already dead when the trigger
+fires is accepted as dead rather than searched for alive; and the reload
+guard falls through instead of returning. Gotcha 111 carries the general
+rule.
+
+**A knockout is not a kill, and the bounty does not say which.** Playtest,
+2026-09-12: System Collapse drops him, the NCPD bounty pays its 500 eddies,
+the objective stays. Correct on both counts. System Collapse is the game's
+non-lethal quickhack, and the game pays a bounty on a defeat exactly as on a
+death (`ScriptedPuppet.HandleDefeated` rewards the killer with
+`gameKillType.Defeat`). Short Circuit, Contagion, Synapse Burnout and
+Detonate Grenade are damage and kill only if the damage is enough, and he is
+elite-rank; Suicide is the one quickhack that always kills. So a player who
+drops him with a damage hack and sees the money land will believe the job
+done. **Open:** an on-screen line when he is down and breathing, the way the
+"spotted" line works, so the player is told what the game will not. Deferred
+on 2026-09-12; the story asks for a death, and counting a knockout would make
+Wakako's closing call a lie.
+
+**The workaround for a save stuck on 1.0.4**, from the CET console, then walk
+away from the stairs:
+
+```
+Game.GetQuestsSystem():SetFactStr("cc_g02_toji_dead", 1)
+Game.GetQuestsSystem():SetFactStr("cc_g02_exfil_done", 1)
+Game.GetQuestsSystem():SetFactStr("cc_g02_site_clear", 1)
+```

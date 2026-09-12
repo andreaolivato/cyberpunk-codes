@@ -24,9 +24,28 @@ StatusEffectHelper.ApplyStatusEffect(player, t"GameplayRestriction.NoDriving");
 StatusEffectHelper.RemoveStatusEffect(player, t"GameplayRestriction.NoDriving");
 ```
 
-Fast travel is the exception, and it is the one this project ships. It has its
-own named-lock API, and a named lock is reference counted by name, so two
-holders cannot clear each other's:
+Fast travel is the exception. It is not applied as a status effect at all: the
+game keeps a list of named reasons fast travel is unavailable, and a mod adds
+one to that list and removes it again by the same name.
+
+`fastTravelSystem.swift` keeps a persistent array of
+`FastTravelSystemLock { lockReason, linkedStatusEffectID }`:
+
+- `IsFastTravelEnabled()` is `ArraySize(m_fastTravelLocks) <= 0`.
+- `AddFastTravelLock` returns early if a lock with that name is already in the
+  list, so a second call does nothing.
+- `RemoveFastTravelLock` erases the one entry matching the name, so two holders
+  cannot clear each other's.
+- **`OnRestored` calls `EvaluateFastTravelLocksOnRestore`, which drops any lock
+  whose `linkedStatusEffectID` the player no longer has. Since nothing applies
+  that status effect to the player, OUR LOCK IS DROPPED ON EVERY LOAD.** That is
+  what makes a forgotten lock impossible, and it also means a lock that should
+  still be held has to be re-added on the first pass of a session. Gig 01 does
+  that already, because `ApplyLock` derives `want` from facts every tick rather
+  than remembering it, but nothing here said so. Passing the status
+  effect id as the third argument therefore makes a stale lock clean itself up
+  on load, which is the answer to the reload trap below for fast travel
+  specifically. Always pass it.
 
 ```swift
 FastTravelSystem.AddFastTravelLock(n"cc_g01_call", game,
@@ -37,7 +56,7 @@ Only three records carry the `restrictionName` field that pairs with that API:
 `BlockFastTravel`, `BlockFastTravelQuest` and `PhoneCall`. Everything else is
 applied as a plain status effect, with no name attached and no reference count.
 
-## The hazard, before the list
+## A forgotten restriction is permanent
 
 A status effect with `savable` set is written into the save file. A restriction
 this mod applies and then forgets it is holding therefore survives a reload, and
@@ -67,9 +86,13 @@ GameplayRestriction.cc_g01_no_vehicle:
 
 **Measured 2026-08-21, on all three things that could have gone wrong.**
 
-- **The clone still blocks.** The game's gate reads a gameplay tag rather than a
-  record id, so a clone inherits the behaviour. This was the half that could
-  have made the whole approach pointless.
+- **The clone still blocks.** The gate reads a gameplay TAG rather than a record
+  id, so a clone inherits the behaviour through `gameplayTags`. This was the
+  half that could have made the whole approach pointless. The tag is
+  `n"VehicleNoInteraction"`, read with
+  `StatusEffectSystem.ObjectHasStatusEffectWithTag` in two places:
+  `DisableAllVehicleInteractionsNotEnabledPrereq` (`prereqs.swift`), which takes
+  the prompt away, and the vehicle wheel in `quickSlotsManager.swift`.
 - **It is not written to the save.** Applied, saved, quit to desktop,
   relaunched, loaded: gone, and V could drive.
 - **Every line applied.** The TweakXL log is clean, and the counts moved by
@@ -106,7 +129,7 @@ restriction should also have a hard time cap and a way to force it off.
 | `VehicleNoInteraction` stops V getting into a vehicle | Measured in game 2026-08-21 |
 | `NoDriving` and `VehicleNoSummoning` apply and remove cleanly, and are not the ones that block entry | Measured in game 2026-08-21 |
 | `StatusEffectHelper.ApplyStatusEffect` / `RemoveStatusEffect` is the working route | Measured in game 2026-08-21 |
-| `DoStatusEffectsAllowMounting` is the game's own gate on getting into a vehicle | Found in the 2.31 script bundle, on `gamevehicleVehicleMountableComponent` |
+| The gate is the gameplay tag `VehicleNoInteraction`, not the record id | Read in `prereqs.swift` and `quickSlotsManager.swift` |
 | `VehicleNoInteraction` is savable, and does not time out | Measured 2026-08-21: applied, saved, quit to desktop, relaunched, loaded, still blocking |
 | A restriction blocks silently, with no refusal message | Measured 2026-08-21 on all three vehicle records |
 | Whether the other 97 are savable | **Not measured.** Assume they are until one is checked |
@@ -178,11 +201,12 @@ has to carry your own words, telling the player what to do rather than that they
 cannot, this is the wrong tool and one of the first two slots is what is left.
 
 
-`VehicleBlockExit` is the mirror of it and blocks leaving, which is a different
-job. The underlying gate is `DoStatusEffectsAllowMounting(GameObject)`, which
-reads the player's status effects, and `BlockMountVehicle` exists as a name in
-the script bundle with no matching TweakDB record, which is the shape of a
-gameplay tag rather than a record id.
+`VehicleBlockExit` reads as the mirror of it, blocking exit, and that is
+inferred from the name rather than measured.
+
+**`DoStatusEffectsAllowMounting` looks like the gate and is not.** It checks
+`BaseStatusEffect.VehicleKnockdown` and `BaseStatusEffect.BikeKnockdown`, and
+nothing else. The gate for this family is the gameplay tag named above.
 
 ### Phone
 

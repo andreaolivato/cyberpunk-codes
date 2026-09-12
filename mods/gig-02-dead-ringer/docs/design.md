@@ -256,7 +256,14 @@ Wakako makes and which fee she pays. It never ends the gig. A hard fail that
 fires wrongly ends a playthrough with no recourse.
 
 **Nobody speaks at the kill.** V reaches him and kills him. The quest waits on
-his death and on nothing else.
+his death and on nothing else, and his own body reports it the moment it
+happens: from any range, with any weapon, whether or not V has come near the
+stairs yet. A kill from a roof or with a quickhack from the street moves the
+objective on without a walk to the top, and no guards are placed for a man
+already dead. A knockout is not a kill: System Collapse, a blunt weapon or a
+choke leave him breathing, and the objective stays open until he is dead. The
+game pays its NCPD bounty on either, so the money landing does not mean he is
+gone.
 
 **Getting out is its own objective, and the area is drawn on the minimap.** The
 shape is the hull of the walked ground, the stairs, the trash pile and the

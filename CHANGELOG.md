@@ -7,6 +7,14 @@ each mod's Nexus Changelog tab.
 
 # Dead Ringer
 
+## 1.0.5 (2026-09-12)
+
+- **Fixed: killing Toji from a roof, from the street above him or with a
+  quickhack from range could leave the objective on "Kill Toji" for good.**
+  Reloading did not clear it. Reported by HardyPilgrim, LostAcc21 and 3DTrees.
+- **Fixed: loading a save made after Toji's death left the gig unable to
+  finish.** It sat on "Leave the area" however far you walked.
+
 ## 1.0.4 (2026-09-10)
 
 - **Fixed: the access point on the pachinko parlor wall asked for Intelligence

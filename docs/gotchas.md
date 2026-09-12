@@ -2671,3 +2671,38 @@ Never renumber. Append.
      Direct, player)` is the game's own way to ask for the rebuild, it queues
      the work rather than doing it in place, and one call on the tick the number
      changes is enough.
+
+111. **A death polled against a remembered body needs the body to exist; the
+     death event on the body itself needs nothing.**
+
+     The obvious way to wait for an NPC to die is a tick: hold the entity id,
+     `FindEntityByID` it, `!ScriptedPuppet.IsAlive`. Gig 01 and gig 02 both
+     shipped that, and gig 02 lost three players to it in two days (backlog
+     45). The test needs three things at once: the id was captured after the
+     body existed, the body the id names is still the body the player is
+     looking at, and it is still there when the tick runs. A kill from before
+     the script started looking, a body the game re-placed, or a corpse the
+     game removed at once each leave the poll holding an id that resolves to
+     nothing, and `IsDefined(x) && !IsAlive(x)` is false for nothing.
+
+     Wrap the death on the body instead:
+
+     ```
+     @wrapMethod(NPCPuppet)
+     protected cb func OnDeath(evt: ref<gameDeathEvent>) -> Bool {
+         let r: Bool = wrappedMethod(evt);
+         if Equals(this.GetRecordID(), t"Character.my_target") { /* set the fact */ }
+         return r;
+     }
+     ```
+
+     One record comparison on any other death. It fires whatever killed him
+     and wherever the player stands, and it fires before the corpse can be
+     touched. Keep the poll if a save from before the wrapper existed has to
+     be caught up, and make it accept a corpse as an answer rather than
+     search for a live man.
+
+     **`OnDeath` is a death.** A knockout is `OnDefeated`, and a knocked-out
+     NPC is alive to `IsAlive` as well, so a "kill" objective correctly stays
+     open on one. The game pays its NCPD bounty on either, so the money
+     landing is not evidence of which happened.
