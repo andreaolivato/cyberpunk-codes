@@ -123,8 +123,9 @@ public class DeadRingerEncounter extends ScriptableSystem {
         return none;
     }
 
-    private func FindInCommunity(entry: CName) -> EntityID {
+    private func FindInCommunity(entry: CName, aliveOnly: Bool) -> EntityID {
         let none: EntityID;
+        let dead: EntityID;
         let game: GameInstance = this.GetGameInstance();
         let nref: NodeRef = CreateNodeRef(CCGig02Combat.CommunityRef());
         let root: GlobalNodeRef;
@@ -138,10 +139,18 @@ public class DeadRingerEncounter extends ScriptableSystem {
         let i: Int32 = 0;
         while i < ArraySize(objects) {
             let puppet: ref<ScriptedPuppet> = objects[i] as ScriptedPuppet;
-            if IsDefined(puppet) && ScriptedPuppet.IsAlive(puppet) {
-                return puppet.GetEntityID();
+            if IsDefined(puppet) {
+                if ScriptedPuppet.IsAlive(puppet) {
+                    return puppet.GetEntityID();
+                }
+                if !aliveOnly && !EntityID.IsDefined(dead) {
+                    dead = puppet.GetEntityID();
+                }
             }
             i += 1;
+        }
+        if EntityID.IsDefined(dead) {
+            return dead;
         }
         return none;
     }
@@ -681,7 +690,7 @@ public class DeadRingerEncounter extends ScriptableSystem {
         }
 
         if !this.m_mercSpawned {
-            this.m_mercId = this.FindInCommunity(CCGig02Combat.MercEntry());
+            this.m_mercId = this.FindInCommunity(CCGig02Combat.MercEntry(), true);
             if EntityID.IsDefined(this.m_mercId) {
                 this.m_mercSpawned = true;
                 qs.SetFactStr("cc_g02_merc_placed", 1);
@@ -979,14 +988,20 @@ public class DeadRingerEncounter extends ScriptableSystem {
 
         if !this.m_hitSpawned {
             if qs.GetFactStr("cc_g02_toji_dead") > 0 {
+                this.m_hitSpawned = true;
+            } else {
+                this.SpawnHit(game);
                 return;
             }
-            this.SpawnHit(game);
-            return;
         }
 
         let toji: ref<ScriptedPuppet> =
             GameInstance.FindEntityByID(game, this.m_tojiId) as ScriptedPuppet;
+
+        if !IsDefined(toji) && qs.GetFactStr("cc_g02_toji_dead") == 0 {
+            this.m_tojiId = this.FindInCommunity(CCGig02Combat.TojiEntry(), false);
+            toji = GameInstance.FindEntityByID(game, this.m_tojiId) as ScriptedPuppet;
+        }
 
         if qs.GetFactStr("cc_g02_hit_armed") > 0
             && qs.GetFactStr("cc_g02_spotted") == 0
@@ -1039,6 +1054,20 @@ public class DeadRingerEncounter extends ScriptableSystem {
         }
     }
 
+    public static func TojiDied(game: GameInstance) -> Void {
+        let qs: ref<QuestsSystem> = GameInstance.GetQuestsSystem(game);
+        if !IsDefined(qs)
+            || qs.GetFactStr("cc_g02_wakako_met") == 0
+            || qs.GetFactStr("cc_g02_toji_dead") > 0 {
+            return;
+        }
+        qs.SetFactStr("cc_g02_toji_met", 1);
+        qs.SetFactStr("cc_g02_toji_dead", 1);
+        if qs.GetFactStr("cc_g02_hit_reached") == 0 {
+            qs.SetFactStr("cc_g02_hit_reached", 1);
+        }
+    }
+
     private func HostileToV(game: GameInstance, player: ref<PlayerPuppet>,
                             toji: ref<ScriptedPuppet>) -> Void {
         let mine: ref<AttitudeAgent> = player.GetAttitudeAgent();
@@ -1060,8 +1089,17 @@ public class DeadRingerEncounter extends ScriptableSystem {
     }
 
     private func SpawnHit(game: GameInstance) -> Void {
-        this.m_tojiId = this.FindInCommunity(CCGig02Combat.TojiEntry());
+        this.m_tojiId = this.FindInCommunity(CCGig02Combat.TojiEntry(), true);
         if !EntityID.IsDefined(this.m_tojiId) {
+            let qs: ref<QuestsSystem> = GameInstance.GetQuestsSystem(game);
+            let corpse: EntityID = this.FindInCommunity(CCGig02Combat.TojiEntry(), false);
+            if EntityID.IsDefined(corpse) {
+                this.m_tojiId = corpse;
+                qs.SetFactStr("cc_g02_toji_placed", 1);
+                qs.SetFactStr("cc_g02_toji_met", 1);
+                qs.SetFactStr("cc_g02_toji_dead", 1);
+                this.m_hitSpawned = true;
+            }
             return;
         }
         GameInstance.GetQuestsSystem(game).SetFactStr("cc_g02_toji_placed", 1);
@@ -1315,6 +1353,15 @@ protected cb func OnHit(evt: ref<gameHitEvent>) -> Bool {
     let r: Bool = wrappedMethod(evt);
     if Equals(this.GetRecordID(), CCGig02Combat.MercRecord()) {
         DeadRingerEncounter.MercWasHit(this.GetGame());
+    }
+    return r;
+}
+
+@wrapMethod(NPCPuppet)
+protected cb func OnDeath(evt: ref<gameDeathEvent>) -> Bool {
+    let r: Bool = wrappedMethod(evt);
+    if Equals(this.GetRecordID(), CCGig02Combat.TojiRecord()) {
+        DeadRingerEncounter.TojiDied(this.GetGame());
     }
     return r;
 }
