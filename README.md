@@ -10,3 +10,4 @@ My mods on Nexus Mods:
 
 - [Negative Balance](https://www.nexusmods.com/cyberpunk2077/mods/32694)
 - [Dead Ringer](https://www.nexusmods.com/cyberpunk2077/mods/33571)
+- [Acceptable Loss](https://www.nexusmods.com/cyberpunk2077/mods/33959)

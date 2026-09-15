@@ -1,0 +1,11 @@
+QuestRewards.sts_cc_g03_qty_completion:
+  $base: QuestRewards.sts_wbr_hil_01_completion_inline5
+  # half of 25k
+  value: 12500
+QuestRewards.sts_cc_g03_money_completion:
+  $base: QuestRewards.sts_wbr_hil_01_completion_inline4
+  quantityModifiers: [ QuestRewards.sts_cc_g03_qty_completion ]
+QuestRewards.sts_cc_g03_completion:
+  $base: QuestRewards.sts_wbr_hil_01_completion
+  name: sts_cc_g03_completion
+  currencyPackage: [ QuestRewards.sts_cc_g03_money_completion ]
