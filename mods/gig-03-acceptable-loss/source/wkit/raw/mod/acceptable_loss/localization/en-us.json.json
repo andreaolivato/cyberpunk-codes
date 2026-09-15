@@ -1,0 +1,376 @@
+{
+  "Header": {
+    "WolvenKitVersion": "8.20.0",
+    "WKitJsonVersion": "0.0.9",
+    "GameVersion": 2310,
+    "DataType": "CR2W",
+    "ArchiveFileName": "en-us.json"
+  },
+  "Data": {
+    "Version": 195,
+    "BuildVersion": 0,
+    "RootChunk": {
+      "$type": "JsonResource",
+      "cookingPlatform": "PLATFORM_PC",
+      "root": {
+        "HandleId": "0",
+        "Data": {
+          "$type": "localizationPersistenceOnScreenEntries",
+          "entries": [
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Dino Dinovic",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-dino-name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Dino",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-dino-speaker"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "On the down-low",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-dino-conv-title"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Yo, V. Got a gig for ya \u2013 corpo client, fat payout, and it's gotta stay on the down-low. Gimme a call, I'll fill you in.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-msg-01"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Call Dino.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-ch-01a"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Gig type: Thievery\nObjective: Steal Militech's combat evaluation data\nLocation: Militech compound past the Tango Tors motel, Badlands\nDetails:\n\nSo I got this corpo client \u2013 no names, and trust me, you don't wanna know \u2013 with a serious hard-on for Militech's combat evaluation data. Some training site out in the Badlands, middle of fuckin' nowhere. Thing is, that data never leaves their local net, so you're gonna have to get inside the wire and pull it off one of their terminals yourself.\n\nHere's the deal: client's paying for a clean pull. No trace, no bodies, nothing that says anyone was ever inside. Militech don't do second chances, and neither does my client.\n\nYou bring it to me and nobody else. Shoot me a word when it's done.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-msg-02"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Data was rigged. Got made mid-pull and half of Militech came down on me. Managed to get out \u2013 with the data.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-ch-02a"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "But Dino, this is bad. Militech's using mercs as live targets for their training exercises. And they're zeroing a lot of them.\nWho's your client?",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-ch-03a"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Who cares who. They want the data to replicate the results \u2013 that's all I know, and all I wanna know.\nSwing by the club. Bring it in person.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-msg-05"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "On my way.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-ch-04a"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Not this one, Dino. I'm wiping it.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-ch-04b"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "You WIPED it?! The fuck's wrong with you, V?!\nClient fronted 5,000 eddies for this. That's coming outta YOUR account, not mine.\nGet your ass over here. Now.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-msg-06"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Acceptable Loss",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-gig-title"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Gig type: Thievery\nObjective: Steal Militech's combat evaluation data\nLocation: Militech compound past the Tango Tors motel, Badlands\nDetails:\n\nSo I got this corpo client \u2013 no names, and trust me, you don't wanna know \u2013 with a serious hard-on for Militech's combat evaluation data. Some training site out in the Badlands, middle of fuckin' nowhere. Thing is, that data never leaves their local net, so you're gonna have to get inside the wire and pull it off one of their terminals yourself.\n\nHere's the deal: client's paying for a clean pull. No trace, no bodies, nothing that says anyone was ever inside. Militech don't do second chances, and neither does my client.\n\nYou bring it to me and nobody else. Shoot me a word when it's done.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-gig-brief"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Get to the Militech site in the Badlands",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-obj-travel"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Get inside the compound",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-obj-enter"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Find a terminal",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-obj-terminal"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Read the files on the terminal",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-obj-data"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Find the mission log in the security room",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-obj-shard"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Read the mission log",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-obj-read"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Get clear of the compound",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-obj-escape"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Leave the Badlands to escape Militech",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-obj-badlands"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Get out of the vehicle",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-obj-dismount"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Message Dino about what happened",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-obj-brief"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Listen to Johnny",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-obj-johnny"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Take the data to Dino, in person",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-obj-dino"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Go and face Dino, in person",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-obj-face"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Leave Dino's bar",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-obj-leave"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Militech training site",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-pin-pin-travel"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Terminal",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-pin-pin-terminal"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Security room",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-pin-pin-shard"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Dino's bar",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-pin-pin-dino"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Dino's bar",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-pin-pin-face"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "The way out",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-pin-pin-leave"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Militech mission log",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-shard-item"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Taken from the security room of a Militech training site in the Badlands.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-shard-item-desc"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "EXERCISE BLOCK BLAND-07 // CONTRACTOR LEDGER",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-shard-title"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "PERFORMANCE ANALYTICS // TRAINING OVERSIGHT\nEXERCISE BLOCK: BLAND-07\nLIVE FIRE AUTHORIZATION: CONFIRMED\n\nOpposition: external contractors (mercenaries).\nFriendly units: Militech trainees.\n\nNeutralization time: 00:47 avg.\nKill confirmation rate: 94%.\nContractor attrition: 68%. Personnel attrition: 2%.\n\nVariance remains within parameters.\nRecommendation: increase contractor aggression modifiers to improve realism.\n\nContractor source: licensed fixer channels.\n\nContractor fatalities are not incidents. They are performance outcomes.\nDo not notify next-of-kin. Do not file external reports.\n\nAcceptable loss threshold: up to 15 contractor units per cycle.\nLosses remain acceptable given dataset value.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-shard-body"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "TRAINING OPERATIONS",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-file-folder"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "MILITECH // BLAND-07",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-file-owner"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "2077",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-file-date"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "LIVE EXERCISE SUMMARY",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-file-1-title"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "From: Training Operations\nTo: Facility Command\n\nExercise Block: BLAND-07\nStatus: ACTIVE\nLive Fire Authorization: CONFIRMED\n\nOpposition: external contractors (mercenaries).\nFriendly units: Militech trainees.\n\nMetrics:\n  Neutralization time: 00:47 avg.\n  Kill confirmation rate: 94%.\n  Data quality: HIGH.\n\nReminder: results remain on the local network.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-file-1-body"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "ATTRITION REPORT",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-file-2-title"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "From: Performance Analytics\nTo: Training Oversight\n\nContractor attrition rate: 68%.\nPersonnel attrition rate: 2%.\n\nVariance remains within parameters.\n\nRecommendation: increase contractor aggression modifiers to improve realism.\n\nContractor source: licensed fixer channels.\n\nLosses remain acceptable given dataset value.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-file-2-body"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "ACCEPTABLE VARIANCE",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-file-3-title"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "From: Oversight Division\nTo: Facility Command\n\nReminder:\n\nContractor fatalities are not incidents. They are performance outcomes.\n\nDo not notify next-of-kin. Do not file external reports.\n\nAcceptable Loss Threshold: up to 15 contractor units per cycle.\n\nTraining integrity takes priority.\n\nPer policy, the cycle ledger is not held on this network. The current block ledger is on physical media in the security room.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-file-3-body"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "MILITECH DETECTED A BREACH. REINFORCEMENTS INCOMING",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-traced-banner"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "MISSION LOG DESTROYED",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-destroyed-banner"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Acceptable Loss is waiting: Dino Dinovic has to have been in touch first. He gets in contact on his own once you have spent some time in City Center.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g03-blocked-no-dino"
+            }
+          ]
+        }
+      }
+    },
+    "EmbeddedFiles": []
+  }
+}

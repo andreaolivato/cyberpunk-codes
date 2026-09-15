@@ -81,7 +81,10 @@ foreach ($src in $jsonSources) {
 #     form. Only .wem so far (Wwise audio, written by tools\gig01\gen_voice.py) - a
 #     whitelist rather than "everything that is not .json", so a stray file in
 #     raw\ can never end up shipped by accident.
-$binaryExts = @(".wem")
+# .xbm joined on 2026-09-11: a texture imported from a PNG by tools\gig03\gen_photo.py
+# for the picture a message carries. Same rule as .wem: a build product that
+# ships and is committed.
+$binaryExts = @(".wem", ".xbm")
 $binaries = Get-ChildItem $raw -Recurse -File | Where-Object { $binaryExts -contains $_.Extension.ToLower() }
 foreach ($src in $binaries) {
     $rel = $src.FullName.Substring($raw.Length + 1)

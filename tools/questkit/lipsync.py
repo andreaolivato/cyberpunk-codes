@@ -286,8 +286,18 @@ def _exact(catalogue, rx, wanted, exact_names):
     for depot, entry in catalogue.items():
         if not rx.search(depot):
             continue
-        have = {n.upper(): sec for n, sec in entry['anims']}
-        names = {k: n for k, n in exact_names.items() if n.upper() in have}
+        # THE SET'S OWN SPELLING WINS, not the caller's. The animation name a
+        # line ships is looked up case-sensitively at run time, so a name that
+        # matches only case-insensitively casts nothing and the mouth does not
+        # move. `_exact_names` builds `f_<stringId hex>` and the case of that
+        # hex is a format-string choice in each gig's generator, which is not
+        # something a pick should depend on. Gig 03 shipped six lines spelled
+        # lowercase against an uppercase set and every one of them was silent:
+        # playtest, 2026-09-10, "the phrase 'you'll steal it for me' doesn't
+        # have lipsync". See gotcha 114.
+        have = {n.upper(): (n, sec) for n, sec in entry['anims']}
+        names = {k: have[n.upper()][0]
+                 for k, n in exact_names.items() if n.upper() in have}
         if not names:
             continue
         spare = [(n, sec) for n, sec in entry['anims']

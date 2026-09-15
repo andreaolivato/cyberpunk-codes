@@ -1,0 +1,199 @@
+# Acceptable Loss: what the game is told to load, and why each key is here.
+#
+# THE ONLY HAND-AUTHORED FILE IN THIS MOD. Everything it names is written by a
+# generator under tools/gig03/. Gig 01's manifest carries the full account of
+# each key; the comments here record only what is specific to this gig.
+#
+# IT STARTS SMALL ON PURPOSE. docs/new-gig.md section 4: a gig that appears in
+# the log and closes proves the journal, the quest phase and this file agree, so
+# every later problem is a local one. Scene subtitles, voice, lipsync and the
+# world sectors are added to this file as they are built, not before, because a
+# key naming a file that does not exist stops the whole archive loading.
+
+journal:
+  - mod\acceptable_loss\journal\gig03.journal
+localization:
+  # JOURNAL / UI STRINGS: the gig title, every objective, the map-pin captions,
+  # Dino's message thread, and the three documents V reads on the terminal.
+  #
+  # ALL NINETEEN LOCALES POINT AT THE ENGLISH FILE. The mod is English-only, and
+  # English beats a raw LocKey. Registering en-us alone is the specific
+  # half-broken state gig 01 shipped for a fortnight: working dialogue and raw
+  # LocKeys in the quest log for everyone not playing in English, invisible in
+  # testing because testing happens in English.
+  #
+  # `onscreens` takes a LIST per locale. Its three siblings take a scalar.
+  onscreens:
+    ar-ar:
+      - mod\acceptable_loss\localization\en-us.json
+    cz-cz:
+      - mod\acceptable_loss\localization\en-us.json
+    de-de:
+      - mod\acceptable_loss\localization\en-us.json
+    en-us:
+      - mod\acceptable_loss\localization\en-us.json
+    es-es:
+      - mod\acceptable_loss\localization\en-us.json
+    es-mx:
+      - mod\acceptable_loss\localization\en-us.json
+    fr-fr:
+      - mod\acceptable_loss\localization\en-us.json
+    hu-hu:
+      - mod\acceptable_loss\localization\en-us.json
+    it-it:
+      - mod\acceptable_loss\localization\en-us.json
+    jp-jp:
+      - mod\acceptable_loss\localization\en-us.json
+    kr-kr:
+      - mod\acceptable_loss\localization\en-us.json
+    pl-pl:
+      - mod\acceptable_loss\localization\en-us.json
+    pt-br:
+      - mod\acceptable_loss\localization\en-us.json
+    ru-ru:
+      - mod\acceptable_loss\localization\en-us.json
+    th-th:
+      - mod\acceptable_loss\localization\en-us.json
+    tr-tr:
+      - mod\acceptable_loss\localization\en-us.json
+    ua-ua:
+      - mod\acceptable_loss\localization\en-us.json
+    zh-cn:
+      - mod\acceptable_loss\localization\en-us.json
+    zh-tw:
+      - mod\acceptable_loss\localization\en-us.json
+  # LIPSYNC. Merges an animLipsyncMapping into the base game's own .lipmap,
+  # saying which vanilla .anims set drives each actor's mouth. The mod ships no
+  # animation data: every line borrows an animation the game already owns, and
+  # because every line here is a whole reused take, most borrow the one vanilla
+  # baked for that exact recording.
+  #
+  # WITHOUT THIS KEY NONE OF IT REACHES THE GAME. The picks are made, the
+  # lipmap is built and packed, and the faces still do not move, because
+  # nothing told the game the resource exists. That is what this gig shipped
+  # until 2026-09-10.
+  #
+  # The .anims live in lang_en_voice.archive, so a player on a different VOICE
+  # pack has no such files. The references are Soft, so they resolve to nothing
+  # and the mouths stay shut. Subtitles and audio are unaffected.
+  subtitles:
+    # THE SUBTITLE MAP, and it is EMPTY today on purpose. Every line in this
+    # gig is a whole reused vanilla take, so each one is subtitled by the
+    # base game under its own stringId and this file adds nothing.
+    #
+    # IT IS REGISTERED ANYWAY, because the generator writes it either way and
+    # an unregistered subtitle map is silent: a line added later WITHOUT a
+    # `vanilla_sid` would simply have no subtitle, with nothing to say why.
+    # Gig 01 and gig 02 both register all four localization keys.
+    #
+    # SCALAR PER LOCALE, unlike `onscreens` above, which takes a list.
+    ar-ar: mod\acceptable_loss\localization\subtitles.json
+    cz-cz: mod\acceptable_loss\localization\subtitles.json
+    de-de: mod\acceptable_loss\localization\subtitles.json
+    en-us: mod\acceptable_loss\localization\subtitles.json
+    es-es: mod\acceptable_loss\localization\subtitles.json
+    es-mx: mod\acceptable_loss\localization\subtitles.json
+    fr-fr: mod\acceptable_loss\localization\subtitles.json
+    hu-hu: mod\acceptable_loss\localization\subtitles.json
+    it-it: mod\acceptable_loss\localization\subtitles.json
+    jp-jp: mod\acceptable_loss\localization\subtitles.json
+    kr-kr: mod\acceptable_loss\localization\subtitles.json
+    pl-pl: mod\acceptable_loss\localization\subtitles.json
+    pt-br: mod\acceptable_loss\localization\subtitles.json
+    ru-ru: mod\acceptable_loss\localization\subtitles.json
+    th-th: mod\acceptable_loss\localization\subtitles.json
+    tr-tr: mod\acceptable_loss\localization\subtitles.json
+    ua-ua: mod\acceptable_loss\localization\subtitles.json
+    zh-cn: mod\acceptable_loss\localization\subtitles.json
+    zh-tw: mod\acceptable_loss\localization\subtitles.json
+  vomaps:
+    # THE VOICEOVER MAP, for the clips this gig ships: three lines cut out
+    # of the game's own recordings (tools/gig03/take_vanilla.py), one of
+    # Johnny's and two of Dino's. Every other line points at the game's own
+    # clip and needs nothing here.
+    ar-ar: mod\acceptable_loss\localization\vomap.json
+    cz-cz: mod\acceptable_loss\localization\vomap.json
+    de-de: mod\acceptable_loss\localization\vomap.json
+    en-us: mod\acceptable_loss\localization\vomap.json
+    es-es: mod\acceptable_loss\localization\vomap.json
+    es-mx: mod\acceptable_loss\localization\vomap.json
+    fr-fr: mod\acceptable_loss\localization\vomap.json
+    hu-hu: mod\acceptable_loss\localization\vomap.json
+    it-it: mod\acceptable_loss\localization\vomap.json
+    jp-jp: mod\acceptable_loss\localization\vomap.json
+    kr-kr: mod\acceptable_loss\localization\vomap.json
+    pl-pl: mod\acceptable_loss\localization\vomap.json
+    pt-br: mod\acceptable_loss\localization\vomap.json
+    ru-ru: mod\acceptable_loss\localization\vomap.json
+    th-th: mod\acceptable_loss\localization\vomap.json
+    tr-tr: mod\acceptable_loss\localization\vomap.json
+    ua-ua: mod\acceptable_loss\localization\vomap.json
+    zh-cn: mod\acceptable_loss\localization\vomap.json
+    zh-tw: mod\acceptable_loss\localization\vomap.json
+  lipmaps:
+    ar-ar: mod\acceptable_loss\localization\gig03.lipmap
+    cz-cz: mod\acceptable_loss\localization\gig03.lipmap
+    de-de: mod\acceptable_loss\localization\gig03.lipmap
+    en-us: mod\acceptable_loss\localization\gig03.lipmap
+    es-es: mod\acceptable_loss\localization\gig03.lipmap
+    es-mx: mod\acceptable_loss\localization\gig03.lipmap
+    fr-fr: mod\acceptable_loss\localization\gig03.lipmap
+    hu-hu: mod\acceptable_loss\localization\gig03.lipmap
+    it-it: mod\acceptable_loss\localization\gig03.lipmap
+    jp-jp: mod\acceptable_loss\localization\gig03.lipmap
+    kr-kr: mod\acceptable_loss\localization\gig03.lipmap
+    pl-pl: mod\acceptable_loss\localization\gig03.lipmap
+    pt-br: mod\acceptable_loss\localization\gig03.lipmap
+    ru-ru: mod\acceptable_loss\localization\gig03.lipmap
+    th-th: mod\acceptable_loss\localization\gig03.lipmap
+    tr-tr: mod\acceptable_loss\localization\gig03.lipmap
+    ua-ua: mod\acceptable_loss\localization\gig03.lipmap
+    zh-cn: mod\acceptable_loss\localization\gig03.lipmap
+    zh-tw: mod\acceptable_loss\localization\gig03.lipmap
+streaming:
+  blocks:
+    # THE SHARD ON THE CABINET, generated by tools/gig03/gen_sector.py.
+    #
+    # One named worldEntityNode carrying the game's own shard case container,
+    # holding this gig's item, standing in the security room of the Militech
+    # compound. The player takes it with [F] or reads it in place with [R], and
+    # either one is what tells the gig V has been found.
+    #
+    # THE NODE IS NAMED IN THE LONG $/03_night_city/... FORM and the name is
+    # repeated in the sector's own nodeRefs. An unnamed node in a mod sector
+    # does not load at all, and the short #name form registers nothing.
+    #
+    # THIS GIG DELETES NOTHING. Gig 01 replaced a shard the base game had
+    # already put on a desk, so its manifest carries a nodeDeletions block with
+    # instance counts to keep in step. Ours stands where the base game put
+    # nothing.
+    - mod\worlds\03_night_city\_compiled\default\cc_g03_world.streamingblock
+    # DINO HIMSELF, generated by tools/gig03/gen_community.py.
+    #
+    # A COMMUNITY, NOT A BODY THE SCENE SPAWNS. A scene-spawned actor is
+    # created when its scene starts and deleted when it exits, so the player
+    # watched the fixer appear as the conversation opened and vanish as it
+    # closed: playtest 2026-09-10, on Regina, "I can see the jump" and "our
+    # body disappears while I'm still there". He sits in the world now and
+    # the scene acquires him. docs/scene-playbook.md opens with the rule.
+    #
+    # The registry sector rides along with the community sector and is not
+    # registered separately; one block covers both.
+    - mod\worlds\03_night_city\_compiled\default\cc_g03_cast.streamingblock
+    # THE REINFORCEMENTS, generated by the same tools/gig03/gen_community.py.
+    #
+    # Three Militech soldiers at three corners of the compound, switched on by
+    # the quest phase when the security-room door opens and off again once V
+    # is out of the Badlands. A second community is its own two sectors and
+    # its own block (gotcha 75), so Dino's stays untouched.
+    - mod\worlds\03_night_city\_compiled\default\cc_g03_militech.streamingblock
+quest:
+  phases:
+    # THE PARENT IS A SCOPE NAME, NOT A FILE PATH, and that is the whole of New
+    # Game Plus compatibility. ArchiveXL expands `cyberpunk2077.quest` to every
+    # root quest a session can run: the base game's, Phantom Liberty's
+    # standalone start, and the three roots the New Game Plus mod registers into
+    # the same scope. A phase parented to a literal path is simply not in the
+    # graph an NG+ session runs, and nothing says why. See gotchas.md 84.
+    - path: mod\acceptable_loss\quest\gig03.questphase
+      parent: cyberpunk2077.quest

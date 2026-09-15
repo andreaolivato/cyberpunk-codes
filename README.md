@@ -5,10 +5,14 @@ for the journal, quest graph, scenes, voice and lipsync, reusable builders
 under `tools/questkit/`, and the notes from working out how each subsystem
 behaves.
 
-It has built one gig so far: **Negative Balance**, a quest with map pins,
-voiced conversations, lipsync and a custom NPC, published on
-[Nexus Mods](https://www.nexusmods.com/cyberpunk2077/mods/32694). Its full
-source is in this repo, and future gigs will be built with the same tools.
+It has built three gigs, all published on Nexus Mods with their full source
+in this repo: **Negative Balance**
+([Nexus](https://www.nexusmods.com/cyberpunk2077/mods/32694)), a quest with
+map pins, voiced conversations, lipsync and custom NPCs; **Dead Ringer**
+([Nexus](https://www.nexusmods.com/cyberpunk2077/mods/33571)), with a video
+holocall, a breach on a wall box the mod ships, and a quest area drawn on the
+minimap; and **Acceptable Loss**, a fight-and-run gig that forces a compound
+of NPCs onto the player and drives the wanted level from script.
 
 The documentation is the point of publishing this. It is written for modders
 building their own quest mods: what each subsystem needs, the traps in it, and

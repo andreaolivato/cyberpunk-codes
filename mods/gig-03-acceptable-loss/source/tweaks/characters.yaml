@@ -1,0 +1,25 @@
+# Acceptable Loss's Character records.
+#
+# ONE RECORD, because this gig has one speaker who needs a body of its own.
+# V and Johnny are the game's own actors and need nothing here.
+#
+# A scene line takes its speaker name from the speaker's Character record, so
+# Dino needs one even though every word he says is his own recording: the
+# record is what the scene spawns as his body on the phone, and what his
+# community entry places on his stool.
+#
+# `displayName` is LocKey#<FNV1a64 of the bare key>, which is the hash ArchiveXL
+# registers our own localization string under. The string itself is in
+# tools/gig03/gen_localization.py.
+
+# DINO. `Character.dyno` is the real one: it is the record his own community
+# entry (`#dyno`, in always_loaded_1) spawns, read off the registry on
+# 2026-09-15. The fixer was Regina Jones (`Character.reggie`) until that day.
+#
+# The short name rather than the full one, for the reason gig 01 shortened
+# Elena's: a long name over every line of a conversation is a mouthful once the
+# standard styling shows speaker names. His phone CONTACT keeps "Dino Dinovic",
+# which is a different string. The hash is FNV1a64 of `cc-g03-dino-speaker`.
+Character.cc_g03_dino:
+  $base: Character.dyno
+  displayName: LocKey#191754584539023329

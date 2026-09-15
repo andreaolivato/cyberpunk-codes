@@ -786,6 +786,13 @@ the telemetry, all of which the direct route skips. Four records, one per
 outcome, cloned by `$base` off one of Wakako's own completion records so that no
 inline record type has to be named in YAML.
 
+**Every scene with a face on screen needs a lipsync pick, and a holocall most
+of all.** It is not automatic, a reused vanilla line does not bring one, and a
+missing pick fails silently. The recipe and the three things that each fail on
+their own are in `scene-playbook.md`, "Lipsync is not automatic"; the mechanism
+is `backlog.md` 2j. Each gig's `gen_scenes` refuses to build when a speaker with
+a mouth has no pick.
+
 **Keep a reward's `name` beginning with `sts_`**: it is what makes the game
 scale the XP to the player's level.
 
@@ -794,6 +801,41 @@ proof that TweakXL resolves a `$base` on an inline record. Gig 01 has not moved
 and the move is not free: its fee is a skim off a dead man's network rather
 than a fixer closing a contract, and a completion record would add level XP the
 gig's economy was balanced without.
+
+## The wanted level
+
+(`CCSharedPrevention.Locate`, `Car` and `Follow`, 2026-09-15: stars raised
+by request are a search, and the police put men on foot round the player
+only once they "know" where the player is, which only a combat report
+sets; the game's spawner sends no car when no road is near the player; and
+a response car chases along traffic lanes and never leaves them. A gig
+that wants the responders to reach a player off the road files the combat
+report on the player's behalf, asks the spawner for cars itself with the
+anywhere strategy, and sends every car a follow command with traffic off,
+all three on the chase loop. Backlog 48.): raise it, keep it, drop it (2026-09-11)
+
+`CCSharedPrevention` in `shared/scripts` is the whole of it, and all three
+verbs are one queued request. `PreventionSystem` has no setter; it has a
+handler for `SetWantedLevel`, and a request built in redscript and queued is
+what reaches it (the same request built in CET Lua is dropped silently,
+measured 2026-09-09).
+
+- **Raise**: `Wanted(game, stars)`, with V's position as the crime point so
+  the response comes to V. Refuses to raise what is already raised.
+- **Keep**: there is no keep. A gig that wants a chase to last polls the heat
+  and raises again when the game has let it fade. Gig 03's trace system does
+  this every three seconds until its story says the escape is made.
+- **Drop**: `Clear(game)`, the same request with `Heat_0`, which the handler
+  turns into the game's own forced de-escalation: four seconds of blinking
+  stars, then the responders stand down. A gig may drop only stars it raised,
+  and only at the moment its story calls the escape; gig 03 does it once, on
+  the frame the game says V is out of the Badlands.
+
+Where V is, as a district, is the prevention system's to say:
+`GetCurrentDistrict()` returns the top of the stack the district trigger areas
+maintain, and `District.IsBadlands()` looks through a sub-district to its
+parent. `CCSharedPrevention.District` wraps it. The stack is empty for a frame
+or two after a load, so null means unknown. Gotcha 117, `backlog.md` 47.
 
 ## Restricting the player: SOLVED. See `gameplay-restrictions.md`.
 

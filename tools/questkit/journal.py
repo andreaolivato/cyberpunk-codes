@@ -134,7 +134,8 @@ def description(did, suffix):
     })
 
 
-def message(mid, suffix, delay=3.0, sender='NPC', important=0):
+def message(mid, suffix, delay=3.0, sender='NPC', important=0,
+            attach_quest=None, image=None):
     """One SMS in a phone conversation.
 
     `delay` is SECONDS BEFORE IT ARRIVES, and it is the only correct way to
@@ -149,13 +150,32 @@ def message(mid, suffix, delay=3.0, sender='NPC', important=0):
     reads correctly: the message is information, the reply is the thing to
     press. Defaulting to 1 was measured wrong in play on 2026-08-26, on a gig
     whose whole opening is a fixer sending a text.
+
+    `attach_quest` is a quest's journal path, `quests/street_stories/<id>`,
+    and it puts THE GIG CARD in the message: the tappable panel the game's own
+    fixers send with a job. Regina attaches her gig to 57 of her messages in
+    the shipped journal, Wakako to hers, and the shape is a `gameJournalPath`
+    of class `gameJournalQuest`, the same object a quest node uses. Leave it
+    None for a message that carries no job.
+
+    `image` is a `UIJournalIcons.*` record id and puts a PICTURE on the
+    message: alone, the picture shows in the thread (Takemura's photos); with
+    `attach_quest`, it is the thumbnail on the gig card, which is how every
+    fixer's brief ships. The record and what it points at are the gig's to
+    provide; see tools/gig03/gen_photo.py.
     """
+    attachment = None
+    if attach_quest:
+        attachment = wrap({'$type': 'gameJournalPath',
+                           'className': cname('gameJournalQuest'),
+                           'editorPath': '', 'fileEntryIndex': 1,
+                           'realPath': attach_quest})
     return wrap({
         '$type': 'gameJournalPhoneMessage',
-        'attachment': None,
+        'attachment': attachment,
         'delay': delay,
         'id': mid,
-        'imageId': tweak(None),
+        'imageId': tweak(image),
         'isQuestImportant': important,
         'journalEntryOverrideDataList': [],
         'sender': sender,
@@ -225,7 +245,33 @@ def map_pin(pin_id, anchor):
     })
 
 
-def objective(oid, suffix, anchor):
+def codex_link(lid, class_name, real_path):
+    """A `gameJournalQuestCodexLink`: a link the Journal shows on an objective.
+
+    This is where the game's click-through from a gig to its messages lives.
+    The messenger renders a brief's text and picture and nothing else; the
+    LINKS are on the quest side. `questLogDetailsPanel.PopulateObjectiveActionLinks`
+    reads these off the tracked objective and spawns, by target class: a Call
+    button for a `gameJournalContact`, an open-thread button for a
+    `gameJournalPhoneMessage` / `PhoneConversation` / `PhoneChoiceGroup`, a
+    read button for a `gameJournalOnscreen` (a shard), and a codex line for a
+    `gameJournalCodexEntry`. Vanilla's own gigs carry them under each
+    objective: `sts_wat_kab_04/phone` links `contacts/regina_jones` with id
+    `contact`. Nothing activates them; they are read when the objective is.
+    """
+    return wrap({
+        '$type': 'gameJournalQuestCodexLink',
+        'id': lid,
+        'journalEntryOverrideDataList': [],
+        'path': wrap({'$type': 'gameJournalPath',
+                      'className': cname(class_name),
+                      'editorPath': '', 'fileEntryIndex': 1,
+                      'realPath': real_path}),
+    })
+
+
+def objective(oid, suffix, anchor, links=()):
+    """`links` is a list of (id, className, realPath) for codex_link."""
     children = []
     if isinstance(anchor, list):
         # An explicit list of (pin_id, anchor). Used where one objective owns
@@ -233,6 +279,7 @@ def objective(oid, suffix, anchor):
         children = [map_pin(pid, a) for pid, a in anchor]
     elif anchor:
         children.append(map_pin('pin_' + oid.replace('obj_', ''), anchor))
+    children.extend(codex_link(*link) for link in links)
     return wrap({
         '$type': 'gameJournalQuestObjective',
         'counter': 0,

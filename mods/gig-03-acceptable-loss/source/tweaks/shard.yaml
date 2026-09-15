@@ -1,0 +1,46 @@
+# The shard on the cabinet in the compound's security room.
+#
+# What the terminal tells V is that the mission log Dino wants is not on the
+# network at all: it is on a shard in the security room. This is that shard.
+#
+# It stands on its own container, placed by tools/gig03/gen_sector.py, on top of
+# the cabinet rather than inside it. An earlier plan pushed the item into the
+# cabinet's own inventory and was dropped: a container the player has already
+# looted may never open again, so the shard would be there on a clean save and
+# missing on a save where the room had been emptied first.
+#
+# displayName / localizedDescription take a BARE ArchiveXL key with no
+# `LocKey#` prefix, the same convention the journal uses (docs/gotchas.md #1).
+# The strings live in tools/gig03/gen_localization.py.
+#
+# ---------------------------------------------------------------------------
+# READ docs/shard-playbook.md BEFORE CHANGING ANYTHING HERE. The three findings
+# that matter, none of them guessable from the field names:
+#
+# THE TITLE ON SCREEN IS THE JOURNAL ENTRY'S TITLE, in both places it appears:
+# the CONTENTS line under the crosshair and the scanner panel. It is not the
+# item's name. The vanilla shard's DisplayName is empty and it still shows one.
+#
+# THE JOURNAL PATH COMES FROM `itemSecondaryAction`, which names an ObjectAction
+# record whose `journalEntry` flat is the onscreen path. All 335 shards in the
+# game are built that way.
+#
+# `objectActions` IS NOT THAT LIST. The vanilla shard's is
+# `[ItemAction.Drop, ItemAction.Disassemble]` with no read action in it.
+# Overriding it does nothing useful and silently costs Disassemble.
+#
+# THE BASE IS `Items.Shard1`, the game's plain shard, which inherits no story.
+# Cloning a shard that already has one carries its inline children across, and
+# those keep pointing at the base's content.
+
+ObjectAction.cc_g03_shard_read:
+  $base: Items.generic_hanako_flowers_shard_inline0
+  journalEntry: onscreens/emails/quests/street_stories/cc_g03_acceptable_loss/onscreens/cc_g03_shard_log
+
+Items.cc_g03_shard:
+  $base: Items.Shard1
+  displayName: cc-g03-shard-item
+  localizedDescription: cc-g03-shard-item-desc
+  # THE LINE THE WHOLE BEAT HANGS OFF. Without it the shard shows the base
+  # item's title in both panels and opens the base item's note.
+  itemSecondaryAction: ObjectAction.cc_g03_shard_read

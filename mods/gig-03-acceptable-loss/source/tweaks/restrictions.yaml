@@ -1,0 +1,22 @@
+# The one gameplay restriction this gig applies: V held still while Johnny
+# speaks at V's own door, so V cannot walk past him.
+#
+# READ docs/gameplay-restrictions.md BEFORE TOUCHING THIS. The two rules that
+# matter: a restriction is a status effect, applied and removed with
+# StatusEffectHelper; and a base-game record is SAVABLE, so one this mod
+# applied and forgot would follow the player into every later load of that
+# save. The clone turns saving off, which is gig 01's measured answer
+# (`GameplayRestriction.cc_g01_no_vehicle`): the clone still blocks, because
+# the gate reads the gameplay tag the clone inherits, and it is not written
+# to the save.
+#
+# `NoMovement` is one of the 39 the base game applies from script, so it is
+# a record that exists to be applied this way. What it stops, exactly, has
+# not been measured before this gig; the first playtest of the door beat is
+# the measurement. Gig03_Places.reds applies it as V crosses out of the
+# bar's area, and lifts it when Johnny's scene has ended, on a 30 s cap, and
+# on the first pass of every session in case a load caught it held.
+
+GameplayRestriction.cc_g03_hold:
+  $base: GameplayRestriction.NoMovement
+  savable: false

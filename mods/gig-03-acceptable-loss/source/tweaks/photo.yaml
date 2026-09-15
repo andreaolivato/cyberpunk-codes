@@ -1,0 +1,13 @@
+# THE PICTURE DINO SENDS, as two icon records: the one a message names
+# through `imageId`, and its `_full` twin for the enlarged view. Generated
+# by tools/gig03/gen_photo.py, which also makes the texture and the atlas
+# they point at.
+
+UIJournalIcons.cc_g03_site:
+  $type: UIIcon
+  atlasResourcePath: mod\acceptable_loss\gui\site.inkatlas
+  atlasPartName: site
+UIJournalIcons.cc_g03_site_full:
+  $type: UIIcon
+  atlasResourcePath: mod\acceptable_loss\gui\site.inkatlas
+  atlasPartName: site

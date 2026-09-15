@@ -1,0 +1,37 @@
+# THE FEE, THE GAME'S OWN WAY.
+#
+# One completion reward of the kind a fixer's gigs carry, handed to
+# `RPGManager.GiveReward` at payout, which is what the game's own quest reward
+# node calls. The money notice on screen, the level scaling of the XP and the
+# telemetry are then vanilla's rather than ours.
+#
+# HANDING THE PLAYER MONEY DIRECTLY IS NOT THE SAME THING. `GiveItemByTDBID`
+# with `Items.money` puts the eddies in the wallet and shows nothing: no
+# transfer readout, no Street Cred popup, no sense that a gig just finished.
+# That is what this gig shipped first and it is what a playtest reported as the
+# ending not landing.
+#
+# The base is `sts_wbr_hil_01_completion` (4,200 eddies, 1,000 XP, 1,136 Street
+# Cred). Only the money changes. The currency entry and its quantity modifier
+# are the base's own inline records, cloned and given a new value, so no record
+# type has to be named here.
+#
+# THE XP SCALES AND THE EDDIES DO NOT. The game applies
+# `CalculateStreetStoryReward` to any reward whose `name` begins with `sts_`,
+# so the Street Cred is right for the player's level while the fee stays the
+# figure the story states.
+#
+# 12,500 IS HALF. The job is worth 25,000 and Dino docks half because the
+# site went loud, which the comic shows as the transfer on screen. There is no
+# quiet outcome to pay the other half: the trace always wins.
+
+QuestRewards.sts_cc_g03_qty_completion:
+  $base: QuestRewards.sts_wbr_hil_01_completion_inline5
+  value: 12500
+QuestRewards.sts_cc_g03_money_completion:
+  $base: QuestRewards.sts_wbr_hil_01_completion_inline4
+  quantityModifiers: [ QuestRewards.sts_cc_g03_qty_completion ]
+QuestRewards.sts_cc_g03_completion:
+  $base: QuestRewards.sts_wbr_hil_01_completion
+  name: sts_cc_g03_completion
+  currencyPackage: [ QuestRewards.sts_cc_g03_money_completion ]

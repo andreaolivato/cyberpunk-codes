@@ -2733,3 +2733,112 @@ Never renumber. Append.
      anything that fails the test and still has to go, use the route that
      owns the body: the community switch for a community entry, the crowd
      null area for future crowd, and nothing at all for another mod's NPC.
+
+113. **A mod journal's ROOT FOLDER ID MUST BE EMPTY, and a wrong one discards
+     the whole file in silence.**
+
+     ArchiveXL merges a mod's `.journal` by walking it against the base game's
+     tree and matching ids level by level. The base game's root folder is called
+     nothing at all. A root written as `'id': 'root'` therefore matches nothing,
+     and every entry under it, contacts, quests and onscreens alike, is thrown
+     away.
+
+     **Nothing reports it.** The archive loads, the manifest is accepted, the
+     strings merge, the quest phase merges, the world sector merges. The only
+     evidence is a MISSING line: ArchiveXL's `[Journal]` section has no "Merging
+     entries from" for the file. A mod whose journal never merged looks exactly
+     like a mod whose journal is fine and whose quest simply has not started.
+
+     Gig 03 shipped it for a day. The symptoms were a shard whose scanner title
+     read `INVALID` and a reader that opened completely blank, both of which look
+     like an item-record problem, which is where the first hour went. The quest
+     log was broken too and nobody had checked it yet.
+
+     `cookingPlatform: 'PLATFORM_PC'` sits beside it on the RootChunk in both
+     working gigs, and was also missing.
+
+     **Diff a new journal against a working one before believing it.** The whole
+     bug is two fields at the top of the file, and gig 01 and gig 02 have both
+     been right since the beginning.
+
+114. **A lipsync animation name is looked up CASE-SENSITIVELY, and a name
+     that differs only in case animates nothing.** The name a scene line
+     carries in `female/maleLipsyncAnimationName` has to match the animation's
+     spelling inside the `.anims` set exactly.
+
+     This matters because a name pointed at a reused vanilla line is COMPUTED
+     rather than read: vanilla names each one `f_<stringId>` in hex, so the
+     obvious way to build one is a format string, and `%016x` and `%016X`
+     both look correct. The sets ship the uppercase spelling.
+
+     **The failure is silent and it is per line.** The actor is configured,
+     the set resolves, the other lines in the same scene animate normally,
+     and the mismatched one plays with a still face. Nothing warns, because
+     a name that resolves to no animation is indistinguishable from a line
+     that was never meant to have one.
+
+     Gig 03 shipped six lines this way, spelled lowercase against uppercase
+     sets. Playtest: "the phrase 'you'll steal it for me' doesn't have
+     lipsync", on a build where the other nine lines were fine. The nine were
+     the ones cast by LENGTH, which take the name straight from the set and
+     so cannot get its case wrong; only the exact matches were affected.
+
+     Resolve the name through the set's own listing rather than trusting the
+     computed string, which is what `questkit.lipsync` does now.
+
+115. **A look-at aimed at the player through `(Root)` is aimed at the ground
+     between his feet, and a standing actor bends and looks at the floor.**
+     `scnLookAtEvent.basic.targetSlot` names an attachment slot on the
+     target entity, and `(Root)` is the origin. On a prop marker standing at
+     camera height that is the marker itself, which is why the holocall
+     look-at works with it. On a person it is the floor.
+
+     Vanilla aims at the player through `pla_default_tgt`, a slot on the
+     player at eye height: `mq019_01_notell_motel.scene` sends all twelve of
+     its look-ats at V there and uses `(Root)` for nothing but props. With
+     the editor preset the request carries (Chest at weight 2), the
+     difference is the whole upper body.
+
+     Gig 02 shipped `(Root)` for every in-person look-at and it passed
+     playtest, because Wakako sits behind a desk and Char sits in a chair,
+     so neither could bend. Gig 03 stood Regina up and the first playtest
+     read "she just stares in the void", the second "she looks at her feet",
+     and the screenshot shows her chin on her chest. `questkit.scene.look_at`
+     now picks the slot the way vanilla does.
+
+116. **"The player opened the door" is a question about WHO, and only the
+     door entity's action handlers can answer it.** `DoorControllerPS.
+     OnSetIsOpened` is the non-final method every open-state change goes
+     through (the bunker door overrides it), and it fires whoever caused the
+     change. A proximity door (`doorTriggerSide OUTSIDE` in the sector)
+     opens for any NPC who walks into its trigger, so a hook there fired the
+     moment a guard ran through the security room. Playtest, 2026-09-11: "as
+     soon as I was detected by a guard the trace started".
+
+     The `Door` entity's `OnToggleOpen`, `OnForceOpen`, `OnActionDemolition`
+     and `OnActionEngineering` are `cb` handlers carrying the action, and
+     `evt.GetExecutor()` is who did it; vanilla reads it there for
+     `m_whoOpened`. Wrap those, test `executor.IsPlayer()`, and for the toggle
+     also test the PS's `IsOpen()`, which already reads the new state, since a
+     toggle closes a door too. Identify the door by position, and read the
+     shipped sector first: a door that ships open never toggles, and one that
+     `automaticallyClosesItself` fires on every visit.
+
+117. **`SetWantedLevel` with `Heat_0` is how a quest drops the stars, and the
+     district the player is in is the prevention system's to tell.** Both
+     read out of preventionSystem.swift on 2026-09-11.
+
+     `OnSetWantedLevel` given `Heat_0` while a chase is on queues the game's
+     own `PreventionForceDeescalateRequest`: four seconds of blinking stars,
+     then nothing, every responder told to stand down, reason logged as
+     "QuestEvent". Given `Heat_0` with no chase on, it returns and does
+     nothing. So the same queued request that raises the heat
+     (`CCSharedPrevention.Wanted`, 2026-09-09) lowers it too, and it is
+     `CCSharedPrevention.Clear`. Like the raise, it does nothing from CET Lua.
+
+     `PreventionSystem.GetCurrentDistrict()` is public and returns the top of
+     a stack the district trigger areas maintain; `District.IsBadlands()` and
+     `IsDogTown()` look through a named sub-district to its parent. The stack
+     is not saved, so for a frame or two after a load the answer is null:
+     treat null as unknown, never as outside. `CCSharedPrevention.District`
+     wraps it and the gig 03 dev menu draws it beside the heat.

@@ -96,11 +96,12 @@ public abstract class CCGig02Combat {
 
 }
 
-// `Dispose` is a native every entity has (CET calls it on any entity and the
-// dev menu's DISPOSE button proved it removes the door crowd), but the game's
-// script bundle does not declare it, so it is declared here.
-@addMethod(Entity)
-public native func Dispose() -> Void;
+// `Dispose` is a game command every entity answers to (CET calls it on any
+// entity and the dev menu's DISPOSE button proved it removes the door crowd),
+// but the script bundle never declares it. It was declared here until
+// 2026-09-11, and a second mod declaring the same name on the same class
+// draws a compiler warning of a possible runtime error, which gig 03 did. It
+// is called by name through Codeware's Reflection now, declared by nobody.
 
 public class DeadRingerEncounter extends ScriptableSystem {
 
@@ -1082,7 +1083,7 @@ public class DeadRingerEncounter extends ScriptableSystem {
                 // GONE, not calmed. Playtest 2026-09-04 (fifth): the CET
                 // Dispose button removed all eleven bodies at the door at once,
                 // where no community switch had moved one. Same call here.
-                npc.Dispose();
+                Reflection.Call(npc, n"Dispose");
             }
             i += 1;
         }
@@ -1126,7 +1127,7 @@ public class DeadRingerEncounter extends ScriptableSystem {
                     && Vector4.Distance(npc.GetWorldPosition(), inn) < 15.0;
                 if atChair || vendor {
                     ArrayPush(this.m_calmed, npc.GetEntityID());
-                    npc.Dispose();
+                    Reflection.Call(npc, n"Dispose");
                 }
             }
             i += 1;
@@ -1230,7 +1231,7 @@ public class DeadRingerEncounter extends ScriptableSystem {
                 if rec == t"Character.wakako_okada"
                     && Vector4.Distance(npc.GetWorldPosition(), office) < 20.0 {
                     ArrayPush(this.m_calmed, npc.GetEntityID());
-                    npc.Dispose();
+                    Reflection.Call(npc, n"Dispose");
                 }
             }
             i += 1;

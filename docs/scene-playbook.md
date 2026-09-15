@@ -317,6 +317,31 @@ So for anything outgoing, and arguably for everything, own the whole call:
    speaker and the body on camera being the same actor is what makes the
    lipsync land without borrowing anything.
 
+9. **Cast every REUSED line from a take the game recorded for a phone.**
+   The phone treatment is a separate recording, not a filter the flags in
+   step 8 apply (gotcha 41), so a reused line only sounds like a call if a
+   twin of it exists under `base\localization\<lang>\vo_holocall\`. Where
+   there is none the plain take plays dry, in the middle of a call whose
+   other lines are filtered, and the difference is obvious.
+
+   Only about 3,000 of the 78,000 English clips have that twin, and which
+   ones follow the scene they were recorded for: lines from vanilla
+   holocalls and gig briefings have it, open-world barks from a voiceset do
+   not. Check by stringId against the VO filename index before writing a
+   line into a call, because a bark is often the only take carrying the
+   words a gig wants.
+
+   Nothing can add one to the game's clip. A call that needs words the phone
+   corpus never recorded has two routes. Move them into a message, which is
+   where the base game puts a fixer's own detail. Or ship the take as a clip
+   of your own: the game's recording, whole and uncut, with the treatment
+   from `questkit/phone.py` baked in by the gig's `gen_voice.py`, under the
+   gig's own line id (no `vanilla_sid`), registered through `vomaps` and
+   `subtitles`, with the line's animation still named after the take
+   (`f_<stringId>`), since the clip is the same length. Gig 03's
+   `take_vanilla.py` and `gen_voice.py` are the worked example, and gig 02's
+   Wakako call is the same route with cuts.
+
 **DIAL BEFORE YOU WAIT, and this is the order the recipe used to get wrong.**
 Showing the prefab variants does not pull the studio in. The studio is a
 `category: Quest` sector with no streaming box, and the call node's
@@ -349,6 +374,13 @@ different in play. Confirmed working in gig 02 on 2026-09-07, Wakako and Char.
 | 4 | the contact's camera, `RenderToTextureCamera` on | an empty frame |
 | 5 | `add_world_workspot_node` on the contact's spot | a default idle, off-frame |
 | 6 | `add_lookat_prop` + `look_at` per section | eyes wander past the lens |
+| 7 | a lipsync pick for the caller | the mouth does not move at all |
+
+**Item 7 is the one that is easiest to believe is automatic.** A reused vanilla
+line brings its own audio and its own text, so it reads as though it brings its
+own mouth. It does not. See "Lipsync is not automatic" below; it has now been
+shipped missing by two separate gigs, and in both the first person to notice was
+a player watching a face in close-up on a phone.
 
 **All five names belong to ONE contact and are only correct together.** Take
 them from that contact's own `base\quest\holocalls\<contact>\
@@ -369,6 +401,51 @@ rather than a character, and it is how the wrong one gets picked.
 
 **The body still needs `forceMaxVisibility`** (step 4 above) whatever else is
 done: the studio is kilometres away and an NPC that far off is culled.
+
+### Lipsync is not automatic, on a holocall or anywhere else
+
+**A line with no lipsync pick ships with an empty animation name and nothing
+errors.** The actor is configured correctly, the animation set resolves, and the
+face sits still. There is no warning in any log, and the only way to find it is
+to look at a face.
+
+Three things have to be true, and each fails silently on its own:
+
+1. **Something casts an animation.** `gen_lipsync.py` per gig writes
+   `source/lipsync_picks.json`.
+2. **The scene generator reads that file.** If its `LIPSYNC_SETS` and
+   `LIPSYNC_LINES` are empty the lipmap is built empty.
+3. **The manifest registers `lipmaps`.** Without the key the resource is packed
+   and never loaded.
+
+`backlog.md` 2j has the whole chain and the measurements behind it:
+
+    .anims set -> base\localization\<lang>.lipmap (ArchiveXL key `lipmaps`)
+               -> scnActorDef.lipsyncAnimSet
+               -> the line's female/maleLipsyncAnimationName
+
+**A reused vanilla line has a perfect animation waiting for it.** Vanilla baked
+one per recording, named `f_<stringId>`, so a line reused WHOLE can use the
+animation made for it rather than an approximation.
+`questkit.lipsync._exact` finds it, ranking candidate sets by how many of a
+scene's lines they serve exactly before it looks at length at all.
+
+**An actor gets ONE set per scene.** So the exact route pays off in proportion
+to how many of that actor's lines in that scene come from the same vanilla
+scene. A speaker whose lines are gathered from five different vanilla scenes
+gets two or three exact animations and the rest cast by length, and length
+casting on a long line is visible: the mouth carries on after the words stop.
+Where that matters, re-pick the lines so more of them share a source scene.
+
+**A trim must NOT use its exact animation.** A cut clip is shorter than the
+recording the animation was baked for, so the mouth outruns the audio. Trims are
+cast by length like any produced line.
+
+**Make it a build failure, not a warning.** Gig 03 shipped every mouth dead
+while its own generator printed `NOTHING IS LIPSYNCED` on four consecutive
+builds. `gen_scenes.check_every_mouth_is_cast` now stops the run when a speaker
+with a face on screen has no pick, and the player is skipped because V is the
+camera.
 
 ### Where a holocall body's pose comes from
 

@@ -9669,3 +9669,406 @@ shape now has a second, solved instance: a script deleting something the
 engine still had a reference to. It does not close 10i, whose reporters had
 no such loop running, and it is noted here because the reading route above
 is what 10i's dumps lacked.
+
+## 47. Making a gig's middle dangerous: a door as the alarm, a compound that turns, a chase that lasts, and a choice by text. BUILT 2026-09-11, SHIPPED in 1.0.0
+
+Four changes to gig 03, asked for together, and each one was a question this
+project had not answered before. What was read, what was decided, and what
+each one still has to prove in play.
+
+### The alarm is a door, and the door is a base-game device
+
+The trace used to start when the shard was taken or read. It starts when the
+security room's door opens now. The door is a shipped `worldEntityNode`
+carrying `single_door.ent`, and its `DoorControllerPS` is what changes state.
+The first build wrapped `OnSetIsOpened`, which fires whoever opens it, and it
+is a proximity door: the first guard to run through set the trace off
+(playtest, 2026-09-11). The hooks are the door entity's four action handlers
+now, each carrying its executor, and only the player counts (gotcha 116). The
+door is identified by position, and the hook is armed by the terminal having
+been read, so a player who explores the room first is not traced while still
+at the terminal. Two nets sit under it: being within four metres of the
+cabinet, and the shard itself being taken, both of which raise the same fact,
+so the stars can never arrive after the shard. `cc_g03_dbg_alarm_src` records
+which of the three fired.
+
+The shipped sector says the door starts closed and closes itself. That was
+read rather than measured: if in play the door stands open on arrival, the
+cabinet net is what fires, and the probe will say 2.
+
+### The compound turns on V, and the four calls are the game's own
+
+Not on the door: on the end of the bar. The first build turned the guards
+the moment the door opened, and the design call the same evening was that
+nobody can know where V is until the trace has finished. So the door sets
+`cc_g03_alarm` and starts the bar; six seconds later the trace sets
+`cc_g03_traced`, and the stars, the guard pass and the reinforcements all
+hang off that. A save made during the bar sets it on the next loop tick.
+
+The site's Militech are its own community: six inside the wire on an early
+save, none hostile to V. A community NPC has no quarrel with the player and
+his senses off (gotchas 74 and 77), so "every guard identifies V" is four
+calls per guard, and the four are what the MaxTac AV drop makes on each unit
+it lands (`psychoSquadAVSystem.swift`): the pairwise hostile attitude, the
+senses on, `TargetTrackingExtension.InjectThreat` at accuracy 1, and
+`NPCPuppet.ChangeHighLevelState(Combat)`. The first two are this project's
+measured pair; the last two are what make a guard come running with V's
+position rather than start a detection ramp from where he stands.
+
+Vanilla's own `AIActionHelper.TryChangingAttitudeToHostile` was read and not
+used: it refuses for a record that is not `IsAggressive`, which a guard at a
+post may not be.
+
+A stim broadcast was not considered: gotcha 81 is the record of what one does
+to the police and the civilians. The pass is filtered to records whose name
+carries "militech", inside the walked perimeter, so the tents' civilians and
+the road are untouched. The threat is re-injected every two seconds while V
+is inside the wire and left alone outside it, so reaching the fence changes
+what the guards know.
+
+### Three reinforcements, as a community
+
+The design asked for two or three more guards. A community, not a script
+spawn, for the reasons in `architecture.md` ("Placing NPCs"): a post has a
+facing, the bodies persist, and the quest graph can switch them. Three of the
+site's own records at three walked corners of the perimeter, one per side, 30
+to 55 m from the security room, facing the middle. The corners are the only
+captured positions at the site apart from the terminal, the office and the
+cabinet, and a corner is the fence line: a body at one stands against the
+wall. If a playtest finds one inside it, capture a spot a metre in.
+
+Switched off at the top of the graph, on when the alarm fires (a fork off the
+main line, gotcha 104), and off again when V is out of the Badlands, because
+community state persists and a reload would otherwise stand the dead back up.
+Regina's community was not touched: two stacks, and hers came out
+byte-identical (gotcha 75).
+
+### The stars stay on until V is out of the Badlands
+
+`CCSharedPrevention.Wanted` was raise-only on principle. The design wanted the
+chase to be the whole trip home, so the trace system now loops every three
+seconds after the raise: if the heat reads below three, ask for three again,
+with V's position as the crime point. The game's own fade (grey stars, then
+zero) is what it is answering, so a gap is three seconds at most.
+`cc_g03_dbg_reraised` counts how many times.
+
+Dropping them is the same request with `Heat_0`, which `OnSetWantedLevel`
+turns into the game's own forced de-escalation (gotcha 117):
+`CCSharedPrevention.Clear`, called once on `cc_g03_badlands_left` and latched.
+The comment on `Wanted` about never lowering a player's heat stands: a gig may
+only drop stars it raised, at the moment its story calls the escape.
+
+Which side of the line V is on comes from the game rather than from a walked
+boundary: `PreventionSystem.GetCurrentDistrict().IsBadlands()`. The district
+stack is not saved, so the answer is null for a frame or two after a load and
+null is treated as still inside.
+
+What has to be measured in play: whether the game's own responders keep
+coming when the heat is re-raised from a fade rather than from a crime, how
+long a fade takes in the Badlands (the loop's three seconds assumes it is
+longer), and whether the forced de-escalation looks right at the district
+line.
+
+### Johnny waits for V to be on foot, and the game says so
+
+Playtest, 2026-09-11: "after I escape the Badlands I have no indication to
+leave the vehicle". The base game's own objectives for this read "Get out of
+the car" (11 quests), "Exit the vehicle" (4) and "Get out of the vehicle",
+so the gig uses the last. It is shown only if V is in a vehicle on the frame
+the Badlands line is crossed: `Gig03_Places` writes `cc_g03_mounted` (1 in
+one, 2 on foot) before it writes `badlands_left`, and the graph reads it once
+with a condition node.
+
+Leaving the Badlands is done by car, and a Johnny beat staged beside V while V
+is driving is gig 01's backlog 16. The ride scene now waits on
+`cc_g03_on_foot`, which `Gig03_Places` sets when V is out of a vehicle with
+the heat at zero. The heat half is capped at ten minutes, the vehicle half is
+not: the last leg into Regina's building is on foot, so the fact is certain
+to arrive, and a cap on it would only reproduce the bug it exists to prevent.
+
+### The decision is two replies in one group
+
+469 of the cooked journal's choice groups carry two or more replies, and
+Regina's own gigs use them for "killed" and "alive". `mq030`'s phase waits on
+each entry with two plain pause nodes and no cut between them, because
+tapping one reply closes the group and the other can never go Succeeded. Gig
+03 uses `add_race2` anyway: the cut and the claim cost nothing and close the
+same-frame window (gotcha 55). True is "bring it", False is "wipe it".
+
+### The loyal ending, and what it costs
+
+The design left the cost undecided and asked for it to be designed first. The
+decision: **no fee, and the client's advance out of V's own wallet.** 5,000,
+a fifth of the whole job, capped at what V has. It is concrete, the player
+feels it in the wallet, and it is what "pay for it" means in a fixer's
+economy. It is also what Regina's one usable loud line lets her say:
+"Forget about the eddies. You're lucky you don't owe me now" reads as the
+advance already settled and that being all she takes.
+
+The shard is removed with `TransactionSystem.RemoveItemByTDBID` three
+seconds into Johnny's scene, with a red banner, because there is nothing in
+V's hands to animate. A shard read in place and left on the cabinet is not in
+the backpack; the probe says 2 and the banner still says what V decided.
+
+The money leaves with `TransactionSystem.RemoveItem(player,
+MarketSystem.Money(), n)` on the loud scene's exit; the eddies counter
+animates down on its own and a banner says why.
+
+Every line in both endings is a whole vanilla take, found by searching the
+corpus rather than by writing the scene first. Johnny's "give up your ideals,
+and no amount of eddies can buy 'em back" is the gig's answer to its own
+question, and it is why the loyal ending exists.
+
+### The dead ends, so they are not walked again
+
+- The "Militech" filter is by record name, which is the census's own reading.
+  `IsCharacterCivilian` was considered as the negative filter and not used:
+  the tents' civilians would pass it, but so might a soldier record with the
+  wrong flag, and the name test was already true of every record counted.
+- A pin for "leave the Badlands" was considered and dropped. The district's
+  boundary is not a walked line, and a pin on a guessed coordinate is the
+  first failure `docs/map-pins-playbook.md` names.
+- Johnny's "He's got no right to do it. Nobody has that right" was found and
+  not used: the pronoun has no referent in a thread with Regina.
+
+## 48. The fixer is the wrong fixer: recasting a gig from Regina Jones to Dino Dinovic at the desk. BUILT 2026-09-15, SHIPPED in 1.0.0
+
+Gig 03's plot is a fixer who reads a ledger of mercs shot as live targets and
+says the client wants the data anyway. The gig was built on Regina Jones,
+because the comic is, and every playtest of her scenes read against it: her
+base-game identity is the ex-media crusader whose cyberpsycho programme
+exists to keep people alive ("even an unproven therapy is still better than a
+bullet to the brain"), and her own briefs call a corpo "the corpo megaprick".
+The question asked on 2026-09-15 was which fixer the base game already
+writes as corporate-aligned and untroubled by mercs dying.
+
+### What the shipped data says about each fixer
+
+Read off the cooked journal (every fixer's briefs and texts) and the voice
+corpus, not off a wiki, though two wikis agreed afterwards.
+
+- **Dino Dinovic**, City Center. Clientele is corpos and politicians, and he
+  is glad Downtown is "on fire" over Hanako because it brings contracts. His
+  Mausser brief has him order a merc killed to placate Zetatech ("NC's
+  gonkest merc... Corp's foaming at the mouth... I need you to toss his head
+  at their feet"); his Cole brief sells a councilwoman's private recordings
+  to the corp she regulates. His failure texts and calls are the rebukes a
+  loud job needs: "I didn't say 'Don't make a complete fuckin' mess', but I
+  didn't think I had to", "The city don't tolerate mediocrity". 77 recorded
+  lines, 53 with a phone version.
+- **Regina Jones**, Watson. 284 lines, the largest rebuke register of any
+  fixer, and the wrong person: her plot is keeping people alive.
+- **Rogue** takes corp clients but is the mercs' own protector ("Balance...
+  corps, gangs, mercs"). **Wakako** is cold and corpo-adjacent, and gig 02
+  already has her. **Mr. Hands** treats mercs as tools, but his world is
+  Dogtown and his pool about 100 lines. **Dakota** owns the Badlands the site
+  is in and is nomad and anti-Militech, the opposite client. **El Capitan**
+  and **Padre** are the two with principles.
+
+Dino, and the recast was done the same day.
+
+### What a fixer switch touches, so the next one is a checklist
+
+Everything Regina-specific in the gig, which turned out to be: the contact
+and its avatar (`PhoneAvatars.Avatar_Dino` is shipped, like hers), the
+Character record (`Character.dyno`, read off his community entry), the start
+gate's contact path (`contacts/dino_dinovic`), the holocall studio setup
+(`#dino_holocall_setup/camera/workspot/lookat`, one set per fixer in
+`quest_ec82d0423d8f1435`), the vanilla community to switch off for the leg
+(`#dyno`, entry `dyno`, phase `default`, always_loaded_1), the cast
+community's position and pose, the pin anchor (`#dyno_sm_default`), the
+lipsync regex (`dino_dyno_dinovic.anims`, his voice tag), every scene, every
+text, every objective naming her, the dev menu's facts and teleports, and the
+door script. Two spellings coexist: his studio nodes are `dino_`, his
+community, character and workspot are `dyno`.
+
+### What the base game needs before Dino is there to meet
+
+Read off `base\open_world\fixers\dyno\phases\dyno.questphase` on
+2026-09-15, node by node. His fixer phase sets `dyno_default_on` as it
+starts, and the intro call ("Ya don't know me, but you will") waits on four
+things together: V inside the City Center district trigger
+(`#city_center_tr`), `q101_enable_side_content` (the prologue over), that
+flag, and no content lock. The call plays `dyno_default.scene` as a holocall
+and the node after it adds `contacts/dino_dinovic`, which is what this gig's
+start gate reads. So "Dino has been in touch" means exactly "V has spent
+time in City Center after the prologue", and nothing else: no quest, no
+door, no unlock. There is no door at his bar in the data or in play, so
+nothing of Regina's door code was carried over.
+
+Two things in that phase touch the leg at the bar. His in-person chat (the
+same `dyno_default.scene`, the "What's up in City Center?" options) is
+offered when V is within 10 m of the game's own `#dyno` body, which is why
+the second Dino came with his menu attached. And a phone call to him from
+V's own contact list deactivates `#dyno` for the call and reactivates it
+afterwards: a player who rings him during this gig's leg gets the game's
+Dino back on the stool beside ours, and the keeper is what removes him
+again. After the leg the graph reactivates `#dyno` itself, so the base game
+finds him where it left him.
+
+### The placement was read, not captured, and that is the open item
+
+Every position in the earlier gigs was stood on in play. Dino's stool was
+read out of `exterior_-16_2_0_1`: his community's AI spot `#ws_dyno_default`
+is a `worldAISpotNode` at (-1969.884, 377.748, 8.046), quaternion k 0.6496
+r 0.7603 (yaw 81.0), on `generic__sit_barstool_bar__sit_around__01`. The
+gig's own copy of him uses the same spot, facing and workspot, so the swap
+has nothing to show. The swap radius (35 m), the leaving radius (45 m) and
+the absence of a door (none within 45 m of the stool in that sector) are
+desk readings, and the first playtest of the bar leg is what checks them.
+`#mq033_dino_teleport`, 5 m south of the stool, is where the base game puts
+V beside him and is the dev menu's teleport.
+
+Regina's AI spot could not be decoded and her copy stood on a stand-around
+idle. Dino's decoded, which is the difference between reading a sector's
+`nodeData` for a node that has a workspot resource and one that does not.
+
+### The call needs no spliced line any more
+
+Regina's job description existed only as open-world barks with no phone
+twin, so it had to be joined from two takes and phone-treated by hand. Dino's
+hire is three lines from one gig (the Eva Cole hire: "swipe some scrolls",
+"Client's feelin' generous, too", "Intel attached. Don't make me beg"), each
+with a `vo_holocall` twin, so `vanilla_sid` plays them filtered and all three
+share one lipsync set, which puts the exact mouth on each. A third line
+borrowed from another of his hires was cast by length and 800 ms out; the
+order of V's replies was rewritten so the three from one session read as a
+conversation.
+
+### Two cuts, and what one set per actor costs a scene of cuts
+
+The loud ending needed "You fucked up, V." and "Sorry, no cred for that
+move.", which exist only as the head and the tail of two debriefs naming
+other gigs' targets. Both are cut at the pause map (a `('to', seconds)` mode
+was added beside `('at', seconds)` for a head kept to a fixed time). An actor
+gets one lipsync set per scene, and the only set holding the scene's two
+whole lines exactly had nothing shorter than 4.2 s to spare for the cuts, so
+the picker gave a 1.2 s line a 5.9 s mouth. The scene is cast by length
+alone now (`LENGTH_ONLY` in `gen_lipsync.py`), from his bark set, which has a
+dozen animations under 2.5 s: the right duration on four lines over the
+right visemes on two.
+
+### First playtest of the switch, the same day, and the fixes
+
+- **The call was a silhouette.** The studio lighting variant is named per
+  fixer, and Regina's and Wakako's (`<name>_holocall_lights`) made the
+  pattern look general. Dino's own holocall scene toggles
+  `dino_dinovic_holocall_lights`. A wrong lighting name is a silent no-op
+  that leaves the body unlit, so the name is read off
+  `base\quest\holocalls\<fixer>\<fixer>_holocall.scene`, never inferred.
+- **At the bar his face did nothing.** No lipsync, no look-at, while
+  Regina's copy on a stand-around idle had both. The difference is the
+  stool: the community placed him through the AI's own use of the barstool
+  spot, and a body the AI holds in a sitting workspot kept its head and
+  mouth for it. His own base-game conversation (`dyno_default.scene`)
+  registers the same barstool resource and plays it FROM THE SCENE, entry
+  6, jumpToEntry 1, playAtActorLocation 1, on the community actor. Both bar
+  scenes do the same now (`bar_pose` in gen_scenes.py), fired at t=0 of the
+  first section. `questkit.scene`'s workspot check accepted only `spawnSet`
+  actors for a community-addressed node and accepts `community`-plan ones
+  too. Unplayed since the fix.
+- **The -5,000 had a banner of ours over the game's own readout.** The
+  design call: no custom text. A reward record cannot take money
+  (`RPGManager.GiveReward` skips any currency quantity that is not above
+  zero, read off the shipped script), and it does not need to: the game's
+  own money popup (`CurrencyChangeInventoryCallback`) fires on any wallet
+  change that is not flagged silent, `RemoveItem` has no silent flag, and
+  the "-5,000" and the new total are drawn by the game. The banner is gone.
+- **"Leave Dino's bar" draws the bar.** A trigger area round the stool, the
+  leaving radius as a 16-gon, as an extra node of the cast sector with the
+  objective's pin on it (the recipe in docs/map-pins-playbook.md, gig 02's
+  way out). One number, `DINO_LEAVE_RADIUS`, feeds the drawn shape and the
+  script's test; the outline goes up to 0.7 m before the objective closes.
+- "Listen to Johnny" replaced "Talk to Johnny" on his beats, and his line at
+  V's door has an objective of its own (a succeeded journal objective does
+  not reopen, so the door beat is a second entry). The game's own wording is
+  "Talk to Johnny." (56 objectives); "Listen to Johnny" has no vanilla use.
+- **The trace started at the closed door.** The cabinet net (backlog 47)
+  fired within 4 m of the cabinet, and the door is 3.15 m from it, so the
+  net reached through the wall to the doorstep. It is 2 m now, inside the
+  room and nowhere else; `cc_g03_dbg_alarm_src` reading 2 is that net.
+- **The reinforcements arrive at the gate.** A spot at the compound's gate
+  was captured in playtest, and the three stand there in a line 1.5 m
+  apart facing into the compound (the opposite of the capture's facing),
+  instead of at three fence corners, where they stood in the wall mesh.
+- **The responders could not find a V off the road.** Playtest: "they try
+  to find me but can't cause I stay outside of the road". Read out of
+  preventionSystem.swift: stars raised by a request are a SEARCH, and the
+  flag `m_policeKnowsPlayerLocation` stays false until a unit reports
+  combat; while it is false `TrySpawnPoliceOnFootFallback` returns at once,
+  and the foot fallback is the only way the system reaches a player the
+  cars cannot (`TrySpawnOnFootFallbackBasedOnRoadInfo` asks for it when the
+  nearest road is further than `fallbackMaxDistanceToRoad`). The game's own
+  units set the flag through the public static
+  `PreventionSystem.CombatStartedRequestToPreventionSystem`, which also
+  records the requester's position as the last known one and turns the
+  stars active. `CCSharedPrevention.Locate` makes that call on the player's
+  behalf, and the trace loop makes it every 3 s while the chase is on (and
+  only then: with no chase the same request runs the crime pipeline and
+  raises heat by itself). `cc_g03_dbg_located` counts the calls. Two limits
+  the game keeps: a mounted player gets no foot units at all
+  (`m_isPlayerMounted`), and the foot units still need navmesh points within
+  the heat table's spawn range. Four stars would change the units, not the
+  flag, so it was not raised.
+- **The cars would not follow V into the desert, and two things were needed.**
+  Playtest, a V driving off the road: "they always get spawned on the main
+  road and they never come to the desert". First, the game's own spawner
+  refuses a car when the nearest road is further than its heat table allows
+  (`TrySpawnOnFootFallbackBasedOnRoadInfo`) and sends men on foot instead.
+  `PreventionSpawnSystem.RequestChaseVehicle` and the registry's
+  `CreateTicket` are both public, so `CCSharedPrevention.Car` makes the
+  request the system would have made, with the `GetToPlayerFromAnywhere`
+  strategy and the Badlands' own Militech car
+  (`Vehicle.v_standard3_chevalier_emperor_militech_wasteland_prevention`,
+  crewed from the record's own `PreventionPassengers`), and the chase loop
+  keeps three in play. That brought the cars: they arrived, and sat on the
+  tarmac. Second, a response car's chase behaviour navigates traffic lanes
+  and never leaves them. The vehicle AI's `AIVehicleFollowCommand` carries a
+  `useTraffic` switch (`aiDriveCommandHandler.swift` maps it straight into
+  the driving behaviour), and with it off the car drives at its target
+  directly, which is how a quest car follows V across the Badlands.
+  `CCSharedPrevention.Follow` sends that command to every car in the
+  registry, target V, 3 to 10 m, re-sent every three seconds because the
+  game hands a car its own chase command back whenever its strategy
+  changes and the later command wins. Playtest 2026-09-15: "confirmed as
+  the best method"; the cars leave the road and come across the sand.
+  `cc_g03_dbg_cars` counts the requests, `cc_g03_dbg_followed` the cars
+  told to follow on the last pass.
+- **Two Dinos on one stool.** Playtest, from a save made before the choice:
+  the game's own Dino still on his stool under ours, his bar chat on offer.
+  The keeper copied from gig 02 (a targeting census within 40 m, disposing
+  any `Character.dyno`) found nothing, where the same census found a
+  standing Wakako and a standing Regina: a body the AI holds in a sitting
+  workspot is not one the targeting system hands back. The keeper now asks
+  the spawner system directly, the way gig 02 finds its merc: resolve the
+  vanilla community node `#dyno`, `GetGameObjectsFromSpawnerEntityID` for
+  entry `dyno`, dispose what comes back. The census stays as the second
+  route. `cc_g03_dbg_dino_disposed` counts the bodies removed.
+- **Johnny gets two lines on the bring-it ending.** The design call: "Don't
+  do it, V" / "Not now, Johnny" / the ideals-and-eddies cut / "I said shut
+  up! What's there to talk about? Job's a job, nothin' personal." The cut
+  ships a second time under this scene's own line id.
+- **Reused lines were paced by an estimate, and it ran short for V.** A
+  section is paced by its line durations; a shipped clip is measured, a
+  `vanilla_sid` line was estimated from its text (1200 ms plus 55 a
+  character). "Not now, Johnny." estimates at 2.0 s and runs 3.4 s (4.0 s on
+  the male body), so Johnny's next line started over V's, and in the
+  bring-it scene V's last line outran the section: the exit flash fired
+  over the words and the body went the moment they stopped ("almost seen
+  him disappear without glitch"). `tools/gig03/measure_vanilla.py` pulls
+  every reused take out of the voice archive, both bodies, writes the
+  longer length to `source/audio/vanilla_durations.json`, and gen_scenes
+  paces from it with the same 350 ms pad the shipped clips get. Committed
+  like durations.json, so a clone builds without the game; run_all runs it
+  and it keeps the file when the CLI is absent. Nine of the 25 estimates
+  were more than half a second out.
+- **V is held still for Johnny at the door.** The design call: stop, then
+  Johnny, then release, "so we're sure he appears and V sees him". A
+  gameplay restriction, `NoMovement` cloned with saving off
+  (`GameplayRestriction.cc_g03_hold`, the recipe in
+  docs/gameplay-restrictions.md), applied by Gig03_Places.reds on the tick
+  V is out of the bar's area on foot, one second before the scene, and
+  lifted when the graph sets `cc_g03_johnny_done` on the scene's exit, or
+  after thirty seconds, or on the first pass of a session that finds it
+  held. What `NoMovement` stops exactly is unmeasured before this;
+  `cc_g03_dbg_hold` reads 1 while held and 2 once lifted.

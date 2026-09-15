@@ -5,6 +5,25 @@ each mod's Nexus Changelog tab.
 
 ---
 
+# Acceptable Loss
+
+## 1.0.0 (2026-09-15)
+
+- **Added: Acceptable Loss, a full side gig.** Dino Dinovic sends you to
+  steal Militech's combat evaluation data from a training site in the
+  Badlands. One compound, a chase, a choice by text, two endings.
+- **Added: every line is spoken and subtitled.** Dino, V and Johnny use the
+  game's own voice lines. No new characters.
+- **Added: it cannot be done quietly.** Opening the security room gets you
+  traced. The compound turns on you and a 3-star wanted level holds until you
+  leave the Badlands.
+- **Added: the bar you have to leave is drawn on the minimap**, the way the
+  game draws its own.
+- **Added: two payouts.** Bring the data for half the fee, or wipe it and pay
+  the client's advance out of your own pocket.
+
+---
+
 # Dead Ringer
 
 ## 1.0.6 (2026-09-15)

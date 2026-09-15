@@ -2209,8 +2209,21 @@ class Scene:
         return perf
 
     def look_at(self, section, actor, target_performer, start_time=0,
-                duration=1000):
+                duration=1000, slot=None):
         """Turn an actor's eyes, head and chest onto a target performer.
+
+        `slot` is the target's attachment slot. Left as None it is chosen the
+        way vanilla chooses it: `pla_default_tgt` when the target is the
+        player, `(Root)` for anything else. THE DIFFERENCE IS EYE HEIGHT.
+        `(Root)` is the entity's origin, which for a person is the ground
+        between their feet, and a standing actor aimed there bends at the
+        chest and looks at the floor. Playtest 2026-09-11, gig 03, Regina in
+        her flat: "she looks down not at me", with the screenshot showing her
+        chin on her chest. Gig 02 shipped the same target and it passed only
+        because Wakako is seated behind a desk. Vanilla's own room scene
+        `mq019_01_notell_motel.scene` aims all twelve of its look-ats at the
+        player through `pla_default_tgt` and uses `(Root)` for nothing but
+        props.
 
         EVERY FIELD IS COPIED FROM `wakako_holocall.scene`, node 56, event 0,
         which is the game's own way of making the caller look down the lens.
@@ -2249,7 +2262,12 @@ class Scene:
                     'targetPerformerId': {'$type': 'scnPerformerId',
                                           'id': target_performer},
                     'targetPropId': {'$type': 'scnPropId', 'id': 4294967295},
-                    'targetSlot': cname('(Root)'),
+                    'targetSlot': cname(
+                        slot if slot is not None else
+                        ('pla_default_tgt'
+                         if self.player_actors
+                         and target_performer == self.player_performer()
+                         else '(Root)')),
                     'targetType': 'Actor',
                 },
                 'removePreviousAdvancedLookAts': 1,
@@ -2552,17 +2570,22 @@ class Scene:
                 continue
             if eref['names'] and eref['reference']['$value'] not in (None, 'None', ''):
                 # Community-addressed: the community node and the entry must
-                # both belong to one spawnSet actor of this scene.
+                # both belong to one community-acquired actor of this scene,
+                # whichever of the two plans acquires it. `spawnSet` was the
+                # only plan when this check was written (gig 02's merc);
+                # gig 03's Dino is a `community`-plan actor and his barstool
+                # is addressed the same way, through the node and the entry
+                # name, which is what the entity reference carries in both.
                 ref = eref['reference']['$value']
                 ent = eref['names'][0]['$value']
-                ok = any(a.get('acquisitionPlan') == 'spawnSet'
+                ok = any(a.get('acquisitionPlan') in ('spawnSet', 'community')
                          and ref in json.dumps(a) and ('"%s"' % ent) in json.dumps(a)
                          for a in self.actors)
                 if not ok:
                     raise SystemExit('%s: workspot node %d addresses community '
-                                     'entry %s of %s, which no spawnSet actor '
-                                     'here uses' % (self.name, n['nodeId']['id'],
-                                                    ent, ref))
+                                     'entry %s of %s, which no community-'
+                                     'acquired actor here uses'
+                                     % (self.name, n['nodeId']['id'], ent, ref))
                 continue
             uniq = eref['dynamicEntityUniqueName']['$value']
             names = {a['spawnDespawnParams']['dynamicEntityUniqueName']['$value']

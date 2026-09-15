@@ -1,0 +1,50 @@
+{
+  "Header": {
+    "WolvenKitVersion": "8.20.0",
+    "WKitJsonVersion": "0.0.9",
+    "GameVersion": 2310,
+    "DataType": "CR2W",
+    "ArchiveFileName": "subtitles.json"
+  },
+  "Data": {
+    "Version": 195,
+    "BuildVersion": 0,
+    "RootChunk": {
+      "$type": "JsonResource",
+      "cookingPlatform": "PLATFORM_PC",
+      "root": {
+        "HandleId": "0",
+        "Data": {
+          "$type": "localizationPersistenceSubtitleEntries",
+          "entries": [
+            {
+              "$type": "localizationPersistenceSubtitleEntry",
+              "femaleVariant": "Give up your ideals, and no amount of eddies can buy 'em back.",
+              "maleVariant": "Give up your ideals, and no amount of eddies can buy 'em back.",
+              "stringId": "2330541904110403591"
+            },
+            {
+              "$type": "localizationPersistenceSubtitleEntry",
+              "femaleVariant": "Give up your ideals, and no amount of eddies can buy 'em back.",
+              "maleVariant": "Give up your ideals, and no amount of eddies can buy 'em back.",
+              "stringId": "3438982882783360468"
+            },
+            {
+              "$type": "localizationPersistenceSubtitleEntry",
+              "femaleVariant": "You fucked up, V.",
+              "maleVariant": "You fucked up, V.",
+              "stringId": "2742322433473941687"
+            },
+            {
+              "$type": "localizationPersistenceSubtitleEntry",
+              "femaleVariant": "Sorry, no cred for that move.",
+              "maleVariant": "Sorry, no cred for that move.",
+              "stringId": "2742321333962313476"
+            }
+          ]
+        }
+      }
+    },
+    "EmbeddedFiles": []
+  }
+}
