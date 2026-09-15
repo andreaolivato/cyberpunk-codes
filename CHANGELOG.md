@@ -7,6 +7,11 @@ each mod's Nexus Changelog tab.
 
 # Dead Ringer
 
+## 1.0.6 (2026-09-15)
+
+- **Fixed: crash outside Afterlife when playing with companion mods.** A
+  police car around the location could do the same. Reported by Renderman11.
+
 ## 1.0.5 (2026-09-12)
 
 - **Fixed: killing Toji from a roof, from the street above him or with a

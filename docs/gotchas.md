@@ -2706,3 +2706,30 @@ Never renumber. Append.
      NPC is alive to `IsAlive` as well, so a "kill" objective correctly stays
      open on one. The game pays its NCPD bounty on either, so the money
      landing is not evidence of which happened.
+
+112. **`Entity.Dispose` on an NPC that is not ambient crowd leaves whatever
+     held that NPC pointing at nothing, and the engine dies on its next
+     question about it.**
+
+     `Dispose` is a native every entity has, undeclared in the shipped scripts
+     (declare it with `@addMethod(Entity) public native func Dispose()`). It
+     destroys the entity where it stands, and that is its whole appeal for
+     clearing the game's own crowd out of a spot a gig needs: the crowd system
+     spawns replacements and forgets the ones that went. Nothing else forgets.
+
+     A player's crash dump, 2026-09-14 (backlog 46): a gig loop disposed
+     every NPC within 22 m of the Afterlife door once a second, and one of
+     them was seated in a police car parked at the kerb. Dispose skips the
+     unmount, so the seat kept saying occupied while pointing at nothing, and
+     the engine's next "is the driver NCPD" read through the empty pointer on
+     a job thread. Crash to desktop, every time, on that machine; never on
+     the development machine, which never had that car parked there. The same
+     call takes a companion NPC out from under the mod that owns it, a vendor
+     out of the shop that expects to sell, and a quest NPC out of a scene.
+
+     The test is `ScriptedPuppet.IsCrowd()`: true for the crowd system's
+     bodies and for records flagged crowd, false for a seated cop, a
+     companion, a vendor or a quest character. Gate every Dispose on it. For
+     anything that fails the test and still has to go, use the route that
+     owns the body: the community switch for a community entry, the crowd
+     null area for future crowd, and nothing at all for another mod's NPC.

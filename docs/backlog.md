@@ -9589,3 +9589,83 @@ Game.GetQuestsSystem():SetFactStr("cc_g02_toji_dead", 1)
 Game.GetQuestsSystem():SetFactStr("cc_g02_exfil_done", 1)
 Game.GetQuestsSystem():SetFactStr("cc_g02_site_clear", 1)
 ```
+
+## 46. A crash every time outside Afterlife, on one machine. SOLVED 2026-09-15
+
+One Nexus report on gig 02: crash to desktop every time, "listening to the
+mercs outside the Afterlife", requirements up to date. Nothing in that beat's
+code can crash on its own: the approach logic only writes facts, and the three
+conversations are ordinary scenes, two of them built entirely from the game's
+own recorded lines. Every merc bug fixed in 1.0.2 came from a player who had
+already listened to all three groups, so the beat itself was known to play.
+The crash report was asked for, and the report folder (`%LOCALAPPDATA%`
+`REDEngine` `ReportQueue`, one folder per crash) came back with the dump, the
+game's own screenshot of the last frame, a telemetry text and the last save.
+
+**What the report said before the dump was opened.** V stood at
+(-1470, 1062, 24), the Afterlife fast-travel arrival point, 16 m from the
+door. The attached save was 88 s old and 2 km away, and the engine recorded a
+2071 m teleport: a fast travel, then the crash within seconds. Four gameplay
+vehicle mounts were alive. The screenshot showed a police car at the kerb
+beside V and two NPCs standing with V; the redscript log listed two companion
+mods (NightCityAllies, RA_BlueMoon). The merc's first recorded line was in
+memory, so the third conversation was loading.
+
+**Reading the dump without symbols.** The route, because it will be needed
+again:
+
+1. `pip install minidump capstone pefile`. The dump's thread list, module
+   list, exception record and every thread's stack memory are enough; this
+   one also carried referenced heap memory, which is how the object below
+   could be read.
+2. The exception thread was a job worker, and the main thread was inside
+   `JobQueue_SyncWait`: the game was waiting on the job that died.
+3. The addresses file in the game's `bin` folder (`cyberpunk2077_addresses.json`,
+   132 MB) maps every function start to a hash, but names only 84 of them.
+   The RED4ext SDK's `AddressHashes.hpp`, Codeware's and ArchiveXL's
+   `Library.hpp` and CET's `Addresses.h` name about 300 more. With those,
+   the script VM (`CBaseFunction_ExecuteScripted`, `InternalExecute`) was
+   shown to be absent from the dying thread: no script was running, and no
+   mod DLL was in the live chain. Codeware return addresses were on that
+   stack but below the live frames, left by an earlier job on the same
+   thread.
+4. A stack scan for module addresses is mostly noise. A return address is
+   only real when a `call` instruction ends exactly at it in the local exe
+   (same build, 3.0.5294808), which capstone checks in one line. That filter
+   turned 85 candidate slots into one coherent chain.
+5. The faulting function, disassembled on the local exe: take an object,
+   follow the pointer at +0x30 (null, with the flag at +0x48 set to 1), read
+   a TweakDBID at +0x98 of the target, fetch that record, follow the record's
+   TweakDBID at +0x20c to a second record, return the int at +0x84, or 0x2a
+   when anything along the way is missing. The two record fetches were
+   recognisable from the TweakDBID validity test (hash non-zero, length byte
+   non-zero) that precedes each. The caller compared the result with 13.
+   `gamedataAffiliation` has `Invalid = 42` and `NCPD = 13`: the engine was
+   asking whether somebody was NCPD, about a slot that said it held somebody
+   and pointed at nobody.
+
+**The mod's side.** `Gig02_Encounter.Bystanders` disposed every NPC within
+22 m of the door that was not the gig's own, once a second, from the moment
+the gig was accepted until the merc was dealt with, with the raw `Dispose`
+native. The fast-travel arrival point is inside that radius. Disposing a
+seated NPC skips the unmount, so the car's seat kept its occupant flag and
+lost its occupant. Which body it was, a cop in that car or one of the two
+companions, is inference from the screenshot and the mount count; the fix is
+the same for both.
+
+**The fix, 1.0.6.** Both removal loops (the door, and the stranger in Char's
+chair at the Dewdrop Inn) test `ScriptedPuppet.IsCrowd()` first. The queue
+this exists to clear is the crowd system's, and a seated cop, a companion, a
+vendor and a quest NPC never pass the test. Played on 2026-09-15: the queue
+still leaves, nobody at the door reacts to the fight. Gotcha 112 carries the
+rule. The one regression the change can produce is a non-crowd body left
+standing at the door, which would bring back the 2026-09-04 shoot-back for
+that one body; the community switches and the crowd null area still stand in
+front of that.
+
+**Related.** 10i's two decoded dumps were also access violations on job
+threads with no mod DLL on the stack, one while the world was mounting. That
+shape now has a second, solved instance: a script deleting something the
+engine still had a reference to. It does not close 10i, whose reporters had
+no such loop running, and it is noted here because the reading route above
+is what 10i's dumps lacked.

@@ -1039,9 +1039,17 @@ public class DeadRingerEncounter extends ScriptableSystem {
     // and answering brings the police. The graph switches the two vanilla
     // communities off the way Rogue's date does, and the sector carries a
     // crowd null area; this is the guarantee underneath both: while the gig
-    // owns the door, every NPC within 22 m of the posts that is not ours is
-    // made friendly to V and given a bystander's reactions, so gunfire makes
-    // it run rather than shoot. Once per body, remembered by id.
+    // owns the door, every CROWD NPC within 22 m of the posts that is not
+    // ours is removed. Once per body, remembered by id.
+    //
+    // CROWD ONLY. A player's crash report (2026-09-14) showed the game dying
+    // seconds after a fast travel to the door: the engine asked whether the
+    // driver of a police car parked at the kerb was NCPD, and the driver had
+    // been disposed by this loop, so the seat still said occupied and pointed
+    // at nothing. Dispose skips the unmount, and the same call would take a
+    // companion out from under the mod that owns it. The queue this exists to
+    // clear is the crowd system's, so `IsCrowd` is the whole test: a cop in a
+    // car, a companion, a vendor or a quest NPC never passes it.
     private let m_calmed: array<EntityID>;
 
     private func Bystanders(game: GameInstance, qs: ref<QuestsSystem>,
@@ -1066,7 +1074,7 @@ public class DeadRingerEncounter extends ScriptableSystem {
         while i < ArraySize(parts) {
             let obj: ref<GameObject> = TS_TargetPartInfo.GetComponent(parts[i]).GetEntity() as GameObject;
             let npc: ref<ScriptedPuppet> = obj as ScriptedPuppet;
-            if IsDefined(npc) && !npc.IsPlayer()
+            if IsDefined(npc) && !npc.IsPlayer() && npc.IsCrowd()
                 && Vector4.Distance(npc.GetWorldPosition(), door) < 22.0
                 && !this.IsOurs(npc.GetRecordID())
                 && !ArrayContains(this.m_calmed, npc.GetEntityID()) {
@@ -1109,7 +1117,11 @@ public class DeadRingerEncounter extends ScriptableSystem {
             if IsDefined(npc) && !npc.IsPlayer() && !this.IsOurs(npc.GetRecordID())
                 && !ArrayContains(this.m_calmed, npc.GetEntityID()) {
                 let rec: TweakDBID = npc.GetRecordID();
-                let atChair: Bool = Vector4.Distance(npc.GetWorldPosition(), chair) < 1.5;
+                // The chair's sitter is ambient crowd; a companion or a quest
+                // NPC standing at the chair is not, and is left alone. Same
+                // reason as the door loop above.
+                let atChair: Bool = npc.IsCrowd()
+                    && Vector4.Distance(npc.GetWorldPosition(), chair) < 1.5;
                 let vendor: Bool = rec == t"Character.wat_kab_netrunner_01"
                     && Vector4.Distance(npc.GetWorldPosition(), inn) < 15.0;
                 if atChair || vendor {
