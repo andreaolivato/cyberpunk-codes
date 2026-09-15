@@ -530,7 +530,8 @@ public class DeadRingerEncounter extends ScriptableSystem {
         while i < ArraySize(parts) {
             let obj: ref<GameObject> = TS_TargetPartInfo.GetComponent(parts[i]).GetEntity() as GameObject;
             let npc: ref<ScriptedPuppet> = obj as ScriptedPuppet;
-            if IsDefined(npc) && !npc.IsPlayer()
+            // crowd only
+            if IsDefined(npc) && !npc.IsPlayer() && npc.IsCrowd()
                 && Vector4.Distance(npc.GetWorldPosition(), door) < 22.0
                 && !this.IsOurs(npc.GetRecordID())
                 && !ArrayContains(this.m_calmed, npc.GetEntityID()) {
@@ -566,7 +567,8 @@ public class DeadRingerEncounter extends ScriptableSystem {
             if IsDefined(npc) && !npc.IsPlayer() && !this.IsOurs(npc.GetRecordID())
                 && !ArrayContains(this.m_calmed, npc.GetEntityID()) {
                 let rec: TweakDBID = npc.GetRecordID();
-                let atChair: Bool = Vector4.Distance(npc.GetWorldPosition(), chair) < 1.5;
+                let atChair: Bool = npc.IsCrowd()
+                    && Vector4.Distance(npc.GetWorldPosition(), chair) < 1.5;
                 // the game's yoko
                 let vendor: Bool = rec == t"Character.wat_kab_netrunner_01"
                     && Vector4.Distance(npc.GetWorldPosition(), inn) < 15.0;
