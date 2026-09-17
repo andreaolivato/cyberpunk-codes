@@ -85,8 +85,8 @@ CAST = {
     # Toji had one recorded line here. It went with his dialogue on 2026-09-06,
     # along with the wav and the wem; nothing speaks at the kill now.
     'merc': {
-        'gig02_group3': ['q07', 'q08', 'q09'],
-        'gig02_beaten': ['m30', 'm31', 'm32'],
+        'gig02_group3': ['q07', 'q08', 'q08b', 'q09'],
+        'gig02_beaten': ['m29', 'm30', 'm31', 'm32', 'm33'],
     },
 }
 

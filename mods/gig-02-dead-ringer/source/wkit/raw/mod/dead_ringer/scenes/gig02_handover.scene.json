@@ -195,7 +195,7 @@
           },
           "voicetagId": {
             "$type": "scnVoicetagId",
-            "id": "1624173162010259792"
+            "id": "1624173162010259992"
           }
         }
       ],
@@ -548,7 +548,7 @@
               "DepotPath": {
                 "$type": "ResourcePath",
                 "$storage": "string",
-                "$value": "base\\localization\\en-us\\lipsync\\base\\open_world\\scenes\\chats\\badlands\\bls_south_018\\civ_low_f_09_enus_25.anims"
+                "$value": "base\\localization\\en-us\\lipsync\\base\\open_world\\voicesets\\civilian_low_no_rep\\civ_low_f_34_enus_30\\civ_low_f_34_enus_30.anims"
               },
               "Flags": "Soft"
             },
@@ -970,7 +970,7 @@
                           "targetSlot": {
                             "$type": "CName",
                             "$storage": "string",
-                            "$value": "(Root)"
+                            "$value": "pla_default_tgt"
                           },
                           "targetType": "Actor"
                         },
@@ -1107,7 +1107,7 @@
                         "role": "Full",
                         "speakers": []
                       },
-                      "duration": 950,
+                      "duration": 1360,
                       "executionTagFlags": 0,
                       "id": {
                         "$type": "scnSceneEventId",
@@ -1147,7 +1147,7 @@
                         "role": "Full",
                         "speakers": []
                       },
-                      "duration": 2250,
+                      "duration": 2710,
                       "executionTagFlags": 0,
                       "id": {
                         "$type": "scnSceneEventId",
@@ -1158,7 +1158,7 @@
                         "$type": "scnscreenplayItemId",
                         "id": 513
                       },
-                      "startTime": 1650,
+                      "startTime": 2060,
                       "type": "0",
                       "visualStyle": "regular",
                       "voParams": {
@@ -1219,7 +1219,7 @@
                           "targetSlot": {
                             "$type": "CName",
                             "$storage": "string",
-                            "$value": "(Root)"
+                            "$value": "pla_default_tgt"
                           },
                           "targetType": "Actor"
                         },
@@ -1336,7 +1336,7 @@
                 ],
                 "sectionDuration": {
                   "$type": "scnSceneTime",
-                  "stu": 4400
+                  "stu": 5270
                 }
               }
             },
@@ -1417,7 +1417,7 @@
             "femaleLipsyncAnimationName": {
               "$type": "CName",
               "$storage": "string",
-              "$value": "f_1E49D294E02B6000"
+              "$value": "f_1B0C70B0DC69E004"
             },
             "itemId": {
               "$type": "scnscreenplayItemId",
@@ -1430,7 +1430,7 @@
             "maleLipsyncAnimationName": {
               "$type": "CName",
               "$storage": "string",
-              "$value": "f_1E49D294E02B6000"
+              "$value": "f_1B0C70B0DC69E004"
             },
             "speaker": {
               "$type": "scnActorId",
@@ -1453,7 +1453,7 @@
             "femaleLipsyncAnimationName": {
               "$type": "CName",
               "$storage": "string",
-              "$value": "f_1E49D4B9002B6000"
+              "$value": "f_1B0C70B0D269E004"
             },
             "itemId": {
               "$type": "scnscreenplayItemId",
@@ -1466,7 +1466,7 @@
             "maleLipsyncAnimationName": {
               "$type": "CName",
               "$storage": "string",
-              "$value": "f_1E49D4B9002B6000"
+              "$value": "f_1B0C70B0D269E004"
             },
             "speaker": {
               "$type": "scnActorId",

@@ -441,11 +441,15 @@ def build_group3():
 
     start = s.start('group3_in')
     s1 = s.section([
-        # THE SUBTITLES FOLLOW THE RECORDING (delivery of 2026-09-06): the
-        # brag opens on a laugh, "even" is in the punchline, the begging opens
-        # on "No!" twice, and it is "her words" rather than "her wording".
-        s.add_line(m, "Ha. They didn't even make it out of the car.", key='q07'),
+        # THE SUBTITLES FOLLOW THE RECORDING (the actor's delivery of
+        # 2026-09-17): the brag opens on a laugh, "even" is in the punchline,
+        # the begging opens on "No!" twice, and it is "her words" rather than
+        # "her wording". "Pow!" is the actor's own addition after the shotgun
+        # line, recorded as a take of its own and kept because it is the
+        # brag's flourish.
+        s.add_line(m, "Heh. They didn't even make it out of the car.", key='q07'),
         s.add_line(m, "Shotgun through the glass.", key='q08'),
+        s.add_line(m, "Pow!", key='q08b'),
     ])
     s2 = s.section([
         # THE WORDS THAT IDENTIFY HIM: the brief names Jig-Jig Street.
@@ -498,7 +502,12 @@ def build_beaten():
     v = s.add_player()
 
     start = s.start('beaten_in')
-    s1 = s.section([s.add_line(m, "No! Wait! Why?", key='m30')])
+    # He opens on a grunt: he has just been put on the floor, and the actor
+    # recorded the hurt separately from the words. Subtitled the way the game
+    # subtitles its own ("Agh!" is a vanilla line), since a scene line always
+    # carries one.
+    s1 = s.section([s.add_line(m, "Ugh!", key='m29'),
+                    s.add_line(m, "No! Wait! Why?", key='m30')])
     s2 = s.section([s.add_line(v, "Wakako sent me.", key='v06',
                                vanilla_sid=0x196b41d47c386000)])
     s3 = s.section([s.add_line(m, "Wakako? She hired me!", key='m31')])
@@ -508,8 +517,10 @@ def build_beaten():
     s4 = s.section([s.add_line(v, "You're a shitty liar.", key='v07',
                                vanilla_sid=0x1b2b52f11862a000)])
     s5 = s.section([
-        s.add_line(m, "No! I've got her messages. Her tag, her words, the "
+        s.add_line(m, "No! I got the messages. Her tag, her words, the "
                       "transfer. Take it. Read it.", key='m32'),
+        # The actor's addition, and the last thing he says before the choice.
+        s.add_line(m, "Look for yourself.", key='m33'),
     ])
     # `merc_talked` fires here, after his line: the graph opens the objective
     # to take the shard off him. It is already in his pocket.

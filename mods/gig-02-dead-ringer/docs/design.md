@@ -176,7 +176,7 @@ the map and no second body spawned beside a first.
 | Wakako | her office, and four calls | the game's own recordings |
 | Yoko | the Dewdrop Inn | the game's own recordings |
 | Char | the netrunner chair, and one video call | recorded, 4 lines |
-| the merc | outside Afterlife | recorded, 6 lines |
+| the merc | outside Afterlife | recorded, 9 lines |
 | Toji | the Japantown stairs | silent |
 | V, Johnny | throughout | the game's own recordings |
 
