@@ -3,7 +3,7 @@
     "WolvenKitVersion": "8.20.0",
     "WKitJsonVersion": "0.0.9",
     "GameVersion": 2310,
-    "ExportedDateTime": "2026-09-07T03:43:40.5541918Z",
+    "ExportedDateTime": "2026-09-17T12:27:55.5119361Z",
     "DataType": "CR2W",
     "ArchiveFileName": "C:\\Users\\andre\\OneDrive\\Desktop\\cyberpunk-gigs\\gig02_dead_ringer\\source\\archive\\mod\\dead_ringer\\scenes\\gig02_char_call.scene"
   },
@@ -196,7 +196,7 @@
           },
           "voicetagId": {
             "$type": "scnVoicetagId",
-            "id": "1624173162010260832"
+            "id": "1624173162010260060"
           }
         }
       ],
@@ -711,7 +711,7 @@
               "DepotPath": {
                 "$type": "ResourcePath",
                 "$storage": "string",
-                "$value": "base\\localization\\en-us\\lipsync\\base\\quest\\main_quests\\part1\\q105\\scenes\\q105_03a_dollhouse_doll_02\\civ_mid_f_21_enus_25.anims"
+                "$value": "base\\localization\\en-us\\lipsync\\base\\quest\\minor_quests\\mq026\\scenes\\mq026_02_death\\civ_low_f_51_afam_40.anims"
               },
               "Flags": "Soft"
             },
@@ -817,7 +817,7 @@
                         "role": "Full",
                         "speakers": []
                       },
-                      "duration": 6770,
+                      "duration": 7170,
                       "executionTagFlags": 0,
                       "id": {
                         "$type": "scnSceneEventId",
@@ -857,7 +857,7 @@
                         "role": "Full",
                         "speakers": []
                       },
-                      "duration": 4270,
+                      "duration": 3780,
                       "executionTagFlags": 0,
                       "id": {
                         "$type": "scnSceneEventId",
@@ -868,7 +868,7 @@
                         "$type": "scnscreenplayItemId",
                         "id": 257
                       },
-                      "startTime": 7470,
+                      "startTime": 7870,
                       "type": "0",
                       "visualStyle": "regular",
                       "voParams": {
@@ -1068,7 +1068,7 @@
                 ],
                 "sectionDuration": {
                   "$type": "scnSceneTime",
-                  "stu": 11740
+                  "stu": 11650
                 }
               }
             },
@@ -1532,7 +1532,7 @@
             "femaleLipsyncAnimationName": {
               "$type": "CName",
               "$storage": "string",
-              "$value": "f_1758D867DF2B6000"
+              "$value": "f_1A8FA9D2A462A000"
             },
             "itemId": {
               "$type": "scnscreenplayItemId",
@@ -1545,7 +1545,7 @@
             "maleLipsyncAnimationName": {
               "$type": "CName",
               "$storage": "string",
-              "$value": "f_1758D867DF2B6000"
+              "$value": "f_1A8FA9D2A462A000"
             },
             "speaker": {
               "$type": "scnActorId",
@@ -1568,7 +1568,7 @@
             "femaleLipsyncAnimationName": {
               "$type": "CName",
               "$storage": "string",
-              "$value": "f_1758D8673F2B6000"
+              "$value": "f_1AB90E053E3BC000"
             },
             "itemId": {
               "$type": "scnscreenplayItemId",
@@ -1581,7 +1581,7 @@
             "maleLipsyncAnimationName": {
               "$type": "CName",
               "$storage": "string",
-              "$value": "f_1758D8673F2B6000"
+              "$value": "f_1AB90E053E3BC000"
             },
             "speaker": {
               "$type": "scnActorId",

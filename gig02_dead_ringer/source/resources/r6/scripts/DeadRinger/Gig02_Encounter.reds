@@ -30,9 +30,6 @@ public abstract class CCGig02Combat {
 
 }
 
-@addMethod(Entity)
-public native func Dispose() -> Void;
-
 public class DeadRingerEncounter extends ScriptableSystem {
 
     private let m_mercId: EntityID;
@@ -536,7 +533,7 @@ public class DeadRingerEncounter extends ScriptableSystem {
                 && !this.IsOurs(npc.GetRecordID())
                 && !ArrayContains(this.m_calmed, npc.GetEntityID()) {
                 ArrayPush(this.m_calmed, npc.GetEntityID());
-                npc.Dispose();
+                Reflection.Call(npc, n"Dispose");
             }
             i += 1;
         }
@@ -574,7 +571,7 @@ public class DeadRingerEncounter extends ScriptableSystem {
                     && Vector4.Distance(npc.GetWorldPosition(), inn) < 15.0;
                 if atChair || vendor {
                     ArrayPush(this.m_calmed, npc.GetEntityID());
-                    npc.Dispose();
+                    Reflection.Call(npc, n"Dispose");
                 }
             }
             i += 1;
@@ -664,7 +661,7 @@ public class DeadRingerEncounter extends ScriptableSystem {
                 if rec == t"Character.wakako_okada"
                     && Vector4.Distance(npc.GetWorldPosition(), office) < 20.0 {
                     ArrayPush(this.m_calmed, npc.GetEntityID());
-                    npc.Dispose();
+                    Reflection.Call(npc, n"Dispose");
                 }
             }
             i += 1;

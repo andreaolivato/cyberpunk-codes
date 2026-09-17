@@ -3,7 +3,7 @@
     "WolvenKitVersion": "8.20.0",
     "WKitJsonVersion": "0.0.9",
     "GameVersion": 2310,
-    "ExportedDateTime": "2026-09-06T09:08:34.4664640Z",
+    "ExportedDateTime": "2026-09-17T12:31:07.8123354Z",
     "DataType": "CR2W",
     "ArchiveFileName": "C:\\Users\\andre\\OneDrive\\Desktop\\cyberpunk-gigs\\gig02_dead_ringer\\source\\archive\\mod\\dead_ringer\\scenes\\gig02_beaten.scene"
   },
@@ -196,7 +196,7 @@
           },
           "voicetagId": {
             "$type": "scnVoicetagId",
-            "id": "1624173162010261160"
+            "id": "1624173162010261092"
           }
         }
       ],
@@ -317,7 +317,7 @@
             "localeId": "en_us",
             "locstringId": {
               "$type": "scnlocLocstringId",
-              "ruid": "2789606698320863598"
+              "ruid": "2790588562204666796"
             },
             "signature": {
               "$type": "scnlocSignature",
@@ -325,7 +325,7 @@
             },
             "variantId": {
               "$type": "scnlocVariantId",
-              "ruid": "3432229838855482252"
+              "ruid": "3431372475123254478"
             },
             "vpeIndex": 0
           },
@@ -334,6 +334,40 @@
             "localeId": "db_db",
             "locstringId": {
               "$type": "scnlocLocstringId",
+              "ruid": "2790588562204666796"
+            },
+            "signature": {
+              "$type": "scnlocSignature",
+              "val": "3"
+            },
+            "variantId": {
+              "$type": "scnlocVariantId",
+              "ruid": "2339941310842026311"
+            },
+            "vpeIndex": 1
+          },
+          {
+            "$type": "scnlocLocStoreEmbeddedVariantDescriptorEntry",
+            "localeId": "en_us",
+            "locstringId": {
+              "$type": "scnlocLocstringId",
+              "ruid": "2789606698320863598"
+            },
+            "signature": {
+              "$type": "scnlocSignature",
+              "val": "3"
+            },
+            "variantId": {
+              "$type": "scnlocVariantId",
+              "ruid": "3432229838855482252"
+            },
+            "vpeIndex": 2
+          },
+          {
+            "$type": "scnlocLocStoreEmbeddedVariantDescriptorEntry",
+            "localeId": "db_db",
+            "locstringId": {
+              "$type": "scnlocLocstringId",
               "ruid": "2789606698320863598"
             },
             "signature": {
@@ -344,7 +378,7 @@
               "$type": "scnlocVariantId",
               "ruid": "3173692230352881357"
             },
-            "vpeIndex": 1
+            "vpeIndex": 3
           },
           {
             "$type": "scnlocLocStoreEmbeddedVariantDescriptorEntry",
@@ -361,7 +395,7 @@
               "$type": "scnlocVariantId",
               "ruid": "3065070888141983631"
             },
-            "vpeIndex": 2
+            "vpeIndex": 4
           },
           {
             "$type": "scnlocLocStoreEmbeddedVariantDescriptorEntry",
@@ -378,7 +412,7 @@
               "$type": "scnlocVariantId",
               "ruid": "2952186306262917646"
             },
-            "vpeIndex": 3
+            "vpeIndex": 5
           },
           {
             "$type": "scnlocLocStoreEmbeddedVariantDescriptorEntry",
@@ -395,7 +429,7 @@
               "$type": "scnlocVariantId",
               "ruid": "2951382349201107002"
             },
-            "vpeIndex": 4
+            "vpeIndex": 6
           },
           {
             "$type": "scnlocLocStoreEmbeddedVariantDescriptorEntry",
@@ -412,10 +446,60 @@
               "$type": "scnlocVariantId",
               "ruid": "2801476838723885019"
             },
-            "vpeIndex": 5
+            "vpeIndex": 7
+          },
+          {
+            "$type": "scnlocLocStoreEmbeddedVariantDescriptorEntry",
+            "localeId": "en_us",
+            "locstringId": {
+              "$type": "scnlocLocstringId",
+              "ruid": "2789605598809235387"
+            },
+            "signature": {
+              "$type": "scnlocSignature",
+              "val": "3"
+            },
+            "variantId": {
+              "$type": "scnlocVariantId",
+              "ruid": "2496188000394839877"
+            },
+            "vpeIndex": 8
+          },
+          {
+            "$type": "scnlocLocStoreEmbeddedVariantDescriptorEntry",
+            "localeId": "db_db",
+            "locstringId": {
+              "$type": "scnlocLocstringId",
+              "ruid": "2789605598809235387"
+            },
+            "signature": {
+              "$type": "scnlocSignature",
+              "val": "3"
+            },
+            "variantId": {
+              "$type": "scnlocVariantId",
+              "ruid": "3254389604856079260"
+            },
+            "vpeIndex": 9
           }
         ],
         "vpEntries": [
+          {
+            "$type": "scnlocLocStoreEmbeddedVariantPayloadEntry",
+            "content": "Ugh!",
+            "variantId": {
+              "$type": "scnlocVariantId",
+              "ruid": "3431372475123254478"
+            }
+          },
+          {
+            "$type": "scnlocLocStoreEmbeddedVariantPayloadEntry",
+            "content": "Ugh!",
+            "variantId": {
+              "$type": "scnlocVariantId",
+              "ruid": "2339941310842026311"
+            }
+          },
           {
             "$type": "scnlocLocStoreEmbeddedVariantPayloadEntry",
             "content": "No! Wait! Why?",
@@ -450,7 +534,7 @@
           },
           {
             "$type": "scnlocLocStoreEmbeddedVariantPayloadEntry",
-            "content": "No! I\u0027ve got her messages. Her tag, her words, the transfer. Take it. Read it.",
+            "content": "No! I got the messages. Her tag, her words, the transfer. Take it. Read it.",
             "variantId": {
               "$type": "scnlocVariantId",
               "ruid": "2951382349201107002"
@@ -458,10 +542,26 @@
           },
           {
             "$type": "scnlocLocStoreEmbeddedVariantPayloadEntry",
-            "content": "No! I\u0027ve got her messages. Her tag, her words, the transfer. Take it. Read it.",
+            "content": "No! I got the messages. Her tag, her words, the transfer. Take it. Read it.",
             "variantId": {
               "$type": "scnlocVariantId",
               "ruid": "2801476838723885019"
+            }
+          },
+          {
+            "$type": "scnlocLocStoreEmbeddedVariantPayloadEntry",
+            "content": "Look for yourself.",
+            "variantId": {
+              "$type": "scnlocVariantId",
+              "ruid": "2496188000394839877"
+            }
+          },
+          {
+            "$type": "scnlocLocStoreEmbeddedVariantPayloadEntry",
+            "content": "Look for yourself.",
+            "variantId": {
+              "$type": "scnlocVariantId",
+              "ruid": "3254389604856079260"
             }
           }
         ]
@@ -549,7 +649,7 @@
               "DepotPath": {
                 "$type": "ResourcePath",
                 "$storage": "string",
-                "$value": "base\\localization\\en-us\\lipsync\\base\\open_world\\voicesets\\civilian_mid_no_rep\\civ_mid_m_21_enus_25\\civ_mid_m_21_enus_25.anims"
+                "$value": "base\\localization\\en-us\\lipsync\\base\\open_world\\voicesets\\civilian_mid_rep\\civ_mid_m_04_enus_30\\civ_mid_m_04_enus_30.anims"
               },
               "Flags": "Soft"
             },
@@ -635,7 +735,7 @@
                         "role": "Full",
                         "speakers": []
                       },
-                      "duration": 2573,
+                      "duration": 1100,
                       "executionTagFlags": 0,
                       "id": {
                         "$type": "scnSceneEventId",
@@ -647,6 +747,46 @@
                         "id": 1
                       },
                       "startTime": 700,
+                      "type": "0",
+                      "visualStyle": "regular",
+                      "voParams": {
+                        "$type": "scnDialogLineVoParams",
+                        "alwaysUseBrainGender": 0,
+                        "customVoEvent": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "None"
+                        },
+                        "disableHeadMovement": 0,
+                        "ignoreSpeakerIncapacitation": 1,
+                        "isHolocallSpeaker": 0,
+                        "voContext": "Vo_Context_Quest",
+                        "voExpression": "Vo_Expression_Spoken"
+                      }
+                    }
+                  },
+                  {
+                    "HandleId": "4",
+                    "Data": {
+                      "$type": "scnDialogLineEvent",
+                      "additionalSpeakers": {
+                        "$type": "scnAdditionalSpeakers",
+                        "executionTag": 0,
+                        "role": "Full",
+                        "speakers": []
+                      },
+                      "duration": 2710,
+                      "executionTagFlags": 0,
+                      "id": {
+                        "$type": "scnSceneEventId",
+                        "id": "2564878181924553689"
+                      },
+                      "scalingData": null,
+                      "screenplayLineId": {
+                        "$type": "scnscreenplayItemId",
+                        "id": 257
+                      },
+                      "startTime": 1800,
                       "type": "0",
                       "visualStyle": "regular",
                       "voParams": {
@@ -707,18 +847,18 @@
                 ],
                 "sectionDuration": {
                   "$type": "scnSceneTime",
-                  "stu": 3273
+                  "stu": 4510
                 }
               }
             },
             {
-              "HandleId": "4",
+              "HandleId": "5",
               "Data": {
                 "$type": "scnSectionNode",
                 "actorBehaviors": [],
                 "events": [
                   {
-                    "HandleId": "5",
+                    "HandleId": "6",
                     "Data": {
                       "$type": "scnDialogLineEvent",
                       "additionalSpeakers": {
@@ -736,7 +876,7 @@
                       "scalingData": null,
                       "screenplayLineId": {
                         "$type": "scnscreenplayItemId",
-                        "id": 257
+                        "id": 513
                       },
                       "startTime": 700,
                       "type": "0",
@@ -804,13 +944,13 @@
               }
             },
             {
-              "HandleId": "6",
+              "HandleId": "7",
               "Data": {
                 "$type": "scnSectionNode",
                 "actorBehaviors": [],
                 "events": [
                   {
-                    "HandleId": "7",
+                    "HandleId": "8",
                     "Data": {
                       "$type": "scnDialogLineEvent",
                       "additionalSpeakers": {
@@ -819,7 +959,7 @@
                         "role": "Full",
                         "speakers": []
                       },
-                      "duration": 2677,
+                      "duration": 3310,
                       "executionTagFlags": 0,
                       "id": {
                         "$type": "scnSceneEventId",
@@ -828,7 +968,7 @@
                       "scalingData": null,
                       "screenplayLineId": {
                         "$type": "scnscreenplayItemId",
-                        "id": 513
+                        "id": 769
                       },
                       "startTime": 700,
                       "type": "0",
@@ -891,18 +1031,18 @@
                 ],
                 "sectionDuration": {
                   "$type": "scnSceneTime",
-                  "stu": 3377
+                  "stu": 4010
                 }
               }
             },
             {
-              "HandleId": "8",
+              "HandleId": "9",
               "Data": {
                 "$type": "scnSectionNode",
                 "actorBehaviors": [],
                 "events": [
                   {
-                    "HandleId": "9",
+                    "HandleId": "10",
                     "Data": {
                       "$type": "scnDialogLineEvent",
                       "additionalSpeakers": {
@@ -920,7 +1060,7 @@
                       "scalingData": null,
                       "screenplayLineId": {
                         "$type": "scnscreenplayItemId",
-                        "id": 769
+                        "id": 1025
                       },
                       "startTime": 700,
                       "type": "0",
@@ -988,13 +1128,13 @@
               }
             },
             {
-              "HandleId": "10",
+              "HandleId": "11",
               "Data": {
                 "$type": "scnSectionNode",
                 "actorBehaviors": [],
                 "events": [
                   {
-                    "HandleId": "11",
+                    "HandleId": "12",
                     "Data": {
                       "$type": "scnDialogLineEvent",
                       "additionalSpeakers": {
@@ -1003,7 +1143,7 @@
                         "role": "Full",
                         "speakers": []
                       },
-                      "duration": 6736,
+                      "duration": 5750,
                       "executionTagFlags": 0,
                       "id": {
                         "$type": "scnSceneEventId",
@@ -1012,9 +1152,49 @@
                       "scalingData": null,
                       "screenplayLineId": {
                         "$type": "scnscreenplayItemId",
-                        "id": 1025
+                        "id": 1281
                       },
                       "startTime": 700,
+                      "type": "0",
+                      "visualStyle": "regular",
+                      "voParams": {
+                        "$type": "scnDialogLineVoParams",
+                        "alwaysUseBrainGender": 0,
+                        "customVoEvent": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "None"
+                        },
+                        "disableHeadMovement": 0,
+                        "ignoreSpeakerIncapacitation": 1,
+                        "isHolocallSpeaker": 0,
+                        "voContext": "Vo_Context_Quest",
+                        "voExpression": "Vo_Expression_Spoken"
+                      }
+                    }
+                  },
+                  {
+                    "HandleId": "13",
+                    "Data": {
+                      "$type": "scnDialogLineEvent",
+                      "additionalSpeakers": {
+                        "$type": "scnAdditionalSpeakers",
+                        "executionTag": 0,
+                        "role": "Full",
+                        "speakers": []
+                      },
+                      "duration": 1680,
+                      "executionTagFlags": 0,
+                      "id": {
+                        "$type": "scnSceneEventId",
+                        "id": "2763384011534011949"
+                      },
+                      "scalingData": null,
+                      "screenplayLineId": {
+                        "$type": "scnscreenplayItemId",
+                        "id": 1537
+                      },
+                      "startTime": 6450,
                       "type": "0",
                       "visualStyle": "regular",
                       "voParams": {
@@ -1075,18 +1255,18 @@
                 ],
                 "sectionDuration": {
                   "$type": "scnSceneTime",
-                  "stu": 7436
+                  "stu": 8130
                 }
               }
             },
             {
-              "HandleId": "12",
+              "HandleId": "14",
               "Data": {
                 "$type": "scnSectionNode",
                 "actorBehaviors": [],
                 "events": [
                   {
-                    "HandleId": "13",
+                    "HandleId": "15",
                     "Data": {
                       "$type": "scneventsSocket",
                       "duration": 0,
@@ -1174,7 +1354,7 @@
               }
             },
             {
-              "HandleId": "14",
+              "HandleId": "16",
               "Data": {
                 "$type": "scnEndNode",
                 "ffStrategy": "automatic",
@@ -1187,7 +1367,7 @@
               }
             },
             {
-              "HandleId": "15",
+              "HandleId": "17",
               "Data": {
                 "$type": "scnQuestNode",
                 "ffStrategy": "automatic",
@@ -1226,13 +1406,13 @@
                   }
                 ],
                 "questNode": {
-                  "HandleId": "16",
+                  "HandleId": "18",
                   "Data": {
                     "$type": "questFactsDBManagerNodeDefinition",
                     "id": 9,
                     "sockets": [
                       {
-                        "HandleId": "17",
+                        "HandleId": "19",
                         "Data": {
                           "$type": "questSocketDefinition",
                           "connections": [],
@@ -1245,7 +1425,7 @@
                         }
                       },
                       {
-                        "HandleId": "18",
+                        "HandleId": "20",
                         "Data": {
                           "$type": "questSocketDefinition",
                           "connections": [],
@@ -1258,7 +1438,7 @@
                         }
                       },
                       {
-                        "HandleId": "19",
+                        "HandleId": "21",
                         "Data": {
                           "$type": "questSocketDefinition",
                           "connections": [],
@@ -1272,7 +1452,7 @@
                       }
                     ],
                     "type": {
-                      "HandleId": "20",
+                      "HandleId": "22",
                       "Data": {
                         "$type": "questSetVar_NodeType",
                         "factName": "cc_g02_merc_talked",
@@ -1312,11 +1492,47 @@
             "femaleLipsyncAnimationName": {
               "$type": "CName",
               "$storage": "string",
-              "$value": "f_1B0B62371569E004"
+              "$value": "f_1A76EB2632582000"
             },
             "itemId": {
               "$type": "scnscreenplayItemId",
               "id": 1
+            },
+            "locstringId": {
+              "$type": "scnlocLocstringId",
+              "ruid": "2790588562204666796"
+            },
+            "maleLipsyncAnimationName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "f_1A76EB2632582000"
+            },
+            "speaker": {
+              "$type": "scnActorId",
+              "id": 0
+            },
+            "usage": {
+              "$type": "scnscreenplayLineUsage",
+              "playerGenderMask": {
+                "$type": "scnGenderMask",
+                "mask": 3
+              }
+            }
+          },
+          {
+            "$type": "scnscreenplayDialogLine",
+            "addressee": {
+              "$type": "scnActorId",
+              "id": 0
+            },
+            "femaleLipsyncAnimationName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "f_1A76EB269A582004"
+            },
+            "itemId": {
+              "$type": "scnscreenplayItemId",
+              "id": 257
             },
             "locstringId": {
               "$type": "scnlocLocstringId",
@@ -1325,7 +1541,7 @@
             "maleLipsyncAnimationName": {
               "$type": "CName",
               "$storage": "string",
-              "$value": "f_1B0B62371569E004"
+              "$value": "f_1A76EB269A582004"
             },
             "speaker": {
               "$type": "scnActorId",
@@ -1352,7 +1568,7 @@
             },
             "itemId": {
               "$type": "scnscreenplayItemId",
-              "id": 257
+              "id": 513
             },
             "locstringId": {
               "$type": "scnlocLocstringId",
@@ -1384,11 +1600,11 @@
             "femaleLipsyncAnimationName": {
               "$type": "CName",
               "$storage": "string",
-              "$value": "f_1B0B62371469E004"
+              "$value": "f_1A76EB2649582004"
             },
             "itemId": {
               "$type": "scnscreenplayItemId",
-              "id": 513
+              "id": 769
             },
             "locstringId": {
               "$type": "scnlocLocstringId",
@@ -1397,7 +1613,7 @@
             "maleLipsyncAnimationName": {
               "$type": "CName",
               "$storage": "string",
-              "$value": "f_1B0B62371469E004"
+              "$value": "f_1A76EB2649582004"
             },
             "speaker": {
               "$type": "scnActorId",
@@ -1424,7 +1640,7 @@
             },
             "itemId": {
               "$type": "scnscreenplayItemId",
-              "id": 769
+              "id": 1025
             },
             "locstringId": {
               "$type": "scnlocLocstringId",
@@ -1456,11 +1672,11 @@
             "femaleLipsyncAnimationName": {
               "$type": "CName",
               "$storage": "string",
-              "$value": "f_1B0B62372D69E004"
+              "$value": "f_1A76EB2667582004"
             },
             "itemId": {
               "$type": "scnscreenplayItemId",
-              "id": 1025
+              "id": 1281
             },
             "locstringId": {
               "$type": "scnlocLocstringId",
@@ -1469,7 +1685,43 @@
             "maleLipsyncAnimationName": {
               "$type": "CName",
               "$storage": "string",
-              "$value": "f_1B0B62372D69E004"
+              "$value": "f_1A76EB2667582004"
+            },
+            "speaker": {
+              "$type": "scnActorId",
+              "id": 0
+            },
+            "usage": {
+              "$type": "scnscreenplayLineUsage",
+              "playerGenderMask": {
+                "$type": "scnGenderMask",
+                "mask": 3
+              }
+            }
+          },
+          {
+            "$type": "scnscreenplayDialogLine",
+            "addressee": {
+              "$type": "scnActorId",
+              "id": 0
+            },
+            "femaleLipsyncAnimationName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "f_1A76EB2664582004"
+            },
+            "itemId": {
+              "$type": "scnscreenplayItemId",
+              "id": 1537
+            },
+            "locstringId": {
+              "$type": "scnlocLocstringId",
+              "ruid": "2789605598809235387"
+            },
+            "maleLipsyncAnimationName": {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "f_1A76EB2664582004"
             },
             "speaker": {
               "$type": "scnActorId",

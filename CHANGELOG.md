@@ -26,6 +26,17 @@ each mod's Nexus Changelog tab.
 
 # Dead Ringer
 
+## 1.1.0 (2026-09-17)
+
+- **Changed: Char and the merc are recorded by professional voice actors.**
+  Char is played by Sarah Fish, the merc by fronterawave.
+- **Added: the merc says more.** A "Pow!" in his brag outside Afterlife, a
+  grunt as he goes down, and "Look for yourself" when he hands over the proof.
+- **Changed: two of the merc's subtitles follow his new recording**, which
+  rewords them.
+- **Fixed: Yoko and Wakako look at your face while they speak**, not at the
+  floor.
+
 ## 1.0.6 (2026-09-15)
 
 - **Fixed: crash outside Afterlife when playing with companion mods.** A
