@@ -239,6 +239,11 @@ public class NegativeBalanceStart extends ScriptableSystem {
     // is over, so a later fast travel gets the full budget again.
     private let m_ftDefer: Int32;
 
+    // Whether this session has published which other mods are installed
+    // (Gig01_Companions.reds). Once per session is enough: the answer cannot
+    // change without a relaunch, because the switch behind it is compile-time.
+    private let m_companions: Bool;
+
     private func OnAttach() -> Void {
         this.m_step = 0;
         this.Schedule(CCGig01StartRules.DelaySeconds(0));
@@ -329,6 +334,18 @@ public class NegativeBalanceStart extends ScriptableSystem {
             this.m_step += 1;
             this.Schedule(CCGig01StartRules.DelaySeconds(this.m_step));
             return;
+        }
+
+        // WHICH OTHER MODS ARE INSTALLED, published as `cc_g01_easy` before
+        // anything below can start the gig. Here rather than in OnAttach for
+        // the reason the comment above gives: this is the first point in the
+        // session where the quest system is known to be there. Before the hold
+        // and before the already-running check, because a session that resumes
+        // a gig already under way still has the estate's detail ahead of it and
+        // that beat reads the fact.
+        if !this.m_companions {
+            this.m_companions = true;
+            CCGig01Companions.Publish(qs);
         }
 
         // HOLD THE TRIGGER, for testing anything that is not the gig itself.

@@ -44,6 +44,21 @@ local FACTS = {
     -- otherwise collects her call every few minutes. It does not settle the
     -- trigger, so it is releasable without a reload.
     "cc_g01_dev_hold",
+    -- EASE THE GIG WITHOUT THE MODS. Gig01_Companions eases the gig when Dark
+    -- Future or Much Better AI is installed: a few posts at each site stand down.
+    -- Set this to 1 on a machine with neither and the script counts it as one
+    -- installed mod on its next session start. It is read about half a minute
+    -- after a load, so set it, then RELOAD, then start the gig. Persists in the
+    -- save like any fact; clear it to get the gig as shipped again.
+    "cc_g01_dev_easy",
+    -- READ THESE, do not set them. `cc_g01_easy` is how many of the known mods
+    -- the script found this session (plus one for cc_g01_dev_easy), and it is
+    -- the one fact the quest phase reads: above zero, the details thin. The
+    -- `_dbg_easy_*` rows say which probe answered yes, 1 or 0 once looked at.
+    "cc_g01_easy",
+    "cc_g01_dbg_easy_darkfuture",
+    "cc_g01_dbg_easy_darkfuturecore",
+    "cc_g01_dbg_easy_muchbetterai",
     -- THE "HEROES IS NOT DONE" MESSAGE, already shown. Gig01_Start sets it the
     -- one time it tells a player the gig is waiting on sq018, so the message
     -- cannot repeat every session. Clear it to see the message again without
@@ -118,6 +133,16 @@ local FACTS = {
     "cc_g01_dbg_compound_hostile",
     "cc_g01_dbg_compound_senses",
     "cc_g01_dbg_compound_workspot",
+    -- READ THESE. Written by the quest phase at the beat that switches each
+    -- detail on: `_placed` goes to 1 on both branches of the easy fork, so a
+    -- site with no guards and `_placed` 0 is a phase that has not got there
+    -- yet; `_thinned` is how many posts the phase stood down again, 0 unless
+    -- `cc_g01_easy` was above zero when the beat ran. "posts standing" above
+    -- counts against the full roster, so 18 of 30 with `_thinned` 12 is right.
+    "cc_g01_compound_placed",
+    "cc_g01_compound_thinned",
+    "cc_g01_estate_placed",
+    "cc_g01_estate_thinned",
     -- READ THESE, do not set them. WHERE THE PLAYER IS, and whether the estate
     -- boundary accepts it. Ungated: they update everywhere in the city and with
     -- no gig running, because the fault they exist for is the estate leg doing
@@ -2142,6 +2167,13 @@ registerForEvent("onDraw", function()
                                  qs:GetFactStr("cc_g01_dbg_estate_hostile"),
                                  qs:GetFactStr("cc_g01_dbg_estate_senses"),
                                  qs:GetFactStr("cc_g01_dbg_estate_workspot")))
+        -- Whether the phase has switched this detail on yet, and how many
+        -- posts it stood down again because the gig is eased. The full roster
+        -- is what "posts standing" counts against, so 18 of 29 with 11 stood
+        -- down is the eased gig working, not a site half streamed in.
+        ImGui.Text(string.format("    switched on by phase: %d   stood down (eased): %d",
+                                 qs:GetFactStr("cc_g01_estate_placed"),
+                                 qs:GetFactStr("cc_g01_estate_thinned")))
 
         -- THE INDUSTRIAL PARK, the same four rows for the same reasons. Its
         -- detail is a community too as of 2026-08-25: forty-six walked posts in
@@ -2160,6 +2192,21 @@ registerForEvent("onDraw", function()
                                  qs:GetFactStr("cc_g01_dbg_compound_hostile"),
                                  qs:GetFactStr("cc_g01_dbg_compound_senses"),
                                  qs:GetFactStr("cc_g01_dbg_compound_workspot")))
+        ImGui.Text(string.format("    switched on by phase: %d   stood down (eased): %d",
+                                 qs:GetFactStr("cc_g01_compound_placed"),
+                                 qs:GetFactStr("cc_g01_compound_thinned")))
+        -- WHAT EASES THE GIG. Gig01_Companions publishes these half a minute
+        -- into every session: the count the phase reads, and which of the
+        -- known mods answered yes. None of them is installed on the dev
+        -- machine (Much Better AI was, for one day of playtests), so this row
+        -- reads 0 here; cc_g01_dev_easy is how to play the eased gig without
+        -- installing one.
+        ImGui.Text(string.format("EASED: cc_g01_easy %d   (Dark Future %d, DF Core %d, Much Better AI %d, dev switch %d)",
+                                 qs:GetFactStr("cc_g01_easy"),
+                                 qs:GetFactStr("cc_g01_dbg_easy_darkfuture"),
+                                 qs:GetFactStr("cc_g01_dbg_easy_darkfuturecore"),
+                                 qs:GetFactStr("cc_g01_dbg_easy_muchbetterai"),
+                                 qs:GetFactStr("cc_g01_dev_easy")))
         -- THE CAMERA AND SECURITY-AREA READOUTS ARE GONE, 2026-08-25.
         --
         -- Neither describes anything that ships any more: the camera pass was

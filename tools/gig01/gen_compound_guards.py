@@ -193,6 +193,60 @@ POSTS = [
 ]
 
 
+# ------------------------------------------------ WHO STANDS DOWN WHEN EASED
+#
+# THE ROSTER ABOVE IS THE GIG AS SHIPPED. These twelve are switched off again,
+# one quest node each, when the player runs a mod that makes every fight in
+# the game harder (`Gig01_Companions.reds` says which mods, and
+# `gen_questphase.thin_detail` is the node shape). Eighteen stand then.
+#
+# THE COMPLAINT THIS ANSWERS is the workstation. Players on Nexus, three of
+# them, with AI and survival mods: "SO many goons around that workstation",
+# "remove a goon or two, or put them on patrol so there are gaps", and one
+# who wanted stealth to be a real option with a mod that makes guards more
+# observant. Patrols were tried and did not walk (see NOBODY WALKS below), so
+# the answer is fewer men, and the design call of 2026-09-20 set a count per
+# area after two playtests, five per site and then four, both judged too
+# light a cut. The count per area is the design; which man goes within an
+# area follows two rules: the one standing on the objective goes first, then
+# one of any pair standing within a few metres of each other.
+#
+#   area                          shipped  eased   who goes
+#   main gate                        1       1     nobody
+#   second gate                      3       1     gate2_01, gate2_03 (the
+#                                                  smoker in the middle stays)
+#   yard                            11       9     inner04 (5.2 m from inner03)
+#                                                  inner07 (5.3 m from inner06),
+#                                                  both the pair nearest the
+#                                                  building
+#   deck                             3       2     deck04 (4.8 m from deck02)
+#   lower interior floors            3       2     inside12, the one under the
+#                                                  terminal room
+#   office floor, outside the room   5       2     inside14 (1.0 m from the
+#                                                  door), inside15 (7 m),
+#                                                  inside16 (12 m); the two
+#                                                  at the far end stay
+#   terminal room                    4       1     office01 (2.2 m from the
+#                                                  terminal), office02 (5.6 m,
+#                                                  shotgun), office04; office03
+#                                                  stays, 12 m off, coffee
+#
+# Distances to the objective were measured from the posts to
+# `CCGig01Places.OfficeTerminal()` and `OfficeEntry()`.
+#
+# Every name here has to be a post in POSTS. `guard_site.check_stand_down`
+# refuses to write otherwise, because a quest node naming an entry that does
+# not exist crashes the game without a message (gotcha 73).
+STAND_DOWN = [
+    'gate2_01', 'gate2_03',
+    'inner04', 'inner07',
+    'deck04',
+    'inside12',
+    'inside14', 'inside15', 'inside16',
+    'office01', 'office02', 'office04',
+]
+
+
 # ------------------------------------------------------- WHO IS DOING WHAT
 #
 # Playtest 2026-08-25 asked for a few of them to look less alike without
@@ -288,4 +342,5 @@ def build():
 
 if __name__ == '__main__':
     guard_site.write(OUT, SECTOR, POSTS, ENCOUNTER, 'CompoundEntries',
-                     cache_dir=CACHE, idles=IDLES, area_class=AREA_CLASS)
+                     cache_dir=CACHE, idles=IDLES, area_class=AREA_CLASS,
+                     stand_down=STAND_DOWN)

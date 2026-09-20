@@ -65,9 +65,25 @@ from gen_community import (                                         # noqa: E402
 # quest node reaching for nothing, silently, on every load (gotcha 73).
 import gen_estate_guards                                            # noqa: E402
 import gen_compound_guards                                          # noqa: E402
+import guard_site                                                   # noqa: E402
 
 ESTATE_REF = gen_estate_guards.build().community_ref
 COMPOUND_REF = gen_compound_guards.build().community_ref
+
+# THE GIG IS EASED WHEN THIS FACT IS ABOVE ZERO. `Gig01_Companions.reds` sets
+# it every session to how many of the mods it knows about are installed, so a
+# player running one of them meets fewer guards at the two places the objective
+# forces him to stand. Nothing else reads it. The dev menu can set it by hand.
+EASY_FACT = 'cc_g01_easy'
+
+# The posts that stand down are stated once, in the roster they thin, and
+# checked there against the roster (gotcha 73: a node naming an entry that does
+# not exist crashes the game with no message). Checked again here, because
+# this file is the one that writes the nodes and it only imports the list.
+for _mod in (gen_estate_guards, gen_compound_guards):
+    _faults = guard_site.check_stand_down(_mod.POSTS, _mod.STAND_DOWN)
+    if _faults:
+        raise SystemExit('%s: %s' % (_mod.__name__, '; '.join(_faults)))
 
 
 def estate_guards(action):
@@ -102,6 +118,50 @@ def compound_guards(action):
     and closes when V is clear of the compound.
     """
     step(add_community(action, COMPOUND_REF))
+
+
+def thin_detail(reference, stand_down, site):
+    """Right after a detail goes on: if the gig is eased, stand some of it down.
+
+    One fork on `EASY_FACT`, read once (`add_condition_fact`, not a pause: the
+    fact is set at session start and the decision is taken at this beat, not
+    waited for). Down the True side, one `Deactivate` node per post in
+    `stand_down`, each naming its entry the way Hoshino's own switch does, and
+    that per-entry shape is the measured one: a per-entry action leaves the
+    other entries alone (gotcha 69's bench, run 14). Both sides join on one node.
+
+    WHAT IS MEASURED AND WHAT IS NOT. Whole-community Activate is measured
+    (both details stand). Per-entry Deactivate is measured (Hoshino stays away
+    until his beat). Per-entry Deactivate IN THE SAME FRAME as a whole-community
+    Activate, which is what this writes, has not been played yet. The reading
+    that makes it plausible is that community state is data the spawner acts on
+    (it persists in saves, which is why the whole detail has to be switched off
+    at the end), so an entry set off right after being set on nets to off. If a
+    playtest with the fact set finds every post standing, that reading was
+    wrong and the alternative is to activate the kept entries one node each and
+    never activate the community whole. PLAYED 2026-09-20 with Much Better AI
+    installed: the posts named stood down and the rest stood, so the reading
+    holds.
+
+    The join sets `cc_g01_<site>_placed` to 1 on both sides, so the panel can
+    tell "the phase has not got here yet" from "it did and nothing stood". The
+    True side also writes `cc_g01_<site>_thinned` with how many stood down,
+    which is what the panel prints beside "posts standing: 25 of 30".
+    """
+    fork = add_condition_fact(EASY_FACT, 0, 'Greater')
+    b.connect(chain[-1], (fork, 'In'))
+    cur = (fork, 'True')
+    for name in stand_down:
+        off = add_community('Deactivate', reference, entry=name,
+                            phase=guard_site.PHASE)
+        b.connect(cur, (off, 'In'))
+        cur = (off, 'Out')
+    thinned = add_setvar('cc_g01_%s_thinned' % site, len(stand_down))
+    b.connect(cur, (thinned, 'In'))
+    placed = add_setvar('cc_g01_%s_placed' % site, 1)
+    b.connect((thinned, 'Out'), (placed, 'In'))
+    b.connect((fork, 'False'), (placed, 'In'))
+    chain.append((placed, 'Out'))
 
 
 def hoshino_community(action):
@@ -235,6 +295,10 @@ step(add_journal('gameJournalPointOfInterestMappin', POI, notify=0), in_sock='Ac
 # walk or the drive to place forty-six bodies, and this is the first moment the
 # gig knows he is going.
 compound_guards('Activate')
+# AND A FEW OF THEM STAND DOWN AGAIN IF THE GIG IS EASED. Which ones, and why
+# those, is in `gen_compound_guards.STAND_DOWN`; what eases the gig is in
+# `Gig01_Companions.reds`.
+thin_detail(COMPOUND_REF, gen_compound_guards.STAND_DOWN, 'compound')
 step(add_setvar('cc_g01_nix_done', 0))
 
 # --- objective progression, gated by facts (set by the encounter script)
@@ -863,6 +927,9 @@ hoshino_community('Activate')
 # callback chain behind him, which is the "they simply weren't there, then they
 # appeared" report the chain was built to answer.
 estate_guards('Activate')
+# AND A FEW OF THEM STAND DOWN AGAIN IF THE GIG IS EASED, the same way as the
+# industrial park's. `gen_estate_guards.STAND_DOWN` says which and why.
+thin_detail(ESTATE_REF, gen_estate_guards.STAND_DOWN, 'estate')
 # NO PIN ON obj_wayin, and it is the only objective in the gig with a marker but
 # no pin entry. Gig01_Encounter registers a runtime mappin instead and walks it
 # up the hill; a journal pin cannot be hidden once its objective is active, which

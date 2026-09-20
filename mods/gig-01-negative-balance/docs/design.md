@@ -466,6 +466,24 @@ Open: the whole branch is unplayed. The two trims want an ear, and the SMS
 thread wants a run on a real save (pacing, whether the reply button reads as
 the way to close it).
 
+## The gig eases itself for some other mods
+
+Thirty guards stand at the industrial park and twenty-nine at the estate, a
+count tuned by playtest on the game as shipped. When the player runs Dark
+Future (or Dark Future Core) or Much Better AI, eighteen stand at each site
+instead. At the park: one at each gate, nine in the yard, two on the deck, two
+on the lower floors, two on the office floor at the far end, and one man in
+the terminal room, drinking coffee twelve metres from the workstation. At the
+estate: four at the gate, six on the grounds, five on the terrace, one on
+Hoshino's floor at the far end, the roof sniper, and one man at the office
+end. The cut is deepest at the objective itself and lightest at the gates, so
+a quiet approach has somewhere to go and the sites still read as guarded.
+
+Detected on every load, so removing the mod brings the full detail back on the
+next session. The list of mods is in `Gig01_Companions.reds`, the list of
+posts in each site's roster under `STAND_DOWN`, and the mechanism in
+`docs/architecture.md`, "Easing a gig for the player's other mods".
+
 ## Languages
 
 The gig follows the player's voice-over language. V, Johnny, Nix and Mama

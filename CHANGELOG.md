@@ -140,6 +140,14 @@ each mod's Nexus Changelog tab.
 
 Releases are on the [Nexus page](https://www.nexusmods.com/cyberpunk2077/mods/32694).
 
+## 2.3.0 (2026-09-20)
+
+- **Added: fewer guards based on installed mods.** If Dark Future (or Dark
+  Future Core) or Much Better AI is installed, the gig spawns fewer guards
+  around the objectives at the industrial complex and the residence. Full
+  stealth is achievable even with these mods. Reported by ErwintheGerman,
+  EyeGodZA, Arixson and sadday.
+
 ## 2.2.0 (2026-09-19)
 
 - **Added: support for translations.** V, Johnny, Mama Welles and Nix are now

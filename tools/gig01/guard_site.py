@@ -231,6 +231,31 @@ def check_posts(posts, keep_clear=None):
     return problems
 
 
+def check_stand_down(posts, stand_down):
+    """Every post that stands down when the gig is eased has to be a post that
+    exists, and none may be named twice.
+
+    The quest phase turns these entries off one node each, right after it turns
+    the whole detail on, and a spawn-manager node naming a community entry that
+    does not exist is not an error the game reports: a renamed entry of exactly
+    this kind loaded without a warning on 2026-08-25 and then crashed the game
+    (gotcha 73). So the list is checked here against the roster it thins, and
+    the generator refuses to write when the two disagree, which is the same
+    guard `check_idles` and `check_redscript` put on their lists (gotcha 76).
+    """
+    names = [name for name, _r, _x, _y, _z, _yaw in posts]
+    problems = ['%s stands down but is not a post here' % key
+                for key in stand_down if key not in names]
+    seen = set()
+    for key in stand_down:
+        if key in seen:
+            problems.append('%s stands down twice' % key)
+        seen.add(key)
+    if stand_down and len(stand_down) >= len(names):
+        problems.append('every post stands down, which empties the site')
+    return problems
+
+
 def check_against_game(posts, cache_dir, radius=1.5):
     """Is any post standing where the base game already stands somebody?
 
@@ -323,8 +348,14 @@ def check_redscript(posts, reds_path, func, community_ref):
 
 def write(out_dir, sector, posts, reds_path, func, cache_dir=None,
           keep_clear=None, idles=None, routes=None, extras=None,
-          area_class=None):
-    """Check everything, then write the three files. Prints what it did."""
+          area_class=None, stand_down=None):
+    """Check everything, then write the three files. Prints what it did.
+
+    `stand_down` is the list of posts the quest phase switches off again when
+    the gig is eased (see `gen_questphase.thin_detail`). It changes nothing
+    written here: every post is an entry whatever the mode, and the phase is
+    what leaves some of them empty.
+    """
     com = build(sector, posts, idles, routes, extras, area_class)
     keep = [p for p in posts if p[0] not in route_posts(routes)]
     # The POSITION checks run over every point that will be occupied, beats
@@ -333,6 +364,7 @@ def write(out_dir, sector, posts, reds_path, func, cache_dir=None,
     faults = check_posts(posts, keep_clear)
     faults += check_idles(posts, idles)
     faults += check_redscript(keep, reds_path, func, com.community_ref)
+    faults += check_stand_down(keep, stand_down or [])
     if faults:
         for fault in faults:
             print('POSTS: ' + fault)
@@ -361,6 +393,9 @@ def write(out_dir, sector, posts, reds_path, func, cache_dir=None,
           % (len(com.entries), len(walkers)))
     for e in walkers:
         print('     %-9s %d points' % (e.name, len(e.points)))
+    if stand_down:
+        print('   %d of them stand down when the gig is eased: %s'
+              % (len(stand_down), ', '.join(stand_down)))
     used = {}
     for e in com.entries:
         used[e.workspot.rsplit(chr(92), 1)[-1]] = \

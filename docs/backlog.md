@@ -10150,3 +10150,51 @@ translation archive loads first (gotcha 121).
   the others (Japanese and Brazilian mostly) leave that pause in every
   other language. A tighter cut in the long dub removes it, one line at a
   time.
+
+## 50. A detail that thins itself for the player's other mods. BUILT 2026-09-20, not yet played
+
+Gig 01 stands fewer guards at the two places the objective forces the player
+to be when Dark Future, Dark Future Core or Much Better AI is installed. The
+mechanism is in `architecture.md` ("Easing a gig for the player's other
+mods"); this entry is the evidence behind each part and the one step that
+has not been played.
+
+### Established at the desk
+
+- `@if(ModuleExists("..."))` on a pair of same-named functions is the
+  documented redscript form for compile-time detection of another mod, on
+  global functions and, since redscript 0.5.18, on class members. Much Better
+  AI 2.15 ships the exact shape to detect Immersive Shooting AI.
+- The module names were read out of the release archives rather than
+  guessed: Dark Future 2.0.3 declares `DarkFuture.Main`, Dark Future Core
+  `DarkFutureCore.Main`, Much Better AI 2.15 `MuchBetterAI.Core` with every
+  file importing `MuchBetterAIConfig`. A wrong name compiles clean and
+  answers false for everyone.
+- Both sides of every probe compile: the repo compiled once against the
+  vanilla scripts alone and once with two stub modules named `DarkFuture.Main`
+  and `MuchBetterAIConfig` beside it. A stub written with a byte-order mark
+  fails to compile at 1:1; redscript wants plain UTF-8.
+- A per-entry `Deactivate` node is the shape Hoshino's own switch uses, and a
+  per-entry action leaves the other entries alone (gotcha 69's bench, run
+  14).
+
+### Played 2026-09-20, with Much Better AI 2.15 installed
+
+- A per-entry `Deactivate` in the same frame as the whole-community
+  `Activate` that precedes it TAKES. The named posts stood down and the rest
+  stood. The reading behind it: community state is data the spawner acts on,
+  which is why the whole detail has to be switched off at the end of the gig,
+  so an entry set off right after being set on nets to off.
+- The count is a design decision, not a measurement, and it moved twice in
+  one day. Five per site emptied the terminal room and its doorway and was
+  judged too much at the choke and too little everywhere else; four and
+  three was judged too little a cut. The design then set a count per area
+  (eighteen at each site) and the rosters carry the table. Inside an area the
+  pick follows two rules: the man on the objective goes first, then one of
+  any pair standing within a few metres.
+
+### Open
+
+- Whether eighteen per site is right for a player with Dark Future, which
+  changes what a fight costs rather than how guards see. Not played with;
+  the mod is not installed on the dev machine.

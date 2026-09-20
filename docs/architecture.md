@@ -810,6 +810,45 @@ made it possible.
 disk.** `Character.Mama_Welles` and her position were found with the CET dev
 menu's CAPTURE THE NPC I'M LOOKING AT probe; guessing either fails silently.
 
+## Easing a gig for the player's other mods (2026-09-20)
+
+A guard count tuned by playtest on the game as shipped is wrong for a player
+running a mod that makes every fight harder. Gig 01 answers this with one fact,
+one fork and a list per site, and the shape is reusable by any gig that places
+a detail.
+
+- **Detection is compile-time, in redscript.** `@if(ModuleExists("X.Y"))` on a
+  pair of same-named functions leaves one of them in the bundle, so
+  `CCGig01Companions.DarkFuture()` answers true on a machine where Dark Future
+  compiles alongside the gig and false anywhere else. The module names are read
+  out of each mod's release archive (`Gig01_Companions.reds` lists them with
+  the file each came from); a guessed name compiles clean and answers false
+  for everyone. The same pattern is what Much Better AI uses to detect
+  Immersive Shooting AI, so it has a shipped example beyond ours.
+- **One fact, written every session.** `Gig01_Start` publishes `cc_g01_easy`
+  on its first check after a load, about half a minute in, as the count of
+  known mods installed. Every session, because facts persist in the save and
+  the player's mod list can change between sessions. A dev fact
+  (`cc_g01_dev_easy`) counts as one mod, so the eased gig can be played on a
+  machine with none.
+- **The quest phase forks once per detail.** Right after the whole community
+  is switched on, `add_condition_fact` reads the fact and, down the True side,
+  one per-entry `Deactivate` node per post in the roster's `STAND_DOWN` list
+  (`gen_questphase.thin_detail`). The roster is the only place the list is
+  written; `guard_site.check_stand_down` refuses to write when a name is not a
+  post, because a node naming an entry that does not exist crashes the game
+  without a message (gotcha 73).
+- **Which posts** is a count per area set by the design, then two rules
+  inside each area: the man standing on the objective goes first, then one
+  of any pair standing within a few metres. Gig 01 stands eighteen at each
+  site instead of thirty and twenty-nine, with the table of areas and the
+  measured distances in each roster. Two earlier lists, five per site and
+  then four and three, were played and judged too light a cut.
+
+The per-entry Deactivate in the same frame as the whole-community Activate
+was played on 2026-09-20 with Much Better AI installed and took: the named
+posts stood down and the rest stood. `backlog.md` 50.
+
 ## Paying the player: the game's own reward records (2026-09-06)
 
 A gig's fee can be handed over two ways, and the gigs do it differently because

@@ -187,6 +187,56 @@ POSTS = [
 ]
 
 
+# ------------------------------------------------ WHO STANDS DOWN WHEN EASED
+#
+# THE ROSTER ABOVE IS THE GIG AS SHIPPED. These eleven are switched off again,
+# one quest node each, when the player runs a mod that makes every fight in
+# the game harder (`Gig01_Companions.reds` says which mods, and
+# `gen_questphase.thin_detail` is the node shape). Eighteen stand then.
+#
+# The count per area is the design call of 2026-09-20, after two playtests
+# (five per site, then three here) were judged too light a cut; the roster in
+# `gen_compound_guards.py` has the player feedback both lists answer. Which
+# man goes within an area follows two rules: the one standing on the
+# objective goes first, then one of any pair standing within a few metres.
+# The estate has two objectives, the couch Hoshino waits on and the terminal
+# the malware goes into, and distances below are to `CCGig01Places.Hoshino()`
+# and `EstateTerminal()`.
+#
+#   area                          shipped  eased   who goes
+#   front gate and just inside       6       4     inner03 (3.0 m from gate02,
+#                                                  4.5 from inner02, 4.7 from
+#                                                  gate03), gate02 (5.0 m from
+#                                                  gate01)
+#   grounds and the drive            8       6     inner09 and inner11, the two
+#                                                  of the eight nearest the
+#                                                  house (62 and 69 m from the
+#                                                  couch)
+#   terrace level                    6       5     inner17, 12 m below the couch
+#                                                  and the last post on the way
+#                                                  up
+#   first floor, Hoshino's           4       1     floor02, floor03, floor04;
+#                                                  floor05 stays, the furthest
+#                                                  from the couch at 29 m
+#   roof                             1       1     nobody; a sniper is a threat
+#                                                  the player can see coming
+#   office end                       4       1     office03 (3.4 m from the
+#                                                  terminal, shotgun), office02
+#                                                  (5.5 m, netrunner), office01;
+#                                                  office04 stays at 15 m
+#
+# Every name here has to be a post in POSTS. `guard_site.check_stand_down`
+# refuses to write otherwise, because a quest node naming an entry that does
+# not exist crashes the game without a message (gotcha 73).
+STAND_DOWN = [
+    'inner03', 'gate02',
+    'inner09', 'inner11',
+    'inner17',
+    'floor02', 'floor03', 'floor04',
+    'office01', 'office02', 'office03',
+]
+
+
 # ------------------------------------------------------- WHO IS DOING WHAT
 #
 # A handful, and DISCIPLINED ONES ONLY. This is an elite Arasaka detail at a
@@ -219,4 +269,5 @@ if __name__ == '__main__':
     guard_site.write(OUT, SECTOR, POSTS, ENCOUNTER, 'EstateEntries',
                      cache_dir=CACHE, idles=IDLES,
                      keep_clear=((299.021, 1055.990, 229.928), 3.0,
-                                 'the couch Hoshino waits on'))
+                                 'the couch Hoshino waits on'),
+                     stand_down=STAND_DOWN)
