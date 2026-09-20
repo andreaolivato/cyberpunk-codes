@@ -12,49 +12,14 @@ localization:
   # the two contacts, the SMS thread, and the text of the two things V reads
   # (the merc's shard and the parlor's camera log).
   #
-  # ALL NINETEEN LOCALES POINT AT THE ENGLISH FILE. The mod is English-only, and
-  # English beats a raw LocKey. Registering en-us alone is the specific
-  # half-broken state gig 01 shipped for a fortnight: working dialogue and raw
-  # LocKeys in the quest log for everyone not playing in English, invisible in
-  # testing because testing happens in English.
+  # ENGLISH ONLY, ON PURPOSE: ArchiveXL merges it as the fallback for every
+  # other language, and a translation mod registering its own language wins
+  # whichever order the two load in. Gig 01's manifest carries the account and
+  # the measurement (2026-09-19); a locale with strings in
+  # tools/gig02/translations/ gains its own line here. The subtitles, vomaps
+  # and lipmaps blocks below follow gig 01's manifest too.
   onscreens:
-    ar-ar:
-      - mod\dead_ringer\localization\en-us.json
-    cz-cz:
-      - mod\dead_ringer\localization\en-us.json
-    de-de:
-      - mod\dead_ringer\localization\en-us.json
     en-us:
-      - mod\dead_ringer\localization\en-us.json
-    es-es:
-      - mod\dead_ringer\localization\en-us.json
-    es-mx:
-      - mod\dead_ringer\localization\en-us.json
-    fr-fr:
-      - mod\dead_ringer\localization\en-us.json
-    hu-hu:
-      - mod\dead_ringer\localization\en-us.json
-    it-it:
-      - mod\dead_ringer\localization\en-us.json
-    jp-jp:
-      - mod\dead_ringer\localization\en-us.json
-    kr-kr:
-      - mod\dead_ringer\localization\en-us.json
-    pl-pl:
-      - mod\dead_ringer\localization\en-us.json
-    pt-br:
-      - mod\dead_ringer\localization\en-us.json
-    ru-ru:
-      - mod\dead_ringer\localization\en-us.json
-    th-th:
-      - mod\dead_ringer\localization\en-us.json
-    tr-tr:
-      - mod\dead_ringer\localization\en-us.json
-    ua-ua:
-      - mod\dead_ringer\localization\en-us.json
-    zh-cn:
-      - mod\dead_ringer\localization\en-us.json
-    zh-tw:
       - mod\dead_ringer\localization\en-us.json
   # SCENE DIALOGUE. A scene line resolves its scnlocLocstringId through this,
   # not through the scene's own embedded locStore, which the game ignores.
@@ -63,25 +28,25 @@ localization:
   # Written by tools/gig02/gen_scenes.py, which emits TWO resources: this map,
   # which is a list of file paths, and the entries file it points at.
   subtitles:
-    ar-ar: mod\dead_ringer\localization\subtitles.json
-    cz-cz: mod\dead_ringer\localization\subtitles.json
-    de-de: mod\dead_ringer\localization\subtitles.json
+    ar-ar: mod\dead_ringer\localization\subtitles_ar-ar.json
+    cz-cz: mod\dead_ringer\localization\subtitles_cz-cz.json
+    de-de: mod\dead_ringer\localization\subtitles_de-de.json
     en-us: mod\dead_ringer\localization\subtitles.json
-    es-es: mod\dead_ringer\localization\subtitles.json
-    es-mx: mod\dead_ringer\localization\subtitles.json
-    fr-fr: mod\dead_ringer\localization\subtitles.json
-    hu-hu: mod\dead_ringer\localization\subtitles.json
-    it-it: mod\dead_ringer\localization\subtitles.json
-    jp-jp: mod\dead_ringer\localization\subtitles.json
-    kr-kr: mod\dead_ringer\localization\subtitles.json
-    pl-pl: mod\dead_ringer\localization\subtitles.json
-    pt-br: mod\dead_ringer\localization\subtitles.json
-    ru-ru: mod\dead_ringer\localization\subtitles.json
-    th-th: mod\dead_ringer\localization\subtitles.json
-    tr-tr: mod\dead_ringer\localization\subtitles.json
-    ua-ua: mod\dead_ringer\localization\subtitles.json
-    zh-cn: mod\dead_ringer\localization\subtitles.json
-    zh-tw: mod\dead_ringer\localization\subtitles.json
+    es-es: mod\dead_ringer\localization\subtitles_es-es.json
+    es-mx: mod\dead_ringer\localization\subtitles_es-mx.json
+    fr-fr: mod\dead_ringer\localization\subtitles_fr-fr.json
+    hu-hu: mod\dead_ringer\localization\subtitles_hu-hu.json
+    it-it: mod\dead_ringer\localization\subtitles_it-it.json
+    jp-jp: mod\dead_ringer\localization\subtitles_jp-jp.json
+    kr-kr: mod\dead_ringer\localization\subtitles_kr-kr.json
+    pl-pl: mod\dead_ringer\localization\subtitles_pl-pl.json
+    pt-br: mod\dead_ringer\localization\subtitles_pt-br.json
+    ru-ru: mod\dead_ringer\localization\subtitles_ru-ru.json
+    th-th: mod\dead_ringer\localization\subtitles_th-th.json
+    tr-tr: mod\dead_ringer\localization\subtitles_tr-tr.json
+    ua-ua: mod\dead_ringer\localization\subtitles_ua-ua.json
+    zh-cn: mod\dead_ringer\localization\subtitles_zh-cn.json
+    zh-tw: mod\dead_ringer\localization\subtitles_zh-tw.json
   # SCENE VOICEOVER, keyed by the SAME RUID as the subtitle above. A
   # locVoiceoverMap is a flat global stringId -> wem list with no scene or quest
   # scoping, so registering ours here is all the scene system needs to play our
@@ -94,22 +59,22 @@ localization:
   vomaps:
     ar-ar: mod\dead_ringer\localization\vomap.json
     cz-cz: mod\dead_ringer\localization\vomap.json
-    de-de: mod\dead_ringer\localization\vomap.json
+    de-de: mod\dead_ringer\localization\vomap_de-de.json
     en-us: mod\dead_ringer\localization\vomap.json
-    es-es: mod\dead_ringer\localization\vomap.json
+    es-es: mod\dead_ringer\localization\vomap_es-es.json
     es-mx: mod\dead_ringer\localization\vomap.json
-    fr-fr: mod\dead_ringer\localization\vomap.json
+    fr-fr: mod\dead_ringer\localization\vomap_fr-fr.json
     hu-hu: mod\dead_ringer\localization\vomap.json
-    it-it: mod\dead_ringer\localization\vomap.json
-    jp-jp: mod\dead_ringer\localization\vomap.json
-    kr-kr: mod\dead_ringer\localization\vomap.json
-    pl-pl: mod\dead_ringer\localization\vomap.json
-    pt-br: mod\dead_ringer\localization\vomap.json
-    ru-ru: mod\dead_ringer\localization\vomap.json
+    it-it: mod\dead_ringer\localization\vomap_it-it.json
+    jp-jp: mod\dead_ringer\localization\vomap_jp-jp.json
+    kr-kr: mod\dead_ringer\localization\vomap_kr-kr.json
+    pl-pl: mod\dead_ringer\localization\vomap_pl-pl.json
+    pt-br: mod\dead_ringer\localization\vomap_pt-br.json
+    ru-ru: mod\dead_ringer\localization\vomap_ru-ru.json
     th-th: mod\dead_ringer\localization\vomap.json
     tr-tr: mod\dead_ringer\localization\vomap.json
     ua-ua: mod\dead_ringer\localization\vomap.json
-    zh-cn: mod\dead_ringer\localization\vomap.json
+    zh-cn: mod\dead_ringer\localization\vomap_zh-cn.json
     zh-tw: mod\dead_ringer\localization\vomap.json
   # LIPSYNC. Merges an animLipsyncMapping into the base game's own .lipmap,
   # saying which vanilla .anims set drives each actor's mouth. The mod ships no
@@ -122,22 +87,22 @@ localization:
   lipmaps:
     ar-ar: mod\dead_ringer\localization\gig02.lipmap
     cz-cz: mod\dead_ringer\localization\gig02.lipmap
-    de-de: mod\dead_ringer\localization\gig02.lipmap
+    de-de: mod\dead_ringer\localization\gig02_de-de.lipmap
     en-us: mod\dead_ringer\localization\gig02.lipmap
-    es-es: mod\dead_ringer\localization\gig02.lipmap
+    es-es: mod\dead_ringer\localization\gig02_es-es.lipmap
     es-mx: mod\dead_ringer\localization\gig02.lipmap
-    fr-fr: mod\dead_ringer\localization\gig02.lipmap
+    fr-fr: mod\dead_ringer\localization\gig02_fr-fr.lipmap
     hu-hu: mod\dead_ringer\localization\gig02.lipmap
-    it-it: mod\dead_ringer\localization\gig02.lipmap
-    jp-jp: mod\dead_ringer\localization\gig02.lipmap
-    kr-kr: mod\dead_ringer\localization\gig02.lipmap
-    pl-pl: mod\dead_ringer\localization\gig02.lipmap
-    pt-br: mod\dead_ringer\localization\gig02.lipmap
-    ru-ru: mod\dead_ringer\localization\gig02.lipmap
+    it-it: mod\dead_ringer\localization\gig02_it-it.lipmap
+    jp-jp: mod\dead_ringer\localization\gig02_jp-jp.lipmap
+    kr-kr: mod\dead_ringer\localization\gig02_kr-kr.lipmap
+    pl-pl: mod\dead_ringer\localization\gig02_pl-pl.lipmap
+    pt-br: mod\dead_ringer\localization\gig02_pt-br.lipmap
+    ru-ru: mod\dead_ringer\localization\gig02_ru-ru.lipmap
     th-th: mod\dead_ringer\localization\gig02.lipmap
     tr-tr: mod\dead_ringer\localization\gig02.lipmap
     ua-ua: mod\dead_ringer\localization\gig02.lipmap
-    zh-cn: mod\dead_ringer\localization\gig02.lipmap
+    zh-cn: mod\dead_ringer\localization\gig02_zh-cn.lipmap
     zh-tw: mod\dead_ringer\localization\gig02.lipmap
 streaming:
   # THE BASE GAME'S OWN BODY IN CHAR'S CHAIR, removed.

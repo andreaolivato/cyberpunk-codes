@@ -1,0 +1,155 @@
+{
+  "Header": {
+    "WolvenKitVersion": "8.20.0",
+    "WKitJsonVersion": "0.0.9",
+    "GameVersion": 2310,
+    "DataType": "CR2W",
+    "ArchiveFileName": "gig03_de-de.lipmap"
+  },
+  "Data": {
+    "Version": 195,
+    "BuildVersion": 0,
+    "RootChunk": {
+      "$type": "animLipsyncMapping",
+      "cookingPlatform": "PLATFORM_PC",
+      "languageCodeName": {
+        "$type": "CName",
+        "$storage": "string",
+        "$value": "de-de"
+      },
+      "sceneEntries": [
+        {
+          "$type": "animLipsyncMappingSceneEntry",
+          "actorVoiceTags": [
+            "1609920229118869504"
+          ],
+          "animSets": [
+            {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "string",
+                "$value": "base\\localization\\de-de\\lipsync\\base\\open_world\\street_stories\\city_center\\downtown\\sts_cct_dtn_05\\scenes\\sts_cct_dtn_05_holocall_prebrief\\dino_dyno_dinovic.anims"
+              },
+              "Flags": "Soft"
+            }
+          ]
+        },
+        {
+          "$type": "animLipsyncMappingSceneEntry",
+          "actorVoiceTags": [
+            "1609920229118869504"
+          ],
+          "animSets": [
+            {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "string",
+                "$value": "base\\localization\\de-de\\lipsync\\base\\open_world\\street_stories\\city_center\\downtown\\sts_cct_dtn_04\\scenes\\sts_cct_dtn_04_holocall_debriefs\\dino_dyno_dinovic.anims"
+              },
+              "Flags": "Soft"
+            }
+          ]
+        },
+        {
+          "$type": "animLipsyncMappingSceneEntry",
+          "actorVoiceTags": [
+            "1103967280742240508"
+          ],
+          "animSets": [
+            {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "string",
+                "$value": "base\\localization\\de-de\\lipsync\\base\\quest\\minor_quests\\mq042\\scenes\\mq042_nomad_02_car_found\\johnny.anims"
+              },
+              "Flags": "Soft"
+            }
+          ]
+        },
+        {
+          "$type": "animLipsyncMappingSceneEntry",
+          "actorVoiceTags": [
+            "1103967280742240508"
+          ],
+          "animSets": [
+            {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "string",
+                "$value": "base\\localization\\de-de\\lipsync\\base\\quest\\side_quests\\sq023\\scenes\\sq023_07_restaurant\\johnny.anims"
+              },
+              "Flags": "Soft"
+            }
+          ]
+        },
+        {
+          "$type": "animLipsyncMappingSceneEntry",
+          "actorVoiceTags": [
+            "1103967280742240508"
+          ],
+          "animSets": [
+            {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "string",
+                "$value": "base\\localization\\de-de\\lipsync\\base\\quest\\minor_quests\\mq018\\scenes\\mq018_07_protein\\johnny.anims"
+              },
+              "Flags": "Soft"
+            }
+          ]
+        },
+        {
+          "$type": "animLipsyncMappingSceneEntry",
+          "actorVoiceTags": [
+            "1609920229118869504"
+          ],
+          "animSets": [
+            {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "string",
+                "$value": "base\\localization\\de-de\\lipsync\\base\\open_world\\voicesets\\fixers\\vset_dyno\\dino_dyno_dinovic.anims"
+              },
+              "Flags": "Soft"
+            }
+          ]
+        },
+        {
+          "$type": "animLipsyncMappingSceneEntry",
+          "actorVoiceTags": [
+            "1103967280742240508"
+          ],
+          "animSets": [
+            {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "string",
+                "$value": "base\\localization\\de-de\\lipsync\\base\\quest\\main_quests\\part1\\q104\\scenes\\q104_08_courier_talks\\johnny.anims"
+              },
+              "Flags": "Soft"
+            }
+          ]
+        }
+      ],
+      "scenePaths": [
+        "8830954949231700414",
+        "15282937045320264267",
+        "11020194520639497541",
+        "4914090153161571010",
+        "13932859832558778749",
+        "7012387647466846560",
+        "16160971131921358163"
+      ],
+      "scenePreviewPaths": [
+        "17418987566262925970",
+        "13226400648740692541",
+        "3293614234633298263",
+        "34345498313011582",
+        "7325495729245392943",
+        "3136772956692403780",
+        "2605225974827331461"
+      ]
+    },
+    "EmbeddedFiles": []
+  }
+}

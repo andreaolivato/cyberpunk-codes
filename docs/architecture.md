@@ -710,6 +710,47 @@ Two things about the mechanism, which is the part worth copying:
 The corpus that measurement came from is `tools/vo_corpus.py`, which indexes
 every spoken line in the game and applies well beyond this question.
 
+## Other languages: BUILT 2026-09-18, first played 2026-09-19
+
+Every gig follows the player's voice-over language and reads its own text in
+English until someone translates it. The mechanism is in
+`scene-playbook.md`, "Other languages"; this is why it is that way.
+
+- **The gig ships no translation of its own words, and makes one easy to
+  ship.** A translation has to be written by someone who speaks the
+  language. So the gig registers its English text as the fallback for every
+  language, which means nobody sees a raw key, and ships a translation kit
+  (`mods/<gig>/translation-kit/`, whose README is the guide). A translation
+  built from the kit is a small mod of its own, published on Nexus as a
+  translation of the gig and linked from the gig's page. That is the shape
+  the site is built for. The tables under `tools/gigNN/translations/` hold
+  only the game's own words: the official sentence of each cut line in each
+  language. A contributed translation can go into them to ship inside the
+  gig instead.
+- **The game's own characters speak the game's own dub.** A reused line
+  resolves its text and audio per language without the gig doing anything,
+  so the casting rule (`docs/conventions.md`, "Voice") translates most of a
+  gig by itself. The cut takes are the exception: each is remade in each
+  dub, and a dub whose take has no usable pause keeps the English cut for
+  that line.
+- **The invented characters keep their actors.** Elena, Hoshino, Char and
+  the merc are recorded once, in English. Their subtitles stay English until
+  a translation supplies them. The kit pre-writes each of those subtitles as
+  the game's own translation tag, so the player sees the English words turn
+  into the translation, the way a Japanese or Creole line does. A translator
+  with a voice actor can re-record them; the kit carries the voice map for
+  it, and the page invites it.
+- **One timeline, written at the shortest dub.** A line's slot is one number
+  for every language. The game stretches the slot to the take it plays for
+  its own lines, never shrinks one, and never stretches for a clip the mod
+  ships (measured 2026-09-19, three lines with a wrong slot on purpose). So
+  a reused line is written at its shortest dub and every language gets its
+  own take; a shipped clip is written at its measured length; a line with
+  one clip per dub is written at the longest of them. The first version of
+  this branch wrote the longest dub with a cap, on the assumption that the
+  game does not adapt, and every short dub got a pause after its line. The
+  playbook has the measurement.
+
 ## Placing NPCs: COMMUNITIES, and this is what ships
 
 Every NPC this gig places for the player to meet is placed by a community the

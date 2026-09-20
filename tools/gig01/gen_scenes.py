@@ -164,6 +164,8 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # Several names are imported only to be re-exported. gen_voice, gen_lipsync and
 # gen_shard_ent reaches for them as gen_scenes.<name>, and keeping them
 # resolvable here means the split costs those tools no changes at all.
+from questkit import translations                                   # noqa: E402
+from questkit import vanilla_durations                              # noqa: E402
 from questkit.scene import (                                        # noqa: F401
     Scene, configure, write_subtitles, write_lipmap,
     ANCHOR_PLAYER, JOHNNY_ACTOR, JOHNNY_GHOST, JOHNNY_SOLID,
@@ -236,6 +238,25 @@ try:
 except (OSError, ValueError):
     MEASURED = {}
 
+# AND THE REUSED LINES, as the shortest dub of each. tools/measure_packs.py
+# measures every voice pack on this machine and tools/gigNN/measure_vanilla.py
+# writes this file from the shortest, and the game stretches the slot to
+# whichever take it plays; without it a reused line is paced by an
+# estimate from its text, which ran short for V by up to two seconds in gig 03
+# (playtest 2026-09-15) and cannot be right for more than one language at
+# once. Same table, same key shape, same 350 ms pad.
+# AND THE DUBBED LANGUAGES' OWN CLIPS. A vanilla cut remade in a dub is a
+# clip of a different length, so a section is paced from the longest clip
+# any language ships for the line (durations_<locale>.json, written by
+# gen_voice's locale pass): the game stretches a slot only for its own
+# lines, never for a shipped clip (questkit.vanilla_durations).
+vanilla_durations.merge_locale_clips(MEASURED, os.path.join(SOURCE, 'audio'))
+
+VANILLA_DURATIONS_FILE = os.path.join(SOURCE, 'audio', 'vanilla_durations.json')
+if os.path.exists(VANILLA_DURATIONS_FILE):
+    with open(VANILLA_DURATIONS_FILE, encoding='utf-8') as _fh:
+        MEASURED.update(json.load(_fh))
+
 # ------------------------------------------------------------------- LIPSYNC
 #
 # tools/gig01/gen_lipsync.py casts a vanilla lipsync animation of about the right
@@ -290,6 +311,7 @@ configure(
     lipsync_sets=LIPSYNC_SETS,
     lipsync_lines=LIPSYNC_LINES,
     scene_aliases=SCENE_ALIASES,
+    translations=translations.load(os.path.dirname(os.path.abspath(__file__))),
 )
 
 

@@ -1736,6 +1736,133 @@ It ships with an empty animation name and a face that never moves, and nothing
 errors. Its length is free: vanilla baked an animation for that exact line,
 named `f_<stringId>`, and its duration is the clip's. Gotcha 59.
 
+## Other languages
+
+The game has nineteen text languages and eleven voice languages (ten dubs
+plus English; Latin American Spanish is text only). Everything here was
+checked against the game's own files, and the parts seen in game say so.
+
+**The gig's own text is registered for English only.** ArchiveXL uses the
+one language a manifest registers as the fallback for every other language.
+A fallback entry fills a key nothing else defines and never overwrites one
+that is. So a player in Italian reads English, never a raw key (seen in
+game, 2026-09-19: every string English, the journal included). Subtitles
+are still registered per language, because the cut lines' subtitles are the
+dub's own words and differ per language; the rest of each subtitles file is
+English. If a table under `tools/gigNN/translations/` carries strings for
+a language, that language gets its own strings file (`conventions.md`,
+"Localization keys").
+
+**A translation is a separate mod.** It has to supply the gig's own text and
+the invented characters' subtitles, and nothing else. Both go through keys
+that a second mod can define for another language. This was measured on
+2026-09-19 with a throwaway archive that defined one string, one of Elena's
+subtitles and one of her voice clips, in Italian:
+
+- The string replaced the gig's. ArchiveXL overwrites a key another mod
+  defined, and logs it, whichever mod loads first.
+- The subtitle and the clip did not. ArchiveXL appends both, and the game
+  keeps the first entry it meets for a line id. The gig had loaded first.
+- ArchiveXL reads `archive\pc\mod` in name order. A translation archive
+  whose name sorts before the gig's (a leading digit) therefore wins on all
+  three.
+
+Each gig ships a `translation-kit/` folder: a WolvenKit project with the
+English text in place and the invented characters' lines pre-written as the
+translation tag. `tools/make_translation_kit.py` writes it from the build,
+and its README is the guide.
+
+**A reused vanilla line comes translated and dubbed.** A line that points at
+a vanilla `stringId` ships nothing. The game finds the subtitle in the
+player's text language and the audio in the player's voice pack. Most of a
+gig's lines should be this. Gotcha 118: the expansion's recordings are in a
+second archive per language.
+
+**A line the gig records stays in its recording.** The invented characters'
+clips are the same in every language, and their subtitles are English until
+a translation supplies them. A translation writes each subtitle as the
+game's own tag for speech the player's cyberware translates:
+
+```
+<kiroshi l="eng" o="V? Sorry, I didn't know you'd answer." t="V? Scusa, non sapevo se avresti risposto." b="" a=""/>
+```
+
+`o` is what is said, `t` what it means, `b` and `a` stay empty. That is the
+shape of the 2,922 vanilla lines that carry the tag. The base game uses
+`jpn`, `mex`, `creo` and `rus` for `l`; `eng` is what the Cosmopolitan Night
+City mod uses for English audio in a dubbed game, and it renders like the
+others (seen in game, 2026-09-19). Every foreign line carries the tag, not
+only the first of a run: the base game's Russian penthouse conversation is
+45 tagged lines in a row. The game does the animation, keyed by the line's
+spoken length: under 0.5 s the words resolve over 0.2 s after a 0.2 s
+delay; from 0.5 to 5 s, over 0.5 s plus a tenth of the length, after
+0.25 s; over 5 s, the same length with no delay. A 3 s line resolves in
+0.8 s, a 7 s line in 1.2 s. The mod ships only the tag. A line whose
+translation is the same word ("Nova.") needs no tag; the effect would
+animate the word into itself. `questkit.translations.kiroshi` writes the
+tag for a translation contributed into the repo, for the lines listed in
+the gig's `translations/_actors.json`.
+
+**A cut vanilla take is a clip the mod ships, so it is English in every dub
+until it is cut again in that dub.** The same take exists in every voice
+pack under the same name, but the pause is not in the same place, because
+translators reorder clauses. A cut remade in a dub ships as a clip like any
+other, under `audio\vo\<locale>__<scene>__<key>.wem`, and that locale's
+voice map points the line's RUID at it. A body without its own cut keeps the
+English one. `gen_voice`'s locale pass builds the map and measures the clips
+into `durations_<locale>.json`.
+
+**Lipsync per dub.** Every voice pack carries the same lipsync tree under
+its own folder, `base\localization\<locale>\lipsync\...`, with the same set
+names and the same `f_<stringId>` animation names. Checked across all ten
+packs for every set the gigs name. A lipsync map per dub is the English map
+with `en-us` swapped for the locale in every set path and `languageCodeName`
+set to the locale, which is what the game's own `<locale>.lipmap` carries.
+`gen_scenes.write_lipmap` writes them.
+
+**One timeline, and the game stretches it for its own lines.** A line's
+slot in a scene (`scnDialogLineEvent.duration`) is one number for every
+language, while a dub of the same line can run up to four seconds longer or
+shorter than English. Three test builds on 2026-09-19, each with one line's
+slot deliberately wrong, showed what the game does with that:
+
+- A reused vanilla line given a 1 s slot still finished before the next
+  line started, inside a section and across a section boundary. The game
+  stretches the slot to the take.
+- A reused line given a slot longer than its Italian take left the player
+  waiting. The game never shrinks a slot.
+- A clip the mod ships given a 0.5 s slot was talked over. The game only
+  knows the length of its own lines, from the per-language table every
+  voice pack carries (`lengthMapReport` in
+  `base\localization\volanguagedatamap.json`), and a mod cannot add to it.
+
+Three rules follow, and they are the whole of the timing:
+
+- A reused vanilla line is written at its SHORTEST dub, and every language
+  then gets exactly its own take. `tools/measure_packs.py` measures every
+  reused take in every pack on the machine, and `tools/gigNN/measure_vanilla.py`
+  writes the committed `vanilla_durations.json` from the shortest, so a
+  clone builds without any pack.
+- A clip the mod ships is written at its measured length (`durations.json`).
+  It is the same clip in every language.
+- A line with one clip per dub (a cut take remade in each dub) is written at
+  the LONGEST of them (`questkit.vanilla_durations.merge_locale_clips`).
+  The game will not stretch for a shipped clip, so a shorter slot would cut
+  that dub off. The shorter dubs wait for the difference on these lines. The
+  fix for that is a tighter cut in the long dub, not a shorter slot.
+
+**The words.** `tools/vanilla_text.py` pulls the official translation of
+every reused line in every language. The cut lines' subtitles are written
+from it: the sentences the cut keeps, in the dub's own words, for every text
+locale, whether or not that locale's dub was cut. A Czech player hears the
+dub they installed and reads Czech. `tools/vanilla_terms.py` prints how every
+language renders a phrase (the street-story headers, the gig types, the
+districts, a quest title a banner names), which is what to check a
+translation's wording against. The gig-type line follows the wording of the
+game's own briefs, which differs from the standalone labels in several
+languages: Czech briefs say "Nájemné železo", the label says "Nájemný
+zabiják".
+
 ## STAGING A CHARACTER WHO SPEAKS, LIPSYNCS AND STANDS BESIDE V
 
 **One call does all of it: `Scene.stage_johnny(first_section, last_section)`.**

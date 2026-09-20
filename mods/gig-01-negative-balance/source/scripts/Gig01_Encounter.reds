@@ -758,8 +758,8 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
             // running it every few seconds while V is on the estate costs less
             // than the bug it prevents.
             this.SetAnnounced(estate);
-            CCSharedHud.Notify(game, estate ? "Estate security on site"
-                                            : "Arasaka security on site");
+            CCSharedHud.Notify(game, GetLocalizedTextByKey(estate
+                ? n"cc-g01-hud-estate-security" : n"cc-g01-hud-arasaka-security"));
         }
     }
 
@@ -1066,7 +1066,8 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
                 // 3.2 s is not arbitrary - it is exactly how long the two 1.6 s
                 // steps below take, and the bar reports FAILED if it closes
                 // under 96%.
-                CCSharedHud.RunBar(this.GetGameInstance(), "COPYING LEDGER", 3.2);
+                CCSharedHud.RunBar(this.GetGameInstance(),
+                    GetLocalizedTextByKey(n"cc-g01-hud-copy-ledger"), 3.2);
                 break;
             case 1: break;
             case 2:
@@ -1228,8 +1229,10 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
             case 0:
                 // The real vanilla upload bar, on the terminal V is plugged
                 // into. 12.5 s covers the five beats below at 2.5 s each.
+                // The header is the base game's own sabotage-gig string, so
+                // it follows the player's language; the widget sets the case.
                 CCSharedHud.RunBar(this.GetGameInstance(),
-                    "SABOTAGE: UPLOADING MALWARE TO THE NETWORK", 10.0);
+                    GetLocalizedTextByKey(n"UI-QuestNotifications-sts_sabotaging"), 10.0);
                 break;
             case 1: break;
             case 2: break;
@@ -1706,7 +1709,8 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
                     && Vector4.Distance(pos, CCG01Shard.ObjectSpot()) <= 4.0 {
                     this.m_shardWait += 1;
                     if this.m_shardWait > 30 {
-                        CCSharedHud.Notify(this.GetGameInstance(), "Shard not found - taking the beat");
+                        CCSharedHud.Notify(this.GetGameInstance(),
+                                           GetLocalizedTextByKey(n"cc-g01-hud-shard-missing"));
                         qs.SetFactStr("cc_g01_shard_found", 1);
                     }
                 }

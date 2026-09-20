@@ -13,8 +13,11 @@ Keys are written BARE, with no 'LocKey#' prefix, on both sides: ArchiveXL hashes
 the bare key and matches the journal's reference to the entry here.
 """
 import json
+import os
 
 from questkit import cr2w
+from questkit.packs import TEXT_LOCALES
+from questkit import translations as _tr
 
 LOCKEY_PREFIX = ''
 
@@ -44,7 +47,7 @@ def entry(key, value):
 def write_onscreens(path, strings):
     """Write the resource. Returns how many strings went into it."""
     doc = {
-        'Header': cr2w.header('en-us.json'),
+        'Header': cr2w.header(os.path.basename(path).replace('.json.json', '.json')),
         'Data': {
             'Version': 195, 'BuildVersion': 0,
             'RootChunk': {
@@ -61,3 +64,46 @@ def write_onscreens(path, strings):
     with open(path, 'w', encoding='utf-8', newline='\n') as fh:
         json.dump(doc, fh, indent=2)
     return len(strings)
+
+
+def write_all_locales(out_dir, strings, tables):
+    """The gig's strings, registered for ENGLISH ONLY, and any locale a
+    table translates as its own file beside it.
+
+    English is the fallback: a manifest that registers `onscreens:` for
+    `en-us` alone has ArchiveXL merge that file for every other language as
+    fallback entries, which fill any key nothing else defines and never
+    overwrite one that is. So a player on another language reads English
+    until a translation exists, never a raw key, and a translation mod that
+    registers its own language wins whichever order the two load in
+    (measured 2026-09-19; `docs/scene-playbook.md`, "Other languages").
+    Registering our own English text under every locale instead, which this
+    function did on 2026-09-18, would make ours a real entry in each
+    language and beat a translation mod that loads after us.
+
+    A locale whose table carries `onscreens` gets `<locale>.json.json` too,
+    every key present with English filling the gaps, for a translation
+    contributed into this repo; `update_manifest_locales.py` registers the
+    locales that have one. Returns {locale: count of translated keys}.
+    """
+    done = {}
+    for loc in TEXT_LOCALES:
+        table = tables.get(loc, {}).get('onscreens', {}) if loc != 'en-us' else {}
+        path = os.path.join(out_dir, loc + '.json.json')
+        if loc != 'en-us' and not table:
+            if os.path.exists(path):
+                os.remove(path)
+            continue
+        merged, missing = {}, []
+        for k, v in strings.items():
+            if loc != 'en-us' and k in table:
+                merged[k] = table[k]
+            else:
+                merged[k] = v
+                if loc != 'en-us':
+                    missing.append(k)
+        write_onscreens(path, merged)
+        if loc != 'en-us':
+            _tr.report('onscreens', loc, missing, len(strings))
+        done[loc] = len(strings) - len(missing)
+    return done

@@ -78,7 +78,7 @@ import gen_scenes as gs
 # file is the GIG: which lines are voiced, by whom, and which have a male take.
 from questkit.voice import (                                        # noqa: F401
     configure, stem, line_texts, holocall_lines, write_tone, wav_ms, convert,
-    check_wem, write_vomap, WWISE, WWISE_PROJ, CONVERSION,
+    check_wem, write_vomap, locale_pass, WWISE, WWISE_PROJ, CONVERSION,
 )
 from questkit import phone
 
@@ -353,6 +353,11 @@ def main():
     print('wrote %s (%d measured durations)' % (DURATIONS, len(durations)))
 
     write_vomap(vomap)
+    # THE DUBBED LANGUAGES. Clips under source/audio/<locale>/ are the same
+    # vanilla cuts made in that dub (scene-playbook.md, "Other languages"); each
+    # locale gets its own map and durations file. questkit.voice.locale_pass.
+    locale_pass(gs.locstring_ruid, vomap, holocall, HOLOCALL_SRC,
+                aliases=gs.SCENE_ALIASES, filter_file=phone.filter_file)
     print('\nNow re-run gen_scenes.py - it reads durations.json and will re-time '
           'the sections to the real clips.')
 

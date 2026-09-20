@@ -195,10 +195,18 @@ Every key there carries a comment saying why it exists. This is the map of it.
 
 Four things learned the hard way:
 
-1. Register every locale, not just `en-us`. An English-only mod should point all
-   nineteen at its English file. Otherwise a player in another language gets
-   working dialogue and audio, and raw LocKeys for the title and objectives. It
-   looks perfect in testing, because testing happens in English.
+1. Register `onscreens` for `en-us` only. ArchiveXL merges the one language a
+   manifest registers as the fallback for every language it does not, so a
+   player on another language reads English, never a raw key, and a
+   translation mod that registers its own language wins whichever order the
+   two load in (measured 2026-09-19; gotcha 121). An earlier version of this
+   list said the opposite, that `en-us` alone shows raw keys; that was reasoned
+   at the desk and was wrong. Register another locale under `onscreens` only
+   for a strings file that differs. The three sibling blocks are registered
+   per locale where their files differ per language (a dub's re-cut clips,
+   its lipsync map); `tools/update_manifest_locales.py` writes the blocks and
+   `tools/check_locales.py` verifies them. `scene-playbook.md`, "Other
+   languages", has what each block carries.
 2. `onscreens` takes a list per locale. Its three siblings take a scalar.
 3. Parent the quest phase to the SCOPE `cyberpunk2077.quest`, not to a file
    path. ArchiveXL expands that name to every root quest a session can run,
@@ -269,6 +277,13 @@ Only two of those orderings carry weight, and both are about `gen_scenes`:
 
 Both sidecars are optional. A gig with no audio runs `gen_scenes` on its own and
 everything works except that nobody speaks.
+
+The same two generators write the other languages. `gen_localization` writes
+a strings file per locale from `tools/gigNN/translations/<locale>.json`,
+English filling any key a table lacks; `gen_scenes` writes the subtitles per
+locale the same way, and a lipsync map per dubbed locale; `gen_voice` writes a
+voice map per dubbed locale from any clips under `source/audio/<locale>/`.
+`tools/check_locales.py` after the run says whether every locale is complete.
 
 Skip what your gig does not have. An unvoiced gig with no conversations needs
 only `gen_journal`, `gen_localization` and `gen_questphase`. This repo's

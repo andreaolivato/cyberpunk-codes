@@ -158,6 +158,14 @@ below is everything else.
   while looking perfect in testing, because testing happens in English. All four
   keys now register the same 19 locales.
 
+  **Corrected 2026-09-19, and the fix above is undone.** The claim was
+  reasoned, not measured: ArchiveXL has merged a manifest's one language as
+  the fallback for every other since 2023, so `en-us` alone shows English
+  in every language, never a raw key, and registering our English under
+  every locale was worse, because it made ours a real entry in each language
+  and beat any translation mod that loaded after us. Measured in an Italian
+  game; gotcha 121. `onscreens` is registered for `en-us` alone again.
+
   **Correction to this entry's own instruction, which said "fix in the
   generator, not the file": the `.archive.xl` is not generated**. Nothing
   writes it, `build-archive.ps1` only reads its filename to derive the archive
@@ -10072,3 +10080,73 @@ right visemes on two.
   after thirty seconds, or on the first pass of a session that finds it
   held. What `NoMovement` stops exactly is unmeasured before this;
   `cc_g03_dbg_hold` reads 1 while held and 2 once lifted.
+
+## 49. Playing the gigs in nineteen languages. BUILT 2026-09-18, first playtest 2026-09-19
+
+The three gigs follow the player's voice-over language, read their own
+text in English until someone translates it, and ship a kit for that
+translation. The mechanism and the decisions are in `scene-playbook.md`
+("Other languages") and `architecture.md`; this entry is what was measured,
+what was found on the first playtest, and what is still open.
+
+### Measured before building
+
+- Every voice pack carries the same lipsync tree, set names and animation
+  names under its own locale folder: all 32 sets the gigs name, in all ten
+  packs. A lipsync map per dub is a path substitution.
+- Dubs differ from the English take by up to four seconds per line, in both
+  directions, across the 97 reused lines measured in eleven languages.
+- The translation tag: 2,922 vanilla subtitle lines carry
+  `<kiroshi l=".." o=".." t=".." b="" a=""/>`, every line of a foreign
+  conversation tagged, `b` and `a` empty on conversation lines. The
+  animation timing is three tiers of the line's duration, in the base game's
+  subtitle controller.
+- The game's own briefs word the gig type differently from the standalone
+  labels in several languages. A translation should follow the briefs,
+  which are what a player reads.
+
+### Found on the first Italian playtest, 2026-09-19
+
+- Ten lines mute with Italian subtitles: every one an expansion recording,
+  and the machine had the base Italian archive only. Gotcha 118.
+- Four banners in English: typed into scripts. Gotcha 119. The malware bar
+  and the trace bar now read the game's own strings; the copy bar and the
+  "finish Heroes first" notice read keys of the gig's own.
+- Pauses after every dubbed line that runs shorter than English. The
+  branch had written every reused line's slot at the longest dub, on the
+  assumption that the game plays a scene's timeline as written. Three test
+  builds the same day, each with one line's slot deliberately wrong, showed
+  what the game does (gotcha 120): it stretches a slot to the take for its
+  own lines, never shrinks one, and never stretches for a shipped clip. The
+  reused lines are now written at the shortest dub and the game times them
+  per language; the re-cut clips at the longest dub, since the game will not
+  stretch for them.
+
+- The translation effect renders with `l="eng"` the way it does with the
+  vanilla codes (seen in the Italian playtest), and the strings follow the
+  text language while the voice map follows the voice language (Italian text
+  over English voice, then Italian voice, both played).
+
+### What ships for a language, and what a translation is
+
+The strings are registered for English only, with English as the fallback,
+and what ships for other languages is what the game does on its own: every
+line of its own characters dubbed and subtitled, the cut lines re-cut per
+dub with the dub's own words as subtitles, the invented characters in
+English. The gig's own words are translated by whoever speaks the language:
+a translation is a mod of its own, and each gig ships the kit for one
+(`mods/<gig>/translation-kit/`, its README the guide), measured to work on 2026-09-19
+with a second archive overriding a string, a subtitle and a clip in Italian.
+Strings win regardless of load order; subtitles and clips win when the
+translation archive loads first (gotcha 121).
+
+### Open
+
+- Fourteen of the 170 re-cuts keep the English cut, where the dub's take
+  has no pause the cut can use; nobody has listened to the other 156 yet.
+- Whether the mouths of a re-recorded invented character, which keep the
+  English recording's animation, read acceptably in another language.
+- The ten re-cut lines where one dub's cut runs more than a second past
+  the others (Japanese and Brazilian mostly) leave that pause in every
+  other language. A tighter cut in the long dub removes it, one line at a
+  time.

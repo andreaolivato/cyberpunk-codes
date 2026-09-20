@@ -164,6 +164,17 @@ courtesy carry the threat.
 lines are a starting point rather than final text. Where the comic and the canon
 voice disagree, canon wins.
 
+## Languages
+
+The gig follows the player's voice-over language. A line spoken in the
+game's own recordings comes with its own dub, so Wakako, V, Johnny and Yoko
+speak whatever the voice pack speaks, and the seven cut lines are cut again
+in each dub with the dub's own words as subtitles. Char and the merc are
+English only. The gig's own text is English until a translation exists; a
+translation is a mod of its own, built from `translation-kit/`
+(its README is the guide), and `docs/scene-playbook.md`, "Other languages",
+is the mechanism.
+
 ## The cast: who is a body
 
 

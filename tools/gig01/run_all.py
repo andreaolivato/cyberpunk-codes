@@ -44,6 +44,9 @@ ORDER = [
     'gen_shard_ent.py',
     'gen_scenes.py',
     'gen_questphase.py',
+    # The translation kit, from the strings and subtitles just written, so
+    # a translator's files never drift from what the gig registers.
+    '../make_translation_kit.py',
     # Dev benches last, so a broken bench cannot hide a broken shipped file.
     'gen_poselab.py',
 ]

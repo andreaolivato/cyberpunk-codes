@@ -11,10 +11,14 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from gig01_config import RAW_MOD, LOCKEY_PREFIX                     # noqa: E402
-from questkit.localization import configure, write_onscreens        # noqa: E402
+from questkit.localization import configure, write_all_locales      # noqa: E402
+from questkit import translations                                   # noqa: E402
 
 configure(lockey_prefix=LOCKEY_PREFIX)
-OUT = os.path.join(RAW_MOD, 'localization', 'en-us.json.json')
+# One file per text locale lands here: en-us.json.json is the English table
+# of record and the eighteen others are written from tools/gigNN/translations/.
+OUT = os.path.join(RAW_MOD, 'localization')
+HERE = os.path.dirname(os.path.abspath(__file__))
 
 # A REAL NEWLINE, BUILT RATHER THAN TYPED. Every multi-line string below is a
 # display string: the widgets take a finished value and break on real newlines,
@@ -357,6 +361,17 @@ STRINGS = {
     # This is where the ledger actually leaves V's hands, and it is the beat the
     # gig was missing entirely. The payment is the comic's own detail: p30 shows
     # a money-transfer toast for E$ -15,000, so V pays up front for the dig.
+    # The two banners Gig01_Encounter.reds used to carry as bare strings.
+    # Moved here on the translations branch so they follow the player's
+    # language like every other string; the script reads them by key.
+    'hud-estate-security': 'Estate security on site',
+    'hud-arasaka-security': 'Arasaka security on site',
+    'hud-shard-missing': 'Shard not found - taking the beat',
+    # The copy bar's header (Gig01_Encounter.DownloadStep). The malware bar
+    # and gig 03's trace bar use the base game's own strings instead.
+    'hud-copy-ledger': 'COPYING LEDGER',
+    # Shown once when the gig is gated behind Heroes (Gig01_Start.NotifyBlocked).
+    'blocked-heroes': 'Negative Balance is waiting: finish "Heroes" for Jackie first.',
     'hud-send-01': 'ENCRYPTING LEDGER...',
     'hud-send-02': 'SENDING TO NIX',
     'hud-send-03': 'DELIVERED',
@@ -444,5 +459,6 @@ STRINGS = {
 }
 
 
-OUT_COUNT = write_onscreens(OUT, STRINGS)
-print(f'wrote {OUT} ({OUT_COUNT} strings)')
+os.makedirs(OUT, exist_ok=True)
+DONE = write_all_locales(OUT, STRINGS, translations.load(HERE))
+print('wrote %d strings in %d locales under %s' % (len(STRINGS), len(DONE), OUT))

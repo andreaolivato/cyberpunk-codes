@@ -699,7 +699,7 @@
                           "targetSlot": {
                             "$type": "CName",
                             "$storage": "string",
-                            "$value": "(Root)"
+                            "$value": "pla_default_tgt"
                           },
                           "targetType": "Actor"
                         },
@@ -908,7 +908,7 @@
                           "targetSlot": {
                             "$type": "CName",
                             "$storage": "string",
-                            "$value": "(Root)"
+                            "$value": "pla_default_tgt"
                           },
                           "targetType": "Actor"
                         },
@@ -1074,9 +1074,9 @@
                   },
                   "entityPosition": {
                     "$type": "Vector3",
-                    "X": 0,
-                    "Y": 0,
-                    "Z": 0
+                    "X": 0.0,
+                    "Y": 0.0,
+                    "Z": 0.0
                   },
                   "visualizerStyle": "inWorld"
                 },
@@ -1316,7 +1316,7 @@
                         "role": "Full",
                         "speakers": []
                       },
-                      "duration": 4115,
+                      "duration": 3978,
                       "executionTagFlags": 0,
                       "id": {
                         "$type": "scnSceneEventId",
@@ -1388,7 +1388,7 @@
                           "targetSlot": {
                             "$type": "CName",
                             "$storage": "string",
-                            "$value": "(Root)"
+                            "$value": "pla_default_tgt"
                           },
                           "targetType": "Actor"
                         },
@@ -1505,7 +1505,7 @@
                 ],
                 "sectionDuration": {
                   "$type": "scnSceneTime",
-                  "stu": 4815
+                  "stu": 4678
                 }
               }
             },

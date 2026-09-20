@@ -12,7 +12,9 @@ map pins, voiced conversations, lipsync and custom NPCs; **Dead Ringer**
 ([Nexus](https://www.nexusmods.com/cyberpunk2077/mods/33571)), with a video
 holocall, a breach on a wall box the mod ships, and a quest area drawn on the
 minimap; and **Acceptable Loss**, a fight-and-run gig that forces a compound
-of NPCs onto the player and drives the wanted level from script.
+of NPCs onto the player and drives the wanted level from script. All three
+follow the game's voice-over language and ship a translation kit
+(`mods/<gig>/translation-kit/`); `docs/scene-playbook.md` ("Other languages") has how.
 
 The documentation is the point of publishing this. It is written for modders
 building their own quest mods: what each subsystem needs, the traps in it, and

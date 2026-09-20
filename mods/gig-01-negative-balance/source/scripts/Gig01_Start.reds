@@ -291,7 +291,7 @@ public class NegativeBalanceStart extends ScriptableSystem {
         }
         qs.SetFactStr("cc_g01_heroes_notified", 1);
         CCSharedHud.NotifyTyped(this.GetGameInstance(),
-            "Negative Balance is waiting: finish \"Heroes\" for Jackie first.",
+            GetLocalizedTextByKey(n"cc-g01-blocked-heroes"),
             SimpleMessageType.Neutral, 6.0);
     }
 

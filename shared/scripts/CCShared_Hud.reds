@@ -84,7 +84,12 @@ public abstract class CCSharedHud {
         }
         bb.SetString(d.Header, header, true);
         bb.SetString(d.BottomText, "", true);
-        bb.SetString(d.CompletedText, "COMPLETE", true);
+        // The widget's own word for it, so it follows the player's language
+        // (COMPLETATO, ABGESCHLOSSEN...). A literal here showed "COMPLETE" in
+        // an Italian game (playtest 2026-09-19; gotcha 119).
+        bb.SetString(d.CompletedText,
+            GetLocalizedTextByKey(n"Story-base-gameplay-gui-widgets-hud_progress_bar-hud_progress_bar-_localizationString11"),
+            true);
         bb.SetFloat(d.Progress, 0.0, true);
         bb.SetBool(d.Active, true, true);
     }

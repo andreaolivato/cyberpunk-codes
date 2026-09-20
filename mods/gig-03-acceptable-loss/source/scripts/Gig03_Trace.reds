@@ -107,7 +107,11 @@ public abstract class CCG03TraceRules {
     public static func DelaySeconds() -> Float { return 6.0; }
 
     // What the bar says while it fills, and what the banner says when it lands.
-    public static func BarHeader() -> String { return "TRACING YOUR LOCATION"; }
+    // The base game's own words for the Reveal quickhack, so the header
+    // follows the player's language; the widget sets the case.
+    public static func BarHeader() -> String {
+        return GetLocalizedTextByKey(n"UI-Quickhacks-RevealDescription");
+    }
 
     public static func PollSeconds() -> Float { return 5.0; }
 

@@ -1,0 +1,106 @@
+{
+  "Header": {
+    "WolvenKitVersion": "8.20.0",
+    "WKitJsonVersion": "0.0.9",
+    "GameVersion": 2310,
+    "DataType": "CR2W",
+    "ArchiveFileName": "vomap_kr-kr.json"
+  },
+  "Data": {
+    "Version": 195,
+    "BuildVersion": 0,
+    "RootChunk": {
+      "$type": "JsonResource",
+      "cookingPlatform": "PLATFORM_PC",
+      "root": {
+        "HandleId": "0",
+        "Data": {
+          "$type": "locVoiceoverMap",
+          "entries": [
+            {
+              "$type": "locVoLineEntry",
+              "femaleResPath": {
+                "DepotPath": {
+                  "$type": "ResourcePath",
+                  "$storage": "string",
+                  "$value": "mod\\acceptable_loss\\audio\\vo\\kr-kr__gig03_destroy__j02.wem"
+                },
+                "Flags": "Soft"
+              },
+              "maleResPath": {
+                "DepotPath": {
+                  "$type": "ResourcePath",
+                  "$storage": "string",
+                  "$value": "mod\\acceptable_loss\\audio\\vo\\kr-kr__gig03_destroy__j02.wem"
+                },
+                "Flags": "Soft"
+              },
+              "stringId": "3438982882783360468"
+            },
+            {
+              "$type": "locVoLineEntry",
+              "femaleResPath": {
+                "DepotPath": {
+                  "$type": "ResourcePath",
+                  "$storage": "string",
+                  "$value": "mod\\acceptable_loss\\audio\\vo\\kr-kr__gig03_dino_bar_loud__d02.wem"
+                },
+                "Flags": "Soft"
+              },
+              "maleResPath": {
+                "DepotPath": {
+                  "$type": "ResourcePath",
+                  "$storage": "string",
+                  "$value": "mod\\acceptable_loss\\audio\\vo\\kr-kr__gig03_dino_bar_loud__d02.wem"
+                },
+                "Flags": "Soft"
+              },
+              "stringId": "2742322433473941687"
+            },
+            {
+              "$type": "locVoLineEntry",
+              "femaleResPath": {
+                "DepotPath": {
+                  "$type": "ResourcePath",
+                  "$storage": "string",
+                  "$value": "mod\\acceptable_loss\\audio\\vo\\kr-kr__gig03_dino_bar_loud__d03.wem"
+                },
+                "Flags": "Soft"
+              },
+              "maleResPath": {
+                "DepotPath": {
+                  "$type": "ResourcePath",
+                  "$storage": "string",
+                  "$value": "mod\\acceptable_loss\\audio\\vo\\kr-kr__gig03_dino_bar_loud__d03.wem"
+                },
+                "Flags": "Soft"
+              },
+              "stringId": "2742321333962313476"
+            },
+            {
+              "$type": "locVoLineEntry",
+              "femaleResPath": {
+                "DepotPath": {
+                  "$type": "ResourcePath",
+                  "$storage": "string",
+                  "$value": "mod\\acceptable_loss\\audio\\vo\\kr-kr__gig03_object__j02.wem"
+                },
+                "Flags": "Soft"
+              },
+              "maleResPath": {
+                "DepotPath": {
+                  "$type": "ResourcePath",
+                  "$storage": "string",
+                  "$value": "mod\\acceptable_loss\\audio\\vo\\kr-kr__gig03_object__j02.wem"
+                },
+                "Flags": "Soft"
+              },
+              "stringId": "2330541904110403591"
+            }
+          ]
+        }
+      }
+    },
+    "EmbeddedFiles": []
+  }
+}

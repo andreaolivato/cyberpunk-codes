@@ -60,6 +60,9 @@ ORDER = [
     'gen_community.py',
     'gen_scenes.py',
     'gen_questphase.py',
+    # The translation kit, from the strings and subtitles just written, so
+    # a translator's files never drift from what the gig registers.
+    '../make_translation_kit.py',
 ]
 
 if __name__ == '__main__':

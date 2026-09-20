@@ -41,6 +41,19 @@ Prefix everything with `cc` (Cyberpunk.Codes) + gig number so four installed gig
 that gig's config module, and both the generator writing the strings and the one
 referencing them read it from there.
 
+Per-locale files are named by the locale: `subtitles_<locale>.json` with
+`gigNN_lines_<locale>.json` for the scene lines, `vomap_<locale>.json` and
+`gigNN_<locale>.lipmap` for the ten dubbed locales (`en-us` carries no
+suffix); the strings are `localization\en-us.json`, registered for English
+only, plus `<locale>.json` for a locale a table translates. The tables are
+`tools/gigNN/translations/<locale>.json`, one per locale, with `onscreens`
+by bare key and `lines` by `scene/key`; a gendered line is `{"f": ...,
+"m": ...}`, and what ships in `lines` is the game's own words for the cut
+lines. `_actors.json` beside them lists the lines the gig's invented
+characters speak. A translation shipped as its own mod uses the gig's
+`translation-kit/` folder and the folder name `mod\<gig>_translation\`.
+`scene-playbook.md`, "Other languages"; the kit's README is the guide.
+
 ## Generators
 One subdirectory per gig under `tools/`, `tools/gig01/` and so on, so a second
 gig can take the same filenames. Each gig has one config module named after it

@@ -30,7 +30,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import gen_scenes as gs                                             # noqa: E402
 import take_vanilla                                                 # noqa: E402
 from questkit.voice import (                                        # noqa: E402
-    configure, stem, line_texts, holocall_lines, wav_ms, convert, write_vomap,
+    configure, stem, line_texts, holocall_lines, wav_ms, convert, write_vomap, locale_pass,
 )
 from questkit import phone                                          # noqa: E402
 from gig03_config import SOURCE, RAW_MOD, DEPOT                     # noqa: E402
@@ -90,6 +90,9 @@ def main():
 
     convert(wavs)
     write_vomap(vomap)
+    # THE DUBBED LANGUAGES: see questkit.voice.locale_pass.
+    locale_pass(gs.locstring_ruid, vomap, holocall, HOLOCALL_SRC,
+                aliases=getattr(gs, 'SCENE_ALIASES', {}), filter_file=phone.filter_file)
     with open(DURATIONS, 'w', encoding='utf-8', newline='\n') as fh:
         json.dump(durations, fh, indent=1, sort_keys=True)
     print('wrote %s (%d line(s))' % (DURATIONS, len(durations)))

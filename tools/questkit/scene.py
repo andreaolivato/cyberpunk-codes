@@ -44,6 +44,7 @@ SUBTITLE_OUT = None
 SUBTITLE_MAP_OUT = None
 SUBTITLE_DEPOT = None
 LIPMAP_OUT = None
+TRANSLATIONS = {}
 LIPMAP_NAME = None
 MEASURED = {}
 LIPSYNC_SETS = {}
@@ -54,7 +55,7 @@ SCENE_ALIASES = {}
 def configure(out_dir, scene_depot, subtitle_out, subtitle_map_out,
               subtitle_depot, lipmap_out, lipmap_name,
               durations=None, lipsync_sets=None, lipsync_lines=None,
-              scene_aliases=None):
+              scene_aliases=None, translations=None):
     r"""Point the builder at one mod's output tree.
 
     out_dir           where the .scene.json files are written
@@ -75,10 +76,14 @@ def configure(out_dir, scene_depot, subtitle_out, subtitle_map_out,
     lipsync_lines     {'scene/key': animation name}
     scene_aliases     {scene: source scene} for scenes that reuse another's
                       recordings, so they borrow its lipsync picks too
+    translations      what questkit.translations.load returns: the per-locale
+                      tables the subtitle resources are written from. Missing
+                      means English in every locale.
     """
     global OUT_DIR, SCENE_DEPOT, SUBTITLE_OUT, SUBTITLE_MAP_OUT, SUBTITLE_DEPOT
     global LIPMAP_OUT, LIPMAP_NAME, MEASURED, LIPSYNC_SETS, LIPSYNC_LINES
-    global SCENE_ALIASES
+    global SCENE_ALIASES, TRANSLATIONS
+    TRANSLATIONS = translations or {}
     OUT_DIR = out_dir
     SCENE_DEPOT = scene_depot
     SUBTITLE_OUT = subtitle_out
@@ -565,6 +570,8 @@ class Scene:
         # (locstring ruid, text) for every line and option - this is what the
         # game actually reads. See the module docstring.
         self.subtitles = []
+        # RUID -> line key, so a translation table can find the line.
+        self.subtitle_key = {}
         self.entry_points = []
         self.exit_points = []
         self.performers = []
@@ -1154,6 +1161,7 @@ class Scene:
         # this. The embedded locStore below keeps the female wording; it is
         # editor data and not what anyone reads.
         self.subtitles.append((ls, text, male if male is not None else text))
+        self.subtitle_key[ls] = key
         for locale in ('en_us', 'db_db'):
             vid = ruid('var/' + self.name + '/' + key + '/' + locale)
             self.loc_vp.append({'$type': 'scnlocLocStoreEmbeddedVariantPayloadEntry',
@@ -2633,7 +2641,6 @@ def write_subtitles(scenes):
     gendered override and is set to the same string so a male V is not left
     reading a blank line.
     """
-    entries = []
     seen = set()
     for scene in scenes:
         for ls, text, male in scene.subtitles:
@@ -2641,58 +2648,102 @@ def write_subtitles(scenes):
                 raise SystemExit('duplicate locstring RUID %s ("%s") - two keys '
                                  'collided, change one' % (ls, text))
             seen.add(ls)
-            entries.append({
-                '$type': 'localizationPersistenceSubtitleEntry',
-                'femaleVariant': text,
-                'maleVariant': male,
-                'stringId': ls,
-            })
 
-    doc = {
-        'Header': cr2w.header('subtitles.json'),
-        'Data': {
-            'Version': 195, 'BuildVersion': 0,
-            'RootChunk': {
-                '$type': 'JsonResource',
-                'cookingPlatform': 'PLATFORM_PC',
-                'root': {'HandleId': '0', 'Data': {
-                    '$type': 'localizationPersistenceSubtitleEntries',
-                    'entries': entries,
-                }},
+    # ONE PAIR OF RESOURCES PER TEXT LOCALE. en-us keeps the plain names; every
+    # other locale gets `_<locale>` before the extension, and the manifest
+    # points that locale's `subtitles:` at its own map. A line the locale's
+    # table does not translate is written in English, and the gap is printed,
+    # so no locale ever resolves a RUID to nothing.
+    from questkit.packs import TEXT_LOCALES
+    from questkit import translations as _tr
+    for loc in TEXT_LOCALES:
+        table = TRANSLATIONS.get(loc, {}).get('lines', {}) if loc != 'en-us' else {}
+        # The invented characters' lines: their recordings stay English, so
+        # in every other language the subtitle carries the game's own
+        # translation effect (questkit.translations.kiroshi).
+        actors = TRANSLATIONS.get(loc, {}).get('actors', set()) if loc != 'en-us' else set()
+        entries, missing, total = [], [], 0
+        for scene in scenes:
+            for ls, text, male in scene.subtitles:
+                total += 1
+                key = '%s/%s' % (scene.name, scene.subtitle_key.get(ls))
+                tr = table.get(key)
+                if tr is None and scene.name in SCENE_ALIASES:
+                    tr = table.get('%s/%s' % (SCENE_ALIASES[scene.name],
+                                              scene.subtitle_key.get(ls)))
+                if isinstance(tr, dict):
+                    f, m = tr.get('f', text), tr.get('m', tr.get('f', male))
+                elif isinstance(tr, str):
+                    f, m = tr, tr
+                else:
+                    f, m = text, male
+                    # English by design unless a contributed translation
+                    # covers the gig's own lines: the tables ship only the
+                    # game's own words (the cut lines), so an actor line
+                    # counts as missing only once the locale translates any
+                    # actor line at all.
+                    if loc != 'en-us' and any(a in table for a in actors):
+                        missing.append(key)
+                if key in actors and (f != text or m != male):
+                    f = _tr.kiroshi(text, f)
+                    m = _tr.kiroshi(male, m)
+                entries.append({
+                    '$type': 'localizationPersistenceSubtitleEntry',
+                    'femaleVariant': f,
+                    'maleVariant': m,
+                    'stringId': ls,
+                })
+        suffix = '' if loc == 'en-us' else '_' + loc
+        sub_out = SUBTITLE_OUT.replace('.json.json', suffix + '.json.json')
+        map_out = SUBTITLE_MAP_OUT.replace('.json.json', suffix + '.json.json')
+        depot = SUBTITLE_DEPOT.replace('.json', suffix + '.json')
+        doc = {
+            'Header': cr2w.header(os.path.basename(depot)),
+            'Data': {
+                'Version': 195, 'BuildVersion': 0,
+                'RootChunk': {
+                    '$type': 'JsonResource',
+                    'cookingPlatform': 'PLATFORM_PC',
+                    'root': {'HandleId': '0', 'Data': {
+                        '$type': 'localizationPersistenceSubtitleEntries',
+                        'entries': entries,
+                    }},
+                },
+                'EmbeddedFiles': [],
             },
-            'EmbeddedFiles': [],
-        },
-    }
-    os.makedirs(os.path.dirname(SUBTITLE_OUT), exist_ok=True)
-    with open(SUBTITLE_OUT, 'w', encoding='utf-8', newline='\n') as fh:
-        json.dump(doc, fh, indent=2)
-    print('wrote %s (%d subtitle entries)' % (SUBTITLE_OUT, len(entries)))
+        }
+        os.makedirs(os.path.dirname(sub_out), exist_ok=True)
+        with open(sub_out, 'w', encoding='utf-8', newline='\n') as fh:
+            json.dump(doc, fh, indent=2)
 
-    # ...and the map that points at it, which is what ArchiveXL registers.
-    doc = {
-        'Header': cr2w.header('subtitles.json'),
-        'Data': {
-            'Version': 195, 'BuildVersion': 0,
-            'RootChunk': {
-                '$type': 'JsonResource',
-                'cookingPlatform': 'PLATFORM_PC',
-                'root': {'HandleId': '0', 'Data': {
-                    '$type': 'localizationPersistenceSubtitleMap',
-                    'entries': [{
-                        '$type': 'localizationPersistenceSubtitleMapEntry',
-                        'subtitleFile': resref(SUBTITLE_DEPOT),
-                        # The base map groups its files; "quest" is what every
-                        # story subtitle file uses.
-                        'subtitleGroup': cname('quest'),
-                    }],
-                }},
+        # ...and the map that points at it, which is what ArchiveXL registers.
+        doc = {
+            'Header': cr2w.header(os.path.basename(map_out).replace('.json.json', '.json')),
+            'Data': {
+                'Version': 195, 'BuildVersion': 0,
+                'RootChunk': {
+                    '$type': 'JsonResource',
+                    'cookingPlatform': 'PLATFORM_PC',
+                    'root': {'HandleId': '0', 'Data': {
+                        '$type': 'localizationPersistenceSubtitleMap',
+                        'entries': [{
+                            '$type': 'localizationPersistenceSubtitleMapEntry',
+                            'subtitleFile': resref(depot),
+                            # The base map groups its files; "quest" is what
+                            # every story subtitle file uses.
+                            'subtitleGroup': cname('quest'),
+                        }],
+                    }},
+                },
+                'EmbeddedFiles': [],
             },
-            'EmbeddedFiles': [],
-        },
-    }
-    with open(SUBTITLE_MAP_OUT, 'w', encoding='utf-8', newline='\n') as fh:
-        json.dump(doc, fh, indent=2)
-    print('wrote %s (subtitle map -> %s)' % (SUBTITLE_MAP_OUT, SUBTITLE_DEPOT))
+        }
+        with open(map_out, 'w', encoding='utf-8', newline='\n') as fh:
+            json.dump(doc, fh, indent=2)
+        if loc == 'en-us':
+            print('wrote %s (%d subtitle entries) and its map, plus one pair per '
+                  'locale' % (sub_out, len(entries)))
+        _tr.report('subtitles', loc, missing, total)
 
     # Reused vanilla lines are deliberately absent from the resource above -
     # vanilla's own registration supplies their text and audio. Print them so
@@ -2732,40 +2783,55 @@ def write_lipmap(scenes):
     installed a different voice pack has no such files - the Soft references
     simply do not resolve and the mouths stay shut. Nothing else changes.
     """
-    entries, paths, previews = [], [], []
-    for scene in scenes:
-        if not scene.lipsync_sets:
-            continue
-        depot = SCENE_DEPOT + scene.name + '.scene'
-        paths.append(str(fnv1a64(depot)))
-        previews.append(str(fnv1a64(depot + 'preview')))
-        entries.append({
-            '$type': 'animLipsyncMappingSceneEntry',
-            'actorVoiceTags': list(scene.lipsync_voicetags),
-            'animSets': [resref(p, 'Soft') for p in scene.lipsync_sets],
-        })
-
-    doc = {
-        'Header': cr2w.header(LIPMAP_NAME),
-        'Data': {
-            'Version': 195, 'BuildVersion': 0,
-            'RootChunk': {
-                '$type': 'animLipsyncMapping',
-                'cookingPlatform': 'PLATFORM_PC',
-                'languageCodeName': cname('en-us'),
-                'sceneEntries': entries,
-                'scenePaths': paths,
-                'scenePreviewPaths': previews,
+    # ONE MAP PER DUBBED LANGUAGE. The animation sets live inside each
+    # language's own voice archive, under that language's folder, with the
+    # same file names and the same animation names (checked on all ten
+    # packs, docs/scene-playbook.md "Other languages"): so the map for de-de is the
+    # English map with `\en-us\` swapped for `\de-de\` and the language code
+    # set. A player on the German dub then gets moving mouths from the files
+    # they actually have. The nine text-only locales have no voice pack and
+    # the manifest points them at the English map.
+    from questkit.packs import PACKS
+    for loc in ['en-us'] + sorted(PACKS):
+        entries, paths, previews = [], [], []
+        for scene in scenes:
+            if not scene.lipsync_sets:
+                continue
+            depot = SCENE_DEPOT + scene.name + '.scene'
+            paths.append(str(fnv1a64(depot)))
+            previews.append(str(fnv1a64(depot + 'preview')))
+            entries.append({
+                '$type': 'animLipsyncMappingSceneEntry',
+                'actorVoiceTags': list(scene.lipsync_voicetags),
+                'animSets': [resref(p.replace(chr(92) + 'en-us' + chr(92),
+                                              chr(92) + loc + chr(92)), 'Soft')
+                             for p in scene.lipsync_sets],
+            })
+        suffix = '' if loc == 'en-us' else '_' + loc
+        name = LIPMAP_NAME.replace('.lipmap', suffix + '.lipmap')
+        out = LIPMAP_OUT.replace('.lipmap.json', suffix + '.lipmap.json')
+        doc = {
+            'Header': cr2w.header(name),
+            'Data': {
+                'Version': 195, 'BuildVersion': 0,
+                'RootChunk': {
+                    '$type': 'animLipsyncMapping',
+                    'cookingPlatform': 'PLATFORM_PC',
+                    'languageCodeName': cname(loc),
+                    'sceneEntries': entries,
+                    'scenePaths': paths,
+                    'scenePreviewPaths': previews,
+                },
+                'EmbeddedFiles': [],
             },
-            'EmbeddedFiles': [],
-        },
-    }
-    os.makedirs(os.path.dirname(LIPMAP_OUT), exist_ok=True)
-    with open(LIPMAP_OUT, 'w', encoding='utf-8', newline='\n') as fh:
-        json.dump(doc, fh, indent=2)
-    total = sum(len(e['animSets']) for e in entries)
-    print('wrote %s (%d scenes, %d lipsync sets)'
-          % (LIPMAP_OUT, len(entries), total))
+        }
+        os.makedirs(os.path.dirname(out), exist_ok=True)
+        with open(out, 'w', encoding='utf-8', newline='\n') as fh:
+            json.dump(doc, fh, indent=2)
+        if loc == 'en-us':
+            total = sum(len(e['animSets']) for e in entries)
+            print('wrote %s (%d scenes, %d lipsync sets), plus one per dubbed '
+                  'language' % (out, len(entries), total))
     if not entries:
         print('  NOTHING IS LIPSYNCED - run tools\\gen_lipsync.py first '
               '(it writes source\\lipsync_picks.json, which this reads)')

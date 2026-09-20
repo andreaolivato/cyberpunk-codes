@@ -73,6 +73,8 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from questkit import translations                                   # noqa: E402
+from questkit import vanilla_durations                              # noqa: E402
 from questkit.scene import (                                        # noqa: F401
     Scene, configure, write_subtitles, write_lipmap,
     ANCHOR_PLAYER, JOHNNY_ACTOR, JOHNNY_GHOST, JOHNNY_SOLID,
@@ -122,6 +124,13 @@ else:
 # the bring-it scene the section ended, and Johnny with it, while V was
 # still talking (playtest 2026-09-15, "almost seen him disappear without
 # glitch"). Same table, same key shape, same 350 ms pad.
+# AND THE DUBBED LANGUAGES' OWN CLIPS. A vanilla cut remade in a dub is a
+# clip of a different length, so a section is paced from the longest clip
+# any language ships for the line (durations_<locale>.json, written by
+# gen_voice's locale pass): the game stretches a slot only for its own
+# lines, never for a shipped clip (questkit.vanilla_durations).
+vanilla_durations.merge_locale_clips(MEASURED, os.path.join(SOURCE, 'audio'))
+
 VANILLA_DURATIONS_FILE = os.path.join(SOURCE, 'audio', 'vanilla_durations.json')
 if os.path.exists(VANILLA_DURATIONS_FILE):
     with open(VANILLA_DURATIONS_FILE, encoding='utf-8') as _fh:
@@ -240,6 +249,7 @@ configure(
     lipsync_sets=LIPSYNC_SETS,
     lipsync_lines=LIPSYNC_LINES,
     scene_aliases=SCENE_ALIASES,
+    translations=translations.load(os.path.dirname(os.path.abspath(__file__))),
 )
 
 

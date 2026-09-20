@@ -4,116 +4,82 @@ localization:
   # JOURNAL / UI STRINGS: the gig title, every objective, contact and
   # conversation name, the shard's text, the computer screens.
   #
-  # UNDER EVERY LOCALE, which is a FIX (2026-08-14), not decoration. This
-  # block used to register `en-us` alone while `subtitles`, `vomaps` and
-  # `lipmaps` below were all mapped across the full 19. The result was a
-  # specific and quite bad kind of half-broken: a player running the game in
-  # any other language got working dialogue, working audio and working lip
-  # sync - and RAW LOCKEYS where the gig title, the objectives, Elena's and
-  # Nix's contact names and the shard text should be. The gig would have been
-  # unplayable in eighteen languages while looking perfect in testing, because
-  # testing happens in English.
+  # ENGLISH ONLY, ON PURPOSE (2026-09-19). ArchiveXL merges the one language a
+  # mod registers as the fallback for every language it does not: the entries
+  # fill any key nothing else defines and never overwrite one that is. So a
+  # player on another language reads English here until a translation exists,
+  # never a raw key, and a translation mod that registers its own language
+  # wins whichever order the two load in. Measured in game with a second
+  # archive overriding one key in Italian; the account is in
+  # docs/scene-playbook.md, "Other languages"; each gig's translation-kit/
+  # README.md is the page for whoever writes one. The entry of 2026-08-14
+  # that said `en-us` alone shows raw keys was reasoned, not measured, and
+  # was wrong.
   #
-  # The precedent is exact: zDeceptiousQuestCore ships one en-us onscreens file
-  # and maps all 19 locales onto it, which is what a shipped, English-only
-  # quest mod does about this.
-  #
-  # Same reasoning as its three siblings below - the mod is English-only, and
-  # English beats a raw LocKey. If it is ever translated, these lines become
-  # the place the translations attach.
+  # A locale gains its own line here when tools/gig01/translations/<locale>.json
+  # carries strings: gen_localization.py writes the file and
+  # update_manifest_locales.py registers it.
   onscreens:
-    ar-ar:
-      - mod\negative_balance\localization\en-us.json
-    cz-cz:
-      - mod\negative_balance\localization\en-us.json
-    de-de:
-      - mod\negative_balance\localization\en-us.json
     en-us:
-      - mod\negative_balance\localization\en-us.json
-    es-es:
-      - mod\negative_balance\localization\en-us.json
-    es-mx:
-      - mod\negative_balance\localization\en-us.json
-    fr-fr:
-      - mod\negative_balance\localization\en-us.json
-    hu-hu:
-      - mod\negative_balance\localization\en-us.json
-    it-it:
-      - mod\negative_balance\localization\en-us.json
-    jp-jp:
-      - mod\negative_balance\localization\en-us.json
-    kr-kr:
-      - mod\negative_balance\localization\en-us.json
-    pl-pl:
-      - mod\negative_balance\localization\en-us.json
-    pt-br:
-      - mod\negative_balance\localization\en-us.json
-    ru-ru:
-      - mod\negative_balance\localization\en-us.json
-    th-th:
-      - mod\negative_balance\localization\en-us.json
-    tr-tr:
-      - mod\negative_balance\localization\en-us.json
-    ua-ua:
-      - mod\negative_balance\localization\en-us.json
-    zh-cn:
-      - mod\negative_balance\localization\en-us.json
-    zh-tw:
       - mod\negative_balance\localization\en-us.json
   # Scene dialogue. A scene line resolves its scnlocLocstringId through THIS,
   # not through the scene's own embedded locStore (which the game ignores) and
   # not through onscreens. Without it, choice hubs render blank rows and
   # sections play silently - see docs/scene-playbook.md.
   #
-  # Every language points at the same English file on purpose: the mod is
-  # English-only, and English beats an empty subtitle.
+  # One map and one lines file per locale, `_<locale>` suffixed, written by
+  # gen_scenes.write_subtitles from the same translation tables. A line the
+  # game recorded (vanilla_sid) is not in any of them: the game supplies its
+  # own translation and its own dub for those.
   subtitles:
-    ar-ar: mod\negative_balance\localization\subtitles.json
-    cz-cz: mod\negative_balance\localization\subtitles.json
-    de-de: mod\negative_balance\localization\subtitles.json
+    ar-ar: mod\negative_balance\localization\subtitles_ar-ar.json
+    cz-cz: mod\negative_balance\localization\subtitles_cz-cz.json
+    de-de: mod\negative_balance\localization\subtitles_de-de.json
     en-us: mod\negative_balance\localization\subtitles.json
-    es-es: mod\negative_balance\localization\subtitles.json
-    es-mx: mod\negative_balance\localization\subtitles.json
-    fr-fr: mod\negative_balance\localization\subtitles.json
-    hu-hu: mod\negative_balance\localization\subtitles.json
-    it-it: mod\negative_balance\localization\subtitles.json
-    jp-jp: mod\negative_balance\localization\subtitles.json
-    kr-kr: mod\negative_balance\localization\subtitles.json
-    pl-pl: mod\negative_balance\localization\subtitles.json
-    pt-br: mod\negative_balance\localization\subtitles.json
-    ru-ru: mod\negative_balance\localization\subtitles.json
-    th-th: mod\negative_balance\localization\subtitles.json
-    tr-tr: mod\negative_balance\localization\subtitles.json
-    ua-ua: mod\negative_balance\localization\subtitles.json
-    zh-cn: mod\negative_balance\localization\subtitles.json
-    zh-tw: mod\negative_balance\localization\subtitles.json
+    es-es: mod\negative_balance\localization\subtitles_es-es.json
+    es-mx: mod\negative_balance\localization\subtitles_es-mx.json
+    fr-fr: mod\negative_balance\localization\subtitles_fr-fr.json
+    hu-hu: mod\negative_balance\localization\subtitles_hu-hu.json
+    it-it: mod\negative_balance\localization\subtitles_it-it.json
+    jp-jp: mod\negative_balance\localization\subtitles_jp-jp.json
+    kr-kr: mod\negative_balance\localization\subtitles_kr-kr.json
+    pl-pl: mod\negative_balance\localization\subtitles_pl-pl.json
+    pt-br: mod\negative_balance\localization\subtitles_pt-br.json
+    ru-ru: mod\negative_balance\localization\subtitles_ru-ru.json
+    th-th: mod\negative_balance\localization\subtitles_th-th.json
+    tr-tr: mod\negative_balance\localization\subtitles_tr-tr.json
+    ua-ua: mod\negative_balance\localization\subtitles_ua-ua.json
+    zh-cn: mod\negative_balance\localization\subtitles_zh-cn.json
+    zh-tw: mod\negative_balance\localization\subtitles_zh-tw.json
   # Scene VOICEOVER. Same idea as `subtitles` above and keyed by the SAME RUID:
   # a locVoiceoverMap is a flat, global stringId -> wem list with no scene or
   # quest scoping, so registering ours here is all it takes for the scene system
   # to play our audio natively - no script driver, no Audioware.
   # Generated by tools/gig01/gen_voice.py. See docs/backlog.md 2a.
   #
-  # English clips under every locale, for the same reason the subtitles are:
-  # the mod is English-only, and a voice beats silence.
+  # ONE MAP PER DUBBED LANGUAGE (vomap_<locale>.json), written by gen_voice's
+  # locale pass: the English map with each vanilla cut swapped for the same
+  # cut made in that dub. Elena and Hoshino keep their actors' recordings
+  # everywhere. The nine text-only locales use the English map.
   vomaps:
     ar-ar: mod\negative_balance\localization\vomap.json
     cz-cz: mod\negative_balance\localization\vomap.json
-    de-de: mod\negative_balance\localization\vomap.json
+    de-de: mod\negative_balance\localization\vomap_de-de.json
     en-us: mod\negative_balance\localization\vomap.json
-    es-es: mod\negative_balance\localization\vomap.json
+    es-es: mod\negative_balance\localization\vomap_es-es.json
     es-mx: mod\negative_balance\localization\vomap.json
-    fr-fr: mod\negative_balance\localization\vomap.json
+    fr-fr: mod\negative_balance\localization\vomap_fr-fr.json
     hu-hu: mod\negative_balance\localization\vomap.json
-    it-it: mod\negative_balance\localization\vomap.json
-    jp-jp: mod\negative_balance\localization\vomap.json
-    kr-kr: mod\negative_balance\localization\vomap.json
-    pl-pl: mod\negative_balance\localization\vomap.json
-    pt-br: mod\negative_balance\localization\vomap.json
-    ru-ru: mod\negative_balance\localization\vomap.json
+    it-it: mod\negative_balance\localization\vomap_it-it.json
+    jp-jp: mod\negative_balance\localization\vomap_jp-jp.json
+    kr-kr: mod\negative_balance\localization\vomap_kr-kr.json
+    pl-pl: mod\negative_balance\localization\vomap_pl-pl.json
+    pt-br: mod\negative_balance\localization\vomap_pt-br.json
+    ru-ru: mod\negative_balance\localization\vomap_ru-ru.json
     th-th: mod\negative_balance\localization\vomap.json
     tr-tr: mod\negative_balance\localization\vomap.json
     ua-ua: mod\negative_balance\localization\vomap.json
-    zh-cn: mod\negative_balance\localization\vomap.json
+    zh-cn: mod\negative_balance\localization\vomap_zh-cn.json
     zh-tw: mod\negative_balance\localization\vomap.json
   # LIPSYNC. The fourth and last of ArchiveXL's localization keys, and the one
   # this project had never used. It merges an animLipsyncMapping into the base
@@ -125,30 +91,30 @@ localization:
   # mechanism in tools/gig01/gen_lipsync.py; the file itself is written by
   # gen_scenes.write_lipmap().
   #
-  # Registered under every locale like its two siblings above, with one caveat
-  # worth knowing: the .anims themselves live in lang_en_voice.archive, so a
-  # player who installed a different VOICE pack has no such files. The
-  # references are Soft, so they resolve to nothing and the mouths simply stay
-  # shut. Subtitles and audio are unaffected.
+  # ONE MAP PER DUBBED LANGUAGE. The .anims live inside each language's own
+  # voice archive under that language's folder, same file names, same
+  # animation names (measured on the Polish pack), so gig01_<locale>.lipmap is
+  # the English map with the folder swapped and the language code set. The
+  # nine text-only locales have no voice pack and point at the English map.
   lipmaps:
     ar-ar: mod\negative_balance\localization\gig01.lipmap
     cz-cz: mod\negative_balance\localization\gig01.lipmap
-    de-de: mod\negative_balance\localization\gig01.lipmap
+    de-de: mod\negative_balance\localization\gig01_de-de.lipmap
     en-us: mod\negative_balance\localization\gig01.lipmap
-    es-es: mod\negative_balance\localization\gig01.lipmap
+    es-es: mod\negative_balance\localization\gig01_es-es.lipmap
     es-mx: mod\negative_balance\localization\gig01.lipmap
-    fr-fr: mod\negative_balance\localization\gig01.lipmap
+    fr-fr: mod\negative_balance\localization\gig01_fr-fr.lipmap
     hu-hu: mod\negative_balance\localization\gig01.lipmap
-    it-it: mod\negative_balance\localization\gig01.lipmap
-    jp-jp: mod\negative_balance\localization\gig01.lipmap
-    kr-kr: mod\negative_balance\localization\gig01.lipmap
-    pl-pl: mod\negative_balance\localization\gig01.lipmap
-    pt-br: mod\negative_balance\localization\gig01.lipmap
-    ru-ru: mod\negative_balance\localization\gig01.lipmap
+    it-it: mod\negative_balance\localization\gig01_it-it.lipmap
+    jp-jp: mod\negative_balance\localization\gig01_jp-jp.lipmap
+    kr-kr: mod\negative_balance\localization\gig01_kr-kr.lipmap
+    pl-pl: mod\negative_balance\localization\gig01_pl-pl.lipmap
+    pt-br: mod\negative_balance\localization\gig01_pt-br.lipmap
+    ru-ru: mod\negative_balance\localization\gig01_ru-ru.lipmap
     th-th: mod\negative_balance\localization\gig01.lipmap
     tr-tr: mod\negative_balance\localization\gig01.lipmap
     ua-ua: mod\negative_balance\localization\gig01.lipmap
-    zh-cn: mod\negative_balance\localization\gig01.lipmap
+    zh-cn: mod\negative_balance\localization\gig01_zh-cn.lipmap
     zh-tw: mod\negative_balance\localization\gig01.lipmap
 streaming:
   blocks:

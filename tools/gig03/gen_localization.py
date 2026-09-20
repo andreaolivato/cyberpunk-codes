@@ -30,7 +30,8 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from gig03_config import RAW_MOD, LOCKEY_PREFIX                     # noqa: E402
-from questkit.localization import configure, write_onscreens        # noqa: E402
+from questkit.localization import configure, write_all_locales      # noqa: E402
+from questkit import translations                                   # noqa: E402
 
 # One newline, built rather than escaped. See the note on 'shard-body'.
 NL = chr(10)
@@ -39,7 +40,10 @@ NL = chr(10)
 DASH = chr(0x2013)
 
 configure(lockey_prefix=LOCKEY_PREFIX)
-OUT = os.path.join(RAW_MOD, 'localization', 'en-us.json.json')
+# One file per text locale lands here: en-us.json.json is the English table
+# of record and the eighteen others are written from tools/gigNN/translations/.
+OUT = os.path.join(RAW_MOD, 'localization')
+HERE = os.path.dirname(os.path.abspath(__file__))
 
 STRINGS = {
     # --- the contact --------------------------------------------------------
@@ -339,6 +343,6 @@ STRINGS['gig-brief'] = STRINGS['msg-02']
 
 
 if __name__ == '__main__':
-    os.makedirs(os.path.dirname(OUT), exist_ok=True)
-    COUNT = write_onscreens(OUT, STRINGS)
-    print('wrote %s (%d strings)' % (OUT, COUNT))
+    os.makedirs(OUT, exist_ok=True)
+    DONE = write_all_locales(OUT, STRINGS, translations.load(HERE))
+    print('wrote %d strings in %d locales under %s' % (len(STRINGS), len(DONE), OUT))

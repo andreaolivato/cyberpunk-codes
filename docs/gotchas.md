@@ -2842,3 +2842,69 @@ Never renumber. Append.
      is not saved, so for a frame or two after a load the answer is null:
      treat null as unknown, never as outside. `CCSharedPrevention.District`
      wraps it and the gig 03 dev menu draws it beside the heat.
+
+118. **A voice pack is two archives, and a Phantom Liberty recording plays
+     only from the second.** Steam's Language setting installs
+     `archive\pc\content\lang_<tag>_voice.archive` (the base game, about
+     5 GB) and `archive\pc\ep1\lang_<tag>_voice.archive` (the expansion,
+     about 1.6 GB) together. A depot download gives them one at a time. With
+     only the first in place the game still offers the language and plays
+     every base-game recording in it, but a line recorded for the expansion
+     shows its subtitle over silence. Measured 2026-09-19 with Italian:
+     Nix's office lines, Yoko's, Johnny's door line in gig 03 and V's
+     replies to all three, 13 of the 113 reused takes across the gigs. The
+     pack listing shows which archive holds a take
+     (`ep1\localization\<locale>\vo\...`), and `tools/measure_packs.py`
+     reads both archives for that reason.
+
+119. **HUD text typed into a script is English in every language.**
+     `CCSharedHud.RunBar`, `Notify` and `NotifyTyped` take a `String`. A
+     literal compiles and shows as typed, whatever the player's text
+     language. Read a key instead: one of the gig's own, or the game's when
+     it already has the sentence (`UI-QuestNotifications-sts_sabotaging` is
+     the sabotage gigs' upload bar, `UI-Quickhacks-RevealDescription` is
+     "Tracing your location"). Four such literals reached an Italian playtest
+     before `tools/check_locales.py` started failing a build on one
+     (2026-09-19).
+
+120. **A dialogue line's slot stretches to the game's own take, never to a
+     shipped clip, and never shrinks.** `scnDialogLineEvent.duration` is one
+     number for every language. Measured 2026-09-19 with three test builds,
+     one wrong slot each, played in Italian:
+
+     - A reused vanilla line given a 1 s slot finished before the next line
+       started, inside a section and across a section boundary.
+     - A reused line given a slot longer than its Italian take left the
+       player waiting for the difference.
+     - A clip the mod ships given a 0.5 s slot was talked over.
+
+     The game reads its own lines' lengths per language from the table each
+     voice pack carries (`lengthMapReport` in
+     `base\localization\volanguagedatamap.json`, a `locVoiceoverLengthMap`
+     of every line). ArchiveXL merges nothing into it. So write a reused line
+     at its shortest dub, a shipped clip at its measured length, and a line
+     with one shipped clip per dub at the longest of them.
+     `scene-playbook.md`, "Other languages".
+
+121. **`onscreens` registered for `en-us` alone gives every other language
+     English, not raw keys, and that is what lets a translation mod win.**
+     ArchiveXL uses the one language a manifest registers as the fallback
+     for every language it does not. A fallback entry fills any key nothing
+     else defines and never overwrites one that is (its localization
+     extension has worked this way since 2023). A mod that registers its own
+     language for the same keys overwrites them whichever of the two loads
+     first, and ArchiveXL logs "Item #n overwrites entry". Measured
+     2026-09-19 in an Italian game: one string from a second archive
+     replaced the gig's, every other string was English, no key was raw.
+     Backlog 0b of 2026-08-14 said the opposite; it was reasoned at the desk
+     and was wrong.
+
+     Subtitles and voice clips work differently. ArchiveXL appends every
+     mod's entries for a language without looking for duplicates, and the
+     game keeps the first entry it meets for a line id. In the same test the
+     gig's Italian subtitle and clip won over the second archive's, and the
+     gig had loaded first. ArchiveXL walks `archive\pc\mod` with a plain
+     directory scan, which on Windows comes back in name order. So a
+     translation archive that supplies subtitles or clips is named to sort
+     before the gig's: a leading digit does it. Each gig's
+     `translation-kit/README.md` is the guide.

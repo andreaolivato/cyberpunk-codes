@@ -216,6 +216,16 @@ minimap, the way *Dead Ringer* draws its way out, and the objective closes
 at its edge. No street door is known at the bar; Regina's building had one,
 and the code that unlocked it went with her.
 
+## Languages
+
+The gig follows the player's voice-over language. Every spoken line is one
+of the game's own recordings, so Dino, V and Johnny speak whatever the
+voice pack speaks, and the four cut lines are cut again in each dub with
+the dub's own words as subtitles. The gig's own text is English until a
+translation exists; a translation is a mod of its own, built from
+`translation-kit/` (its README is the guide), and `docs/scene-playbook.md`,
+"Other languages", is the mechanism.
+
 ## What the voice rules cost this gig
 
 Dino and Johnny speak only in recordings the base game already made. That is

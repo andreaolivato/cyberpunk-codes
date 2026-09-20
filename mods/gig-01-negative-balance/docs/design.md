@@ -26,7 +26,7 @@ which doubles as the visual/staging reference for every beat.
 
 | # | Beat | Mechanic | Facts |
 |---|------|----------|-------|
-| 1 | Night holocall from UNKNOWN CALLER → Elena | Phone call scene (Elena AI-voiced). She reports the pattern; V sends her to El Coyote Cojo ("Stay with Mama Welles") and asks where she works | `cc_g01_started` |
+| 1 | Night holocall from UNKNOWN CALLER → Elena | Phone call scene (Elena, voiced by her actor). She reports the pattern; V sends her to El Coyote Cojo ("Stay with Mama Welles") and asks where she works | `cc_g01_started` |
 | 2 | Location received | Elena sends workplace location; journal gig "Negative Balance" + map pin; V/Johnny recognize it as Arasaka-run | `cc_g01_accepted` |
 | 2b | Daytime recon (optional beat) | Approach by day: goons + mech out front make the front door a non-option; establishes night entry | `cc_g01_recon_done` |
 | 3 | Infiltration, LOCATION 1 | Arasaka compound, Arroyo/Santo Domingo. Street approach x=-177.761, y=-1472.829, z=7.477 (pin anchor `#std_arr_parking_spwn_179`). Guards inside (stealth-viable), hackable cameras | `cc_g01_office_reached` |
@@ -465,6 +465,16 @@ generator that a reader has to work out is dead.
 Open: the whole branch is unplayed. The two trims want an ear, and the SMS
 thread wants a run on a real save (pacing, whether the reply button reads as
 the way to close it).
+
+## Languages
+
+The gig follows the player's voice-over language. V, Johnny, Nix and Mama
+Welles speak whatever the voice pack speaks, since their lines are the
+game's own recordings, and the six cut lines are cut again in each dub with
+the dub's own words as subtitles. Elena and Hoshino are English only. The
+gig's own text is English until a translation exists; a translation is a
+mod of its own, built from `translation-kit/` (its README is the guide), and
+`docs/scene-playbook.md`, "Other languages", is the mechanism.
 
 ## History
 

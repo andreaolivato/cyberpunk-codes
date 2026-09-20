@@ -215,14 +215,16 @@ def check_wem(path):
 
 
 # ------------------------------------------------------------------------ vomap
-def write_vomap(entries):
+def write_vomap(entries, out=None):
     """entries: [(stringId, female wem, male wem)].
 
     The two paths are usually the same file - most speakers here are NPCs and
     the split exists for V, who is recorded twice. Mama Welles is the exception
-    that makes it earn its keep (see GENDERED)."""
+    that makes it earn its keep (see GENDERED). `out` overrides VOMAP_OUT for
+    the per-language maps locale_pass writes."""
+    out = out or VOMAP_OUT
     doc = {
-        'Header': cr2w.header('vomap.json'),
+        'Header': cr2w.header(os.path.basename(out).replace('.json.json', '.json')),
         'Data': {
             'Version': 195, 'BuildVersion': 0,
             'RootChunk': {
@@ -244,9 +246,97 @@ def write_vomap(entries):
             'EmbeddedFiles': [],
         },
     }
-    os.makedirs(os.path.dirname(VOMAP_OUT), exist_ok=True)
-    with open(VOMAP_OUT, 'w', encoding='utf-8', newline='\n') as fh:
+    os.makedirs(os.path.dirname(out), exist_ok=True)
+    with open(out, 'w', encoding='utf-8', newline='\n') as fh:
         json.dump(doc, fh, indent=2)
-    print('wrote %s (%d voiceover entries)' % (VOMAP_OUT, len(entries)))
+    print('wrote %s (%d voiceover entries)' % (out, len(entries)))
+
+
+# ------------------------------------------------------- the dubbed languages
+def locale_pass(ruid_of, vomap, holocall, holocall_src, aliases=None, filter_file=None):
+    r"""One voice map per dubbed language, from the clips under
+    `<audio_src>\<locale>\`.
+
+    A line the game's own characters say is a vanilla take cut short, and the
+    English cut is what ships until a cut of the same take in that language
+    has been made and listened to. Each such
+    cut is a WAV under the locale's folder, named exactly like the English
+    one (`<scene>__<key>.wav`, `__m` for a second body). This converts them,
+    writes `durations_<locale>.json` beside `durations.json` so gen_scenes can
+    pace a section from the longest clip in any language, and writes
+    `vomap_<locale>.json` as the English map with those lines swapped for the
+    locale's clips. Every dubbed locale gets a map, identical to English where
+    it has no clips, so the manifest can name them unconditionally.
+
+    ruid_of(scene, key)  -> the line's RUID string, from gen_scenes
+    vomap                the English entries [(ruid, fem wem, male wem)]
+    holocall             {(scene, key)} of lines heard down a phone
+    aliases              {alias scene: source scene}, as gen_scenes.SCENE_ALIASES
+    filter_file          questkit.phone.filter_file, applied to holocall clips
+    """
+    from questkit.packs import PACKS
+    aliases = aliases or {}
+    by_ruid = {}
+    for sid, fem, male in vomap:
+        by_ruid[sid] = (fem, male)
+    for loc in sorted(PACKS):
+        folder = os.path.join(AUDIO_SRC, loc)
+        clips = {}
+        if os.path.isdir(folder):
+            for fn in sorted(os.listdir(folder)):
+                if not fn.lower().endswith('.wav'):
+                    continue
+                stem_g = fn[:-4]
+                male = stem_g.endswith('__m')
+                base = stem_g[:-3] if male else stem_g
+                scene, key = base.split('__', 1)
+                clips.setdefault((scene, key), {})['m' if male else 'f'] = os.path.join(folder, fn)
+        wavs, durations, entries = [], {}, dict(by_ruid)
+        for (scene, key), bodies in sorted(clips.items()):
+            wems = {}
+            k = '%s/%s' % (scene, key)
+            for g, wav in bodies.items():
+                if (scene, key) in holocall and filter_file:
+                    filtered = os.path.join(holocall_src, loc, os.path.basename(wav))
+                    os.makedirs(os.path.dirname(filtered), exist_ok=True)
+                    filter_file(wav, filtered)
+                    wav = filtered
+                name = '%s__%s__%s%s.wem' % (loc, scene, key, '__m' if g == 'm' else '')
+                wavs.append((wav, name))
+                wems[g] = name
+                durations[k] = max(durations.get(k, 0), wav_ms(wav))
+            sid = ruid_of(scene, key)
+            if sid not in entries:
+                raise SystemExit('%s has a clip for %s/%s, which the English map '
+                                 'does not voice' % (loc, scene, key))
+            en_fem, en_male = entries[sid]
+            # A body without a clip of its own keeps the English one. A line
+            # with a single recording (the English map names one file for
+            # both bodies) gives that recording to both.
+            fem = wems.get('f') or en_fem
+            if 'm' in wems:
+                male = wems['m']
+            elif en_fem == en_male and 'f' in wems:
+                male = wems['f']
+            else:
+                male = en_male
+            entries[sid] = (fem, male)
+            for alias, src in aliases.items():
+                if src == scene:
+                    entries[ruid_of(alias, key)] = (fem, male)
+                    durations['%s/%s' % (alias, key)] = durations[k]
+        convert(wavs)
+        for _wav, out_name in wavs:
+            check_wem(os.path.join(WEM_OUT, out_name))
+        dpath = os.path.join(AUDIO_SRC, 'durations_%s.json' % loc)
+        if durations:
+            with open(dpath, 'w', encoding='utf-8', newline='\n') as fh:
+                json.dump(durations, fh, indent=2, sort_keys=True)
+        elif os.path.exists(dpath):
+            os.remove(dpath)
+        write_vomap([(sid, fem, male) for sid, (fem, male) in entries.items()],
+                    out=VOMAP_OUT.replace('.json.json', '_%s.json.json' % loc))
+        if clips:
+            print('  %s: %d line(s) in that language, %d clip(s)' % (loc, len(clips), len(wavs)))
 
 
