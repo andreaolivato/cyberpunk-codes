@@ -282,7 +282,7 @@ def build(gig):
         '',
         '## Making the mod',
         '',
-        '1. Download [%s.zip](%s.zip?raw=true),' % (archive, archive),
+        '1. Download [%s.zip](https://github.com/andreaolivato/cyberpunk-codes/raw/main/mods/%s/translation-kit/%s.zip),' % (archive, mod, archive),
         '   unzip it, and double-click the `.cpmodproj` to open the project in',
         '   WolvenKit.',
         '2. In the project explorer, under `archive`, open',

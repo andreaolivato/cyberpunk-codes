@@ -39,7 +39,7 @@ Nothing else.
 
 ## Making the mod
 
-1. Download [0_acceptable_loss_translation.zip](0_acceptable_loss_translation.zip?raw=true),
+1. Download [0_acceptable_loss_translation.zip](https://github.com/andreaolivato/cyberpunk-codes/raw/main/mods/gig-03-acceptable-loss/translation-kit/0_acceptable_loss_translation.zip),
    unzip it, and double-click the `.cpmodproj` to open the project in
    WolvenKit.
 2. In the project explorer, under `archive`, open
