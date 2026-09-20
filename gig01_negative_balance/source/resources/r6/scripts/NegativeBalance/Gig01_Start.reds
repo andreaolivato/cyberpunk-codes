@@ -55,6 +55,7 @@ public class NegativeBalanceStart extends ScriptableSystem {
     private let m_settled: Bool;
     private let m_step: Int32;
     private let m_ftDefer: Int32;
+    private let m_companions: Bool;
 
     private func OnAttach() -> Void {
         this.m_step = 0;
@@ -103,6 +104,11 @@ public class NegativeBalanceStart extends ScriptableSystem {
             this.m_step += 1;
             this.Schedule(CCGig01StartRules.DelaySeconds(this.m_step));
             return;
+        }
+
+        if !this.m_companions {
+            this.m_companions = true;
+            CCGig01Companions.Publish(qs);
         }
 
         if qs.GetFactStr("cc_g01_dev_hold") > 0 {
