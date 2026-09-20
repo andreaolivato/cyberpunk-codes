@@ -58,6 +58,11 @@ is written down here and nowhere else:
   cc_g03_dock_paid      Gig03_Places.reds, the advance taken, once
   cc_g03_unlock_dino    THIS GRAPH, when the trip to him opens
   cc_g03_at_bar         redscript, within the swap radius of his stool
+  cc_g03_swapped        THIS GRAPH, once the game's own Dino is switched off
+                        and ours on. Gig03_Places.reds's keeper waits on it
+  dyno_default_on       THE GAME'S OWN, the gate of Dino's fixer phase. Held
+                        at 0 by this graph from the swap until V has left
+                        the bar, then set back to 1 (see VANILLA_DINO)
   cc_g03_delivered      redscript, at Dino
   cc_g03_left_dino      redscript, once the player is away from the bar,
                         on foot. Gig03_Places.reds holds V still on it
@@ -83,6 +88,7 @@ from questkit.questgraph import (  # noqa: E402
     add_setvar, add_journal, add_journal_quest, add_scene,
     add_call_contact, add_prefab_variant, add_race2, add_pause_node_loaded,
     add_delay, add_toggle_component, add_community, add_condition_fact,
+    add_spawnset,
 )
 from questkit.scene import ANCHOR_PLAYER  # noqa: E402
 
@@ -134,9 +140,29 @@ SCENES = cfg.DEPOT + chr(92) + 'scenes' + chr(92)
 # HE IS SWITCHED OFF ONLY FOR THE HANDOVER, and switched back on when the gig
 # ends. A base-game fixer missing from his own bar for the rest of a save is a
 # worse bug than anything this gig fixes by removing him.
+#
+# HIS OWN PHASE SWITCHES HIM TOO, AND IT IS A LOOP. Read off
+# `base/open_world/fixers/dyno/phases/dyno.questphase` on 2026-09-20, after
+# the Nexus report of two Dinos at the bar: every time V steps inside his
+# load trigger (`#dyno_dd_tr_load`) the game ACTIVATES entry `dyno`, and
+# every time V steps out it deactivates it. A single Deactivate from this
+# graph held only until the next crossing, which is why the double came and
+# went with the route taken into the bar. The loop's own gate is the fact
+# below: the activate node waits on `dyno_default_on > 0`, and the fact has
+# no other writer in the 3,496 quest files of the base game and Phantom
+# Liberty (his phase sets it to 1, once, and `character_entries.questphase`
+# only reads it). So the graph holds it at 0 for the length of the handover
+# and hands it back at 1, which is what lets his phase carry on as before.
+#
+# AND HE IS SWITCHED BY NAME, NOT BY NODE. His community is a compiled area
+# node in `always_loaded_1` with no NodeRef of its own, so the
+# community-template node this graph uses for its own cast has nothing to
+# resolve for him. His phase uses `questSpawnSet_NodeType` against the
+# registered name `#dyno`; `add_spawnset` is that node. Gotcha 122.
 import gen_community                                         # noqa: E402
 
 VANILLA_DINO = ('#dyno', 'dyno', 'default')
+VANILLA_DINO_GATE = 'dyno_default_on'
 
 # OUR OWN DINO, the community entry gen_community.py places on his stool.
 # Long form, because a community reference is resolved as a real world
@@ -533,9 +559,19 @@ def trip_to_dino(obj, bar_scene, bar_in, bar_out, door_scene, door_in,
     # player, every time. Playtest, on Regina: "for a very quick second I see
     # the old one".
     step(add_pause_fact('cc_g03_at_bar'))
-    step(add_community('Deactivate', VANILLA_DINO[0], entry=VANILLA_DINO[1],
-                       phase=VANILLA_DINO[2]))
+    # HIS OWN PHASE IS HELD FIRST, so that nothing it does can undo the two
+    # nodes after it: with the gate at 0, V crossing his load trigger no
+    # longer activates him (see VANILLA_DINO above). Then his entry is
+    # switched off by name, with the node his own phase uses, and ours on.
+    step(add_setvar(VANILLA_DINO_GATE, 0))
+    step(add_spawnset('Deactivate', VANILLA_DINO[0], VANILLA_DINO[1],
+                      VANILLA_DINO[2]))
     step(add_community('Activate', CAST_REF, entry='dino'))
+    # THE KEEPER WAITS ON THIS, NOT ON THE APPROACH FACT. Gig03_Places.reds
+    # used to start disposing his body on the tick that set `cc_g03_at_bar`,
+    # before this graph had switched anything, and a community whose entry
+    # is still on puts a disposed body straight back under the same id.
+    step(add_setvar('cc_g03_swapped', 1))
 
     # NOW WAIT FOR THEM TO REACH HIM.
     step(add_pause_fact('cc_g03_delivered'))
@@ -560,10 +596,15 @@ def trip_to_dino(obj, bar_scene, bar_in, bar_out, door_scene, door_in,
 
     close_objective('obj_leave')
 
-    # HE GOES BACK, now that nobody is watching the swap.
+    # HE GOES BACK, now that nobody is watching the swap: ours off, his
+    # phase's gate handed back at 1 (from here on it activates him when V
+    # is inside his load trigger and deactivates him outside it, as it
+    # always did), and his entry switched on by name so the stool is not
+    # left empty on the way out when V is already inside that trigger.
     step(add_community('Deactivate', CAST_REF, entry='dino'))
-    step(add_community('Reactivate', VANILLA_DINO[0], entry=VANILLA_DINO[1],
-                       phase=VANILLA_DINO[2]))
+    step(add_setvar(VANILLA_DINO_GATE, 1))
+    step(add_spawnset('Activate', VANILLA_DINO[0], VANILLA_DINO[1],
+                      VANILLA_DINO[2]))
 
     # THE LAST LINE, outside V's own door, with "Listen to Johnny" on screen
     # for the length of it (its own journal entry: the one from the decision

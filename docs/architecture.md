@@ -781,6 +781,17 @@ records are vanilla and need no TweakXL at all.
   `questkit/questgraph.py` is one node per beat, and it is what keeps a site
   empty until the story wants it.
 
+**A community the GAME registered is switched by its name, and its own phase
+is switched with it.** Gig 03 seats its own Dino on the game's Dino's stool.
+The game's fixers are compiled community area nodes in `always_loaded_1`
+with no NodeRef, so the community-template node above has nothing to resolve
+for them; `add_spawnset` (`questSpawnSet_NodeType`, the node the fixer's own
+phase uses) addresses the registered spawn set by name. That phase is a loop
+that re-activates the fixer every time V enters his load trigger, gated on a
+fact (`dyno_default_on`) that nothing else writes, so the graph holds the
+fact at 0 across the beat and hands it back at 1. Gotcha 122, backlog
+48-ADDENDUM-1.
+
 **And what a community does NOT bring**, which cost two playtests to learn: an
 entry arrives with no quarrel with the player and with its senses switched off
 as far as the player is concerned. `Gig01_Encounter.FindDetail` finds the bodies

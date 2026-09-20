@@ -211,7 +211,10 @@ barstool itself, the way his own base-game conversation does, which is what
 lets it turn his head to V and move his mouth; left to the community's own
 use of the stool, his face did neither. The game's own Dino is switched off
 as V comes within 35 metres and back on once V is 35 metres away again, so
-the swap is never in view. "Leave Dino's bar" draws that circle on the
+the swap is never in view. His own bar routine, which the game restarts
+every time V walks into the bar, is held off for the length of the visit
+and handed back on the way out, or it would seat him again beside ours the
+moment V came through the door. "Leave Dino's bar" draws that circle on the
 minimap, the way *Dead Ringer* draws its way out, and the objective closes
 at its edge. No street door is known at the bar; Regina's building had one,
 and the code that unlocked it went with her.

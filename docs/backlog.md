@@ -10081,6 +10081,49 @@ right visemes on two.
   held. What `NoMovement` stops exactly is unmeasured before this;
   `cc_g03_dbg_hold` reads 1 while held and 2 once lifted.
 
+### 48-ADDENDUM-1. Two Dinos, again: his own phase puts him back. Reported on Nexus 2026-09-20, fixed at the desk, not yet played
+
+The keeper above was never going to hold, and the reason is in the game's
+own file rather than in ours. `base/open_world/fixers/dyno/phases/dyno.questphase`
+loops: V inside `#dyno_dd_tr_load` with `dyno_default_on > 0` activates
+spawn set `#dyno` entry `dyno`, V outside deactivates it, and round again.
+The trigger is a box 37 m by 32 m centred on his stool, so its edge is at
+most 26 m out, inside this gig's 35 m swap circle. On foot the swap fired
+first and the crossing switched him straight back on, bar chat and all; at
+speed the two-second tick sometimes landed after the crossing, in which case
+his phase was already waiting for V to leave and the swap held. One
+playtest each way on release day, which is what "came back on that run, not
+on the next" was.
+
+Three things changed, all in `gen_questphase.trip_to_dino`,
+`Gig03_Places.reds` and `questkit/questgraph.py`:
+
+- **The gate is held.** The graph sets `dyno_default_on` to 0 before it
+  switches him off and back to 1 after V has left the bar. The fact has no
+  other writer in the 3,496 quest files of the base game and Phantom
+  Liberty (his phase sets it to 1 on its two starts;
+  `character_entries.questphase` reads it), so 1 is always the value to
+  hand back. His phase then activates him when V is inside the trigger and
+  deactivates him outside it, as it always did.
+- **He is switched by name.** His community is a compiled area node with no
+  NodeRef, so the community-template node this graph uses for its own cast
+  had nothing to resolve. `add_spawnset` is `questSpawnSet_NodeType` against
+  the registered name, field for field the node his own phase uses. Gig
+  02's Wakako is switched with the community-template node and was not
+  changed here; it is on that gig's list to check before it ships again.
+- **The keeper is a backstop, not a race.** It waits on `cc_g03_swapped`,
+  which the graph sets after the switch, where it used to run on the tick
+  that set `cc_g03_at_bar`, before the graph had acted, and a body disposed
+  with its entry still on came back under the same fixed id, which the
+  keeper then ignored for the session. It now disposes an id up to five
+  times, looks three ways (the community's bodies, its fixed ids, a census
+  widened to any puppet), and writes `cc_g03_dbg_dino_route` with the route
+  that last found him.
+
+Gotcha 122 is the reusable half. Not yet played: a run from the pre-choice
+save that walks into the bar slowly is the test, since that is the approach
+that doubled him every time.
+
 ## 49. Playing the gigs in nineteen languages. BUILT 2026-09-18, first playtest 2026-09-19
 
 The three gigs follow the player's voice-over language, read their own

@@ -2908,3 +2908,38 @@ Never renumber. Append.
      translation archive that supplies subtitles or clips is named to sort
      before the gig's: a leading digit does it. Each gig's
      `translation-kit/README.md` is the guide.
+
+122. **A game fixer's own phase switches his community entry on every time V
+     enters his load trigger and off every time V leaves it, so a mod's single
+     Deactivate holds only until the next crossing.** Read off
+     `base/open_world/fixers/dyno/phases/dyno.questphase` (game 2.31,
+     2026-09-20), after a Nexus report of two Dinos on one stool: a sub-phase
+     waits for V inside `#dyno_dd_tr_load` with `dyno_default_on > 0`,
+     activates spawn set `#dyno`, entry `dyno`, phase `default`, waits for V
+     outside, deactivates, and loops. The trigger is a box 37 m by 32 m
+     centred 1.6 m from his stool (`quest_c20639e6752d65cc`, scale 18.4 by
+     16.0 on the class-default unit square), so its edge is at most 26 m out.
+     A switch keyed to a 35 m circle fires before the crossing on foot and,
+     with a two-second tick, sometimes after it at speed: the first gives two
+     Dinos, the second one, which is the whole of the intermittence.
+
+     The loop's gate is the fact. Nothing else writes it: of the 3,496
+     `.quest` and `.questphase` files in the base game and Phantom Liberty,
+     his phase sets it to 1 (twice, on its two starts) and
+     `character_entries.questphase` only reads it. So a beat that stands in
+     for him holds the fact at 0 from its switch until V has left, then sets
+     it back to 1, and his phase carries on as before. The other fixers'
+     phases sit beside his under `base/open_world/fixers/` and their facts
+     follow the same spelling (`dakota_default_on` is one of them); whether
+     each loops the same way is inference until its file is read.
+
+     Two more things the same evening settled. His community is a compiled
+     area node in `always_loaded_1` with no NodeRef of its own
+     (`QuestPrefabRefHash` 0), so a `questCommunityTemplate_NodeType` with
+     `spawnerReference: #dyno` has nothing to resolve; the game switches him
+     with `questSpawnSet_NodeType` against the registered name, which is
+     `add_spawnset` in `questkit/questgraph.py`. And a body disposed while
+     its entry is still on is put back under the same id (fixed ids, #64), so
+     a keeper that latches ids for good stops seeing him after the first
+     pass. What is measured: the phase, the trigger, the fact's writers. What
+     is not, at the time of writing: the fix in play. `backlog.md` 48.

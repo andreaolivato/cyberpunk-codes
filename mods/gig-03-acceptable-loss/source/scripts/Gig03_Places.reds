@@ -237,9 +237,14 @@ public abstract class CCG03Places {
 public class AcceptableLossPlaces extends ScriptableSystem {
 
     private let m_settled: Bool;
-    // The game's own Dino bodies already disposed, by id, so each is
-    // disposed once.
+    // The game's own Dino bodies disposed this session, by id, and how many
+    // times each. NOT A ONE-SHOT LATCH: a community body keeps its id
+    // across respawns (its ids are fixed per entry, gotcha 64), so a body
+    // that is put back after a dispose is the same id seen again, and a
+    // keeper that remembered ids for good ignored him for the rest of the
+    // session. The count caps a fight that could otherwise run all night.
     private let m_disposed: array<EntityID>;
+    private let m_disposedTimes: array<Int32>;
     // Ticks spent waiting for the stars to go before Johnny's ride beat. A
     // field on purpose: a reload starts the count again, and the question is
     // being asked again from the start.
@@ -478,9 +483,16 @@ public class AcceptableLossPlaces extends ScriptableSystem {
         // 2026-09-11, on Regina, "now there are two Reginas". Gig 02's Wakako
         // had the same and its ParlorKeeper is this. Between the swap and the
         // player leaving, any `Character.dyno` within 20 m of his stool is
-        // disposed, once per body. Ours is `Character.cc_g03_dino` and is
-        // never touched.
-        if qs.GetFactStr("cc_g03_at_bar") > 0
+        // disposed. Ours is `Character.cc_g03_dino` and is never touched.
+        //
+        // AFTER THE GRAPH HAS SWITCHED, NOT ON THE APPROACH. `cc_g03_swapped`
+        // is set by the graph once his entry is off and his phase's gate is
+        // held; this ran on `cc_g03_at_bar` until 2026-09-20, which is set
+        // on THIS tick, a frame or more before the graph acts on it. A body
+        // disposed while its entry is still on is put straight back by the
+        // community under the same id, and the id was then ignored for the
+        // rest of the session: two Dinos, reported on Nexus.
+        if qs.GetFactStr("cc_g03_swapped") > 0
             && qs.GetFactStr("cc_g03_left_dino") <= 0 {
             this.DinoKeeper(game, player as PlayerPuppet, pos);
         }
@@ -514,7 +526,8 @@ public class AcceptableLossPlaces extends ScriptableSystem {
         this.m_holdChecked = true;
     }
 
-    // TWO WAYS TO FIND HIM, and the first is the one that works on a stool.
+    // THREE WAYS TO FIND HIM, and the first two are the ones that work on a
+    // stool.
     //
     // Playtest 2026-09-15, on a save made before the choice: "there are two
     // of them, default + ours", with the game's own Dino still offering his
@@ -524,10 +537,19 @@ public class AcceptableLossPlaces extends ScriptableSystem {
     // targeting system hands back for a player standing over it. So the
     // first route asks the spawner system directly for the entry the game's
     // own community placed, the way gig 02 finds its merc
-    // (`FindInCommunity`): resolve the vanilla community node `#dyno`, ask
-    // for its entry `dyno`, and dispose whatever it returns. That does not
-    // care where the body is or what it is doing. The census stays as the
-    // second route, for a body the spawner no longer owns.
+    // (`FindInCommunity`): the community's id, the entry `dyno`, and dispose
+    // whatever it returns. That does not care where the body is or what it
+    // is doing. The second route asks the same system for the entry's FIXED
+    // ids (deterministic per entry, gotcha 64) and looks each one up, for a
+    // body the first route stops listing. The census stays as the third,
+    // widened from live NPCs to any puppet, for a body the spawner no longer
+    // owns.
+    //
+    // WHY THE KEEPER FAILED UNTIL 2026-09-20, in one line: it ran before
+    // the graph had switched his entry off, so the community put him back,
+    // and it never looked at that id again. See the caller. The routes were
+    // never the fault, but the readouts below are what says which of them
+    // found him, for the next report.
     private func DinoKeeper(game: GameInstance, player: ref<PlayerPuppet>,
                             pos: Vector4) -> Void {
         if !IsDefined(player) {
@@ -544,30 +566,36 @@ public class AcceptableLossPlaces extends ScriptableSystem {
         // THE COMMUNITY'S OWN ID, read off the registry item in
         // always_loaded_1 (`sourceObjectId` of the `#dyno` area node, the
         // same number the registry repeats as its `communityId`). NOT the
-        // hash of "#dyno": a vanilla community's id is the hash of its long
-        // global name, which is not in the file, and resolving the short
-        // form found nothing (playtest 2026-09-15, the second pair of
-        // Dinos). Codeware's `EntityID.FromHash` builds the id from the
-        // number directly, so nothing has to resolve.
+        // hash of "#dyno": a compiled community area node has no NodeRef at
+        // all (its `QuestPrefabRefHash` is 0), and resolving the short form
+        // found nothing (playtest 2026-09-15, the second pair of Dinos).
+        // Codeware's `EntityID.FromHash` builds the id from the number
+        // directly, so nothing has to resolve.
+        let spawner: EntityID = EntityID.FromHash(17285452288567170630ul);
         let objects: array<ref<GameObject>>;
-        GetGameObjectsFromSpawnerEntityID(EntityID.FromHash(17285452288567170630ul),
-                                          [n"dyno"], game, objects);
+        GetGameObjectsFromSpawnerEntityID(spawner, [n"dyno"], game, objects);
         qs.SetFactStr("cc_g03_dbg_dino_seen", ArraySize(objects));
         let k: Int32 = 0;
         while k < ArraySize(objects) {
-            let body: ref<ScriptedPuppet> = objects[k] as ScriptedPuppet;
-            if IsDefined(body) && !ArrayContains(this.m_disposed, body.GetEntityID()) {
-                ArrayPush(this.m_disposed, body.GetEntityID());
-                qs_dbg_count(game, "cc_g03_dbg_dino_disposed");
-                Reflection.Call(body, n"Dispose");
-            }
+            this.RemoveDino(game, qs, objects[k] as ScriptedPuppet, 1);
+            k += 1;
+        }
+        let ids: array<EntityID>;
+        GetFixedEntityIdsFromSpawnerEntityID(spawner, [n"dyno"], game, ids);
+        k = 0;
+        while k < ArraySize(ids) {
+            this.RemoveDino(game, qs,
+                            GameInstance.FindEntityByID(game, ids[k]) as ScriptedPuppet, 2);
             k += 1;
         }
         // A crosshair query by default; Complete is what makes it a census
-        // (the same lesson as the guard count in Gig03_Trace).
-        let query: TargetSearchQuery = TSQ_NPC();
+        // (the same lesson as the guard count in Gig03_Trace). Any puppet,
+        // not TSQ_NPC's live ones only, and secondary parts included, so the
+        // net is as wide as the system allows.
+        let query: TargetSearchQuery;
+        query.searchFilter = TSF_Any(IntEnum<TSFMV>(2));
         query.testedSet = TargetingSet.Complete;
-        query.includeSecondaryTargets = false;
+        query.includeSecondaryTargets = true;
         query.ignoreInstigator = true;
         query.maxDistance = 40.0;
         query.filterObjectByDistance = true;
@@ -578,21 +606,51 @@ public class AcceptableLossPlaces extends ScriptableSystem {
             let obj: ref<GameObject> = TS_TargetPartInfo.GetComponent(parts[i]).GetEntity() as GameObject;
             let npc: ref<ScriptedPuppet> = obj as ScriptedPuppet;
             if IsDefined(npc) && !npc.IsPlayer()
-                && npc.GetRecordID() == t"Character.dyno"
-                && Vector4.Distance(npc.GetWorldPosition(), him) < 20.0
-                && !ArrayContains(this.m_disposed, npc.GetEntityID()) {
-                ArrayPush(this.m_disposed, npc.GetEntityID());
-                qs_dbg_count(game, "cc_g03_dbg_dino_disposed");
-                // BY NAME, THROUGH CODEWARE, so nothing is declared. `Dispose`
-                // is a game command the script bundle never wrote down; a mod
-                // that declares it itself collides with any other mod that
-                // does (gig 02 did until 2026-09-11, and the compiler warned
-                // on the pair). Codeware is a requirement already, and its
-                // Reflection calls the command as the game has it.
-                Reflection.Call(npc, n"Dispose");
+                && Vector4.Distance(npc.GetWorldPosition(), him) < 20.0 {
+                this.RemoveDino(game, qs, npc, 3);
             }
             i += 1;
         }
+    }
+
+    // ONE BODY OUT, IF IT IS HIS. Only `Character.dyno` is ever touched,
+    // whichever route handed it over: ours is `Character.cc_g03_dino`, a
+    // record of its own. Up to five times per id, counted, because the
+    // community keeps an id across respawns and a body that comes back is
+    // the same id seen again.
+    //
+    // BY NAME, THROUGH CODEWARE, so nothing is declared. `Dispose` is a
+    // game command the script bundle never wrote down; a mod that declares
+    // it itself collides with any other mod that does (gig 02 did until
+    // 2026-09-11, and the compiler warned on the pair). Codeware is a
+    // requirement already, and its Reflection calls the command as the game
+    // has it.
+    private func RemoveDino(game: GameInstance, qs: ref<QuestsSystem>,
+                            body: ref<ScriptedPuppet>, route: Int32) -> Void {
+        if !IsDefined(body) || body.GetRecordID() != t"Character.dyno" {
+            return;
+        }
+        let id: EntityID = body.GetEntityID();
+        let at: Int32 = -1;
+        let j: Int32 = 0;
+        while j < ArraySize(this.m_disposed) && at < 0 {
+            if this.m_disposed[j] == id {
+                at = j;
+            }
+            j += 1;
+        }
+        if at < 0 {
+            ArrayPush(this.m_disposed, id);
+            ArrayPush(this.m_disposedTimes, 0);
+            at = ArraySize(this.m_disposed) - 1;
+        }
+        if this.m_disposedTimes[at] >= 5 {
+            return;
+        }
+        this.m_disposedTimes[at] += 1;
+        qs_dbg_count(game, "cc_g03_dbg_dino_disposed");
+        qs.SetFactStr("cc_g03_dbg_dino_route", route);
+        Reflection.Call(body, n"Dispose");
     }
 
     // PAID ONCE, LATCHED IN A FACT. A field would be gone on the next load and

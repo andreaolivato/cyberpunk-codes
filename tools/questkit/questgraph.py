@@ -429,6 +429,41 @@ def add_community(action, reference, entry=None, phase=None):
     return nid
 
 
+def add_spawnset(action, reference, entry, phase):
+    """Switch one entry of a community THE GAME REGISTERED BY NAME, the way the
+    game's own fixer phases do it.
+
+    `questSpawnManagerNodeDefinition` holding a `questSpawnSet_NodeType`, read
+    field for field off `base/open_world/fixers/dyno/phases/dyno.questphase`
+    nodes 17 (Deactivate) and 33 (Activate) on 2026-09-20. `reference` is the
+    spawn set's registered name (`#dyno`, `#wakako`: the `spawnSetReference`
+    of its `worldCommunityRegistryItem`), `entry` and `phase` the entry and
+    phase names in that item.
+
+    NOT `add_community` FOR A FIXER. The game's fixers are compiled community
+    area nodes in `always_loaded_1`, and a compiled area node carries NO
+    NodeRef (its `QuestPrefabRefHash` is 0), so the `spawnerReference` a
+    community-template node resolves has nothing to resolve to. The spawn-set
+    node is matched by the registered NAME, which is the join gotcha 69
+    describes for scene actors. Gotcha 122.
+    """
+    nid = next(NID)
+    b.node(nid, 'questSpawnManagerNodeDefinition', {
+        'actions': [{
+            '$type': 'questSpawnManagerNodeActionEntry',
+            'type': {'@handle': {
+                '$type': 'questSpawnSet_NodeType',
+                'action': action,
+                'entryName': cname(entry),
+                'phaseName': cname(phase),
+                'reference': {'$type': 'NodeRef', '$storage': 'string',
+                              '$value': reference},
+            }},
+        }],
+    }, STD)
+    return nid
+
+
 def add_crowd_null_area(reference, enable):
     """Switch a crowd null area on or off: no crowd-system pedestrians inside it.
 
