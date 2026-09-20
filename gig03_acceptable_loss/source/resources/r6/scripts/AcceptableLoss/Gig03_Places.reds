@@ -126,6 +126,7 @@ public class AcceptableLossPlaces extends ScriptableSystem {
 
     private let m_settled: Bool;
     private let m_disposed: array<EntityID>;
+    private let m_disposedTimes: array<Int32>;
     private let m_heatWaitTicks: Int32;
     private let m_destroyScheduled: Bool;
     private let m_holdOn: Bool;
@@ -283,7 +284,7 @@ public class AcceptableLossPlaces extends ScriptableSystem {
 
         this.Hold(game, qs, player);
 
-        if qs.GetFactStr("cc_g03_at_bar") > 0
+        if qs.GetFactStr("cc_g03_swapped") > 0
             && qs.GetFactStr("cc_g03_left_dino") <= 0 {
             this.DinoKeeper(game, player as PlayerPuppet, pos);
         }
@@ -326,23 +327,28 @@ public class AcceptableLossPlaces extends ScriptableSystem {
         if Vector4.Distance(pos, him) > 40.0 {
             return;
         }
+        // his community
+        let spawner: EntityID = EntityID.FromHash(17285452288567170630ul);
         let objects: array<ref<GameObject>>;
-        GetGameObjectsFromSpawnerEntityID(EntityID.FromHash(17285452288567170630ul),
-                                          [n"dyno"], game, objects);
+        GetGameObjectsFromSpawnerEntityID(spawner, [n"dyno"], game, objects);
         qs.SetFactStr("cc_g03_dbg_dino_seen", ArraySize(objects));
         let k: Int32 = 0;
         while k < ArraySize(objects) {
-            let body: ref<ScriptedPuppet> = objects[k] as ScriptedPuppet;
-            if IsDefined(body) && !ArrayContains(this.m_disposed, body.GetEntityID()) {
-                ArrayPush(this.m_disposed, body.GetEntityID());
-                qs_dbg_count(game, "cc_g03_dbg_dino_disposed");
-                Reflection.Call(body, n"Dispose");
-            }
+            this.RemoveDino(game, qs, objects[k] as ScriptedPuppet, 1);
             k += 1;
         }
-        let query: TargetSearchQuery = TSQ_NPC();
+        let ids: array<EntityID>;
+        GetFixedEntityIdsFromSpawnerEntityID(spawner, [n"dyno"], game, ids);
+        k = 0;
+        while k < ArraySize(ids) {
+            this.RemoveDino(game, qs,
+                            GameInstance.FindEntityByID(game, ids[k]) as ScriptedPuppet, 2);
+            k += 1;
+        }
+        let query: TargetSearchQuery;
+        query.searchFilter = TSF_Any(IntEnum<TSFMV>(2));
         query.testedSet = TargetingSet.Complete;
-        query.includeSecondaryTargets = false;
+        query.includeSecondaryTargets = true;
         query.ignoreInstigator = true;
         query.maxDistance = 40.0;
         query.filterObjectByDistance = true;
@@ -353,15 +359,40 @@ public class AcceptableLossPlaces extends ScriptableSystem {
             let obj: ref<GameObject> = TS_TargetPartInfo.GetComponent(parts[i]).GetEntity() as GameObject;
             let npc: ref<ScriptedPuppet> = obj as ScriptedPuppet;
             if IsDefined(npc) && !npc.IsPlayer()
-                && npc.GetRecordID() == t"Character.dyno"
-                && Vector4.Distance(npc.GetWorldPosition(), him) < 20.0
-                && !ArrayContains(this.m_disposed, npc.GetEntityID()) {
-                ArrayPush(this.m_disposed, npc.GetEntityID());
-                qs_dbg_count(game, "cc_g03_dbg_dino_disposed");
-                Reflection.Call(npc, n"Dispose");
+                && Vector4.Distance(npc.GetWorldPosition(), him) < 20.0 {
+                this.RemoveDino(game, qs, npc, 3);
             }
             i += 1;
         }
+    }
+
+    private func RemoveDino(game: GameInstance, qs: ref<QuestsSystem>,
+                            body: ref<ScriptedPuppet>, route: Int32) -> Void {
+        if !IsDefined(body) || body.GetRecordID() != t"Character.dyno" {
+            return;
+        }
+        let id: EntityID = body.GetEntityID();
+        let at: Int32 = -1;
+        let j: Int32 = 0;
+        while j < ArraySize(this.m_disposed) && at < 0 {
+            if this.m_disposed[j] == id {
+                at = j;
+            }
+            j += 1;
+        }
+        if at < 0 {
+            ArrayPush(this.m_disposed, id);
+            ArrayPush(this.m_disposedTimes, 0);
+            at = ArraySize(this.m_disposed) - 1;
+        }
+        // five per id
+        if this.m_disposedTimes[at] >= 5 {
+            return;
+        }
+        this.m_disposedTimes[at] += 1;
+        qs_dbg_count(game, "cc_g03_dbg_dino_disposed");
+        qs.SetFactStr("cc_g03_dbg_dino_route", route);
+        Reflection.Call(body, n"Dispose");
     }
 
     private func Pay(game: GameInstance, qs: ref<QuestsSystem>) -> Void {

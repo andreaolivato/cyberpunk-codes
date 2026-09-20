@@ -7,6 +7,12 @@ each mod's Nexus Changelog tab.
 
 # Acceptable Loss
 
+## 1.1.1 (2026-09-20)
+
+- **Fixed: two Dinos at his bar.** The default Dino (with the default
+  dialogue choices) appeared together with the one we spawn for this gig.
+  Reported by AbsoluteDakka.
+
 ## 1.1.0 (2026-09-19)
 
 - **Added: support for translations.** Dino, V and Johnny are now
