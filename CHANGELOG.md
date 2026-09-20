@@ -7,6 +7,16 @@ each mod's Nexus Changelog tab.
 
 # Acceptable Loss
 
+## 1.1.0 (2026-09-19)
+
+- **Added: support for translations.** Dino, V and Johnny are now
+  automatically translated in your language, both voice and subtitles,
+  thanks to reusing vanilla lines that are already translated.
+  Texts (journal, messages, shard, terminal) stay English until
+  someone makes a translation mod. A new translation kit is available to
+  help translators make their own translation mod with all the required
+  files: `mods/gig-03-acceptable-loss/translation-kit/README.md`.
+
 ## 1.0.0 (2026-09-15)
 
 - **Added: Acceptable Loss, a full side gig.** Dino Dinovic sends you to
@@ -25,6 +35,16 @@ each mod's Nexus Changelog tab.
 ---
 
 # Dead Ringer
+
+## 1.2.0 (2026-09-19)
+
+- **Added: support for translations.** Wakako, V, Johnny and Yoko are now
+  automatically translated in your language, both voice and subtitles,
+  thanks to reusing vanilla lines that are already translated.
+  Char and the merc stay English. Texts (journal, messages, shard, camera log) stay English until
+  someone makes a translation mod. A new translation kit is available to
+  help translators make their own translation mod with all the required
+  files: `mods/gig-02-dead-ringer/translation-kit/README.md`.
 
 ## 1.1.0 (2026-09-17)
 
@@ -119,6 +139,16 @@ each mod's Nexus Changelog tab.
 # Negative Balance
 
 Releases are on the [Nexus page](https://www.nexusmods.com/cyberpunk2077/mods/32694).
+
+## 2.2.0 (2026-09-19)
+
+- **Added: support for translations.** V, Johnny, Mama Welles and Nix are now
+  automatically translated in your language, both voice and subtitles,
+  thanks to reusing vanilla lines that are already translated.
+  Elena and Hoshino stay English. Texts (journal, messages, shard, terminal) stay English until
+  someone makes a translation mod. A new translation kit is available to
+  help translators make their own translation mod with all the required
+  files: `mods/gig-01-negative-balance/translation-kit/README.md`.
 
 ## 2.1.0 (2026-09-07)
 

@@ -16,7 +16,9 @@ public abstract class CCG03TraceRules {
 
     public static func DelaySeconds() -> Float { return 6.0; }
 
-    public static func BarHeader() -> String { return "TRACING YOUR LOCATION"; }
+    public static func BarHeader() -> String {
+        return GetLocalizedTextByKey(n"UI-Quickhacks-RevealDescription");
+    }
 
     public static func PollSeconds() -> Float { return 5.0; }
 

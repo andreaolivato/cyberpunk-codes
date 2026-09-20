@@ -3,7 +3,7 @@
     "WolvenKitVersion": "8.20.0",
     "WKitJsonVersion": "0.0.9",
     "GameVersion": 2310,
-    "ExportedDateTime": "2026-09-03T04:44:55.5693221Z",
+    "ExportedDateTime": "2026-09-20T05:14:09.9521200Z",
     "DataType": "CR2W",
     "ArchiveFileName": "C:\\Users\\andre\\OneDrive\\Desktop\\cyberpunk-gigs\\gig01_negative_balance\\source\\archive\\mod\\negative_balance\\localization\\en-us.json"
   },
@@ -367,6 +367,41 @@
               "maleVariant": "",
               "primaryKey": "0",
               "secondaryKey": "cc-g01-shard-body"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Estate security on site",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-hud-estate-security"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Arasaka security on site",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-hud-arasaka-security"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Shard not found - taking the beat",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-hud-shard-missing"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "COPYING LEDGER",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-hud-copy-ledger"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Negative Balance is waiting: finish \u0022Heroes\u0022 for Jackie first.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g01-blocked-heroes"
             },
             {
               "$type": "localizationPersistenceOnScreenEntry",

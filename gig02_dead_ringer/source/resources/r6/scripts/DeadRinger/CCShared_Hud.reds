@@ -39,7 +39,9 @@ public abstract class CCSharedHud {
         }
         bb.SetString(d.Header, header, true);
         bb.SetString(d.BottomText, "", true);
-        bb.SetString(d.CompletedText, "COMPLETE", true);
+        bb.SetString(d.CompletedText,
+            GetLocalizedTextByKey(n"Story-base-gameplay-gui-widgets-hud_progress_bar-hud_progress_bar-_localizationString11"),
+            true);
         bb.SetFloat(d.Progress, 0.0, true);
         bb.SetBool(d.Active, true, true);
     }

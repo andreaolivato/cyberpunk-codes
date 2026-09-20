@@ -1,0 +1,43 @@
+{
+  "Header": {
+    "WolvenKitVersion": "8.20.0",
+    "WKitJsonVersion": "0.0.9",
+    "GameVersion": 2310,
+    "ExportedDateTime": "2026-09-20T04:59:42.6884245Z",
+    "DataType": "CR2W",
+    "ArchiveFileName": "C:\\Users\\andre\\OneDrive\\Desktop\\cyberpunk-gigs\\gig03_acceptable_loss\\source\\archive\\mod\\acceptable_loss\\localization\\subtitles_pt-br.json"
+  },
+  "Data": {
+    "Version": 195,
+    "BuildVersion": 0,
+    "RootChunk": {
+      "$type": "JsonResource",
+      "cookingPlatform": "PLATFORM_PC",
+      "root": {
+        "HandleId": "0",
+        "Data": {
+          "$type": "localizationPersistenceSubtitleMap",
+          "entries": [
+            {
+              "$type": "localizationPersistenceSubtitleMapEntry",
+              "subtitleFile": {
+                "DepotPath": {
+                  "$type": "ResourcePath",
+                  "$storage": "string",
+                  "$value": "mod\\acceptable_loss\\localization\\gig03_lines_pt-br.json"
+                },
+                "Flags": "Soft"
+              },
+              "subtitleGroup": {
+                "$type": "CName",
+                "$storage": "string",
+                "$value": "quest"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "EmbeddedFiles": []
+  }
+}

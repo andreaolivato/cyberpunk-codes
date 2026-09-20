@@ -287,8 +287,8 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
         if !this.Announced(estate)
             && this.HighWater(estate) >= ArraySize(names) {
             this.SetAnnounced(estate);
-            CCSharedHud.Notify(game, estate ? "Estate security on site"
-                                            : "Arasaka security on site");
+            CCSharedHud.Notify(game, GetLocalizedTextByKey(estate
+                ? n"cc-g01-hud-estate-security" : n"cc-g01-hud-arasaka-security"));
         }
     }
 
@@ -443,7 +443,9 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
     public func DownloadStep(step: Int32) -> Void {
         switch step {
             case 0:
-                CCSharedHud.RunBar(this.GetGameInstance(), "COPYING LEDGER", 3.2);
+                CCSharedHud.RunBar(this.GetGameInstance(),
+                    // two 1.6s steps
+                    GetLocalizedTextByKey(n"cc-g01-hud-copy-ledger"), 3.2);
                 break;
             case 1: break;
             case 2:
@@ -495,7 +497,7 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
         switch step {
             case 0:
                 CCSharedHud.RunBar(this.GetGameInstance(),
-                    "SABOTAGE: UPLOADING MALWARE TO THE NETWORK", 10.0);
+                    GetLocalizedTextByKey(n"UI-QuestNotifications-sts_sabotaging"), 10.0);
                 break;
             case 1: break;
             case 2: break;
@@ -661,7 +663,8 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
                     this.m_shardWait += 1;
                     // 45s
                     if this.m_shardWait > 30 {
-                        CCSharedHud.Notify(this.GetGameInstance(), "Shard not found - taking the beat");
+                        CCSharedHud.Notify(this.GetGameInstance(),
+                                           GetLocalizedTextByKey(n"cc-g01-hud-shard-missing"));
                         qs.SetFactStr("cc_g01_shard_found", 1);
                     }
                 }
