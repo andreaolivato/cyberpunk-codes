@@ -533,9 +533,20 @@ public class DeadRingerEncounter extends ScriptableSystem {
                 && !this.IsOurs(npc.GetRecordID())
                 && !ArrayContains(this.m_calmed, npc.GetEntityID()) {
                 ArrayPush(this.m_calmed, npc.GetEntityID());
-                Reflection.Call(npc, n"Dispose");
+                this.DisposeByName(npc);
             }
             i += 1;
+        }
+    }
+
+    private func DisposeByName(body: ref<IScriptable>) -> Void {
+        let cls: ref<ReflectionClass> = Reflection.GetClassOf(body);
+        if !IsDefined(cls) {
+            return;
+        }
+        let fn: ref<ReflectionMemberFunc> = cls.GetFunction(n"Dispose");
+        if IsDefined(fn) {
+            fn.Call(body);
         }
     }
 
@@ -571,7 +582,7 @@ public class DeadRingerEncounter extends ScriptableSystem {
                     && Vector4.Distance(npc.GetWorldPosition(), inn) < 15.0;
                 if atChair || vendor {
                     ArrayPush(this.m_calmed, npc.GetEntityID());
-                    Reflection.Call(npc, n"Dispose");
+                    this.DisposeByName(npc);
                 }
             }
             i += 1;
@@ -661,7 +672,7 @@ public class DeadRingerEncounter extends ScriptableSystem {
                 if rec == t"Character.wakako_okada"
                     && Vector4.Distance(npc.GetWorldPosition(), office) < 20.0 {
                     ArrayPush(this.m_calmed, npc.GetEntityID());
-                    Reflection.Call(npc, n"Dispose");
+                    this.DisposeByName(npc);
                 }
             }
             i += 1;

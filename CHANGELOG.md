@@ -7,6 +7,11 @@ each mod's Nexus Changelog tab.
 
 # Acceptable Loss
 
+## 1.1.2 (2026-09-25)
+
+- **Fixed: with Codeware 1.17 (the last version for game 2.30), every script
+  mod failed to load.** Reported by saturnfcb.
+
 ## 1.1.1 (2026-09-20)
 
 - **Fixed: two Dinos at his bar.** The default Dino (with the default
@@ -41,6 +46,11 @@ each mod's Nexus Changelog tab.
 ---
 
 # Dead Ringer
+
+## 1.2.1 (2026-09-25)
+
+- **Fixed: with Codeware 1.17 (the last version for game 2.30), every script
+  mod failed to load.**
 
 ## 1.2.0 (2026-09-19)
 

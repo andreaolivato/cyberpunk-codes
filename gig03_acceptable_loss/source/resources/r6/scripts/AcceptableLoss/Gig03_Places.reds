@@ -392,7 +392,18 @@ public class AcceptableLossPlaces extends ScriptableSystem {
         this.m_disposedTimes[at] += 1;
         qs_dbg_count(game, "cc_g03_dbg_dino_disposed");
         qs.SetFactStr("cc_g03_dbg_dino_route", route);
-        Reflection.Call(body, n"Dispose");
+        this.DisposeByName(body);
+    }
+
+    private func DisposeByName(body: ref<IScriptable>) -> Void {
+        let cls: ref<ReflectionClass> = Reflection.GetClassOf(body);
+        if !IsDefined(cls) {
+            return;
+        }
+        let fn: ref<ReflectionMemberFunc> = cls.GetFunction(n"Dispose");
+        if IsDefined(fn) {
+            fn.Call(body);
+        }
     }
 
     private func Pay(game: GameInstance, qs: ref<QuestsSystem>) -> Void {
