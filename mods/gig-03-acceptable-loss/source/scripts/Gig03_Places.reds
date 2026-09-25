@@ -650,7 +650,22 @@ public class AcceptableLossPlaces extends ScriptableSystem {
         this.m_disposedTimes[at] += 1;
         qs_dbg_count(game, "cc_g03_dbg_dino_disposed");
         qs.SetFactStr("cc_g03_dbg_dino_route", route);
-        Reflection.Call(body, n"Dispose");
+        this.DisposeByName(body);
+    }
+
+    // THE LONG SPELLING OF `Reflection.Call`. That one-line helper is not in
+    // Codeware 1.17, and a player on 1.17 lost every script mod they had to
+    // it (Nexus report, 2026-09-24). Class, then function, then call: all
+    // three exist in 1.17 and in every version after it.
+    private func DisposeByName(body: ref<IScriptable>) -> Void {
+        let cls: ref<ReflectionClass> = Reflection.GetClassOf(body);
+        if !IsDefined(cls) {
+            return;
+        }
+        let fn: ref<ReflectionMemberFunc> = cls.GetFunction(n"Dispose");
+        if IsDefined(fn) {
+            fn.Call(body);
+        }
     }
 
     // PAID ONCE, LATCHED IN A FACT. A field would be gone on the next load and

@@ -1083,9 +1083,24 @@ public class DeadRingerEncounter extends ScriptableSystem {
                 // GONE, not calmed. Playtest 2026-09-04 (fifth): the CET
                 // Dispose button removed all eleven bodies at the door at once,
                 // where no community switch had moved one. Same call here.
-                Reflection.Call(npc, n"Dispose");
+                this.DisposeByName(npc);
             }
             i += 1;
+        }
+    }
+
+    // THE LONG SPELLING OF `Reflection.Call`. That one-line helper is not in
+    // Codeware 1.17, and a player on 1.17 lost every script mod they had to
+    // it (Nexus report on gig 03, 2026-09-24). Class, then function, then
+    // call: all three exist in 1.17 and in every version after it.
+    private func DisposeByName(body: ref<IScriptable>) -> Void {
+        let cls: ref<ReflectionClass> = Reflection.GetClassOf(body);
+        if !IsDefined(cls) {
+            return;
+        }
+        let fn: ref<ReflectionMemberFunc> = cls.GetFunction(n"Dispose");
+        if IsDefined(fn) {
+            fn.Call(body);
         }
     }
 
@@ -1127,7 +1142,7 @@ public class DeadRingerEncounter extends ScriptableSystem {
                     && Vector4.Distance(npc.GetWorldPosition(), inn) < 15.0;
                 if atChair || vendor {
                     ArrayPush(this.m_calmed, npc.GetEntityID());
-                    Reflection.Call(npc, n"Dispose");
+                    this.DisposeByName(npc);
                 }
             }
             i += 1;
@@ -1231,7 +1246,7 @@ public class DeadRingerEncounter extends ScriptableSystem {
                 if rec == t"Character.wakako_okada"
                     && Vector4.Distance(npc.GetWorldPosition(), office) < 20.0 {
                     ArrayPush(this.m_calmed, npc.GetEntityID());
-                    Reflection.Call(npc, n"Dispose");
+                    this.DisposeByName(npc);
                 }
             }
             i += 1;

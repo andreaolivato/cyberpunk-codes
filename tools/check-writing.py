@@ -105,6 +105,11 @@ LIMP = [
     # "he is not frightened".
     'the one thing that decides', 'the thing to know is',
     'the part worth reading', 'what is worth knowing',
+    # "Has" is the verb for possession. "Each holds a node", "the file
+    # carries a table" and "the sector houses a marker" dress it up, and
+    # "each holds a" was called "typical AI" (the design call, 2026-09-21).
+    'holds a ', 'holds an ', 'holds the ', 'carries a ', 'carries an ',
+    'houses a ', 'houses an ', 'houses the ',
 ]
 
 # Figures of speech standing in for a plain statement. A line does not "sit
