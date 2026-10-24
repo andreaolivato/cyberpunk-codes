@@ -99,6 +99,7 @@ PIN_POS = {
     # The same spot under the objective that replaces obj_toji once V is
     # seen (2026-09-05).
     'pin_toji_loud': STAIR[7],
+    'pin_toji_finish': STAIR[7],
     # The way out is the way in: the top of the stairs.
     'pin_exfil': hit_area.position(),
     'pin_exfil_loud': hit_area.position(),
@@ -166,6 +167,7 @@ OBJECTIVES = [
     ('obj_hit',       'obj-hit',       ANCHOR_HIT),
     ('obj_toji',      'obj-toji',      ANCHOR_HIT),
     ('obj_toji_loud', 'obj-toji-loud', ANCHOR_HIT),
+    ('obj_toji_finish', 'obj-toji-finish', ANCHOR_HIT),
     ('obj_exfil',     'obj-exfil',     AREA_REF),
     ('obj_exfil_loud', 'obj-exfil-loud', AREA_REF),
     # Beat 17 (design call 2026-09-06): the call home and Johnny's last word

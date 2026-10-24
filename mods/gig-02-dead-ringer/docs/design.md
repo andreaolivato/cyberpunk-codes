@@ -206,8 +206,8 @@ He is the only source for the proof, so the gig cannot survive him dying by
 accident. He is unkillable through the fight, drops at a third of his health,
 and talks from the floor.
 
-**He does not start it.** He is hostile but does not open fire; the player
-does. The fight ends with him kneeling, not dead, and he stays kneeling: there
+**He does not start it.** He stands still until V hits him. From the first
+hit he is hostile and shoots back. The fight ends with him kneeling, not dead, and he stays kneeling: there
 is no stand-up animation a mod can drive that does not read as a glitch, so he
 holds the pose through the conversation and the choice.
 

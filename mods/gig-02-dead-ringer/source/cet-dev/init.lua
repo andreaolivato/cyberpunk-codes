@@ -112,6 +112,7 @@ local STEPS = {
     { fact = "cc_g02_dropped",         who = "SCRIPT", what = "V is at the trash pile or at the bottom; nothing waits on it since 2026-09-05" },
     { fact = "cc_g02_toji_met",         who = "SCRIPT", what = "getting close to Toji, OR killing him from range" },
     { fact = "cc_g02_toji_dead",        who = "SCRIPT", what = "waiting for Toji to die" },
+    { fact = "cc_g02_toji_ko",          who = "SCRIPT", what = "Toji down: knocked out or dead" },
     { fact = "cc_g02_exfil_armed",      who = "GRAPH",  what = "he is down: the objective now asks V to leave without being seen" },
     { fact = "cc_g02_exfil_done",       who = "SCRIPT", what = "get 70 m from the bottom step. BEING SEEN also sets it, so a firefight cannot strand the objective" },
     { fact = "cc_g02_closed",           who = "GRAPH",  what = "one of the two closing calls is playing. Which one is decided by cc_g02_spotted" },
@@ -210,6 +211,7 @@ local FACTS = {
     "cc_g02_toji_met",
     "cc_g02_kill_seen",
     "cc_g02_toji_dead",
+    "cc_g02_toji_ko",
     "cc_g02_exfil_armed",
     "cc_g02_exfil_done",
     "cc_g02_afterlife_clear",
@@ -780,9 +782,20 @@ local function dumpLookedAt(name)
     -- Invulnerable, which is the state he is supposed to be in BEFORE V speaks
     -- to him and AFTER he is down, and never during.
     head("damage")
-    m("health %", function()
+    -- POINTS AND PERCENT. `perc` false is raw points, measured 2026-10-24
+    -- (gotcha 106). The gig works out the percentage from points over max
+    -- and compares that with 33 and 99, so "perc true" is its number.
+    m("health points", function()
         return Game.GetStatPoolsSystem():GetStatPoolValue(
             target:GetEntityID(), gamedataStatPoolType.Health, false)
+    end)
+    m("health, perc true", function()
+        return Game.GetStatPoolsSystem():GetStatPoolValue(
+            target:GetEntityID(), gamedataStatPoolType.Health, true)
+    end)
+    m("health max", function()
+        return Game.GetStatPoolsSystem():GetStatPoolMaxPointValue(
+            target:GetEntityID(), gamedataStatPoolType.Health)
     end)
     m("IsDead", function() return target:IsDead() end)
     m("IsDefeated", function() return target:IsDefeated() end)
@@ -831,7 +844,7 @@ local JOURNAL = {
 local OBJECTIVES = {
     "obj_afterlife", "obj_lead", "obj_merc", "obj_beat", "obj_proof",
     "obj_wakako2", "obj_inn", "obj_trace", "obj_parlor", "obj_relay",
-    "obj_face", "obj_wakako_met", "obj_hit", "obj_toji", "obj_toji_loud",
+    "obj_face", "obj_wakako_met", "obj_hit", "obj_toji", "obj_toji_loud", "obj_toji_finish",
     "obj_exfil", "obj_exfil_loud", "obj_call_wakako", "obj_johnny_3",
 }
 

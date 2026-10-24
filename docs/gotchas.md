@@ -2510,14 +2510,32 @@ Never renumber. Append.
 106. **A stat pool read on a body that is still resolving answers 0, and that
      is indistinguishable from "nearly dead".**
 
-     ```
-     GameInstance.GetStatPoolsSystem(game)
-         .GetStatPoolValue(Cast<StatsObjectID>(id), gamedataStatPoolType.Health, false)
+     ```reds
+     let pools: ref<StatPoolsSystem> = GameInstance.GetStatPoolsSystem(game);
+     let max: Float = pools.GetStatPoolMaxPointValue(Cast<StatsObjectID>(id),
+                                                     gamedataStatPoolType.Health);
+     let hp: Float = 0.0;
+     if max > 0.0 {
+         hp = 100.0 * pools.GetStatPoolValue(Cast<StatsObjectID>(id),
+                                             gamedataStatPoolType.Health, false) / max;
+     }
      ```
 
-     Health comes back as a percentage, so 100 is untouched. On a tick where the
-     entity is not fully resolved the same call returns 0. Nothing about the
-     return value says which of the two it is.
+     The last argument of `GetStatPoolValue` is `perc`, and `false` means raw
+     health points, not a percentage. Measured on game 2.31: an unhurt
+     civilian read 62.4 with `false`, 100 with `true`, and a max of 62.4.
+     The base game uses `true` wherever it compares with a percentage
+     (`adamSmasherComponent.swift` against 30 and 50). A threshold like 33 or
+     99 compared with raw points means a different thing on every NPC level.
+     Gig 02 compared raw points with percentages until 1.2.2. A merc with
+     fewer than 99 points counted as already hit before the fight, kept the
+     friendly attitude the reticle will not lock on to, and could not be
+     attacked. Whether that happens depended on V's level.
+
+     The percentage above is worked out from points and max. On a tick where
+     the entity is not fully resolved the read returns 0. Nothing about the
+     return value says whether that is a body still resolving or a body shot
+     to nothing.
 
      Every test written against that number is therefore wrong on those ticks,
      and in the direction that hurts: `hp < 99.0` reads as "he has been shot",
@@ -2943,3 +2961,32 @@ Never renumber. Append.
      a keeper that latches ids for good stops seeing him after the first
      pass. What is measured: the phase, the trigger, the fact's writers. What
      is not, at the time of writing: the fix in play. `backlog.md` 48.
+
+123. **A save remembers where its quest phase is by node number, so a node
+     inserted into a released phase moves every later player to a different
+     step.** Gotcha 103 is the removal case. Insertion is the same fault, and
+     it is easier to commit because nothing is taken out.
+
+     Playtest, 2026-09-27, after a Nexus report of an objective that never
+     advanced. Two releases inserted sixteen nodes right after the objective
+     "Get inside the compound" goes up. The wait that completes it moved from
+     node 25 to node 41. A save made under the old release, parked at that
+     wait, was loaded under the new one. Node 25 was now a condition node.
+     The objective stayed up for good, the terminal beat did nothing, and no
+     log said why. Nothing a script or the console can reach moves it:
+     `QuestsSystem` exposes facts and fact listeners, and no call that
+     restarts or repositions a phase.
+
+     Whether a shifted save breaks depends on what lands under its number.
+     The same test from a later release, parked at node 26, loaded into a
+     community `Deactivate` node, ran on through the chain to the new wait,
+     and played normally. The node-25 save did not run on from a condition
+     node, and did not run on from a fact-setting node either (a third
+     release, where node 25 sets a fact). Measured: those three cases. No
+     rule predicts the rest, so treat any moved wait as a stopped save.
+
+     **Once a phase has shipped, never renumber its nodes.** A new node gets
+     a number above the last release's highest id, wherever it sits in the
+     chain. Removed nodes leave their numbers unused. Before a release, diff
+     the ids of every `questPauseConditionNodeDefinition` against the last
+     tagged release: any wait whose id moved is a save that stops.

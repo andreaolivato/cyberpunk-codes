@@ -9522,6 +9522,22 @@ signature that made this look strong belongs to the friendly attitude group
 instead: an NPC the game will not lock on to reads, from behind the crosshair,
 much like a weapon that will not come out.
 
+**Reopened and closed again, 2026-10-24 (1.2.2).** Two more reports on 1.2.0
+and 1.2.1 of a merc who could not be attacked. The health read in the fix
+above was wrong in a way no test here could show: `GetStatPoolValue(...,
+false)` is raw points, not a percentage (gotcha 106). The fight compared it
+with 33 and 99. On the test character the merc had 155.4 points, so both
+tests still fired at sensible moments. A merc with fewer than 99 points reads
+as already hit the moment the fight opens, the line that makes him neutral is
+skipped, and he keeps the friendly attitude from before the fight. The health
+is now points over max, times 100.
+
+Measuring it also showed the merc never shot back. His eyes came on at the
+first hit, but his attitude to V stayed neutral and his record ignores
+damage. He now turns hostile at the first hit, the way Hoshino does in gig
+01, and goes back to friendly when he kneels. Playtest, 2026-10-24: he shoots
+back, drops at a third, and the conversation follows.
+
 ## 45. A kill three players made and the gig did not see. SOLVED 2026-09-12
 
 Three Nexus reports in two days on gig 02, all the same: Toji dead, the
@@ -9588,6 +9604,19 @@ done. **Open:** an on-screen line when he is down and breathing, the way the
 "spotted" line works, so the player is told what the game will not. Deferred
 on 2026-09-12; the story asks for a death, and counting a knockout would make
 Wakako's closing call a lie.
+
+**Closed 2026-10-24 (1.2.2), after a Nexus report on 1.2.1.** A knockout
+still does not count. When he is down and alive, the objective "Kill Toji"
+goes Inactive and "Finish Toji off" opens with the same pin, and a line on
+screen says he is only unconscious. The line is for a save already past the
+step the objective swap hangs from. The new quest nodes take numbers above
+1.2.1's highest, so no released node moved (gotcha 123).
+
+An unconscious body put into a container counts as dead. The game's own
+disposal kills the body (`DisposalDevice.OnWorkspotFinished` calls `Kill`),
+which the death wrap already hears; the script also reads the puppet's
+`IsBodyDisposed` blackboard flag as a fallback. Playtest, 2026-10-24: both
+routes, knockout then shot and knockout then container, finish the leg.
 
 **The workaround for a save stuck on 1.0.4**, from the CET console, then walk
 away from the stairs:

@@ -480,6 +480,12 @@ this gig.
 Plain Python, no dependencies, runs on your machine. Nothing in it becomes a
 player download.
 
+**Freeze node numbers once a phase ships.** `questgraph.py` numbers nodes in
+the order they are added. A player's save stores its place by that number.
+Inserting a node renumbers everything after it. A player who updates in the
+middle of the gig then resumes at the wrong step. Give new nodes numbers
+above the last release's highest id. Gotcha 123 has the measurement.
+
 Two honest caveats:
 
 - It has had one consumer. The config surface was drawn around one gig and will

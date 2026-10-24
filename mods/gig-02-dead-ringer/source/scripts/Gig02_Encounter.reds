@@ -145,6 +145,9 @@ public class DeadRingerEncounter extends ScriptableSystem {
     // ---- the hit -----------------------------------------------------------
     private let m_hitSpawned: Bool;
     private let m_tojiId: EntityID;
+    // The knockout message has been shown this session. A field, so a reload
+    // onto a save with Toji already down shows it again.
+    private let m_tojiKoShown: Bool;
     private let m_claws: array<EntityID>;
 
     // ---- the markers -------------------------------------------------------
@@ -1336,9 +1339,23 @@ public class DeadRingerEncounter extends ScriptableSystem {
         let down: Bool = qs.GetFactStr("cc_g02_merc_down") > 0;
         // READ ONCE, USED THREE TIMES: the two beating stages below and the
         // "has he been touched yet" test that decides whether he can see.
-        let hp: Float = GameInstance.GetStatPoolsSystem(game)
-            .GetStatPoolValue(Cast<StatsObjectID>(this.m_mercId),
-                              gamedataStatPoolType.Health, false);
+        //
+        // A PERCENTAGE, 2026-10-24. `GetStatPoolValue(..., false)` is raw
+        // health points, not a percentage (measured: an unhurt civilian read
+        // 62.4 with a max of 62.4, and 100 with `perc` true). Until then the
+        // thresholds below compared points with 33 and 99, so where he went
+        // down depended on his level, and through it on V's. Gotcha 106.
+        // Worked out from points and max rather than asking for `perc`, so a
+        // body still resolving (max 0) reads 0, which every test below already
+        // treats as "not readable yet".
+        let pools: ref<StatPoolsSystem> = GameInstance.GetStatPoolsSystem(game);
+        let hpMax: Float = pools.GetStatPoolMaxPointValue(
+            Cast<StatsObjectID>(this.m_mercId), gamedataStatPoolType.Health);
+        let hp: Float = 0.0;
+        if hpMax > 0.0 {
+            hp = 100.0 * pools.GetStatPoolValue(Cast<StatsObjectID>(this.m_mercId),
+                                                gamedataStatPoolType.Health, false) / hpMax;
+        }
 
         // THE DEAD MAN'S HANDLE, AND IT USED TO BE WIRED TO THE WRONG FACT.
         //
@@ -1600,7 +1617,7 @@ public class DeadRingerEncounter extends ScriptableSystem {
                 // him. He cannot actually be at zero health here, because he
                 // is Immortal for the whole of this branch.
                 let untouched: Bool = hp >= 99.0 || hp <= 0.0;
-                if untouched {
+                if untouched && this.m_mercBlind {
                     agent.SetAttitudeGroup(n"neutral");
                     agent.SetAttitudeTowards(playerAgent, EAIAttitude.AIA_Neutral);
                 }
@@ -1615,6 +1632,21 @@ public class DeadRingerEncounter extends ScriptableSystem {
                         senses.Toggle(true);
                     }
                     this.m_mercBlind = false;
+                }
+                // ...AND HE TURNS ON V, 2026-10-24. Eyes alone did nothing:
+                // playtest the same day shot him to 46% and he stood there
+                // Relaxed, because he was still neutral to V and his record's
+                // NoReaction preset ignores being hit. Hoshino had the same
+                // three fields and fights only because gig 01 turns him hostile
+                // on the first hit (NegativeBalanceEncounter.TurnOnPlayer):
+                // the neutral group, so the Wraiths around him are not set
+                // against the queue, and a hostile line to V. Re-asserted every
+                // tick until he is down, for the reason given above. The
+                // latch is m_mercBlind, a field, so a reload stands him up
+                // unhit and peaceful again, as it does Hoshino.
+                if !this.m_mercBlind {
+                    agent.SetAttitudeGroup(n"neutral");
+                    agent.SetAttitudeTowards(playerAgent, EAIAttitude.AIA_Hostile);
                 }
             } else {
                 if killArmed {
@@ -1952,6 +1984,49 @@ public class DeadRingerEncounter extends ScriptableSystem {
             qs.SetFactStr("cc_g02_toji_dead", 1);
             qs.SetFactStr("cc_g02_toji_met", 1);
         }
+        // DOWN FOLLOWS DEAD, always after it (gotcha 17: the knockout
+        // branch reads `toji_dead` the moment `toji_ko` arrives). Every tick,
+        // so a save made after the kill under 1.2.1 gets it on load.
+        if qs.GetFactStr("cc_g02_toji_dead") > 0 && qs.GetFactStr("cc_g02_toji_ko") == 0 {
+            qs.SetFactStr("cc_g02_toji_ko", 1);
+        }
+
+        // KNOCKED OUT IS NOT DEAD, AND NOW THE PLAYER IS TOLD, 2026-10-24.
+        // Backlog 45 left this open: System Collapse, a blunt weapon or a
+        // choke drop him breathing, the bounty pays as for a kill, and the
+        // objective stays on "Kill Toji" with nothing saying why (Nexus,
+        // 1.2.1). `cc_g02_toji_ko` makes the quest phase swap the objective
+        // for "Finish Toji off" (gen_questphase.py, section 13-16b). The
+        // message on screen is for a save already past the step that swap
+        // hangs from, so it shows once a session, on a field rather than a
+        // fact.
+        //
+        // A BODY IN A CONTAINER COUNTS AS DEAD. A disposal kills the body
+        // itself (disposalDevice.swift, OnWorkspotFinished calls Kill), which
+        // the death wrap below already hears. The blackboard flag is the
+        // fallback for a disposal that does not reach the kill: an
+        // unconscious man in a dumpster cannot be shot, so without it that
+        // save could never finish.
+        if qs.GetFactStr("cc_g02_toji_dead") == 0
+            && IsDefined(toji) && ScriptedPuppet.IsAlive(toji) {
+            let tojiBb: ref<IBlackboard> = toji.GetPuppetStateBlackboard();
+            if IsDefined(tojiBb)
+                && tojiBb.GetBool(GetAllBlackboardDefs().PuppetState.IsBodyDisposed) {
+                DeadRingerEncounter.TojiDied(game);
+            } else {
+                if ScriptedPuppet.IsDefeated(toji) || ScriptedPuppet.IsUnconscious(toji) {
+                    if qs.GetFactStr("cc_g02_toji_ko") == 0 {
+                        qs.SetFactStr("cc_g02_toji_ko", 1);
+                    }
+                    if !this.m_tojiKoShown {
+                        this.m_tojiKoShown = true;
+                        CCSharedHud.NotifyTyped(game,
+                            GetLocalizedTextByKey(n"cc-g02-hud-toji-ko"),
+                            SimpleMessageType.Negative, 6.0);
+                    }
+                }
+            }
+        }
 
         // THE DEN STANDS DOWN ONCE V IS CLEAR (design question 2026-09-06:
         // "after the gig they should be back to normal behaviour"). These
@@ -2101,6 +2176,8 @@ public class DeadRingerEncounter extends ScriptableSystem {
         }
         qs.SetFactStr("cc_g02_toji_met", 1);
         qs.SetFactStr("cc_g02_toji_dead", 1);
+        // After `dead`, never before it: see the tick in Hit().
+        qs.SetFactStr("cc_g02_toji_ko", 1);
         if qs.GetFactStr("cc_g02_hit_reached") == 0 {
             qs.SetFactStr("cc_g02_hit_reached", 1);
         }

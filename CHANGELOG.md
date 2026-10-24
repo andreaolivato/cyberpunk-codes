@@ -47,6 +47,15 @@ each mod's Nexus Changelog tab.
 
 # Dead Ringer
 
+## 1.2.2 (2026-10-24)
+
+- **Fixed: the merc outside Afterlife could not be attacked on some characters.**
+  It depended on your level. Reported by J4dziaDax and Cleyghaan.
+- **Changed: the merc shoots back once you hit him.**
+- **Fixed: knocking Toji out left the objective stuck on "Kill Toji".** It now
+  changes to "Finish Toji off", and hiding him unconscious in a container
+  counts as a kill. Reported by Maraudine.
+
 ## 1.2.1 (2026-09-25)
 
 - **Fixed: with Codeware 1.17 (the last version for game 2.30), every script

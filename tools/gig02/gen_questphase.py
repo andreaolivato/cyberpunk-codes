@@ -958,10 +958,16 @@ step(add_setvar('cc_g02_hit_armed', 1))
 # the objective. It has no output: it always resolves before the phase ends,
 # because Toji's death is on the main line.
 SEEN_FORK = chain[-1]
+#
+# DOWN, NOT ONLY DEAD, 2026-10-24. Both waits read `cc_g02_toji_ko`, which the
+# script sets when he is knocked out AND when he dies (after `toji_dead`), so
+# a player seen after a knockout keeps "Finish Toji off" rather than getting
+# "Kill Toji" back on top of it. Same node numbers, new facts: a save parked
+# here waits on a fact the script also sets on any later tick after a death.
 SEEN_OR = add_pause_facts([('cc_g02_spotted', 0, 'Greater'),
-                           ('cc_g02_toji_dead', 0, 'Greater')], 'OR')
+                           ('cc_g02_toji_ko', 0, 'Greater')], 'OR')
 b.connect(SEEN_FORK, (SEEN_OR, 'In'))
-STILL_ALIVE = add_condition_fact('cc_g02_toji_dead', 0, 'Equal')
+STILL_ALIVE = add_condition_fact('cc_g02_toji_ko', 0, 'Equal')
 b.connect((SEEN_OR, 'Out'), (STILL_ALIVE, 'In'))
 chain = [(STILL_ALIVE, 'True')]
 close_objective('obj_toji')
@@ -1091,6 +1097,42 @@ for _who in CAST:
 
 step(add_setvar('cc_g02_done', 1))
 step(add_output(), in_sock='In', out_sock=None)
+
+
+# ===========================================================================
+# 13-16b. KNOCKED OUT, NOT DEAD (2026-10-24)
+# ===========================================================================
+#
+# BUILT LAST SO EVERY NODE ABOVE KEEPS ITS NUMBER. A save remembers where it
+# is by node number (gotcha 123), and this branch was added after 1.2.1 had
+# shipped. Its nodes take the highest numbers and hang off SEEN_FORK, the
+# armed step, beside the seen branch.
+#
+# A side branch with no output, like the seen one. It waits for
+# `cc_g02_toji_ko`, which the script sets on a knockout and on a death. Only
+# a knockout swaps the objective: the open kill objective goes Inactive and
+# "Finish Toji off" takes its place, with the same pin. His death closes it,
+# and the main line goes on to the way out as it always did.
+KO_WAIT = add_pause_fact('cc_g02_toji_ko')
+b.connect(SEEN_FORK, (KO_WAIT, 'In'))
+KO_ALIVE = add_condition_fact('cc_g02_toji_dead', 0, 'Equal')
+b.connect((KO_WAIT, 'Out'), (KO_ALIVE, 'In'))
+KO_SEEN = add_condition_fact('cc_g02_spotted', 0, 'Greater')
+b.connect((KO_ALIVE, 'True'), (KO_SEEN, 'In'))
+HIDE_LOUD = add_journal('gameJournalQuestObjective', PHASE + '/obj_toji_loud',
+                        notify=0)
+HIDE_QUIET = add_journal('gameJournalQuestObjective', PHASE + '/obj_toji',
+                         notify=0)
+b.connect((KO_SEEN, 'True'), (HIDE_LOUD, 'Inactive'))
+b.connect((KO_SEEN, 'False'), (HIDE_QUIET, 'Inactive'))
+FINISH_OPEN = add_journal('gameJournalQuestObjective', PHASE + '/obj_toji_finish')
+b.connect((HIDE_LOUD, 'Out'), (FINISH_OPEN, 'Active'))
+b.connect((HIDE_QUIET, 'Out'), (FINISH_OPEN, 'Active'))
+chain = [(FINISH_OPEN, 'Out')]
+step(add_journal('gameJournalQuestMapPin', PHASE + '/obj_toji_finish/pin_toji_finish',
+                 notify=0), in_sock='Active')
+step(add_pause_fact('cc_g02_toji_dead'))
+close_objective('obj_toji_finish')
 
 
 if __name__ == '__main__':

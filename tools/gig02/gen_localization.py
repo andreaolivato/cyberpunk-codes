@@ -229,6 +229,8 @@ STRINGS = {
     'obj-toji': 'Kill Toji without being seen',
     # Once V has been seen (playtest 2026-09-05).
     'obj-toji-loud': 'Kill Toji',
+    # Replaces whichever kill objective is open when he is knocked out.
+    'obj-toji-finish': 'Finish Toji off',
     'obj-exfil': 'Leave without being seen',
     'obj-exfil-loud': 'Leave the area',
     'obj-call-wakako': 'Call Wakako',
@@ -326,6 +328,9 @@ STRINGS = {
     # is the quiet exit Wakako asked for, and the closing call is the cold one.
     # See design.md, "The redesign of 2026-08-27".
     'hud-spotted': 'Seen. This will not stay quiet now.',
+    # Shown when Toji goes down alive. The bounty pays for a knockout too, so
+    # without this the player believes the job is done.
+    'hud-toji-ko': 'Toji is only unconscious. Wakako wants him dead.',
     # The payout. Wakako closes every contract she offers by saying she is
     # closing it and transferring the fee, so unlike the previous gig there is
     # nothing awkward about the money.
