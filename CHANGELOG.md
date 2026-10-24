@@ -47,6 +47,12 @@ each mod's Nexus Changelog tab.
 
 # Dead Ringer
 
+## 1.2.3 (2026-10-24)
+
+- **Fixed: Toji left on the ground by a lethal hit did not count as dead.**
+  With some Reflexes perks the game keeps him alive for a finisher, and the
+  objective stayed on "Kill Toji". Reported by Maraudine.
+
 ## 1.2.2 (2026-10-24)
 
 - **Fixed: the merc outside Afterlife could not be attacked on some characters.**

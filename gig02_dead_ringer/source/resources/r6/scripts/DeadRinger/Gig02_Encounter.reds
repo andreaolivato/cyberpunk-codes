@@ -1050,7 +1050,11 @@ public class DeadRingerEncounter extends ScriptableSystem {
                 && tojiBb.GetBool(GetAllBlackboardDefs().PuppetState.IsBodyDisposed) {
                 DeadRingerEncounter.TojiDied(game);
             } else {
-                if ScriptedPuppet.IsDefeated(toji) || ScriptedPuppet.IsUnconscious(toji) {
+                // downed counts as dead
+                if ScriptedPuppet.IsDefeated(toji) && !ScriptedPuppet.IsUnconscious(toji) {
+                    DeadRingerEncounter.TojiDied(game);
+                }
+                if ScriptedPuppet.IsUnconscious(toji) {
                     if qs.GetFactStr("cc_g02_toji_ko") == 0 {
                         qs.SetFactStr("cc_g02_toji_ko", 1);
                     }
@@ -1399,6 +1403,16 @@ protected cb func OnHit(evt: ref<gameHitEvent>) -> Bool {
     let r: Bool = wrappedMethod(evt);
     if Equals(this.GetRecordID(), CCGig02Combat.MercRecord()) {
         DeadRingerEncounter.MercWasHit(this.GetGame());
+    }
+    return r;
+}
+
+@wrapMethod(ScriptedPuppet)
+protected cb func OnDefeated(evt: ref<DefeatedEvent>) -> Bool {
+    let r: Bool = wrappedMethod(evt);
+    if Equals(this.GetRecordID(), CCGig02Combat.TojiRecord())
+        && !ScriptedPuppet.IsUnconscious(this) {
+        DeadRingerEncounter.TojiDied(this.GetGame());
     }
     return r;
 }
