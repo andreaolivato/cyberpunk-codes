@@ -50,6 +50,7 @@ public class DeadRingerEncounter extends ScriptableSystem {
 
     private let m_hitSpawned: Bool;
     private let m_tojiId: EntityID;
+    private let m_tojiKoShown: Bool;
     private let m_claws: array<EntityID>;
     private let m_mercPin: NewMappinID;
     private let m_mercPinOn: Bool;
@@ -731,9 +732,14 @@ public class DeadRingerEncounter extends ScriptableSystem {
 
         let armed: Bool = qs.GetFactStr("cc_g02_merc_armed") > 0;
         let down: Bool = qs.GetFactStr("cc_g02_merc_down") > 0;
-        let hp: Float = GameInstance.GetStatPoolsSystem(game)
-            .GetStatPoolValue(Cast<StatsObjectID>(this.m_mercId),
-                              gamedataStatPoolType.Health, false);
+        let pools: ref<StatPoolsSystem> = GameInstance.GetStatPoolsSystem(game);
+        let hpMax: Float = pools.GetStatPoolMaxPointValue(
+            Cast<StatsObjectID>(this.m_mercId), gamedataStatPoolType.Health);
+        let hp: Float = 0.0;
+        if hpMax > 0.0 {
+            hp = 100.0 * pools.GetStatPoolValue(Cast<StatsObjectID>(this.m_mercId),
+                                                gamedataStatPoolType.Health, false) / hpMax;
+        }
 
         if qs.GetFactStr("cc_g02_lead_heard") > 0 && !armed && !down {
             this.m_mercTicks += 1;
@@ -842,7 +848,7 @@ public class DeadRingerEncounter extends ScriptableSystem {
         if IsDefined(agent) && IsDefined(playerAgent) {
             if armed && !down {
                 let untouched: Bool = hp >= 99.0 || hp <= 0.0;
-                if untouched {
+                if untouched && this.m_mercBlind {
                     agent.SetAttitudeGroup(n"neutral");
                     agent.SetAttitudeTowards(playerAgent, EAIAttitude.AIA_Neutral);
                 }
@@ -853,6 +859,10 @@ public class DeadRingerEncounter extends ScriptableSystem {
                         senses.Toggle(true);
                     }
                     this.m_mercBlind = false;
+                }
+                if !this.m_mercBlind {
+                    agent.SetAttitudeGroup(n"neutral");
+                    agent.SetAttitudeTowards(playerAgent, EAIAttitude.AIA_Hostile);
                 }
             } else {
                 if killArmed {
@@ -1028,6 +1038,31 @@ public class DeadRingerEncounter extends ScriptableSystem {
             qs.SetFactStr("cc_g02_toji_dead", 1);
             qs.SetFactStr("cc_g02_toji_met", 1);
         }
+        if qs.GetFactStr("cc_g02_toji_dead") > 0 && qs.GetFactStr("cc_g02_toji_ko") == 0 {
+            qs.SetFactStr("cc_g02_toji_ko", 1);
+        }
+
+        if qs.GetFactStr("cc_g02_toji_dead") == 0
+            && IsDefined(toji) && ScriptedPuppet.IsAlive(toji) {
+            let tojiBb: ref<IBlackboard> = toji.GetPuppetStateBlackboard();
+            if IsDefined(tojiBb)
+                // in a dumpster
+                && tojiBb.GetBool(GetAllBlackboardDefs().PuppetState.IsBodyDisposed) {
+                DeadRingerEncounter.TojiDied(game);
+            } else {
+                if ScriptedPuppet.IsDefeated(toji) || ScriptedPuppet.IsUnconscious(toji) {
+                    if qs.GetFactStr("cc_g02_toji_ko") == 0 {
+                        qs.SetFactStr("cc_g02_toji_ko", 1);
+                    }
+                    if !this.m_tojiKoShown {
+                        this.m_tojiKoShown = true;
+                        CCSharedHud.NotifyTyped(game,
+                            GetLocalizedTextByKey(n"cc-g02-hud-toji-ko"),
+                            SimpleMessageType.Negative, 6.0);
+                    }
+                }
+            }
+        }
 
         if qs.GetFactStr("cc_g02_exfil_done") > 0 {
             this.SiteClear(qs, pos);
@@ -1073,6 +1108,7 @@ public class DeadRingerEncounter extends ScriptableSystem {
         }
         qs.SetFactStr("cc_g02_toji_met", 1);
         qs.SetFactStr("cc_g02_toji_dead", 1);
+        qs.SetFactStr("cc_g02_toji_ko", 1);
         if qs.GetFactStr("cc_g02_hit_reached") == 0 {
             qs.SetFactStr("cc_g02_hit_reached", 1);
         }

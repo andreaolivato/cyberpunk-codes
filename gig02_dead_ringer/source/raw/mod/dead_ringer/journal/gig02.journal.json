@@ -3,7 +3,7 @@
     "WolvenKitVersion": "8.20.0",
     "WKitJsonVersion": "0.0.9",
     "GameVersion": 2310,
-    "ExportedDateTime": "2026-09-08T02:56:32.1593563Z",
+    "ExportedDateTime": "2026-10-24T07:51:27.1593563Z",
     "DataType": "CR2W",
     "ArchiveFileName": "C:\\Users\\andre\\OneDrive\\Desktop\\cyberpunk-gigs\\gig02_dead_ringer\\source\\archive\\mod\\dead_ringer\\journal\\gig02.journal"
   },
@@ -2013,12 +2013,107 @@
                                         "counter": 0,
                                         "description": {
                                           "unk1": "0",
-                                          "value": "cc-g02-obj-exfil"
+                                          "value": "cc-g02-obj-toji-finish"
                                         },
                                         "districtID": "",
                                         "entries": [
                                           {
                                             "HandleId": "69",
+                                            "Data": {
+                                              "$type": "gameJournalQuestMapPin",
+                                              "enableGPS": 1,
+                                              "entries": [],
+                                              "id": "pin_toji_finish",
+                                              "journalEntryOverrideDataList": [],
+                                              "mappinData": {
+                                                "$type": "gamemappinsMappinData",
+                                                "active": 1,
+                                                "debugCaption": "",
+                                                "localizedCaption": {
+                                                  "unk1": "0",
+                                                  "value": "cc-g02-pin-pin-toji-finish"
+                                                },
+                                                "mappinType": {
+                                                  "$type": "TweakDBID",
+                                                  "$storage": "string",
+                                                  "$value": "Mappins.QuestStaticMappinDefinition"
+                                                },
+                                                "scriptData": null,
+                                                "variant": "QuestGiverVariant",
+                                                "visibleThroughWalls": 1
+                                              },
+                                              "offset": {
+                                                "$type": "Vector3",
+                                                "X": -26.4410992,
+                                                "Y": -132.611404,
+                                                "Z": -18.7341003
+                                              },
+                                              "reference": {
+                                                "$type": "gameEntityReference",
+                                                "dynamicEntityUniqueName": {
+                                                  "$type": "CName",
+                                                  "$storage": "string",
+                                                  "$value": "None"
+                                                },
+                                                "names": [],
+                                                "reference": {
+                                                  "$type": "NodeRef",
+                                                  "$storage": "string",
+                                                  "$value": "#wbr_sm_jpn_netrun_01"
+                                                },
+                                                "sceneActorContextName": {
+                                                  "$type": "CName",
+                                                  "$storage": "string",
+                                                  "$value": "None"
+                                                },
+                                                "slotName": {
+                                                  "$type": "CName",
+                                                  "$storage": "string",
+                                                  "$value": "None"
+                                                },
+                                                "type": "EntityRef"
+                                              },
+                                              "slotName": {
+                                                "$type": "CName",
+                                                "$storage": "string",
+                                                "$value": "UI_Interaction"
+                                              },
+                                              "uiAnimation": {
+                                                "$type": "TweakDBID",
+                                                "$storage": "uint64",
+                                                "$value": "0"
+                                              }
+                                            }
+                                          }
+                                        ],
+                                        "id": "obj_toji_finish",
+                                        "itemID": {
+                                          "$type": "TweakDBID",
+                                          "$storage": "uint64",
+                                          "$value": "0"
+                                        },
+                                        "journalEntryOverrideDataList": [],
+                                        "locationPrefabRef": {
+                                          "$type": "NodeRef",
+                                          "$storage": "uint64",
+                                          "$value": "0"
+                                        },
+                                        "optional": 0
+                                      }
+                                    },
+                                    {
+                                      "HandleId": "70",
+                                      "Data": {
+                                        "$type": "gameJournalQuestObjective",
+                                        "counter": 0,
+                                        "description": {
+                                          "unk1": "0",
+                                          "value": "cc-g02-obj-exfil"
+                                        },
+                                        "districtID": "",
+                                        "entries": [
+                                          {
+                                            "HandleId": "71",
                                             "Data": {
                                               "$type": "gameJournalQuestMapPin",
                                               "enableGPS": 1,
@@ -2102,7 +2197,7 @@
                                       }
                                     },
                                     {
-                                      "HandleId": "70",
+                                      "HandleId": "72",
                                       "Data": {
                                         "$type": "gameJournalQuestObjective",
                                         "counter": 0,
@@ -2113,7 +2208,7 @@
                                         "districtID": "",
                                         "entries": [
                                           {
-                                            "HandleId": "71",
+                                            "HandleId": "73",
                                             "Data": {
                                               "$type": "gameJournalQuestMapPin",
                                               "enableGPS": 1,
@@ -2197,7 +2292,7 @@
                                       }
                                     },
                                     {
-                                      "HandleId": "72",
+                                      "HandleId": "74",
                                       "Data": {
                                         "$type": "gameJournalQuestObjective",
                                         "counter": 0,
@@ -2223,7 +2318,7 @@
                                       }
                                     },
                                     {
-                                      "HandleId": "73",
+                                      "HandleId": "75",
                                       "Data": {
                                         "$type": "gameJournalQuestObjective",
                                         "counter": 0,
@@ -2259,7 +2354,7 @@
                                 }
                               },
                               {
-                                "HandleId": "74",
+                                "HandleId": "76",
                                 "Data": {
                                   "$type": "gameJournalQuestDescription",
                                   "description": {
@@ -2296,17 +2391,17 @@
               }
             },
             {
-              "HandleId": "75",
+              "HandleId": "77",
               "Data": {
                 "$type": "gameJournalPrimaryFolderEntry",
                 "entries": [
                   {
-                    "HandleId": "76",
+                    "HandleId": "78",
                     "Data": {
                       "$type": "gameJournalPointOfInterestGroup",
                       "entries": [
                         {
-                          "HandleId": "77",
+                          "HandleId": "79",
                           "Data": {
                             "$type": "gameJournalPointOfInterestMappin",
                             "dynamicEntityRef": {
@@ -2362,7 +2457,7 @@
                                 "$value": "Mappins.StaticPointOfInterestMappinDefinition"
                               },
                               "typedVariant": {
-                                "HandleId": "78",
+                                "HandleId": "80",
                                 "Data": {
                                   "$type": "gamemappinsPhaseVariant",
                                   "phase": "UndiscoveredPhase",
@@ -2382,7 +2477,7 @@
                               "Z": 0
                             },
                             "questPath": {
-                              "HandleId": "79",
+                              "HandleId": "81",
                               "Data": {
                                 "$type": "gameJournalPath",
                                 "className": {
@@ -2423,37 +2518,37 @@
               }
             },
             {
-              "HandleId": "80",
+              "HandleId": "82",
               "Data": {
                 "$type": "gameJournalPrimaryFolderEntry",
                 "entries": [
                   {
-                    "HandleId": "81",
+                    "HandleId": "83",
                     "Data": {
                       "$type": "gameJournalFolderEntry",
                       "entries": [
                         {
-                          "HandleId": "82",
+                          "HandleId": "84",
                           "Data": {
                             "$type": "gameJournalFolderEntry",
                             "entries": [
                               {
-                                "HandleId": "83",
+                                "HandleId": "85",
                                 "Data": {
                                   "$type": "gameJournalFolderEntry",
                                   "entries": [
                                     {
-                                      "HandleId": "84",
+                                      "HandleId": "86",
                                       "Data": {
                                         "$type": "gameJournalFolderEntry",
                                         "entries": [
                                           {
-                                            "HandleId": "85",
+                                            "HandleId": "87",
                                             "Data": {
                                               "$type": "gameJournalOnscreenGroup",
                                               "entries": [
                                                 {
-                                                  "HandleId": "86",
+                                                  "HandleId": "88",
                                                   "Data": {
                                                     "$type": "gameJournalOnscreen",
                                                     "description": {
