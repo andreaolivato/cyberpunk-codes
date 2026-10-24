@@ -799,6 +799,8 @@ local function dumpLookedAt(name)
     end)
     m("IsDead", function() return target:IsDead() end)
     m("IsDefeated", function() return target:IsDefeated() end)
+    m("unconscious", function() return ScriptedPuppet.IsUnconscious(target) end)
+    m("alive to the game", function() return ScriptedPuppet.IsAlive(target) end)
 
     -- HAS HE SEEN THE PLAYER. `highLevelState` is what the gig's own stealth
     -- check reads: Combat means spotted. Relaxed or Alerted does not.
@@ -1517,6 +1519,41 @@ registerForEvent("onDraw", function()
     ImGui.TextDisabled("Point at the merc: health should fall when shot and stop")
     ImGui.TextDisabled("short of zero. Point at a Claw: highLevelState Combat is")
     ImGui.TextDisabled("what the gig reads as 'spotted'.")
+
+    -- DOWN OR KNOCK OUT WHOEVER IS UNDER THE CROSSHAIR (1.2.3). The two
+    -- states between alive and dead, without the perk or the weapon that
+    -- produces them. DOWN sets his health to a sliver under the game's own
+    -- defeat line (the custom limit NPCPuppet sets for every human), so the
+    -- game's own path runs: OnStatPoolCustomLimitReached, MarkForDefeat,
+    -- OnPotentialDeath, the Defeated status. That is what a finisher perk
+    -- leaves. KNOCK OUT applies BaseStatusEffect.Unconscious directly, which
+    -- is the status a non-lethal hit ends in.
+    ImGui.Spacing()
+    if ImGui.Button("DOWN THE NPC I'M AIMING AT (looks dead, game says alive)") then
+        local target = lookedAtObject()
+        if target == nil then
+            log("down: nothing under the crosshair.")
+        else
+            local ok, err = pcall(function()
+                Game.GetStatPoolsSystem():RequestSettingStatPoolValue(target:GetEntityID(),
+                    gamedataStatPoolType.Health, 0.05, Game.GetPlayer(), true, false)
+            end)
+            log(ok and "down: health set to a sliver; dump him to see IsDefeated"
+                   or ("down failed: " .. tostring(err)))
+        end
+    end
+    if ImGui.Button("KNOCK OUT THE NPC I'M AIMING AT (unconscious)") then
+        local target = lookedAtObject()
+        if target == nil then
+            log("knockout: nothing under the crosshair.")
+        else
+            local ok, err = pcall(function()
+                CCLab_Status(target, "BaseStatusEffect.Unconscious", true)
+            end)
+            log(ok and "knockout: Unconscious applied" or ("knockout failed: " .. tostring(err)))
+        end
+    end
+    ImGui.TextDisabled("Aim at Toji, press one, then read the objective.")
 
     ImGui.Spacing()
     if ImGui.CollapsingHeader("Gig status: which beat it is on, what it waits for, and which bodies are in the world") then

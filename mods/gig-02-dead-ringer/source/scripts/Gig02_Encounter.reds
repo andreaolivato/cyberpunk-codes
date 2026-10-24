@@ -1991,6 +1991,16 @@ public class DeadRingerEncounter extends ScriptableSystem {
             qs.SetFactStr("cc_g02_toji_ko", 1);
         }
 
+        // DOWNED COUNTS AS DEAD, UNCONSCIOUS DOES NOT (1.2.3). The game has
+        // two states between alive and dead, and both read as alive here.
+        // Defeated is what a lethal hit leaves when the game holds back the
+        // last point of damage for a finisher (StatPoolsManager.IsFinisherGrace,
+        // the Reflexes perks with a blade, a throwable or a bleed): he lies
+        // in his blood and offers Pick Up Body, and no death event comes
+        // until he is finished. Nexus, 1.2.1: a screenshot of exactly that,
+        // on a level 60 V. Unconscious is the non-lethal outcome
+        // (NPCPuppet.OnPotentialDeath picks one or the other).
+        //
         // KNOCKED OUT IS NOT DEAD, AND NOW THE PLAYER IS TOLD, 2026-10-24.
         // Backlog 45 left this open: System Collapse, a blunt weapon or a
         // choke drop him breathing, the bounty pays as for a kill, and the
@@ -2014,7 +2024,14 @@ public class DeadRingerEncounter extends ScriptableSystem {
                 && tojiBb.GetBool(GetAllBlackboardDefs().PuppetState.IsBodyDisposed) {
                 DeadRingerEncounter.TojiDied(game);
             } else {
-                if ScriptedPuppet.IsDefeated(toji) || ScriptedPuppet.IsUnconscious(toji) {
+                if ScriptedPuppet.IsDefeated(toji) && !ScriptedPuppet.IsUnconscious(toji) {
+                    // DOWNED, NOT KNOCKED OUT, 2026-10-24 (1.2.3). The
+                    // fallback for the event wrap at the bottom of this file
+                    // (CCGig02TojiDefeatWrap), for a save loaded with him
+                    // already down.
+                    DeadRingerEncounter.TojiDied(game);
+                }
+                if ScriptedPuppet.IsUnconscious(toji) {
                     if qs.GetFactStr("cc_g02_toji_ko") == 0 {
                         qs.SetFactStr("cc_g02_toji_ko", 1);
                     }
@@ -2622,6 +2639,20 @@ protected cb func OnHit(evt: ref<gameHitEvent>) -> Bool {
     let r: Bool = wrappedMethod(evt);
     if Equals(this.GetRecordID(), CCGig02Combat.MercRecord()) {
         DeadRingerEncounter.MercWasHit(this.GetGame());
+    }
+    return r;
+}
+
+// TOJI DOWNED, SEEN FROM HIS OWN BODY (1.2.3). DefeatedEvent reaches
+// ScriptedPuppet.OnDefeated for the downed state and for the knockout alike,
+// so the wrap tells them apart and counts only the downed one. Same filter by
+// record as the death wrap below. Marker: CCGig02TojiDefeatWrap.
+@wrapMethod(ScriptedPuppet)
+protected cb func OnDefeated(evt: ref<DefeatedEvent>) -> Bool {
+    let r: Bool = wrappedMethod(evt);
+    if Equals(this.GetRecordID(), CCGig02Combat.TojiRecord())
+        && !ScriptedPuppet.IsUnconscious(this) {
+        DeadRingerEncounter.TojiDied(this.GetGame());
     }
     return r;
 }

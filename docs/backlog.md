@@ -9618,6 +9618,18 @@ which the death wrap already hears; the script also reads the puppet's
 `IsBodyDisposed` blackboard flag as a fallback. Playtest, 2026-10-24: both
 routes, knockout then shot and knockout then container, finish the leg.
 
+**The report itself was a third state, closed 2026-10-24 (1.2.3).** The
+reporter's screenshot showed Toji face down in his blood with "Pick Up
+Body", V at level 60, and the objective on "Kill Toji". That is a Defeated
+body: a lethal hit the game left one point short for a finisher, alive to
+the game, with no death event until finished (gotcha 124). 1.2.2 caught it
+as a knockout, so the player got "Finish Toji off" for a man who looked
+dead. Now a Defeated Toji who is not Unconscious counts as killed, from a
+wrap on `ScriptedPuppet.OnDefeated` and from the tick for a save loaded
+with him already down. An Unconscious Toji still gets "Finish Toji off".
+Playtest, 2026-10-24, with the dev menu's DOWN and KNOCK OUT buttons:
+downed went to "Leave without being seen", knocked out to "Finish Toji off".
+
 **The workaround for a save stuck on 1.0.4**, from the CET console, then walk
 away from the stairs:
 

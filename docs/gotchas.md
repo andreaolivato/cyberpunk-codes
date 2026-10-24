@@ -2990,3 +2990,29 @@ Never renumber. Append.
      chain. Removed nodes leave their numbers unused. Before a release, diff
      the ids of every `questPauseConditionNodeDefinition` against the last
      tagged release: any wait whose id moved is a save that stops.
+
+124. **A body on the ground after a lethal hit can be alive, and no death
+     event comes for it.** Every human NPC has two states between alive and
+     dead. `NPCPuppet.OnPotentialDeath` picks one when health reaches the
+     defeat line the game sets on every human.
+
+     - Unconscious: a non-lethal hit, a non-lethal takedown, System
+       Collapse. `ScriptedPuppet.IsUnconscious` is true. The body lies
+       limp and still.
+     - Defeated, without Unconscious: a lethal hit whose last point of
+       damage the game held back for a finisher
+       (`StatPoolsManager.IsFinisherGrace`: the Reflexes perks with a
+       blade, a throwable or a bleed). The body lies in its blood, squirms,
+       and offers Pick Up Body.
+
+     Both report `ScriptedPuppet.IsAlive` true, and `IsDefeated` is true for
+     both. `OnDeath` fires only when the body is finished. A quest that
+     waits on a death waits for good on a Defeated body, and a player with
+     the perks reads it as a kill that the quest did not see.
+
+     Measured on game 2.31 with a dev button that sets health to 0.05% of
+     max, so the game's own defeat path runs: health 0.1%, `IsDefeated`
+     true, unconscious false, alive true. Applying
+     `BaseStatusEffect.Unconscious` gave health 100%, `IsDefeated` true,
+     unconscious true, alive true. To count a Defeated body as a kill, wrap
+     `ScriptedPuppet.OnDefeated` and test `!IsUnconscious`. `backlog.md` 45.
