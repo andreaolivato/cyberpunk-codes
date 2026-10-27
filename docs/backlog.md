@@ -10282,3 +10282,80 @@ has not been played.
 - Whether eighteen per site is right for a player with Dark Future, which
   changes what a fight costs rather than how guards see. Not played with;
   the mod is not installed on the dev machine.
+
+## 51. Mouths made from the audio. BUILT 2026-10-26, all three gigs played 2026-10-27
+
+Until this entry no gig shipped animation data. Every line borrowed a vanilla
+lipsync animation: its own, if it was a whole vanilla line and the one set an
+actor gets per scene held it, or one of about the right length otherwise. A
+recorded or cut line therefore moved a mouth shaped for other words (2j, and
+the ceiling stated there).
+
+Each actor of each scene now has a set the gig ships, at
+`mod\<mod>\localization\en-us\lipsync\<scene>\<actor>.anims`. The
+[lipsync animator](https://github.com/andreaolivato/cyberpunk2077-lipsync-animator)
+makes a mouth for every line the gig ships a clip for, from the clip and its
+words. Every whole vanilla line gets a copy of the animation CDPR made for
+it. The recipe is in `scene-playbook.md`, "Making the mouth from the audio".
+
+| gig | lines with a mouth | borrowed before | made now | copied now |
+|---|---|---|---|---|
+| 01 | 20 | 10 | 7 | 13 |
+| 02 | 47 | 27 | 21 | 26 |
+| 03 | 18 | 10 | 4 | 14 |
+
+Of the 34 actor-scene sets, 16 still point at a vanilla set: the actor says
+only whole vanilla lines there, all baked in that one set. The other 18 are
+the gig's own: 5 hold only made animations, 10 hold made ones beside copies
+of the same actor's whole lines in that scene, and 3 hold copies from more
+than one vanilla set.
+
+Fifteen of the 47 lines that were borrowed were whole vanilla lines. Fourteen
+had lost the one-set-per-scene tie to their scene-mates, and one had no set
+in the catalogue (below). A set the gig ships takes copies from any number of
+vanilla sets, so that tie no longer exists.
+
+### Established at the desk
+
+- The first build of the animator's `anims --sets` "copy" did not keep an
+  animation unchanged. It re-imported it against one fixed male head
+  (`h0_017_ma_b__middle`). One queue man's line came out with 7,609 of
+  86,408 bytes changed, 186 frames instead of 187, and its events gone. In
+  game every copied line moved the neck while the character talked, longer
+  on the men outside Afterlife and shorter on Yoko (playtest, 2026-10-26,
+  with screenshots). The animator was fixed the same day: a copy now moves
+  the animation byte for byte, and the set takes the head of its first
+  source. `questkit.lipsync._check_copies` reads every copied animation back
+  after each build and stops on any difference. All copies in the three gigs
+  pass.
+- Made mouths now leave the head bones at rest and every other face control
+  at 0, so they suit any head (the animator's changelog). They were made
+  again with the fixed version.
+- A copy needs its set found first. Gig 03's Johnny at the door is a Phantom
+  Liberty line, and its animation is in
+  `ep1\localization\en-us\lipsync\...\q307_01_pickup\johnny.anims`, inside
+  the expansion's voice archive. The catalogue read only the base archive
+  until `questkit.lipsync.configure` took `extra_archives` (gotcha 118).
+- Every made animation ends 16 to 63 ms before its clip, on all 32. That is
+  one or two frames at 30 fps.
+- A voicetag can be any non-zero number that differs between the speakers
+  of a scene. The gig's own lipmap entry is the only thing keyed by it.
+  `questkit.lipsync.voicetag` derives one from the actor name.
+- The `rig` the animator writes is the same head for every set. 2j settled
+  that the field does not decide what plays.
+- Every dub's lipmap names the English set. The made animations come from the
+  English clips, and a line cut again for a dub keeps the English cut's mouth.
+  A set per dub is possible from the packs `download_depot` fetches; the
+  design call kept one English set.
+
+### Played 2026-10-26, gig 01
+
+Playtest: "It works perfectly." Nix's two cut lines on the video call,
+Hoshino's two lines, Mama Welles's cut line, and the three whole lines that
+had lost the tie.
+
+### Played 2026-10-27, all three gigs, with the fixed animator
+
+Playtest: "Everything works." Necks steady on the copied lines (Yoko, the
+five outside Afterlife), on the made ones (the merc, Char, Wakako), and on
+the three scenes whose copies come from several vanilla sets.

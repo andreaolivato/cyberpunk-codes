@@ -1,8 +1,13 @@
-r"""Lipsync: the vanilla-animation catalogue, and casting lines into it.
+r"""Lipsync: the vanilla-animation catalogue, and each line's mouth.
 
-The reusable half of the lipsync pipeline. THE MOD SHIPS NO ANIMATION DATA: the
-animation NAME a scene line carries is free-form, so a line simply points at an
-animation the game already owns, chosen for having about the right length.
+The reusable half of the lipsync pipeline. Two routes live here:
+
+  * OUR OWN MOUTHS, at the end of this file. Each actor of each scene gets a
+    set the mod ships: mouths made from the gig's clips by the lipsync
+    animator, plus copies of CDPR's animations for whole vanilla lines.
+  * CASTING, everything before that. A line points at an animation the game
+    already owns, chosen for having about the right length, and the mod ships
+    no animation data. The route every gig used until 2026-10-26.
 
 THE CHAIN, established the expensive way and worth not re-deriving:
 
@@ -38,11 +43,12 @@ CATALOGUE = None
 WK = None
 VOICE_ARCHIVE = None
 CHARACTERS = None
+EXTRA_ARCHIVES = []
 LIPMAP_DEPOT = r'base\localization\en-us.lipmap'
 
 
 def configure(cache, catalogue, wolvenkit, voice_archive, characters,
-              lipmap_depot=None):
+              lipmap_depot=None, extra_archives=None):
     """cache/catalogue are extraction scratch, so they are gitignored and cheap
     to rebuild. wolvenkit is the CLI, voice_archive the game's lang_*_voice
     archive: both are read, never written.
@@ -51,10 +57,18 @@ def configure(cache, catalogue, wolvenkit, voice_archive, characters,
     rebuild_cache needs it to know which .anims to pull out of the archive, and
     it is REQUIRED even though only that one path uses it: a machine with a warm
     cache never calls rebuild_cache, so a missing cast is invisible until
-    somebody clones the repo."""
+    somebody clones the repo.
+
+    extra_archives are more voice archives to read sets from, for a gig that
+    reuses Phantom Liberty lines: their animations are in
+    `archive/pc/ep1/lang_en_voice.archive` (gotcha 118). Opt-in, because the
+    vanilla lipmap read for voicetags covers the base game only, and the
+    casting route stops on a set with no voicetag."""
     global CACHE, CATALOGUE, WK, VOICE_ARCHIVE, LIPMAP_DEPOT, CHARACTERS
+    global EXTRA_ARCHIVES
     CACHE, CATALOGUE, WK, VOICE_ARCHIVE = cache, catalogue, wolvenkit, voice_archive
     CHARACTERS = characters
+    EXTRA_ARCHIVES = list(extra_archives or [])
     if lipmap_depot:
         LIPMAP_DEPOT = lipmap_depot
 
@@ -99,7 +113,8 @@ def rebuild_cache():
                              'configure() before rebuilding the catalogue.')
         rx = '|'.join('(%s)' % c['regex'] for c in CHARACTERS.values())
         print('extracting lipsync sets...')
-        _run(WK, 'unbundle', VOICE_ARCHIVE, '-o', raw, '-r', rx)
+        for archive in [VOICE_ARCHIVE] + EXTRA_ARCHIVES:
+            _run(WK, 'unbundle', archive, '-o', raw, '-r', rx)
         print('extracting the vanilla lipmap...')
         _run(WK, 'unbundle', VOICE_ARCHIVE, '-o', raw, '-r', r'en-us\.lipmap$')
 
@@ -408,3 +423,361 @@ def pick(catalogue, wanted_lines, verbose=False, exact=None):
                 print('    %-6s want %5d ms  got %5d ms  %s'
                       % (key, by_key[key], int(seconds * 1000), name))
     return sets, lines, report
+
+
+# ------------------------------------------------------------ our own mouths
+#
+# Everything above casts a vanilla animation by LENGTH. What follows replaces
+# that for the lines the gig ships audio for: the lipsync animator makes a
+# mouth from the clip and its words, and each actor of each scene gets one
+# .anims of the mod's own, holding
+#
+#   * the animations made from our clips, named f_<line RUID>, and
+#   * a copy of CDPR's own animation for every whole vanilla line, under its
+#     vanilla name, out of whichever vanilla set holds it.
+#
+# The second half is what lifts the one-set-per-scene limit `_exact` works
+# around: the copies can come from any number of vanilla sets.
+#
+# Two stores, on purpose:
+#
+#   mods/<gig>/source/lipsync/<scene>/<actor>.anims   COMMITTED. Only the
+#       made animations, so only data made from our own recordings. Remade
+#       only when a line's clip or words change (made.json records both), so
+#       a build that changed no line needs neither the animator nor its
+#       aligner.
+#   raw/mod/<mod>/localization/en-us/lipsync/<scene>/<actor>.anims   BUILT,
+#       gitignored. The committed animations plus the vanilla copies, so it
+#       needs the game installed. CDPR's animation data is never committed.
+
+_REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+
+def animator():
+    """(python, folder) of the lipsync animator.
+
+    LIPSYNC_ANIMATOR names its folder. Otherwise a folder beside this repo
+    whose name starts with cyberpunk2077-lipsync-animator, preferring one with
+    its own venv. That venv's Python is used when there is one, because that
+    is where its dependencies are and it finds the aligner by itself."""
+    import glob
+    folder = os.environ.get('LIPSYNC_ANIMATOR')
+    if not folder:
+        found = sorted(glob.glob(os.path.join(os.path.dirname(_REPO),
+                                              'cyberpunk2077-lipsync-animator*')),
+                       key=lambda f: not os.path.exists(
+                           os.path.join(f, '.venv', 'Scripts', 'python.exe')))
+        folder = found[0] if found else None
+    if not folder or not os.path.isdir(folder):
+        raise SystemExit('lipsync animator not found: set LIPSYNC_ANIMATOR to '
+                         'its folder')
+    py = os.path.join(folder, '.venv', 'Scripts', 'python.exe')
+    return (py if os.path.exists(py) else sys.executable), folder
+
+
+def _animate(sets):
+    """One `anims --sets` run. Every `out` is written to a temporary name and
+    moved into place only after the whole run succeeds, so a failed run leaves
+    the previous files as they were."""
+    py, folder = animator()
+    tmp = tempfile.mkdtemp(prefix='cc-mouths-')
+    sets = list(sets)                   # the caller's list keeps its paths
+    try:
+        final = []
+        for i, s in enumerate(sets):
+            final.append(s['out'])
+            s = dict(s, out=os.path.join(tmp, '%03d.anims' % i))
+            sets[i] = s
+        spec = os.path.join(tmp, 'sets.json')
+        with open(spec, 'w', encoding='utf-8') as fh:
+            json.dump(sets, fh, indent=1)
+        cmd = [py, '-m', 'lipsync_animator', 'anims', '--sets', spec]
+        for archive in EXTRA_ARCHIVES:
+            cmd += ['--archive', archive]
+        r = subprocess.run(cmd, cwd=folder, capture_output=True, text=True)
+        if r.returncode != 0:
+            raise SystemExit('lipsync animator failed:\n%s\n%s'
+                             % (r.stdout[-3000:], r.stderr[-3000:]))
+        for s, out in zip(sets, final):
+            os.makedirs(os.path.dirname(out), exist_ok=True)
+            shutil.move(s['out'], out)
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def _sha(path):
+    import hashlib
+    with open(path, 'rb') as fh:
+        return hashlib.sha256(fh.read()).hexdigest()
+
+
+def mouth_lines(scenes, actors, vomap_json, raw_dir, catalogue):
+    """Every line spoken by one of `actors` that can have a mouth, as dicts:
+
+        made   {scene, actor, key, name, audio, text}   a clip the mod ships
+        copied {scene, actor, key, name, from}          a whole vanilla line
+
+    A line is MADE when the English voiceover map gives its RUID a clip of
+    ours, which is true of the recorded characters and of every cut vanilla
+    take. It is COPIED when it is a whole vanilla line, whose animation
+    `f_<stringId>` is looked up in the catalogue and copied under the set's
+    own spelling (gotcha 114).
+
+    The speaker is matched by actorId, never by position: scene actors and
+    V share one id space."""
+    with open(vomap_json, encoding='utf-8') as fh:
+        root = json.load(fh)['Data']['RootChunk']
+    clips = {e['stringId']: (e['femaleResPath']['DepotPath']['$value'],
+                             e['maleResPath']['DepotPath']['$value'])
+             for e in root['root']['Data']['entries']}
+    index = {}
+    for depot, entry in sorted(catalogue.items()):
+        for n, _sec in entry['anims']:
+            index.setdefault(n.upper(), (depot, n))
+    out = []
+    for scene in scenes:
+        names = {a['actorId']['id']: a['actorName'] for a in scene.actors}
+        reused = {k: t for k, _sid, t in scene.reused}
+        for idx, line in enumerate(scene.lines):
+            actor = names.get(line['speaker']['id'])
+            if actor not in actors:
+                continue
+            key = scene.line_key[idx]
+            ruid = line['locstringId']['ruid']
+            name = 'f_%016X' % int(ruid)
+            row = {'scene': scene.name, 'actor': actor, 'key': key}
+            if ruid in clips:
+                fem, male = clips[ruid]
+                # One recording per line is all the scene line can name today:
+                # both lipsync names get the same animation.
+                if fem != male:
+                    raise SystemExit('%s/%s has a different clip for each V; '
+                                     'make an m_ animation for it first'
+                                     % (scene.name, key))
+                row.update(name=name, audio=os.path.join(raw_dir, fem),
+                           text=scene.line_text.get(key) or reused.get(key))
+                if not os.path.exists(row['audio']):
+                    raise SystemExit('%s/%s: clip %s is not in the raw tree; '
+                                     'run gen_voice first' % (scene.name, key, fem))
+            elif key in reused:
+                hit = index.get(name.upper())
+                if hit is None:
+                    print('  warning: %s/%s reuses %s and no vanilla set in the '
+                          'catalogue has its animation; it gets no mouth'
+                          % (scene.name, key, name))
+                    continue
+                row.update({'from': hit[0], 'name': hit[1]})
+            else:
+                continue                          # not voiced, nothing to move
+            out.append(row)
+    return out
+
+
+def build_mouths(lines, mod_dir, mod_depot, voicetags, remake=False):
+    """Make what changed, assemble every actor's set, return the picks.
+
+    `mod_depot` is the mod's depot folder (`mod\\negative_balance`).
+    `voicetags` is {actorName: voicetag}; any non-zero number works as long
+    as it differs between the speakers of one scene.
+
+    Returns (sets, names) in the shape gen_scenes reads from
+    lipsync_picks.json."""
+    store = os.path.join(mod_dir, 'source', 'lipsync')
+    record_path = os.path.join(store, 'made.json')
+    record = {}
+    if os.path.exists(record_path):
+        with open(record_path, encoding='utf-8') as fh:
+            record = json.load(fh)
+
+    groups = {}
+    for row in lines:
+        groups.setdefault((row['scene'], row['actor']), []).append(row)
+
+    # 1. Remake the committed sets whose clips or words changed.
+    remade, new_record = [], {}
+    for (scene, actor), rows in sorted(groups.items()):
+        made = [r for r in rows if 'audio' in r]
+        if not made:
+            continue
+        gid = '%s/%s' % (scene, actor.lower())
+        path = os.path.join(store, scene, actor.lower() + '.anims')
+        want = {r['name']: {'key': r['key'], 'text': r['text'],
+                            'audio': os.path.relpath(r['audio'], mod_dir)
+                                       .replace(os.sep, '/'),
+                            'audio_sha256': _sha(r['audio'])} for r in made}
+        new_record[gid] = want
+        have = record.get(gid, {}) if os.path.exists(path) else {}
+        stale = [r for r in made if remake or have.get(r['name']) != want[r['name']]]
+        if not stale:
+            continue
+        keep = [n for n in want if n in have and not any(r['name'] == n for r in stale)]
+        entry = {'out': path,
+                 'lines': [{'name': r['name'], 'audio': r['audio'], 'text': r['text']}
+                           for r in stale]}
+        if keep:
+            entry['copy'] = [{'from': path, 'names': keep}]
+        remade.append(entry)
+        print('  remaking %s: %d of %d line(s)' % (gid, len(stale), len(made)))
+    if remade:
+        _animate(remade)
+    # Sets nobody wants any more go, so the store is exactly the record.
+    for gid in set(record) - set(new_record):
+        p = os.path.join(store, *gid.split('/')) + '.anims'
+        if os.path.exists(p):
+            os.remove(p)
+    os.makedirs(store, exist_ok=True)
+    with open(record_path, 'w', encoding='utf-8', newline='\n') as fh:
+        json.dump(new_record, fh, indent=1, sort_keys=True)
+
+    # 2. Assemble every actor's set: ours, plus the vanilla copies.
+    raw = os.path.join(mod_dir, 'source', 'wkit', 'raw')
+    sets, names, build, stamp = {}, {}, [], {}
+    for (scene, actor), rows in sorted(groups.items()):
+        depot = chr(92).join([mod_depot, 'localization', 'en-us', 'lipsync',
+                              scene, actor.lower() + '.anims'])
+        out = os.path.join(raw, depot)
+        copy = []
+        made = [r['name'] for r in rows if 'audio' in r]
+        by_set = {}
+        for r in rows:
+            if 'from' in r:
+                by_set.setdefault(r['from'], []).append(r['name'])
+        # Only game lines, all in one vanilla set: point at that set, as
+        # before the animator. Nothing is copied or shipped for this actor,
+        # and each dub's lipmap gets that dub's own set (write_lipmap).
+        if not made and len(by_set) == 1:
+            sets.setdefault(scene, {})[actor] = {
+                'anims': next(iter(by_set)), 'voicetag': str(voicetags[actor])}
+            for r in rows:
+                names['%s/%s' % (scene, r['key'])] = r['name']
+            continue
+        copy += [{'from': d, 'names': n} for d, n in sorted(by_set.items())]
+        # Vanilla sources first: the set takes the head of the first set it
+        # copies from, so a mixed set keeps the character's own.
+        if made:
+            copy.append({'from': os.path.join(store, scene, actor.lower() + '.anims'),
+                         'names': made})
+        entry = {'out': out, 'lines': [], 'copy': copy}
+        # Rebuild only what changed: the spec plus the committed file's bytes.
+        key = json.dumps(['tool-copy-1', copy,
+                          _sha(copy[-1]['from']) if made else None])
+        stamp[depot] = key
+        sets.setdefault(scene, {})[actor] = {'anims': depot,
+                                             'voicetag': str(voicetags[actor])}
+        for r in rows:
+            names['%s/%s' % (scene, r['key'])] = r['name']
+        build.append((depot, entry))
+    for scene, actors in sets.items():
+        tags = [a['voicetag'] for a in actors.values()]
+        if len(set(tags)) != len(tags) or '0' in tags:
+            raise SystemExit('%s: voicetags must be non-zero and differ: %s'
+                             % (scene, actors))
+
+    stamp_path = os.path.join(CACHE, 'mouths_%s.json' % os.path.basename(mod_dir))
+    old = {}
+    if os.path.exists(stamp_path):
+        with open(stamp_path, encoding='utf-8') as fh:
+            old = json.load(fh)
+    todo = [e for d, e in build
+            if remake or old.get(d) != stamp[d] or not os.path.exists(e['out'])]
+    if todo:
+        print('  assembling %d set(s)' % len(todo))
+        _animate(todo)
+        _check_copies(todo)
+    # Built sets of scenes or actors that no longer speak go too.
+    lip_root = os.path.join(raw, mod_depot, 'localization', 'en-us', 'lipsync')
+    wanted = {os.path.normcase(os.path.join(raw, d)) for d, _e in build}
+    for root, _dirs, files in os.walk(lip_root):
+        for f in files:
+            p = os.path.join(root, f)
+            if f.endswith('.anims') and os.path.normcase(p) not in wanted:
+                os.remove(p)
+    os.makedirs(CACHE, exist_ok=True)
+    with open(stamp_path, 'w', encoding='utf-8', newline='\n') as fh:
+        json.dump(stamp, fh, indent=1, sort_keys=True)
+    return sets, names
+
+
+def _check_copies(entries):
+    """Every copied animation must have its source's bytes, exactly.
+
+    The animator's `copy` once re-imported each animation against one fixed
+    male head instead of moving it: the keys changed, a frame went, and in
+    game every copied line moved the neck, longer on the men outside
+    Afterlife and shorter on Yoko (playtest, 2026-10-26). It has been fixed
+    since. This check stops the build if that ever comes back."""
+    tmp = tempfile.mkdtemp(prefix='cc-check-')
+    try:
+        files, flat = {}, os.path.join(tmp, 'in')
+        os.makedirs(flat)
+
+        def add(path):
+            if path not in files:
+                files[path] = 'f%03d.anims' % len(files)
+                shutil.copy(path, os.path.join(flat, files[path]))
+
+        for e in entries:
+            add(e['out'])
+            for c in e['copy']:
+                src = c['from']
+                if not os.path.isabs(src):
+                    src = _unbundle_sets([src], os.path.join(CACHE, 'sets'))[src]
+                c['_local'] = src
+                add(src)
+        _run(WK, 'convert', 'serialize', flat, '-o', flat)
+        docs = {}
+        for path, n in files.items():
+            with open(os.path.join(flat, n + '.json'), encoding='utf-8') as fh:
+                docs[path] = _anim_bytes(json.load(fh))
+        for e in entries:
+            got = docs[e['out']]
+            for c in e['copy']:
+                want = docs[c.pop('_local')]
+                for n in c['names']:
+                    if got.get(n) != want[n]:
+                        raise SystemExit('%s: %s is not byte for byte its source'
+                                         % (e['out'], n))
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def _unbundle_sets(depots, into):
+    """Extract vanilla .anims by depot path from the voice archives into
+    `into`, keeping the depot path. Returns {depot: local file}."""
+    want = sorted(set(depots))
+    have = {d: os.path.join(into, d) for d in want}
+    missing = [d for d in want if not os.path.exists(have[d])]
+    if missing:
+        rx = '|'.join('^%s$' % re.escape(d) for d in missing)
+        for archive in [VOICE_ARCHIVE] + EXTRA_ARCHIVES:
+            _run(WK, 'unbundle', archive, '-o', into, '-r', rx)
+    lost = [d for d in want if not os.path.exists(have[d])]
+    if lost:
+        raise SystemExit('not in any voice archive: %s' % lost)
+    return have
+
+
+def _anim_bytes(doc):
+    """{animation name: (its data chunk's bytes, its buffer's other fields)}."""
+    root = doc['Data']['RootChunk']
+    out = {}
+    for e in root['animations']:
+        a = e['Data']['animation']['Data']
+        b = a['animBuffer']['Data']
+        chunk = root['animationDataChunks'][b['dataAddress']['unkIndex']]
+        head = {k: v for k, v in b.items()
+                if k not in ('dataAddress', 'tempBuffer')}
+        out[a['name']['$value']] = (chunk['buffer']['Bytes'],
+                                    json.dumps(head, sort_keys=True))
+    return out
+
+
+def voicetag(actor_name):
+    """A stable non-zero voicetag per actor name. Our sets are keyed in our
+    own lipmap entries only, so the number just has to differ between the
+    speakers of a scene, which distinct names guarantee."""
+    h = 0xCBF29CE484222325
+    for b in ('cc-voicetag:' + actor_name.lower()).encode('utf-8'):
+        h ^= b
+        h = (h * 0x100000001B3) & 0xFFFFFFFFFFFFFFFF
+    return (h & 0x7FFFFFFFFFFFFFFF) or 1

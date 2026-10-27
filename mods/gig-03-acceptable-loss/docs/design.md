@@ -106,6 +106,11 @@ away holding something unread, and it can be read during the escape or after.
 
 ### 4. The door, and the trace
 
+The door is the base game's, with a Technical Ability check and no
+quickhack. The keycard in the shard case on the desk beside it opens it too
+while the gig runs, so no build is locked out of the gig. Carrying the card,
+V sees "Open" instead of the check. Gotcha 125 has how.
+
 The moment the security-room door opens, a netrunner on site traces V and
 **always succeeds**, whatever the player's level, gear or build. It is a story
 beat, not a skill check, and there is no stealth exit from it. A progress bar

@@ -19,7 +19,7 @@ places, records and flow.
 | `questkit/questgraph.py` | the quest-graph `Builder` and its `add_*` node helpers |
 | `questkit/journal.py` | journal handles, map-pin maths, objectives, contacts |
 | `questkit/voice.py` | WAV to WEM through Wwise, and the `locVoiceoverMap` writer |
-| `questkit/lipsync.py` | the vanilla lipsync catalogue and the length-matching scorer |
+| `questkit/lipsync.py` | the vanilla lipsync catalogue, each actor's own lipsync set, and the older length-matching scorer |
 | `questkit/community.py` | communities, their sectors, and the crowd-null area |
 | `questkit/area.py` | the outline buffer every area node and trigger carries |
 | `questkit/splice.py` | cutting a vanilla take at a pause, and joining takes |
@@ -80,6 +80,7 @@ something behaves oddly, check these first.
 | Codeware | 1.20.3 | https://github.com/psiberx/cp2077-codeware/releases |
 | redscript | ships with the game | `engine\tools\scc.exe` |
 | Cyber Engine Tweaks | 1.37.1 | https://github.com/maximegmd/CyberEngineTweaks/releases Dev menu only, never shipped |
+| Lipsync animator | first release | https://github.com/andreaolivato/cyberpunk2077-lipsync-animator Clone it beside this repo, or name its folder in `LIPSYNC_ANIMATOR`. Only `gen_lipsync.py` uses it, and only when a line's clip or words change |
 
 The CLI is expected at
 `%LOCALAPPDATA%\Programs\WolvenKit.CLI\WolvenKit.CLI.exe`. If yours is
@@ -117,14 +118,14 @@ python .\tools\gig01\gen_voice.py                # WAV -> WEM (Wwise) + voiceove
                                                  #  it writes the sidecar gen_scenes paces
                                                  #  voiced lines from. `--placeholder`
                                                  #  substitutes tones for missing takes
-python .\tools\gig01\gen_lipsync.py              # casts a VANILLA lipsync animation of
-                                                 #  about the right length for every line
-                                                 #  Johnny, Hoshino and Mama Welles say,
-                                                 #  into source\lipsync_picks.json. Ships
-                                                 #  NO animation data - the animation name
-                                                 #  a line carries is free-form, so it just
-                                                 #  points at one the game already has.
-                                                 #  Between gen_voice (durations) and
+python .\tools\gig01\gen_lipsync.py              # one lipsync set per actor per scene.
+                                                 #  Lines with a clip of ours get a mouth
+                                                 #  made by the lipsync animator; whole
+                                                 #  vanilla lines get CDPR's own copied in.
+                                                 #  Needs the installed game. Needs the
+                                                 #  animator only when a clip or its words
+                                                 #  changed. Writes source\lipsync_picks.json.
+                                                 #  Between gen_voice (clips) and
                                                  #  gen_scenes (which reads the picks).
                                                  #  `--rebuild` re-extracts its catalogue
 python .\tools\gig01\gen_scenes.py               # TEN .scene conversations - EVERY line

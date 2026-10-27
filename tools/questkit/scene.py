@@ -2783,14 +2783,14 @@ def write_lipmap(scenes):
     installed a different voice pack has no such files - the Soft references
     simply do not resolve and the mouths stay shut. Nothing else changes.
     """
-    # ONE MAP PER DUBBED LANGUAGE. The animation sets live inside each
+    # ONE MAP PER DUBBED LANGUAGE. The vanilla animation sets live inside each
     # language's own voice archive, under that language's folder, with the
     # same file names and the same animation names (checked on all ten
     # packs, docs/scene-playbook.md "Other languages"): so the map for de-de is the
-    # English map with `\en-us\` swapped for `\de-de\` and the language code
-    # set. A player on the German dub then gets moving mouths from the files
-    # they actually have. The nine text-only locales have no voice pack and
-    # the manifest points them at the English map.
+    # English map with `\en-us\` swapped for `\de-de\` in every vanilla path
+    # and the language code set. A set the mod ships is English only and keeps
+    # its path. The nine text-only locales have no voice pack and the
+    # manifest points them at the English map.
     from questkit.packs import PACKS
     for loc in ['en-us'] + sorted(PACKS):
         entries, paths, previews = [], [], []
@@ -2803,8 +2803,13 @@ def write_lipmap(scenes):
             entries.append({
                 '$type': 'animLipsyncMappingSceneEntry',
                 'actorVoiceTags': list(scene.lipsync_voicetags),
+                # Only a vanilla set moves to the dub's folder. A set the mod
+                # ships is made from its English clips and exists only under
+                # en-us, so every dub's map names that one.
                 'animSets': [resref(p.replace(chr(92) + 'en-us' + chr(92),
-                                              chr(92) + loc + chr(92)), 'Soft')
+                                              chr(92) + loc + chr(92))
+                                    if p.lower().startswith('base' + chr(92))
+                                    else p, 'Soft')
                              for p in scene.lipsync_sets],
             })
         suffix = '' if loc == 'en-us' else '_' + loc

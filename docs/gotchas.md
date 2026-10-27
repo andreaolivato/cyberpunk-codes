@@ -2873,7 +2873,9 @@ Never renumber. Append.
      replies to all three, 13 of the 113 reused takes across the gigs. The
      pack listing shows which archive holds a take
      (`ep1\localization\<locale>\vo\...`), and `tools/measure_packs.py`
-     reads both archives for that reason.
+     reads both archives for that reason. Lipsync splits the same way: an
+     expansion line's animation is in a set inside the second archive, so a
+     lipsync catalogue read from the first archive alone does not find it.
 
 119. **HUD text typed into a script is English in every language.**
      `CCSharedHud.RunBar`, `Notify` and `NotifyTyped` take a `String`. A
@@ -3016,3 +3018,33 @@ Never renumber. Append.
      `BaseStatusEffect.Unconscious` gave health 100%, `IsDefeated` true,
      unconscious true, alive true. To count a Defeated body as a kill, wrap
      `ScriptedPuppet.OnDefeated` and test `!IsUnconscious`. `backlog.md` 45.
+
+125. **A door with an active skill check offers only the check, locked or
+     not, so unlocking it changes nothing.** `PushReturnActions` in
+     `scriptableDeviceBasePS` pushes the Technical Ability or Body check
+     while its slot is active on a closed door, and returns before any
+     "Open" is built. `QuestForceUnlock` or `SetIsLocked(false)` alone
+     leaves the prompt on "Use Technical Ability". Played on game 2.5, gig
+     03's security-room door, 2026-10-27.
+
+     To open such a door for a player who lacks the skill, do what a passed
+     check does in `OnActionEngineering`, then lift the lock:
+
+     1. For each active slot of `ps.GetSkillCheckContainer()` (engineering,
+        demolition, hacking): `SetIsActive(false)`, `SetIsPassed(true)`,
+        `CheckPerformed()`.
+     2. `ps.SetIsLocked(false)` and `ps.SetIsSealed(false)`.
+     3. `ps.TurnAuthorizationModuleOFF()`.
+     4. `ps.ExecutePSAction(ps.ActionQuestForceUnlock(), ps)`, so the door
+        entity hears it. The action is deferred.
+
+     Run it from a wrap of `DoorControllerPS.GetActions`, before
+     `wrappedMethod`. The game builds that list when the player looks at
+     the door, so the prompt built in the same call already reads "Open".
+     Test the door's position first (`GetOwnerEntityWeak`), because the
+     wrap runs for every door the player looks at.
+
+     The check's level is not fixed. The same door asked for Technical
+     Ability 5 in a player's report and 10 on game 2.5. Do not name a
+     number in player-facing text. `Gig03_Alarm.reds`, `CCG03Keycard`, opens
+     the door this way when V carries the keycard from the desk beside it.

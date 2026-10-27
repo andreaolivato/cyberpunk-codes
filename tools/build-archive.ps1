@@ -84,7 +84,10 @@ foreach ($src in $jsonSources) {
 # .xbm joined on 2026-09-11: a texture imported from a PNG by tools\gig03\gen_photo.py
 # for the picture a message carries. Same rule as .wem: a build product that
 # ships and is committed.
-$binaryExts = @(".wem", ".xbm")
+# .anims joined on 2026-10-26: each actor's lipsync set, assembled by the gig's
+# gen_lipsync.py. Unlike the other two it is NOT committed, because it carries
+# copies of vanilla animations; a build without it runs gen_lipsync first.
+$binaryExts = @(".wem", ".xbm", ".anims")
 $binaries = Get-ChildItem $raw -Recurse -File | Where-Object { $binaryExts -contains $_.Extension.ToLower() }
 foreach ($src in $binaries) {
     $rel = $src.FullName.Substring($raw.Length + 1)

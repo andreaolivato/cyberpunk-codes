@@ -19,8 +19,8 @@ phone treatment in gen_voice.py) stays in this file for the next line that
 needs it.
 
 A cut line gets NO exact lipsync animation. Vanilla baked one per whole
-recording, and a clip cut short is not that recording; gen_lipsync casts it
-by length like a recorded take (gotcha 59).
+recording, and a clip cut short is not that recording; gen_lipsync makes a
+mouth from the clip, like a recorded take.
 
 LISTEN TO EVERY CUT before shipping it: a cut off a silence map can land one
 pause early and the waveform gives nothing away (questkit/splice writes each
@@ -49,8 +49,8 @@ AUDIO = os.path.join(SOURCE, 'audio')
 
 # (scene, key, stringId) for every WHOLE vanilla take this gig ships as its
 # own clip. None today; the list stays so a whole take can come back without
-# rebuilding the route. gen_lipsync.WHOLE_TAKES reads it for the exact
-# animation names.
+# rebuilding the route. gen_lipsync makes a mouth from the clip, like any
+# line the gig ships audio for.
 TAKES = [
 ]
 

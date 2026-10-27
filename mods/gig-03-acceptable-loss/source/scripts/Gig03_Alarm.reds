@@ -222,6 +222,86 @@ public abstract class CCG03Alarm {
     }
 }
 
+// ---------------------------------------------------------------------------
+// THE DESK KEYCARD OPENS THE SECURITY-ROOM DOOR TOO
+//
+// Reported on Nexus by Sergentegatto, 2026-10-27: without Technical Ability 5
+// the gig cannot be finished. The door is the base game's, read out of
+// exterior_-2_-82_1_0: `initialDoorState LOCKED`, an Engineering check at
+// EASY, no keycard of its own and no network, so neither a quickhack nor a
+// key opens it. The design call: the keycard in the shard case on the desk
+// beside it (`Keycards.ina_05_keycard`, which in the base game opens two
+// other doors of the same building) opens this one too, while the gig runs.
+//
+// THE LOCK IS NOT WHAT KEEPS IT SHUT. Playtest, 2026-10-27: the first build
+// only lifted the lock, and the door still offered nothing but "Use Technical
+// Ability 10" (the check asks 10 on game 2.5, not the 5 reported). The game's
+// own door code (`PushReturnActions` in scriptableDeviceBasePS) offers the
+// skill check while its slot is active on a closed door, and RETURNS before
+// any "Open" is built, locked or not. So the keycard does what a passed check
+// does in `OnActionEngineering`: each active skill-check slot is switched off
+// and marked passed, the lock and seal come off, and the authorization module
+// is turned off. The door stays shut; V opens it, which starts the trace as
+// any other opening does.
+//
+// The hook is the door's own action list, which the game builds when V looks
+// at it, so the prompt built right after already reads "Open". Played
+// 2026-10-27 on game 2.5: with the keycard the prompt is "Open", and opening
+// starts the trace. Gotcha 125 has the general finding.
+public abstract class CCG03Keycard {
+    public static func Keycard() -> TweakDBID { return t"Keycards.ina_05_keycard"; }
+
+    public static func Unlock(ps: ref<DoorControllerPS>) -> Void {
+        // Every door the player looks at passes through here, so the position
+        // test comes first.
+        let door: ref<Entity> = ps.GetOwnerEntityWeak();
+        if !IsDefined(door) || !CCG03Alarm.IsOurDoor(door.GetWorldPosition()) {
+            return;
+        }
+        // Nothing left to undo: an open door, or one already opened up.
+        if !ps.IsLocked() && !ps.IsSealed() && !ps.IsSkillCheckActive() {
+            return;
+        }
+        let game: GameInstance = ps.GetGameInstance();
+        let qs: ref<QuestsSystem> = GameInstance.GetQuestsSystem(game);
+        if !IsDefined(qs) || qs.GetFactStr("cc_g03_start") <= 0
+            || qs.GetFactStr(CCG03Alarm.DoneFact()) > 0 {
+            return;
+        }
+        let player: ref<GameObject> = GetPlayer(game);
+        let ts: ref<TransactionSystem> = GameInstance.GetTransactionSystem(game);
+        if !IsDefined(player) || !IsDefined(ts)
+            || !ts.HasItem(player, ItemID.FromTDBID(CCG03Keycard.Keycard())) {
+            return;
+        }
+        let checks: ref<BaseSkillCheckContainer> = ps.GetSkillCheckContainer();
+        if IsDefined(checks) {
+            CCG03Keycard.Pass(checks.GetEngineeringSlot());
+            CCG03Keycard.Pass(checks.GetDemolitionSlot());
+            CCG03Keycard.Pass(checks.GetHackingSlot());
+        }
+        ps.SetIsLocked(false);
+        ps.SetIsSealed(false);
+        ps.TurnAuthorizationModuleOFF();
+        ps.ExecutePSAction(ps.ActionQuestForceUnlock(), ps);
+    }
+
+    // What `OnActionEngineering` does to its slot on a pass.
+    public static func Pass(slot: ref<SkillCheckBase>) -> Void {
+        if IsDefined(slot) && slot.IsActive() {
+            slot.SetIsActive(false);
+            slot.SetIsPassed(true);
+            slot.CheckPerformed();
+        }
+    }
+}
+
+@wrapMethod(DoorControllerPS)
+public func GetActions(out actions: array<ref<DeviceAction>>, context: GetActionsContext) -> Bool {
+    CCG03Keycard.Unlock(this);
+    return wrappedMethod(actions, context);
+}
+
 // The four ways a player opens a door, each carrying who did it.
 @wrapMethod(Door)
 protected cb func OnToggleOpen(evt: ref<ToggleOpen>) -> Bool {

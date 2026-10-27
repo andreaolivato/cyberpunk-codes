@@ -433,10 +433,10 @@ changes.
 
 ### Two things that arrive with audio
 
-- **Mouths.** `gen_lipsync.py` casts a vanilla animation of roughly the right
-  length onto each line. The mod ships no animation data, because the animation
-  name a line carries is free-form and can simply point at one the game already
-  owns. `docs/scene-playbook.md` covers it.
+- **Mouths.** `gen_lipsync.py` gives each actor of each scene its own lipsync
+  set. A line the gig ships a clip for gets a mouth made from that clip by the
+  [lipsync animator](https://github.com/andreaolivato/cyberpunk2077-lipsync-animator). A whole vanilla line gets a copy of CDPR's own animation.
+  `docs/scene-playbook.md`, "Making the mouth from the audio", covers it.
 - **Phone calls.** A holocall is not the clean take played through a filter at
   runtime. Vanilla ships a separately processed recording for every line that
   arrives on V's phone, so the treatment is baked into the asset.

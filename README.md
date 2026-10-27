@@ -22,6 +22,11 @@ the evidence, so the next person does not have to rediscover them.
 
 Everything the game loads is generated from Python. Nothing is hand-edited JSON.
 
+The lipsync for every line the gigs record or cut is made from that line's
+audio and words with
+[cyberpunk2077-lipsync-animator](https://github.com/andreaolivato/cyberpunk2077-lipsync-animator).
+Lines reused whole play the game's own animation.
+
 ## How a build works
 
 ```

@@ -422,7 +422,8 @@ def build_destroy():
                    vanilla_sid=0x1a9546648644d000),
     ], inner=True)
     # CUT: the take opens on "But", which answers nothing here. It is a
-    # shipped clip from 0.50 s on (take_vanilla.JOINS), dry, cast by length.
+    # shipped clip from 0.50 s on (take_vanilla.JOINS), dry, with a mouth
+    # made from the clip.
     s2 = s.section([
         s.add_line(j, "Give up your ideals, and no amount of eddies can buy "
                       "'em back.", key='j02'),
@@ -472,7 +473,7 @@ def build_object():
                    vanilla_sid=0x19b2d7698744d000),
     ])
     # CUT: the take opens on "But". A shipped clip from 0.50 s on, dry,
-    # cast by length.
+    # with a mouth made from the clip.
     s3 = s.section([
         s.add_line(j, "Give up your ideals, and no amount of eddies can buy "
                       "'em back.", key='j02'),
@@ -503,7 +504,7 @@ def build_dino_bar_loud():
 
     TWO CUTS (take_vanilla.JOINS): "You fucked up, V." is the head of his
     Joanne Koch failure debrief, and "Sorry, no cred for that move." is the
-    tail of his Mausser one. Both ship dry, cast by length. "Your boy Dino
+    tail of his Mausser one. Both ship dry, with mouths made from the clips. "Your boy Dino
     needs a drink" is the whole of his Mausser closer, and here it is him
     done with V. The same community body as the calm version, so nothing
     about the bar changes between the two endings but what he says.

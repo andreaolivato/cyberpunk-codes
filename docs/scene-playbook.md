@@ -411,7 +411,7 @@ to look at a face.
 
 Three things have to be true, and each fails silently on its own:
 
-1. **Something casts an animation.** `gen_lipsync.py` per gig writes
+1. **Something gives each line an animation.** `gen_lipsync.py` per gig writes
    `source/lipsync_picks.json`.
 2. **The scene generator reads that file.** If its `LIPSYNC_SETS` and
    `LIPSYNC_LINES` are empty the lipmap is built empty.
@@ -427,19 +427,19 @@ Three things have to be true, and each fails silently on its own:
 **A reused vanilla line has a perfect animation waiting for it.** Vanilla baked
 one per recording, named `f_<stringId>`, so a line reused WHOLE can use the
 animation made for it rather than an approximation.
-`questkit.lipsync._exact` finds it, ranking candidate sets by how many of a
-scene's lines they serve exactly before it looks at length at all.
+A gig that ships its own set copies that animation into it. See "Making the
+mouth from the audio" below.
 
-**An actor gets ONE set per scene.** So the exact route pays off in proportion
-to how many of that actor's lines in that scene come from the same vanilla
-scene. A speaker whose lines are gathered from five different vanilla scenes
-gets two or three exact animations and the rest cast by length, and length
-casting on a long line is visible: the mouth carries on after the words stop.
-Where that matters, re-pick the lines so more of them share a source scene.
+**An actor gets ONE set per scene.** A set the gig ships can hold copies from
+any number of vanilla sets, so this costs nothing there. It matters only when a
+line borrows a vanilla set directly: then all of an actor's lines in a scene
+come out of one vanilla file. `questkit.lipsync._exact` ranks candidate sets by
+how many of a scene's lines they serve exactly. The lines it cannot serve are
+cast by length, and on a long line the mouth carries on after the words stop.
 
 **A trim must NOT use its exact animation.** A cut clip is shorter than the
-recording the animation was baked for, so the mouth outruns the audio. Trims are
-cast by length like any produced line.
+recording the animation was baked for, so the mouth outruns the audio. A trim
+gets a mouth made from the cut clip, like any line the gig records.
 
 **Make it a build failure, not a warning.** Gig 03 shipped every mouth dead
 while its own generator printed `NOTHING IS LIPSYNCED` on four consecutive
@@ -1649,7 +1649,8 @@ the part that belongs with scene authoring.
 not the data: wherever the visible body is not the scene's own actor, the mouth
 that moves is one nobody can see.
 
-A line moves a mouth through four pieces, and a mod supplies the last two:
+A line moves a mouth through four pieces. A mod that borrows vanilla animations
+supplies the last two. A mod that ships its own sets supplies all four:
 
 | # | piece | note |
 |---|---|---|
@@ -1667,20 +1668,73 @@ Three things that are not guessable:
 - **Vanilla's piece 3 points at files that ship in no archive.** So give every
   speaking actor a real `voicetagId`: the lipmap is keyed by it, and `0` cannot
   be looked up.
-- **The animation NAME is free-form.** Nothing has to be baked: point a line at
-  an animation that already exists in a shipped set, and the mod ships no
-  animation data at all. Pick by LENGTH: that is what `gen_lipsync.py` does.
+- **The animation NAME is free-form.** A line can point at an animation that
+  already exists in a vanilla set, and then the mod ships no animation data.
+  This repo did that until 2026-10, picking by LENGTH. It now makes its own;
+  see "Making the mouth from the audio" below.
 
 Set both `female...` and `male...` to the same `f_` name. The prefix is the
 PLAYER's body type, not the speaker's, and an NPC line is one recording:
 `sts_hey_gle_04_johnny.scene` asks for an `m_` animation that does not exist in
 Johnny's set.
 
-### Whether it LOOKS right is a question about the size of your pool
+### Making the mouth from the audio
 
-The mechanism above will move a mouth on the first try. Whether it is
-convincing is a separate problem, and it has one dominant cause that is not
-obvious.
+This repo makes its mouths with the
+[lipsync animator](https://github.com/andreaolivato/cyberpunk2077-lipsync-animator). It makes a mouth from a clip and its words. Its `anims`
+command writes `.anims` files directly, for a build that wires its own scenes
+and lipmap.
+
+An actor who says only whole vanilla lines in a scene, all baked in one
+vanilla set, points at that set and nothing is shipped for them. Every other
+actor gets a set the gig ships, at
+`mod\<mod>\localization\en-us\lipsync\<scene>\<actor>.anims`. That is an
+actor with a line the gig ships audio for, or with whole lines from more than
+one vanilla set. The scene gives an actor one set, so all their lines in that
+scene must be in it. The set holds two kinds of animation:
+
+1. **Made.** Every line the gig ships a clip for gets a mouth made from that
+   clip. That covers recorded characters and every cut vanilla take. The
+   animation is named `f_<the line's RUID as 16 hex digits>`.
+2. **Copied.** A whole vanilla line gets the animation CDPR baked for it, under
+   its vanilla name. The animator's `copy` moves it out of the vanilla set
+   that holds it, byte for byte. One set can take copies from any number of
+   vanilla sets. The set takes the head of the first set it copies from, so
+   the vanilla sets are listed before the gig's own file.
+
+A copy has to be byte for byte. An early build of the animator re-encoded
+each copy against one fixed male head, and in game the neck moved while the
+character talked: longer on a man, shorter on a woman (playtest,
+2026-10-26). The build now checks that every copied animation reads back
+with the same bytes as its source, and stops if one does not.
+
+A Phantom Liberty line's animation is in the expansion's voice archive,
+`archive\pc\ep1\lang_en_voice.archive` (gotcha 118). A gig that reuses one
+reads that archive into its catalogue too. Gig 03 does, for Johnny at the door.
+The build extracts the expansion's sets from that archive by depot path.
+
+Give the animator the `.wem` the line ships, not the source `.wav`. The `.wem`
+is what the player hears.
+
+Every speaking actor needs a non-zero `voicetagId`. It must differ between the
+speakers of one scene. Any number works, because our lipmap entry is the only
+thing keyed by it. `questkit.lipsync.voicetag` derives one from the actor
+name.
+
+The made animations are committed under `mods\<gig>\source\lipsync\`, with
+`made.json` recording each one's clip hash and words. `gen_lipsync.py` remakes
+an animation only when its clip or words change. The assembled set carries
+CDPR's animations, so it is built from the installed game and never committed.
+
+Every dub's lipmap names the same English set. The made animations come from
+the English clips, and the animator reads English only.
+
+### When borrowing, the size of the pool decides whether it LOOKS right
+
+This section is about borrowing a vanilla animation by length, the route used
+before the animator. The mechanism above will move a mouth on the first try.
+Whether it is convincing is a separate problem, and it has one dominant cause
+that is not obvious.
 
 **One `.anims` set serves a whole scene.** `scnActorDef.lipsyncAnimSet` is a
 single id, so every line an actor speaks in one conversation must come out of
@@ -1721,12 +1775,8 @@ conversation.
 
 `questkit/lipsync.py` does both. The remaining ceiling is real and worth
 knowing before you chase it: these are recorded performances of DIFFERENT
-sentences, so the mouth moves plausibly and says something else. Only baked
-animation fixes that, and baking is out of reach. Matching on the WORDS rather
-than the duration (every animation is named after the vanilla line it came
-from, and that text is recoverable from the English text table) is the untried
-middle ground, and it matters most at one or two syllables, where the eye can
-count mouth openings.
+sentences, so the mouth moves plausibly and says something else. Only a mouth
+made for the line fixes that, which is what the animator does.
 
 **A line you ship no audio for still needs a mouth.** A line that reuses a
 vanilla recording by pointing at its `stringId` has no clip of yours, so it
@@ -1818,7 +1868,8 @@ names and the same `f_<stringId>` animation names. Checked across all ten
 packs for every set the gigs name. A lipsync map per dub is the English map
 with `en-us` swapped for the locale in every set path and `languageCodeName`
 set to the locale, which is what the game's own `<locale>.lipmap` carries.
-`gen_scenes.write_lipmap` writes them.
+`gen_scenes.write_lipmap` writes them. A set the gig ships keeps its English
+path in every dub's map, because it exists only under `en-us`.
 
 **One timeline, and the game stretches it for its own lines.** A line's
 slot in a scene (`scnDialogLineEvent.duration`) is one number for every

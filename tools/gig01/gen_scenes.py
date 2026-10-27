@@ -259,10 +259,10 @@ if os.path.exists(VANILLA_DURATIONS_FILE):
 
 # ------------------------------------------------------------------- LIPSYNC
 #
-# tools/gig01/gen_lipsync.py casts a vanilla lipsync animation of about the right
-# LENGTH for every line Johnny, Hoshino and Mama Welles say, and writes the
-# result here. The whole mechanism is in that file's docstring; what this file
-# needs from it is three things:
+# tools/gig01/gen_lipsync.py gives every line Johnny, Hoshino, Mama Welles and
+# Nix say its animation, in a lipsync set of the gig's own per actor per scene,
+# and writes the result here. The whole mechanism is in that file's docstring;
+# what this file needs from it is three things:
 #
 #   sets[scene][actorName]  -> {anims: depot path, voicetag: str}
 #   lines["scene/key"]      -> the animation name inside that set

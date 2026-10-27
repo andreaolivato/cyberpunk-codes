@@ -145,6 +145,14 @@ def check(mod_dir):
         p = exists(depot, '.json')
         if not p:
             continue
+        # A set the mod ships has to be in the raw tree, or gen_lipsync has
+        # not run since the picks changed.
+        with open(p, encoding='utf-8') as fh:
+            own = re.findall(r'"\$value": "(mod[^"]*\.anims)"', fh.read())
+        for s in own:
+            if not os.path.exists(raw_path(s.replace(B + B, B))):
+                problems.append('lipmap %s names a set that is not in the raw tree: %s'
+                                % (loc, s))
         if loc in PACKS and archives(loc)[0]:
             L = listing(loc)
             with open(p, encoding='utf-8') as fh:

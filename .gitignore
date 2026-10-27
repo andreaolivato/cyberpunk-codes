@@ -15,6 +15,10 @@
 tools/_anchor_cache/
 tools/_vo_cache/
 tools/_lipsync_cache/
+# Each actor's assembled lipsync set. It carries copies of the game's own
+# animations, so it is built by gen_lipsync.py from the installed game and
+# never committed. The gig's own animations are under source/lipsync/.
+**/source/wkit/raw/**/lipsync/**/*.anims
 **/source/wkit/_research/
 **/source/audio/**/*.Ogg
 **/source/audio/**/*.ogg

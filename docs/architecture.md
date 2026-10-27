@@ -692,6 +692,15 @@ Two things about the mechanism, which is the part worth copying:
   Gig 01 once cut "Look, I'll pay." down to "Look" and the waveform looked
   fine.
 
+- **Every mouth moves with its own words.** Each actor of each scene has a
+  lipsync set the gig ships. A line with audio of ours gets a mouth made from
+  that audio by the [lipsync animator](https://github.com/andreaolivato/cyberpunk2077-lipsync-animator). A whole vanilla line gets a copy
+  of the animation CDPR made for that recording. Until 2026-10-26 the gigs
+  shipped no animation data and borrowed vanilla animations by length, so a
+  recorded or cut line moved a mouth shaped for other words. The recipe is in
+  `scene-playbook.md`, "Making the mouth from the audio"; the evidence is
+  `backlog.md` 51.
+
 - **A line that arrives on V's phone is a different asset, not the same asset
   played differently.** The base game ships four processed takes of a voiced
   line, `vo`, `vo_holocall`, `vo_helmet` and `vo_rewinded`, sharing one
