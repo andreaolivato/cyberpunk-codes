@@ -98,6 +98,57 @@ public abstract class CCG03Alarm {
     }
 }
 
+public abstract class CCG03Keycard {
+    public static func Keycard() -> TweakDBID { return t"Keycards.ina_05_keycard"; }
+
+    public static func Unlock(ps: ref<DoorControllerPS>) -> Void {
+        let door: ref<Entity> = ps.GetOwnerEntityWeak();
+        if !IsDefined(door) || !CCG03Alarm.IsOurDoor(door.GetWorldPosition()) {
+            return;
+        }
+        if !ps.IsLocked() && !ps.IsSealed() && !ps.IsSkillCheckActive() {
+            return;
+        }
+        let game: GameInstance = ps.GetGameInstance();
+        let qs: ref<QuestsSystem> = GameInstance.GetQuestsSystem(game);
+        if !IsDefined(qs) || qs.GetFactStr("cc_g03_start") <= 0
+            || qs.GetFactStr(CCG03Alarm.DoneFact()) > 0 {
+            return;
+        }
+        let player: ref<GameObject> = GetPlayer(game);
+        let ts: ref<TransactionSystem> = GameInstance.GetTransactionSystem(game);
+        if !IsDefined(player) || !IsDefined(ts)
+            || !ts.HasItem(player, ItemID.FromTDBID(CCG03Keycard.Keycard())) {
+            return;
+        }
+        let checks: ref<BaseSkillCheckContainer> = ps.GetSkillCheckContainer();
+        if IsDefined(checks) {
+            CCG03Keycard.Pass(checks.GetEngineeringSlot());
+            CCG03Keycard.Pass(checks.GetDemolitionSlot());
+            CCG03Keycard.Pass(checks.GetHackingSlot());
+        }
+        ps.SetIsLocked(false);
+        ps.SetIsSealed(false);
+        ps.TurnAuthorizationModuleOFF();
+        // door stays shut
+        ps.ExecutePSAction(ps.ActionQuestForceUnlock(), ps);
+    }
+
+    public static func Pass(slot: ref<SkillCheckBase>) -> Void {
+        if IsDefined(slot) && slot.IsActive() {
+            slot.SetIsActive(false);
+            slot.SetIsPassed(true);
+            slot.CheckPerformed();
+        }
+    }
+}
+
+@wrapMethod(DoorControllerPS)
+public func GetActions(out actions: array<ref<DeviceAction>>, context: GetActionsContext) -> Bool {
+    CCG03Keycard.Unlock(this);
+    return wrappedMethod(actions, context);
+}
+
 @wrapMethod(Door)
 protected cb func OnToggleOpen(evt: ref<ToggleOpen>) -> Bool {
     let result: Bool = wrappedMethod(evt);

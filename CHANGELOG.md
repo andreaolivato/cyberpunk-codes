@@ -7,6 +7,16 @@ each mod's Nexus Changelog tab.
 
 # Acceptable Loss
 
+## 1.2.0 (2026-10-27)
+
+- **Changed: mouths now move with the words on every line.** The lines cut
+  from Johnny's and Dino's recordings get lipsync made from their own audio
+  with
+  [cyberpunk2077-lipsync-animator](https://github.com/andreaolivato/cyberpunk2077-lipsync-animator).
+- **Fixed: the security-room door could only be opened with enough Technical
+  Ability.** The keycard on the desk beside it now opens it too. Reported by
+  Sergentegatto.
+
 ## 1.1.2 (2026-09-25)
 
 - **Fixed: with Codeware 1.17 (the last version for game 2.30), every script
@@ -46,6 +56,13 @@ each mod's Nexus Changelog tab.
 ---
 
 # Dead Ringer
+
+## 1.3.0 (2026-10-27)
+
+- **Changed: mouths now move with the words on every line.** The merc, Char
+  and the lines cut from Wakako's recordings get lipsync made from their own
+  audio with
+  [cyberpunk2077-lipsync-animator](https://github.com/andreaolivato/cyberpunk2077-lipsync-animator).
 
 ## 1.2.3 (2026-10-24)
 
@@ -170,6 +187,13 @@ each mod's Nexus Changelog tab.
 # Negative Balance
 
 Releases are on the [Nexus page](https://www.nexusmods.com/cyberpunk2077/mods/32694).
+
+## 2.4.0 (2026-10-27)
+
+- **Changed: mouths now move with the words on every line.** Hoshino's lines
+  and the lines cut from Nix's and Mama Welles's recordings get lipsync made
+  from their own audio with
+  [cyberpunk2077-lipsync-animator](https://github.com/andreaolivato/cyberpunk2077-lipsync-animator).
 
 ## 2.3.0 (2026-09-20)
 
