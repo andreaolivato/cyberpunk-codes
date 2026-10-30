@@ -1,0 +1,17 @@
+{
+  "about": "The areas NCR Map Areas draws, one entry per area. Built by tools/console/build_areas.py. An entry with \"from\" is read from that gig's own generator at build time; an entry from another mod gives its pins, position, height and outline as numbers (docs/ncr-map-areas.md). Never remove a released entry: a save that has its objective open would lose its area.",
+  "areas": [
+    {
+      "mod": "Negative Balance",
+      "author": "nightcityriot",
+      "added": "2026-10-30",
+      "from": "gig01"
+    },
+    {
+      "mod": "Dead Ringer",
+      "author": "nightcityriot",
+      "added": "2026-10-30",
+      "from": "gig02"
+    }
+  ]
+}
