@@ -11,8 +11,16 @@ in this repo: **Negative Balance**
 map pins, voiced conversations, lipsync and custom NPCs; **Dead Ringer**
 ([Nexus](https://www.nexusmods.com/cyberpunk2077/mods/33571)), with a video
 holocall, a breach on a wall box the mod ships, and a quest area drawn on the
-minimap; and **Acceptable Loss**, a fight-and-run gig that forces a compound
-of NPCs onto the player and drives the wanted level from script. All three
+minimap; and **Acceptable Loss**
+([Nexus](https://www.nexusmods.com/cyberpunk2077/mods/33959)), a fight-and-run gig that forces a compound
+of NPCs onto the player and drives the wanted level from script.
+
+**Hodan Warsame** (`mods/fixer-01`,
+[Nexus](https://www.nexusmods.com/cyberpunk2077/mods/36816)) is a fixer of
+the mod's own, and other gig mods can add themselves to her gig counter.
+**Return Ticket** (`mods/gig-04-return-ticket`,
+[Nexus](https://www.nexusmods.com/cyberpunk2077/mods/36829)) is her first
+gig. All five mods
 follow the game's voice-over language and ship a translation kit
 (`mods/<gig>/translation-kit/`); `docs/scene-playbook.md` ("Other languages") has how.
 
@@ -52,7 +60,7 @@ in the player's game.
 
 | Doc | For |
 |---|---|
-| [`docs/gotchas.md`](docs/gotchas.md) | 36 things that cost hours each. Read before starting |
+| [`docs/gotchas.md`](docs/gotchas.md) | The things that cost hours each. Read before starting |
 | [`docs/map-pins-playbook.md`](docs/map-pins-playbook.md) | Working map pins. Three ingredients, three failure modes |
 | [`docs/scene-playbook.md`](docs/scene-playbook.md) | Conversations, choices, holocalls, lipsync |
 | [`docs/computer-ui-playbook.md`](docs/computer-ui-playbook.md) | Mod content on a base-game computer, and shards |

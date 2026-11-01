@@ -161,10 +161,14 @@ def strip_markup(text):
     in_fence = False
     for line in text.splitlines():
         s = line.strip()
+        # Dropped lines stay as blanks so the numbers reported, and the
+        # "added since HEAD" filter, still refer to the file's own lines.
         if s.startswith('```') or s.startswith('[code]') or s.startswith('[/code]'):
             in_fence = not in_fence
+            out.append('')
             continue
         if in_fence or s.startswith('|') or s.startswith('    ') or s.startswith('#'):
+            out.append('')
             continue
         line = re.sub(r'\[/?[a-z0-9=#\-\.:/@\?&]+\]', '', line, flags=re.I)   # bbcode
         line = re.sub(r'`[^`]*`', 'X', line)                                  # inline code

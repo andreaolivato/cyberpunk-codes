@@ -67,15 +67,20 @@ if (-not $modDir -or $modDir.Count -gt 1) { throw "Mod '$Mod' not found or ambig
 # r6\scripts and r6\tweaks folder the game loads from, so a release that spells
 # it differently from the dev deploy would be a mod nobody has ever run.
 # gig-01-negative-balance -> NegativeBalance
-$shipName = (($modDir.Name -split "-", 3)[2] -split "-" | ForEach-Object {
-    $_.Substring(0, 1).ToUpper() + $_.Substring(1)
-}) -join ""
+# The module tag and the ship name come from the mod folder. gig-01-negative-balance
+# is Gig01 and NegativeBalance; fixer-01 is Fixer01 twice, because a fixer mod
+# carries no display name until the design gives him one (then fixer-01-<name>).
+if ($modDir.Name -notmatch '^(gig|fixer)-(\d+)(?:-(.+))?$') { throw "cannot derive a mod tag from '$($modDir.Name)': expected gig-NN-name or fixer-NN[-name]" }
+$modTag = $Matches[1].Substring(0, 1).ToUpper() + $Matches[1].Substring(1) + $Matches[2]
+$shipName = if ($Matches[3]) {
+    ($Matches[3] -split "-" | ForEach-Object { $_.Substring(0, 1).ToUpper() + $_.Substring(1) }) -join ""
+} else { $modTag }
 
 # ONE FOLDER PER GIG (2026-09-06). dist\ held every Negative Balance zip in one
 # flat list, which was fine while there was one gig and stops being fine at two:
 # the zips are named after the mod, so a second gig's history interleaves with
 # the first's and the folder stops reading as a release history at all.
-$gigId = ($modDir.Name -replace '^(gig-\d+).*$', '$1')
+$gigId = ($modDir.Name -replace '^((?:gig|fixer)-\d+).*$', '$1')
 if (-not $OutDir) { $OutDir = Join-Path $repo "dist\$gigId" }
 New-Item -ItemType Directory -Force $OutDir | Out-Null
 
@@ -109,9 +114,22 @@ if ($Rebuild) {
 # means the archive would carry a game-file override.
 $raw = Join-Path $modDir.FullName "source\wkit\raw"
 $overrides = Get-ChildItem $raw -Directory -EA 0 | Where-Object { $_.Name -in @("base", "ep1") }
+# ONE KIND OF OVERRIDE IS ALLOWED: a navigation sector. A room built inside a
+# base-game building needs the game's walking mesh extended into it, and the
+# mesh ships only as whole navigation sectors (gotcha 129; gig 04's
+# tools/gig04/gen_navmesh.py). Anything else under base\ or ep1\ is refused.
+# The last mod loaded wins a replaced file, which the notice below says.
 if ($overrides) {
-    throw ("REFUSING TO PACKAGE: source\wkit\raw contains " + ($overrides.Name -join ", ") +
-           ". That would override a base-game file. See docs/map-pins-playbook.md.")
+    $files = $overrides | ForEach-Object { Get-ChildItem $_.FullName -Recurse -File }
+    $bad = $files | Where-Object { $_.Name -notmatch '^navigation_-?\d+_-?\d+_-?\d+_\d+\.streamingsector\.json$' }
+    if ($bad) {
+        throw ("REFUSING TO PACKAGE: source\wkit\raw overrides base-game files: " +
+               (($bad | ForEach-Object { $_.Name }) -join ", ") + ". See docs/map-pins-playbook.md.")
+    }
+    $files | ForEach-Object {
+        Write-Host ("  NOTE: replaces the base-game file " + $_.Name.Replace('.json', '') +
+                    " (another mod replacing it too: the last one loaded wins)") -ForegroundColor Yellow
+    }
 }
 
 # ------------------------------------------------------------- 3) stage
@@ -141,9 +159,7 @@ Get-ChildItem $scriptsDst -Filter *_Lab.reds -File | Remove-Item -Force
 # Shared helpers, vendored under a per-gig module. A release that shipped
 # them un-renamed would break the whole redscript bundle for any player who
 # also installs another of our gigs - see tools/vendor-shared.ps1.
-$gig = ($modDir.Name -replace '^gig-(\d+).*$', 'Gig$1')
-if ($gig -notmatch '^Gig\d+$') { throw "cannot derive a gig number from '$($modDir.Name)'" }
-& (Join-Path $PSScriptRoot "vendor-shared.ps1") -Dst $scriptsDst -Gig $gig
+& (Join-Path $PSScriptRoot "vendor-shared.ps1") -Dst $scriptsDst -Gig $modTag
 
 # TweakXL yaml, only if the mod has any
 $tweaksSrc = Join-Path $modDir.FullName "source\tweaks"
@@ -292,6 +308,10 @@ if ($mismatch -gt 0) {
 Write-Host ""
 Write-Host "  Requirements for the mod page:"
 Write-Host "    RED4ext, ArchiveXL, TweakXL, Codeware, redscript"
+# A gig of the mod's own fixer waits on her introduction, so it needs her mod.
+if (Select-String -Path (Join-Path $modDir.FullName "source\scripts\*.reds") -Pattern 'CyberpunkCodes\.Fixer01' -Quiet) {
+    if ($modTag -ne "Fixer01") { Write-Host "    AND the fixer's own mod (Hodan Warsame, mods/fixer-01): the gig waits on her introduction" }
+}
 Write-Host "    NOT Cyber Engine Tweaks, NOT Audioware, NOT mod_settings"
 Write-Host ""
 Write-Host "  Voices: the Good to know section says how the gig is cast."

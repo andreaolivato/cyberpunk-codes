@@ -1,0 +1,160 @@
+{
+ "sector": "interior_-19_24_0_1.streamingsector.json",
+ "instance": 22,
+ "data": {
+  "$type": "worldStaticLightNode",
+  "allowDistantLight": 0,
+  "areaRectSideA": 1,
+  "areaRectSideB": 1,
+  "areaShape": "ALS_Capsule",
+  "areaTwoSided": 1,
+  "attenuation": "LA_InverseSquare",
+  "autoHideDistance": 80,
+  "capsuleLength": 1,
+  "clampAttenuation": 1,
+  "color": {
+   "$type": "Color",
+   "Alpha": 255,
+   "Blue": 230,
+   "Green": 104,
+   "Red": 251
+  },
+  "colorGroupSaturation": 100,
+  "contactShadows": "CSR_None",
+  "debugName": {
+   "$type": "CName",
+   "$storage": "string",
+   "$value": "{outside_animated_neon_}001"
+  },
+  "directional": 0,
+  "enableLocalShadows": 0,
+  "enableLocalShadowsForceStaticsOnly": 0,
+  "envColorGroup": "ECG_Default",
+  "EV": 1,
+  "flicker": {
+   "$type": "rendSLightFlickering",
+   "flickerPeriod": 0.200000003,
+   "flickerStrength": 0,
+   "positionOffset": 0
+  },
+  "group": "LG_Group0",
+  "iesProfile": {
+   "DepotPath": {
+    "$type": "ResourcePath",
+    "$storage": "uint64",
+    "$value": "0"
+   },
+   "Flags": "Soft"
+  },
+  "innerAngle": 30,
+  "intensity": 500,
+  "isHostOnly": 0,
+  "isVisibleInGame": 1,
+  "lightChannel": "0",
+  "outerAngle": 186.086304,
+  "pathTracingLightUsage": "PTLU_Everywhere",
+  "pathTracingOverrideScaleGI": 1,
+  "portalAngleCutoff": 0,
+  "proxyScale": null,
+  "radius": 10,
+  "rayTracedShadowsPlatform": "RLSP_All",
+  "rayTracingContactShadowRange": -1,
+  "rayTracingIntensityScale": 1,
+  "rayTracingLightSourceRadius": -1,
+  "roughnessBias": 50,
+  "rtxdiShadowStartingDistance": -1,
+  "scaleEnvProbes": 0,
+  "scaleGI": 0,
+  "scaleVolFog": 0,
+  "sceneDiffuse": 1,
+  "sceneSpecularScale": 100,
+  "shadowAngle": -1,
+  "shadowFadeDistance": 10,
+  "shadowFadeRange": 5,
+  "shadowRadius": -1,
+  "shadowSoftnessMode": "LSSM_Default",
+  "softness": 2,
+  "sourcePrefabHash": "1749203526780363284",
+  "sourceRadius": 0.0500000007,
+  "spotCapsule": 0,
+  "tag": "None",
+  "tagExt": "None",
+  "temperature": -1,
+  "type": "LT_Point",
+  "unit": "LU_Lumen",
+  "useInParticles": 1,
+  "useInTransparents": 1
+ },
+ "instanceRecord": {
+  "Id": "2517325371520",
+  "NodeIndex": 20,
+  "Position": {
+   "$type": "Vector4",
+   "W": 0,
+   "X": -1202.66614,
+   "Y": 1587.05115,
+   "Z": 33.5699463
+  },
+  "Orientation": {
+   "$type": "Quaternion",
+   "i": 0,
+   "j": 0,
+   "k": 0.670880735,
+   "r": 0.741565347
+  },
+  "Scale": {
+   "$type": "Vector3",
+   "X": 1,
+   "Y": 1,
+   "Z": 1
+  },
+  "Pivot": {
+   "$type": "Vector3",
+   "X": 0,
+   "Y": 0,
+   "Z": 0
+  },
+  "Bounds": {
+   "$type": "Box",
+   "Max": {
+    "$type": "Vector4",
+    "W": 0,
+    "X": -1202.66614,
+    "Y": 1587.05115,
+    "Z": 33.5699463
+   },
+   "Min": {
+    "$type": "Vector4",
+    "W": 0,
+    "X": -1202.66614,
+    "Y": 1587.05115,
+    "Z": 33.5699463
+   }
+  },
+  "QuestPrefabRefHash": {
+   "$type": "NodeRef",
+   "$storage": "uint64",
+   "$value": "0"
+  },
+  "UkHash1": {
+   "$type": "NodeRef",
+   "$storage": "uint64",
+   "$value": "0"
+  },
+  "CookedPrefabData": {
+   "DepotPath": {
+    "$type": "ResourcePath",
+    "$storage": "uint64",
+    "$value": "0"
+   },
+   "Flags": "Default"
+  },
+  "MaxStreamingDistance": 3.40282347e+38,
+  "UkFloat1": 84,
+  "Uk10": 1088,
+  "Uk11": 512,
+  "Uk12": 0,
+  "Uk13": "0",
+  "Uk14": "0"
+ }
+}

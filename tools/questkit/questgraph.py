@@ -170,6 +170,21 @@ class Builder:
 b = Builder()
 NID = iter(range(1000))
 
+
+def skip_ids_to(first):
+    """The next node gets id `first`, the ids before it left unused.
+
+    A save resumes its phase by node id (gotcha 123), so a wait whose id
+    moves is a save that resumes on the wrong step. This holds a wait at
+    the id it had, when the nodes before it change in number. Fails if the
+    graph has already used `first`."""
+    global NID
+    nxt = next(NID)
+    if nxt > first:
+        raise SystemExit('node id %d is already used (the next was %d)'
+                         % (first, nxt))
+    NID = iter(range(first, 1000))
+
 STD = [('CutDestination', 'CutDestination'), ('In', 'Input'), ('Out', 'Output')]
 # A branch that is decided the moment the token arrives, rather than a wait.
 # Socket order is read off `nix_holocall.questphase` node 26.
@@ -309,6 +324,36 @@ def add_fade(fade_in, duration):
     return nid
 
 
+def add_player_fx(effect):
+    """Play an effect on V, the game's own way: a `questFXManagerNodeDefinition`
+    carrying `questPlayFX_NodeType` with `isPlayer` 1 and an empty reference.
+
+    Copied field for field from the Claire races' wait
+    (`sq024_02_santo_domingo_race.scene`, nodes 658 and 663), which plays
+    `fast_travel_glitch` on V as the screen goes to black and again as it
+    comes back. Read off the shipped scene on 2026-11-01.
+    """
+    nid = next(NID)
+    b.node(nid, 'questFXManagerNodeDefinition', {'type': {'@handle': {
+        '$type': 'questPlayFX_NodeType',
+        'params': [{
+            '$type': 'questPlayFX_NodeTypeParams',
+            'effectInstanceName': cname(None),
+            'effectName': cname(effect),
+            'isPlayer': 1,
+            'objectRef': {'$type': 'gameEntityReference',
+                          'dynamicEntityUniqueName': cname(None), 'names': [],
+                          'reference': {'$type': 'NodeRef', '$storage': 'uint64', '$value': '0'},
+                          'sceneActorContextName': cname(None), 'slotName': cname(None),
+                          'type': 'EntityRef'},
+            'play': 1,
+            'save': 0,
+            'sequenceShift': 0,
+        }],
+    }}}, STD)
+    return nid
+
+
 def add_pause_journal(class_name, real_path, state='Succeeded'):
     nid = next(NID)
     b.node(nid, 'questPauseConditionNodeDefinition', {'condition': {'@handle': {
@@ -384,6 +429,21 @@ def add_condition_fact(fact, value=0, cmp='Greater'):
         '$type': 'questFactsDBCondition',
         'type': {'@handle': {'$type': 'questVarComparison_ConditionType',
                              'comparisonType': cmp, 'factName': fact, 'value': value}},
+    }}}, COND)
+    return nid
+
+
+def add_condition_phone_muted(group='fixer_briefs_and_debriefs'):
+    """A fork on the player's phone setting for a group of calls: True when
+    V has muted it. Read off sts_wbr_hil_01_open_world.questphase (nodes 53
+    and 165): `questSystemCondition` with `questPhoneMuted_ConditionType`,
+    group `fixer_briefs_and_debriefs`, which a fixer's brief and debrief
+    calls check before ringing, sending the text instead when muted."""
+    nid = next(NID)
+    b.node(nid, 'questConditionNodeDefinition', {'condition': {'@handle': {
+        '$type': 'questSystemCondition',
+        'type': {'@handle': {'$type': 'questPhoneMuted_ConditionType',
+                             'groupName': cname(group), 'inverted': 0}},
     }}}, COND)
     return nid
 
@@ -634,6 +694,170 @@ def add_condition_phone_pickup(caller, addressee):
     return nid
 
 
+def _entity_ref(node_ref, entry=None):
+    """A gameEntityReference to a placed body: the community node, and the
+    entry name when one is given. The map icon's `dynamicEntityRef` uses the
+    same pair to find a fixer's body (gen_journal), which is the form proven
+    in play; vanilla's distance checks pass the community node alone."""
+    return {'$type': 'gameEntityReference',
+            'dynamicEntityUniqueName': cname(None),
+            'names': [cname(entry)] if entry else [],
+            'reference': noderef(node_ref),
+            'sceneActorContextName': cname(None),
+            'slotName': cname(None),
+            'type': 'EntityRef'}
+
+
+def add_ai_patrol(node_ref, entry, path_ref, movement='Walk', loops=1):
+    r"""Send a placed body along a spline, with the game's own patrol order.
+
+    `questMiscAICommandNode` carrying an `AIPatrolCommand`, read field for
+    field off `sts_wbr_hil_01_gameplay.questphase` (that gig's drones, which
+    patrol `#hil_01_spl_drone_001_patrol`), with the loop fields changed: one
+    pass along the path rather than back and forth for ever. `path_ref` is a
+    `worldSplineNode` the mod ships (gen_room.spline_node). The body is
+    named the way every other node here names one, the community node in the
+    long form plus the entry (gotcha 34).
+    """
+    nid = next(NID)
+    b.node(nid, 'questMiscAICommandNode', {
+        'entityReference': _entity_ref(node_ref, entry),
+        'function': cname('AIClearRoleCommandParams'),
+        'params': {'@handle': {
+            '$type': 'questConstAICommandParams',
+            'command': {'@handle': {
+                '$type': 'AIPatrolCommand',
+                'alertedPathParams': None,
+                'alertedRadius': 0,
+                'alertedSpots': [],
+                'alwaysUseStealth': 0,
+                'category': cname(None),
+                'id': 4294967295,
+                'ignoreInCombat': 0,
+                'pathParams': {'@handle': {
+                    '$type': 'AIPatrolPathParameters',
+                    'continuationPolicy': 'FromNextControlPoint',
+                    'isBackAndForth': 0,
+                    'isInfinite': 0,
+                    'movementType': movement,
+                    'numberOfLoops': loops,
+                    'path': noderef(path_ref),
+                    'patrolAction': {'$type': 'TweakDBID', '$storage': 'string',
+                                     '$value': 'PatrolActions.DefaultPatrolAction'},
+                    'patrolWithWeapon': 0,
+                    'sortPatrolPoints': 1,
+                    'startFromClosestPoint': 1,
+                }},
+                'patrolAction': {'$type': 'TweakDBID', '$storage': 'uint64', '$value': '0'},
+                'patrolWithWeapon': 0,
+                'questBlockId': '0',
+                'removeAfterCombat': 0,
+                'state': 'NotExecuting',
+            }},
+        }},
+    }, [('CutDestination', 'CutDestination'), ('In', 'Input'), ('Success', 'Output')])
+    return nid
+
+
+def add_pause_distance(node_ref, meters, entry=None, cmp='Less'):
+    r"""Wait until the player is within (or beyond) a distance of a placed body.
+
+    `questDistanceCondition` between the local player and a world entity, the
+    node every fixer's phase uses to offer its in-person conversation: read
+    off `base\open_world\fixers\dyno\phases\dyno.questphase`, the default
+    dialogue phase, node 8 (`Less` 10 m of `#dyno`), and the same scene's own
+    quest node 145 (`Less` 6 m, the call-to-face switch). `cmp` is `Less` or
+    `Greater`. The reference is a community node in the long form (gotcha
+    34), with the entry name when the community has more than one.
+    """
+    nid = next(NID)
+    b.node(nid, 'questPauseConditionNodeDefinition', {'condition': {'@handle': {
+        '$type': 'questDistanceCondition',
+        'type': {'@handle': {
+            '$type': 'questDistanceComparison_ConditionType',
+            'comparisonType': cmp,
+            'distanceDefinition1': {'@handle': {
+                '$type': 'questObjectDistance',
+                'entityRef': {'@handle': {
+                    '$type': 'questUniversalRef',
+                    'entityReference': _entity_ref(None),
+                    'mainPlayerObject': 0,
+                    'refLocalPlayer': 1}},
+                'nodeRef2': _entity_ref(node_ref, entry),
+            }},
+            'distanceDefinition2': {'@handle': {
+                '$type': 'questValueDistance',
+                'distanceValue': meters,
+            }},
+        }},
+    }}}, STD)
+    return nid
+
+
+def _trigger(area_ref, inside):
+    return {'$type': 'questTriggerCondition',
+            'activatorRef': _entity_ref(None),
+            'isPlayerActivator': 1,
+            'triggerAreaRef': noderef(area_ref),
+            'type': 'IsInside' if inside else 'IsOutside'}
+
+
+def add_pause_triggers(area_refs, inside=True, operation='OR'):
+    r"""Wait until the player is inside (or outside) one or all of some
+    trigger areas.
+
+    `questTriggerCondition` on the player, which is how every game fixer's
+    phase waits for V to enter its district: `dyno.questphase` on
+    `#city_center_tr`, `wakako.questphase` on `#westbrook_tr`, both with
+    `isPlayerActivator 1` and the short-form base-game node name. A
+    district can be more than one box (`#charter_hill_tr` and
+    `#charter_hill_tr_001` in `always_loaded_0`), so this takes a list:
+    inside ANY of them with `OR`, or, for leaving, outside ALL of them with
+    `inside=False, operation='AND'`. One area is written without the
+    logical wrapper, as vanilla writes it.
+    """
+    nid = next(NID)
+    if len(area_refs) == 1:
+        cond = _trigger(area_refs[0], inside)
+    else:
+        cond = {'$type': 'questLogicalCondition',
+                'conditions': [{'@handle': _trigger(a, inside)} for a in area_refs],
+                'operation': operation}
+    b.node(nid, 'questPauseConditionNodeDefinition', {'condition': {'@handle': cond}}, STD)
+    return nid
+
+
+def add_pause_phone_call(caller, addressee, phase='IncomingCall'):
+    r"""Wait for a call between two contacts to reach a phase.
+
+    THIS IS HOW A PHASE FINDS OUT THAT V DIALLED A CONTACT. The phone's
+    contact list queues `questTriggerCallRequest` with the player as caller
+    and the contact as addressee, phase `IncomingCall`
+    (`newHudPhoneGameController.CallSelectedContact`), and this
+    `questPhone_ConditionType` completes on it. Every fixer's phase waits on
+    exactly this pair (`dyno.questphase`, default dialogue phase, node 9:
+    caller `contacts/player`, addressee `contacts/dino_dinovic`,
+    `IncomingCall`) and then issues its own call nodes, so the two calls
+    are one call: the request the list queued is what this reports, and the
+    `IncomingCall` node the graph issues next is what stages the studio.
+
+    Not the pick-up condition (gotcha 58, which never fires for a mod's
+    call); this one reports the request itself, and for a call V is making
+    there is nothing to answer.
+    """
+    nid = next(NID)
+    b.node(nid, 'questPauseConditionNodeDefinition', {'condition': {'@handle': {
+        '$type': 'questSystemCondition',
+        'type': {'@handle': {
+            '$type': 'questPhone_ConditionType',
+            'addressee': {'@handle': jpath('gameJournalContact', addressee)},
+            'callPhase': phase,
+            'caller': {'@handle': jpath('gameJournalContact', caller)},
+        }},
+    }}}, STD)
+    return nid
+
+
 def add_race2(src, arm_a, arm_b, claim_fact):
     r"""Two waits, one winner, exactly one token out the other side.
 
@@ -793,6 +1017,34 @@ def add_call_contact(caller, addressee, phase, video=True, prefab='#holocalls_st
     return nid
 
 
+def add_contact_list(contact, add=True, notify=None, nid=None):
+    """Add a contact to V's phone contacts, or take it off.
+
+    The game's own step for it (`questAddRemoveContact_NodeType`, 100 of the
+    base game's phases). A contact not on the list is unknown: the phone
+    shows the unknown caller's portrait for it. Every fixer's phase rings its
+    introduction first and adds the contact after the call (`dyno.questphase`
+    node 47, `reggie.questphase` node 97), so the first call rings as an
+    unknown caller and the video replaces the portrait once it connects.
+    `notify` defaults to the game's: on for an add, off for a removal.
+    `nid` gives the node a fixed id of its own, for a node added to a phase
+    that saves already sit in (gotcha 123: a new node takes a high id, so
+    no existing node's id moves).
+    """
+    if nid is None:
+        nid = next(NID)
+    b.node(nid, 'questPhoneManagerNodeDefinition', {'type': {'@handle': {
+        '$type': 'questAddRemoveContact_NodeType',
+        'params': [{
+            '$type': 'questChangeContactList_NodeTypeParams',
+            'addContact': 1 if add else 0,
+            'contact': {'@handle': jpath('gameJournalContact', contact)},
+            'sendNotification': (1 if add else 0) if notify is None else (1 if notify else 0),
+        }],
+    }}}, STD)
+    return nid
+
+
 def add_toggle_component(object_ref, component, enable=True):
     """Switch a component on or off on a world entity, from the quest graph.
 
@@ -882,6 +1134,24 @@ def add_scene(scene_file, marker, entries, exits):
              'tag': cname('None'), 'type': 'NodeRef'}),
         'syncToMusic': 0,
     }, sockets)
+    return nid
+
+
+# THE COUNTER'S SOCKETS, the game's own (q000_vr_tutorial_course_03, node
+# 308): one up, one down.
+JCOUNT = [('CutDestination', 'CutDestination'), ('Increment', 'Input'),
+          ('Decrement', 'Input'), ('Out', 'Output')]
+
+
+def add_objective_counter(real_path):
+    """Adds one to a counted objective's "[n/total]" on its Increment
+    socket (the total is the journal's `counter`, questkit.journal.objective).
+    The shape of the game's tutorial counter, q000 node 308."""
+    nid = next(NID)
+    b.node(nid, 'questJournalNodeDefinition', {'type': {'@handle': {
+        '$type': 'questJournalQuestObjectiveCounter_NodeType',
+        'path': {'@handle': jpath('gameJournalQuestObjective', real_path)}}}},
+        JCOUNT)
     return nid
 
 

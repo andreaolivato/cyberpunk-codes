@@ -21,7 +21,8 @@ Everything that is original to the gig needs to be translated:
 - the shard
 - the terminal documents
 - the notices and alerts on screen
-- the subtitles for the NPCs invented for this gig: Elena and Hoshino.
+- the dialogue buttons.
+- the subtitles for the characters invented for this gig: Elena and Hoshino.
 - (optional) the voice of Elena and Hoshino.
 
 All these texts require a translation and this guide shows how to create
@@ -49,7 +50,10 @@ Nothing else.
    entry and type your translation into `femaleVariant` over the English.
    If `maleVariant` is not empty, translate it too. Never ever change
    `secondaryKey`. It must always stay the same. Save.
-3. Open `lines.json` in the same folder: the subtitles of Elena and Hoshino:
+3. Open `lines.json` in the same folder.
+   The dialogue buttons are plain English: type your translation into
+   `femaleVariant` and `maleVariant` over it, as in `strings.json`.
+   The subtitles of Elena and Hoshino look like this:
 
    ```
    <kiroshi l="eng" o="V? Sorry, I didn't know you'd answer. My name's Elena Ortega." t="V? Sorry, I didn't know you'd answer. My name's Elena Ortega." b="" a=""/>

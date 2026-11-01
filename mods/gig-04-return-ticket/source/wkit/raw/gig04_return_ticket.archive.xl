@@ -1,0 +1,325 @@
+# Return Ticket: what the game is told to load, and why each key is here.
+#
+# THE ONLY HAND-AUTHORED FILE IN THIS MOD. Everything it names is written by a
+# generator under tools/gig04/. Gig 01's manifest carries the full account of
+# each key; the comments here record only what is specific to this gig.
+#
+# IT STARTS SMALL ON PURPOSE. docs/new-gig.md section 4: a gig that appears in
+# the log and closes proves the journal, the quest phase and this file agree.
+# World sectors are added to this file as they are built, not before, because
+# a key naming a file that does not exist stops the whole archive loading.
+#
+# THIS GIG REQUIRES THE FIXER'S MOD (mods/fixer-01): her contact, her codex
+# entry and her map icon are hers and are not repeated here.
+
+journal:
+  - mod\return_ticket\journal\gig04.journal
+localization:
+  # ENGLISH ONLY, ON PURPOSE: ArchiveXL merges it as the fallback for every
+  # other language, and a translation mod registering its own language wins
+  # whichever order the two load in (gotcha 121). `onscreens` takes a LIST
+  # per locale.
+  onscreens:
+    en-us:
+      - mod\return_ticket\localization\en-us.json
+  # THE SUBTITLES OF THE SCENE LINES. Scalar per locale, unlike `onscreens`.
+  # Hodan's lines are ours; V's are the game's own and need no entry.
+  subtitles:
+    ar-ar: mod\return_ticket\localization\subtitles_ar-ar.json
+    cz-cz: mod\return_ticket\localization\subtitles_cz-cz.json
+    de-de: mod\return_ticket\localization\subtitles_de-de.json
+    en-us: mod\return_ticket\localization\subtitles.json
+    es-es: mod\return_ticket\localization\subtitles_es-es.json
+    es-mx: mod\return_ticket\localization\subtitles_es-mx.json
+    fr-fr: mod\return_ticket\localization\subtitles_fr-fr.json
+    hu-hu: mod\return_ticket\localization\subtitles_hu-hu.json
+    it-it: mod\return_ticket\localization\subtitles_it-it.json
+    jp-jp: mod\return_ticket\localization\subtitles_jp-jp.json
+    kr-kr: mod\return_ticket\localization\subtitles_kr-kr.json
+    pl-pl: mod\return_ticket\localization\subtitles_pl-pl.json
+    pt-br: mod\return_ticket\localization\subtitles_pt-br.json
+    ru-ru: mod\return_ticket\localization\subtitles_ru-ru.json
+    th-th: mod\return_ticket\localization\subtitles_th-th.json
+    tr-tr: mod\return_ticket\localization\subtitles_tr-tr.json
+    ua-ua: mod\return_ticket\localization\subtitles_ua-ua.json
+    zh-cn: mod\return_ticket\localization\subtitles_zh-cn.json
+    zh-tw: mod\return_ticket\localization\subtitles_zh-tw.json
+  # THE VOICEOVER MAP: the recorded lines of Hodan, Maricel, Stamps and
+  # Reynaldo (tools/gig04/gen_voice.py).
+  vomaps:
+    ar-ar: mod\return_ticket\localization\vomap.json
+    cz-cz: mod\return_ticket\localization\vomap.json
+    de-de: mod\return_ticket\localization\vomap_de-de.json
+    en-us: mod\return_ticket\localization\vomap.json
+    es-es: mod\return_ticket\localization\vomap_es-es.json
+    es-mx: mod\return_ticket\localization\vomap.json
+    fr-fr: mod\return_ticket\localization\vomap_fr-fr.json
+    hu-hu: mod\return_ticket\localization\vomap.json
+    it-it: mod\return_ticket\localization\vomap_it-it.json
+    jp-jp: mod\return_ticket\localization\vomap_jp-jp.json
+    kr-kr: mod\return_ticket\localization\vomap_kr-kr.json
+    pl-pl: mod\return_ticket\localization\vomap_pl-pl.json
+    pt-br: mod\return_ticket\localization\vomap_pt-br.json
+    ru-ru: mod\return_ticket\localization\vomap_ru-ru.json
+    th-th: mod\return_ticket\localization\vomap.json
+    tr-tr: mod\return_ticket\localization\vomap.json
+    ua-ua: mod\return_ticket\localization\vomap.json
+    zh-cn: mod\return_ticket\localization\vomap_zh-cn.json
+    zh-tw: mod\return_ticket\localization\vomap.json
+  # LIPSYNC: which vanilla mouth animation drives each of her lines. Without
+  # this key the picks are made and packed and her face does not move.
+  lipmaps:
+    ar-ar: mod\return_ticket\localization\gig04.lipmap
+    cz-cz: mod\return_ticket\localization\gig04.lipmap
+    de-de: mod\return_ticket\localization\gig04_de-de.lipmap
+    en-us: mod\return_ticket\localization\gig04.lipmap
+    es-es: mod\return_ticket\localization\gig04_es-es.lipmap
+    es-mx: mod\return_ticket\localization\gig04.lipmap
+    fr-fr: mod\return_ticket\localization\gig04_fr-fr.lipmap
+    hu-hu: mod\return_ticket\localization\gig04.lipmap
+    it-it: mod\return_ticket\localization\gig04_it-it.lipmap
+    jp-jp: mod\return_ticket\localization\gig04_jp-jp.lipmap
+    kr-kr: mod\return_ticket\localization\gig04_kr-kr.lipmap
+    pl-pl: mod\return_ticket\localization\gig04_pl-pl.lipmap
+    pt-br: mod\return_ticket\localization\gig04_pt-br.lipmap
+    ru-ru: mod\return_ticket\localization\gig04_ru-ru.lipmap
+    th-th: mod\return_ticket\localization\gig04.lipmap
+    tr-tr: mod\return_ticket\localization\gig04.lipmap
+    ua-ua: mod\return_ticket\localization\gig04.lipmap
+    zh-cn: mod\return_ticket\localization\gig04_zh-cn.lipmap
+    zh-tw: mod\return_ticket\localization\gig04.lipmap
+streaming:
+  blocks:
+    # THE CAST, generated by tools/gig04/gen_community.py: one community
+    # with Maricel at her stall, Stamps on his bar stool, the Tyger Claws'
+    # van, Reynaldo and three Claws in the room, Orbital Air's three (two
+    # sets) and their car, plus the area drawn round the room. The
+    # registry sector rides along with the community sector; one block
+    # covers both.
+    - mod\worlds\03_night_city\_compiled\default\cc_g04_cast.streamingblock
+    # THE ROOM, generated by tools/gig04/gen_room.py: the floor, walls,
+    # ceiling, lights and collision behind the door in Little China, and the
+    # real door that replaces the fake one deleted below.
+    - mod\worlds\03_night_city\_compiled\default\cc_g04_room.streamingblock
+    # THE TWO SHARDS AND THE CLUES, generated by tools/gig04/gen_sector.py:
+    # the game's own shard case on the seat of Stamps's couch and on the
+    # ground behind the Claws' van, each in a sector of its own, and the
+    # van's three scanner clues (gen_clues.py), Reynaldo's bag among them;
+    # one block names both sectors.
+    - mod\worlds\03_night_city\_compiled\default\cc_g04_world.streamingblock
+  sectors:
+    # THE FAKE DOOR GOES. The building shell in Little China has a decorative
+    # double door drawn on it (a FakeDoor entity) and two proxy meshes that
+    # stand in for it at distance. The door entity and one proxy are deleted.
+    # On game 2.5 the other proxy is scaled to zero instead (below). The real
+    # door in cc_g04_room stands in the same frame. `expectedNodes` is the
+    # sector's instance count AS THE GAME LOADS IT, and the index is the
+    # node's position in it (gotcha 47). A count mismatch refuses that entry
+    # only, and ArchiveXL.log says so. Other entries for the same sector
+    # still apply.
+    #
+    # THE COUNT IS PHANTOM LIBERTY'S. The two proxy sectors are replaced by
+    # `ep1_1_nightcity.archive` with more nodes in them (1600 for 1595, 2120
+    # for 2091, the proxies at the same index in both); the base game's
+    # numbers were refused in play on 2026-10-01. Read the count off the
+    # ep1 copy of a sector whenever the expansion ships one.
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-23_24_0_0.streamingsector
+      expectedNodes: 974
+      nodeDeletions:
+        - index: 451
+          type: worldEntityNode
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-12_11_0_1.streamingsector
+      expectedNodes: 2120
+      nodeDeletions:
+        - index: 102
+          type: worldGenericProxyMeshNode
+    # THE BASE GAME'S COUNT, for a player without Phantom Liberty. Four
+    # sectors have a second entry in it: this one, exterior_-12_12_0_1 below,
+    # and the two occluder sectors further down (audit 2026-10-01: with only
+    # the expansion's counts, ArchiveXL refuses all four there, and the room
+    # cannot be seen into from the street). Each entry is checked against the sector the
+    # game loaded, so on any one install one of each pair applies and the
+    # other is refused in ArchiveXL.log. Indices matched node for node
+    # between the two copies by type and position.
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-12_11_0_1.streamingsector
+      expectedNodes: 2091
+      nodeDeletions:
+        - index: 102
+          type: worldGenericProxyMeshNode
+    # GAME 2.5 renamed this proxy's type to `worldCookedGenericProxyMeshNode`
+    # (same count, same index). On 2.5 it is not a node of its own: node 36
+    # is ONE cooked proxy for the whole sector, 112 inner meshes, and this
+    # entry is its instance 6 (`kitsch_g.mesh`, hidden by the game itself
+    # within 12.4 m, which is why the painted door seemed to fade as V came
+    # up to the real one). Deleting the entry crashed the game on load with
+    # ArchiveXL 1.28.0: its deletion swaps in a dummy node and keeps the
+    # entry's `instanceIndex` (ArchiveXL issue #36, fixed in 1.28.2, commit
+    # fdaea03). So the entry is SCALED TO ZERO instead, which hides this
+    # instance alone and changes nothing else in the sector. Gotcha 141.
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-12_11_0_1.streamingsector
+      expectedNodes: 2120
+      nodeMutations:
+        - index: 102
+          type: worldCookedGenericProxyMeshNode
+          scale: [0, 0, 0]
+    # Without Phantom Liberty: 2091 entries, the same instance at the same
+    # index (read off the 2.5 base copy with WolvenKit 10.0.0-beta.1).
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-12_11_0_1.streamingsector
+      expectedNodes: 2091
+      nodeMutations:
+        - index: 102
+          type: worldCookedGenericProxyMeshNode
+          scale: [0, 0, 0]
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-12_12_0_1.streamingsector
+      expectedNodes: 1600
+      nodeDeletions:
+        - index: 232
+          type: worldEntityProxyMeshNode
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-12_12_0_1.streamingsector
+      expectedNodes: 1595
+      nodeDeletions:
+        - index: 232
+          type: worldEntityProxyMeshNode
+    # THE STREET VENDOR GOES. The game's own stallholder at Maricel's stall is
+    # one community of one entry (`vendor_template_man`, one spot), a
+    # `worldCompiledCommunityAreaNode_Streamable` with no NodeRef, so no
+    # quest node can switch her off (gotcha 126). Deleting the community node
+    # removes her and nobody else; Maricel stands in her spot. The same
+    # instance in the base and the expansion's copy.
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-10_15_0_1.streamingsector
+      expectedNodes: 2600
+      nodeDeletions:
+        - index: 988
+          type: worldCompiledCommunityAreaNode_Streamable
+    # THE BUILDING'S OCCLUSION BOX GOES. The game covers the inside of the
+    # shell with a `box_occluder` (room frame: 35 m left to 13 m right of
+    # the door, 1.6 m to 19.4 m behind the door line, floor to 5.8 m), so a
+    # camera outside that box is shown nothing inside it. Playtest
+    # 2026-10-01: the city through the doorway, the room from 1.6 m in,
+    # and the floor from both because it lies on the box's bottom face.
+    # The box is in the level-4 sector; the count is Phantom Liberty's copy
+    # (1359; the base game's has 1347 and the same box at 356).
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-2_1_0_4.streamingsector
+      expectedNodes: 1359
+      nodeDeletions:
+        - index: 355
+          type: worldStaticOccluderMeshNode
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-2_1_0_4.streamingsector
+      expectedNodes: 1347
+      nodeDeletions:
+        - index: 356
+          type: worldStaticOccluderMeshNode
+    # GAME 2.5 added one instance to both copies (1360 and 1348) and the box
+    # is at 355 in both: unit box at (-1441.56, 1527.23, 20.99), scale
+    # (17.83, 48.5, 6), read with WolvenKit 10.0.0-beta.1, the first release
+    # that reads 2.5 sectors. Playtest 2026-11-01 on 2.5: the city through
+    # the doorway again, ArchiveXL.log refusing both entries above.
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-2_1_0_4.streamingsector
+      expectedNodes: 1360
+      nodeDeletions:
+        - index: 355
+          type: worldStaticOccluderMeshNode
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-2_1_0_4.streamingsector
+      expectedNodes: 1348
+      nodeDeletions:
+        - index: 355
+          type: worldStaticOccluderMeshNode
+    # TWO MORE OCCLUDERS CROSS THE BUILDING, in the level-3 sector, both
+    # instanced nodes: a box standing in the hall's left 4 m (room frame
+    # u -19.6..-13.9, the whole depth, floor to 7 m), and two tilted
+    # planes of the block behind, from 2.6 m up, crossing the back of the
+    # hall and the cell. Playtest 2026-10-01: the city through the cell's
+    # open door from across the hall, the cell whole from its doorway. The
+    # count is Phantom Liberty's copy (2043); a deleted node takes every
+    # row it carries, which here are this block's own.
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-3_2_0_3.streamingsector
+      expectedNodes: 2043
+      nodeDeletions:
+        - index: 1662
+          type: worldInstancedOccluderNode
+        - index: 1725
+          type: worldInstancedOccluderNode
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-3_2_0_3.streamingsector
+      expectedNodes: 2033
+      nodeDeletions:
+        - index: 1665
+          type: worldInstancedOccluderNode
+        - index: 1728
+          type: worldInstancedOccluderNode
+    # GAME 2.5 dropped one instance before them in both copies. The same two
+    # nodes (466, the box; 529, the planes), found again by testing every
+    # occluder row against points in the room: 1661 and 1724 of 2042 with
+    # Phantom Liberty, 1664 and 1727 of 2032 without. THESE NEED ARCHIVEXL
+    # 1.28.2 OR NEWER: 1.28.0 crashed every load nearby with them in
+    # (playtest 2026-11-01, four crashes; ArchiveXL issue #36, its deletion
+    # kept the entry's `instanceIndex`). The page asks for 1.28.2. Gotcha 141.
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-3_2_0_3.streamingsector
+      expectedNodes: 2042
+      nodeDeletions:
+        - index: 1661
+          type: worldInstancedOccluderNode
+        - index: 1724
+          type: worldInstancedOccluderNode
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-3_2_0_3.streamingsector
+      expectedNodes: 2032
+      nodeDeletions:
+        - index: 1664
+          type: worldInstancedOccluderNode
+        - index: 1727
+          type: worldInstancedOccluderNode
+    # STAMPS'S COUCH STAYS EMPTY. The game has two crowd seats of its own on
+    # it (`master_generic__sit_chair__sit_around__002` and `_004`, part of a
+    # garage shutter prefab), and the crowd puts a random passer-by on them.
+    # Playtest 2026-10-01, while he still sat there: "Stamps keeps changing
+    # look". He drinks at a bar now and his shard lies by the couch; a
+    # stranger on it would read as him. The same instances and count in the
+    # base and the expansion's copy.
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-20_31_0_0.streamingsector
+      expectedNodes: 2609
+      nodeDeletions:
+        - index: 17
+          type: worldAISpotNode
+        - index: 18
+          type: worldAISpotNode
+    # AND THE BOOTH'S OTHER THREE SEATS, in the next sector over: `_003`
+    # (1.1 m from the shard, facing it across the booth), `_005` and `_01`,
+    # the same prefab and workspot (audit 2026-10-02). Two entries, one per
+    # copy of the sector: 5051 nodes with Phantom Liberty, 5048 without, the
+    # three seats at the same indices in both; on any one install one entry
+    # applies and the other is refused in ArchiveXL.log.
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-19_31_0_0.streamingsector
+      expectedNodes: 5051
+      nodeDeletions:
+        - index: 178
+          type: worldAISpotNode
+        - index: 193
+          type: worldAISpotNode
+        - index: 194
+          type: worldAISpotNode
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-19_31_0_0.streamingsector
+      expectedNodes: 5048
+      nodeDeletions:
+        - index: 178
+          type: worldAISpotNode
+        - index: 193
+          type: worldAISpotNode
+        - index: 194
+          type: worldAISpotNode
+    # STAMPS'S STOOL AT THE BAR IS HIS ALONE, for the reason his couch's two
+    # seats went: the crowd puts a random passer-by on a seat of its own.
+    # This one is `master_generic__sit_barstool_bar__sit_around__002`, the
+    # stool he sits on (gig04_config.BAR_STAMPS). The other stool stays, so
+    # a drinker may sit beside him. The same instance and count in the base
+    # and the expansion's copy.
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-11_15_0_1.streamingsector
+      expectedNodes: 1023
+      nodeDeletions:
+        - index: 80
+          type: worldAISpotNode
+quest:
+  phases:
+    # THE PARENT IS A SCOPE NAME, NOT A FILE PATH: ArchiveXL expands
+    # `cyberpunk2077.quest` to every root quest a session can run, which is
+    # what makes the gig exist in a New Game Plus save. gotchas.md 84.
+    - path: mod\return_ticket\quest\gig04.questphase
+      parent: cyberpunk2077.quest

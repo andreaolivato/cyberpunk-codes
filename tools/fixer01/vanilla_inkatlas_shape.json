@@ -1,0 +1,94 @@
+{
+  "Header": {
+    "WolvenKitVersion": "8.20.0",
+    "WKitJsonVersion": "0.0.9",
+    "GameVersion": 2310,
+    "DataType": "CR2W",
+    "ArchiveFileName": "site.inkatlas"
+  },
+  "Data": {
+    "Version": 195,
+    "BuildVersion": 0,
+    "RootChunk": {
+      "$type": "inkTextureAtlas",
+      "activeTexture": "StaticTexture",
+      "cookingPlatform": "PLATFORM_PC",
+      "dynamicTexture": {
+        "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "uint64",
+          "$value": "0"
+        },
+        "Flags": "Soft"
+      },
+      "dynamicTextureSlot": {
+        "$type": "inkDynamicTextureSlot",
+        "parts": [],
+        "texture": {
+          "DepotPath": {
+            "$type": "ResourcePath",
+            "$storage": "uint64",
+            "$value": "0"
+          },
+          "Flags": "Soft"
+        }
+      },
+      "isSingleTextureMode": 1,
+      "parts": [],
+      "slices": [],
+      "slots": {
+        "Elements": [
+          {
+            "$type": "inkTextureSlot",
+            "parts": [],
+            "slices": [],
+            "texture": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Soft"
+            }
+          },
+          {
+            "$type": "inkTextureSlot",
+            "parts": [],
+            "slices": [],
+            "texture": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Soft"
+            }
+          },
+          {
+            "$type": "inkTextureSlot",
+            "parts": [],
+            "slices": [],
+            "texture": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Soft"
+            }
+          }
+        ]
+      },
+      "texture": {
+        "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "uint64",
+          "$value": "0"
+        },
+        "Flags": "Soft"
+      },
+      "textureResolution": "UltraHD_3840_2160"
+    },
+    "EmbeddedFiles": []
+  }
+}

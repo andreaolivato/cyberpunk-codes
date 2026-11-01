@@ -31,9 +31,11 @@ from questkit import gigs                                            # noqa: E40
 
 GIG = gigs.from_argv('02')
 cfg = gigs.config(GIG)
-FACT_PREFIX = 'cc_g' + GIG + '_'
+# The mod's own fact prefix, off its config (`cc_g02_`, `cc_f01_`). Gigs 01
+# and 02 predate the constant and follow the convention.
+FACT_PREFIX = getattr(cfg, 'FACT_PREFIX', 'cc_g' + GIG + '_')
 MENU = os.path.join(cfg.SOURCE, 'cet-dev', 'init.lua')
-PHASE = os.path.join(cfg.RAW_MOD, 'quest', 'gig' + GIG + '.questphase.json')
+PHASE = os.path.join(cfg.RAW_MOD, 'quest', gigs.stem(GIG) + '.questphase.json')
 
 # Facts the menu is not expected to list. `_claim` is a race's own scratch,
 # written and cleared inside one block and meaningless between them.

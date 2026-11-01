@@ -489,7 +489,7 @@ def _animate(sets):
             s = dict(s, out=os.path.join(tmp, '%03d.anims' % i))
             sets[i] = s
         spec = os.path.join(tmp, 'sets.json')
-        with open(spec, 'w', encoding='utf-8') as fh:
+        with open(spec, 'w', encoding='utf-8', newline='\n') as fh:
             json.dump(sets, fh, indent=1)
         cmd = [py, '-m', 'lipsync_animator', 'anims', '--sets', spec]
         for archive in EXTRA_ARCHIVES:

@@ -1,0 +1,13 @@
+# The one gameplay restriction this mod applies: V held still while Johnny
+# speaks after her introduction call, so V cannot walk past him. Gig 04's
+# `cc_g04_hold`, copied: read docs/gameplay-restrictions.md before touching
+# this. A base-game record is SAVABLE, so the clone turns saving off; it
+# still blocks, because the gate reads the gameplay tag the clone inherits.
+#
+# Fixer01_Hold.reds applies it while the quest sets `cc_f01_hold`, never with
+# V in a vehicle, on a 30 s cap, and lifts it on the first pass of every
+# session in case a load caught it held.
+
+GameplayRestriction.cc_f01_hold:
+  $base: GameplayRestriction.NoMovement
+  savable: false

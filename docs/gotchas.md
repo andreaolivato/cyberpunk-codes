@@ -2961,8 +2961,8 @@ Never renumber. Append.
      `add_spawnset` in `questkit/questgraph.py`. And a body disposed while
      its entry is still on is put back under the same id (fixed ids, #64), so
      a keeper that latches ids for good stops seeing him after the first
-     pass. What is measured: the phase, the trigger, the fact's writers. What
-     is not, at the time of writing: the fix in play. `backlog.md` 48.
+     pass. Measured: the phase, the trigger, the fact's writers, and the fix
+     in play (2026-09-20, one Dino at the bar). `backlog.md` 48.
 
 123. **A save remembers where its quest phase is by node number, so a node
      inserted into a released phase moves every later player to a different
@@ -2992,6 +2992,16 @@ Never renumber. Append.
      chain. Removed nodes leave their numbers unused. Before a release, diff
      the ids of every `questPauseConditionNodeDefinition` against the last
      tagged release: any wait whose id moved is a save that stops.
+
+     **A tester's save is frozen in the same way, before any release.**
+     Playtest, 2026-10-13: a gig switches its whole cast off at the top of
+     its phase, one node per person, and then waits for the fixer's
+     introduction. Two people left the cast. The wait moved from node 22 to
+     node 20, and a save taken before the introduction resumed at node 22,
+     past the node that puts the client at her stall. The gig's icon was on
+     the map, the stall was empty, and the call never came.
+     `questkit.questgraph.skip_ids_to(n)` holds a wait at its old number
+     however many nodes come before it.
 
 124. **A body on the ground after a lethal hit can be alive, and no death
      event comes for it.** Every human NPC has two states between alive and
@@ -3048,3 +3058,411 @@ Never renumber. Append.
      Ability 5 in a player's report and 10 on game 2.5. Do not name a
      number in player-facing text. `Gig03_Alarm.reds`, `CCG03Keycard`, opens
      the door this way when V carries the keycard from the desk beside it.
+
+126. **A base-game NPC standing where a gig needs the spot is removed by
+     deleting its community node from the sector, and only when that node
+     has no NodeRef and holds nobody else.**
+
+     Three ways a vanilla NPC is placed, and each has one way to take the
+     body away:
+
+     | how the game places it | how it is found | how it goes |
+     |---|---|---|
+     | a community node WITH a NodeRef (a quest NPC, a fixer) | the quest phase that switches it | the phase switches the entry off by name, as gig 03 does to Dino (`add_spawnset('Deactivate', ...)`) |
+     | a community node WITHOUT a NodeRef (a street vendor, a loiterer) | the `worldCompiledCommunityAreaNode_Streamable` at the body's exact position in the sector cache | ArchiveXL `nodeDeletions` on that instance; nothing a quest node can address |
+     | a crowd system body | nothing in any sector | cannot be removed; place beside it or elsewhere |
+
+     Measured on Kabuki Market's street vendor, 2026-10-01: the capture
+     gave `Character.Kiosk_Woman` at (-1236.69, 1975.17); the only
+     community node at that position is instance 988 of
+     `exterior_-10_15_0_1`, `communityArea_443`, one entry
+     (`vendor_template_man`) with one spot, `debugName` only and no entry
+     in `nodeRefs`. A quest `questCommunityTemplate_NodeType` wants a
+     NodeRef and there is none to give it. The deletion removes the
+     community, which is one person.
+
+     Before deleting, read the node: a community node with several
+     entries removes all of them, and the registry node beside it stays
+     and does no harm. The count in `expectedNodes` is the instance count
+     (gotcha 47) of the sector THE GAME LOADS, which is Phantom Liberty's
+     copy when `ep1_1_nightcity.archive` ships one (the two proxy sectors
+     of gig 04's door were refused for being counted off the base game's
+     copy).
+
+     Played in gig 04: with the vendor's community deleted, gig 04's
+     client stands in the vendor's own spot at the stall (backlog 55).
+
+127. **A building shell the game never meant you to enter has an occlusion
+     box over its whole inside, in a coarse sector, and anything a mod
+     builds in there is invisible until the camera is inside the box.**
+
+     Measured 2026-10-01 on gig 04's room, behind a shop front in Little
+     China. Walls, ceiling and furniture drew from one point and not from
+     another a metre and a half apart, and the floor drew from both. Five
+     builds went into the room's own nodes (facing, appearance, hide and
+     streaming distances, reference points) and none of them was the
+     cause. The cause was `exterior_-2_1_0_4`, the level-4 sector over the
+     block: a `worldStaticOccluderMeshNode` on `engine\meshes\editor\
+     box_occluder.w2mesh` (a unit box, +-0.5) scaled to the shell's inside,
+     here 17.8 by 48.5 by 6 m, starting 1.6 m behind the door line and
+     0.2 m below the floor. An occluder box hides everything inside it from
+     a camera outside it. The floor pieces lay on its bottom face and so
+     were drawn from outside; everything taller was not.
+
+     Finding it: the fine sectors round the door (levels 0 and 1) held no
+     occluder; the box sits two grid levels up, in a sector the cache did
+     not hold. Decode the level-2, -3 and -4 sectors over the spot
+     (`floor(x / (64 * 2^level))` for the cell) and list every
+     `worldStaticOccluderMeshNode` and `worldInstancedOccluderNode` with
+     its position, scale and yaw in the room's own frame; the instanced
+     kind keeps its placements in `buffer`, four `Vector4` rows of a matrix
+     with the translation in the fourth.
+
+     The fix is a `nodeDeletions` entry on that sector. Count the
+     instances of the copy the game loads, which is Phantom Liberty's when
+     the expansion ships one. An occluder is not drawn, so deleting one
+     changes nothing a player sees and costs the engine a little culling
+     for that block.
+
+128. **A room a mod builds has no navigation mesh, no mod can give it
+     one, and the game's run-time obstacles do not bend a path. An NPC in
+     such a room walks through its walls.**
+
+     Measured 2026-10-01 in gig 04's room, with the game's own queries from
+     a CET window. `FindPointInSphereOnlyHumanNavmesh` within 1 m of V
+     answered `InvalidStartingPosition` 11 m inside the room and `OK` on
+     the street 3 m outside the door, in the same session. Eight Tyger
+     Claws placed inside stood where their community put them and, once
+     hostile, moved straight at V through the walls and stood inside
+     them; a grenade thrown among them found the man they held, who was
+     then made invulnerable by `GodModeSystem` and still did not walk out
+     when his community entry was switched to a phase with a street spot.
+     The mesh is baked when the game is built, from what was walkable
+     then, and a shell nobody was meant to enter has none inside.
+
+     `NavigationSystem.AddObstacle` is in the shipped scripts and does
+     place obstacles (55 along the walls, counted back), but
+     `CalculatePathOnlyHumanNavmesh` from V to a point 8 m along the
+     street measured 7.70 m before and 7.70 m after fifteen of them were
+     put across the line. Whatever the obstacles are for, they are not
+     walls to the path finder.
+
+     Nothing in ArchiveXL, the wiki or the shipped node types adds or
+     patches a navigation mesh. What a mod can do is replace the game's
+     own mesh file for the tiles under its room, which is gotcha 129.
+
+129. **The navigation mesh is shipped as ordinary files, Recast/Detour
+     tiles in plain metres with three changes from stock Detour, and a mod
+     archive can replace the sector under its room with the room's floor
+     sewn onto the baked mesh's own edge in the doorway.**
+
+     Read off the game's files 2026-10-01. `navigation_<x>_<y>_<z>_3.
+     streamingsector`, category Navigation, 3,846 of them, named on a
+     256 m grid in all three axes (x and y -32..31 is the whole world,
+     Badlands included; the one under gig 04's room is `navigation_-6_6_
+     -2_3`, its node 333 m below ground with a box 518 m tall). Each holds
+     `worldNavigationNode`s whose `worldNavigationTileResource` is embedded
+     (`EmbeddedFiles`): one resource per 162 m square and per agent (Human,
+     Vehicle), 25 tiles of 32.4 m, and a second copy of any tile that has
+     a variant (a door or gate state, keyed by an id in `allVariantIDs`).
+     `tilesData` names a tile's x, y and buffer; `tileBuffers` holds the
+     bytes. The bytes are a Detour tile: magic DNAV, version 8, the
+     100-byte header, the sections in Detour's order. Three differences
+     from stock Detour: three vertices per polygon (a 20-byte poly: link,
+     3 vertex indices, 3 neighbours, flags, count, area), 64-bit polygon
+     references (16-byte links, zero in the file, filled at load), and
+     the coordinates are metres, the height on Detour's Y (X = world x,
+     Y = world z, Z = world y). A tile's index is floor(x / 32.4). The
+     human agent is 0.3 m wide, 1.8 m tall, climbs 0.6 m; every polygon
+     has flags 3; area is 3 on the street, 4 upstairs, with 128 added on
+     some; the detail mesh is one triangle per polygon with no extra
+     vertices and flags 0x15; neighbours share the same two vertex
+     indices, in the opposite order, on both polygons; the BV tree has
+     two nodes per polygon, built Detour's way, its bounds the vertices'
+     own 0.1 m grid coordinates (round, do not truncate: a stored float is
+     a hair off its cell); off-mesh connections are polygons past
+     `offMeshBase` with no leaf. Polygons are wound clockwise in world x,
+     y.
+
+     The trap that cost a day: tiles in the empty corners of the world
+     are two-triangle slabs of the terrain, and the first reading took
+     the sector named (-23, 23) for the room's (it is 6 km away), its
+     32.4 m slabs for 8.1 m tiles, and its heights for tenths of a metre.
+     The street polygons at the door sit at 18.40 m, which is what the
+     game's own point query returns there, and the resource's node sits
+     at the centre of its 162 m square in metres; both settle the units.
+
+     The baked mesh reaches 3.2 m in through gig 04's doorway, the
+     entrance's own floor, and stops at a straight boundary edge of three
+     polygons. `tools/gig04/gen_navmesh.py` adds the room's floor to the
+     two human tiles the room spans (every copy of a tile with variants):
+     one polygon from that edge to the back of the room, clipped to each
+     tile, ear-clipped into triangles that reuse the edge's own vertex
+     indices, so the baked polygons' neighbour fields point at the new
+     ones and back; portal edges (0x8000 plus the side) on the tile
+     border; walls elsewhere; the tree rebuilt. Nothing of the game's own
+     mesh is removed. The whole sector is written, Phantom Liberty's copy
+     (the one the game loads), under `base\...` in the raw
+     folder, so the archive overrides the game's file; two mods touching
+     the same navigation sector would collide, the ordinary cost of a
+     file override. The parser packs every untouched tile of the sector
+     back to its own bytes, which is the check that the layout above is
+     right.
+
+     Played: the fixer's dev window's `navmesh under V` line read `OK` at
+     18.40 in the doorway, where it said `InvalidStartingPosition` before,
+     and no Claw walked through the walls.
+
+     The join described above, onto the baked edge 3.2 m inside the
+     doorway, was replaced in gig 04 once that baked floor turned out to
+     run through the room's walls (gotcha 130). The room's floor now
+     starts at the wall's inner face, and a threshold polygon joins it to
+     the street.
+
+130. **A doorway whose door was fake has no floor on the door line, so
+     the room behind it and the street are two separate pieces of the
+     walking mesh.**
+
+     Measured 2026-10-02 on gig 04's shop front by following the mesh's
+     own links (each triangle's neighbour fields, and portal edges across
+     tile borders) outward from the room. The baked mesh stops 0.6 m
+     inside the doorway, where the fake door stood, and the street's
+     floor stops 0.6 m outside it: 0.8 m with nothing in it. The game
+     joins the two sides of a working door with a second copy of the tile
+     for the open state (a tile with `activeVariantIDs`, gotcha 129). A
+     fake door gets none, and placing a working door entity there does
+     not make one. So nothing walked from the street into the room:
+     guards ordered to hunt V stood outside, and a Claw inside could get
+     no closer to V on the street than a strip of floor along the
+     outside of the front wall, through the wall.
+
+     The fix is one polygon across the door line, built from the open
+     edges' own vertices on both sides, so both seams link
+     (`tools/gig04/gen_navmesh.py`, "the threshold"). An edge links only
+     whole, so the polygon follows the street's edge where it runs past
+     the opening. The polygon is there whether the door is open or shut,
+     so the door is held open while anyone needs to cross
+     (`Gig04_Places.reds`, `OpenDoor`).
+
+     The game's floor at a shop front can also run THROUGH the line a
+     mod's wall stands on. At gig 04's door it was a strip of large
+     triangles from 1.5 m out to 3.2 m in, across the front wall and the
+     right wall: fifteen triangles across a wall, four links joining floor
+     on its two sides, so guards could walk from the street through the
+     wall. Every polygon of the game's that crosses a wall of the room, or
+     lies inside it, is switched off: flags 0, which no walker's filter
+     passes, and every link to it cut on both sides. The room's own floor
+     then starts at the inner face of the wall, and the threshold is the
+     only way through. The check is to test every link between two
+     walkable polygons, and every walkable polygon's edges, against the
+     wall runs.
+
+131. **A walking-mesh floor at the right height can be under something.
+     Check above a spot as well as under it.**
+
+     Measured 2026-10-02 outside gig 04's door: the pavement strip is at
+     18.40 and about 3 m wide, then a kerb and a raised road at about
+     21.1. Under that road the walking mesh has a second floor at 18.40,
+     and a guard placed there stood inside the road structure. In game
+     he showed only as an outline through the road surface. A spot is
+     safe when it has 1.5 m of floor at its own height round it and no
+     floor between 0.3 m and 7.6 m above it.
+
+132. **A community entry switched on with the player standing beside its
+     spot does not appear until the player has left and come back.**
+
+     Measured 2026-10-13 on gig 04's stall, twice: Maricel's entry was
+     switched on by the quest with V at the counter, and the stall stayed
+     empty; walking about 200 m away and back, she was there. Gig 03
+     switches its Dino on 35 m out, on the way into the bar, and he
+     appears, so the distance or the view matters; neither was measured.
+     The rule that follows: switch a person on while the player is far
+     from the spot, and do not start a beat that needs them until the
+     script finds the body there.
+
+     The likelier cause, not yet proved in game: the spawn phase's
+     `alwaysSpawned` left at its default. The base game marks 1,499 phases
+     `true_`, its quest characters' among them (Panam's in
+     always_loaded_1), and leaves crowd-like entries at the default, where
+     the body appears only when the world's spawner gets to it. A trace on
+     2026-10-14 had the same entry appear within 25 s in two runs and never
+     in a third, through three switch-offs and -ons beside the spot.
+     `questkit.community.Community(always_spawned=True)` writes `true_`.
+     Played once with it on, and she was there (backlog 55).
+
+133. **A scanner clue with no step in `extendedClueRecords` scans, shows its
+     text, and never sets its facts.**
+
+     Read off the scripts (game 2.31) after a playtest on 2026-10-14 where
+     the objective's counter stayed at 0/3 through three finished scans.
+     `scanningComponent.swift` gives a clue's conclusion a time of 1.0 when
+     the clue has steps and 0.0 when it has none. `gameObject.swift`,
+     `ResolveFocusClueConclusion`, runs the clue's facts only when that time
+     is at least the scan's progress, which 0.0 never is. A step with the
+     conclusion's own record lists the clue twice on the scanner. One step
+     whose record is 0 keeps the 1.0 and lists nothing.
+     `docs/clue-playbook.md`, section 4.
+
+134. **A use-workspot order that holds an NPC on a spot never finishes, and
+     the next order sent to that NPC waits behind it.**
+
+     Measured 2026-10-14 on gig 04's Reynaldo. `AIUseWorkspotCommand` walks
+     the NPC to a spot and holds him in its pose, with no end. A second
+     order, sent 12 s after the first and logged as sent, was carried out
+     only a long while later. Keep the order you send and cancel it with
+     `AIComponent.CancelCommand` before the next one. A quest's patrol order
+     that follows waits behind it the same way, so cancel the last one
+     before the quest moves the NPC.
+
+135. **An order sent to an NPC in a sitting pose waits for that pose's slow
+     exit. The fast exit is the get-up the game plays when it pulls a
+     seated NPC out.**
+
+     Measured 2026-10-14 on gig 04's Reynaldo, who sits on the floor. A
+     use-workspot order sent while he sat was carried out after a fight
+     that lasted over a minute. `WorkspotGameSystem.SendFastExitSignal` on
+     the body first, then the order in the same tick, stood him up with an
+     animation and walked him at once. Gig 04's `OutOfPose` is the call.
+
+136. **A patrol node's `Success` is not a signal to wait on.**
+
+     Twice on gig 04 the chain hung on it: on 2026-10-01 after Reynaldo's
+     run, and on 2026-10-14 when his goodbye waited for his walk to the
+     hall. Both times he reached the end of the path and the socket never
+     fired. Wait on something the world shows instead: the script reads
+     the body's position and sets a fact when it is there.
+
+137. **A pose a scene plays on a community actor ends with the scene, and
+     the actor goes back to the pose of its community spot.**
+
+     Measured 2026-10-14. Reynaldo sits on his community spot. The standing
+     idle played on him from a line of his talk (a scene workspot node,
+     `jumpToEntry` 0) put him on his feet with no animation, and as the
+     scene ended he was back on the floor. To get a seated actor up for
+     good, raise a fact from the line (`docs/scene-playbook.md`, "A fact
+     from a line"), send the fast exit (gotcha 135), and give the AI a
+     use-workspot order to a standing spot of your own.
+
+138. **The crowd sits a passer-by on a mod community's seat, with the
+     game's own seat there deleted and a crowd null area round it.**
+
+     Measured 2026-10-14 on gig 04's Stamps, twice, a different woman each
+     time. The game's seat on his stool was deleted through ArchiveXL and
+     the log said the patch applied. His own spot has no markings (gotcha
+     96). A search of every sector within 300 m found no other seat there.
+     A `worldCrowdNullAreaNode` round the bar, switched on with him, did
+     not stop it either. What does: a script that disposes any body with
+     `IsCrowd()` true within a metre of the seat while the character is
+     there (gig 02's InnKeeper, gig 04's ClearStool), and logs each one.
+     Where the crowd takes the seat from is not known.
+
+139. **A room tiled with the interior kit's 3 m floor pieces leaves a strip
+     with no floor where its width is not a multiple of 3 m.**
+
+     Gig 04's room is 19.6 m across. Its tiling stopped at the right wall
+     and left 1.6 m with no floor and no ceiling the whole depth of the
+     room (playtest 2026-10-14). Carry the last column past the wall, into
+     space the player cannot reach.
+
+140. **A recorded line that is not V's can still exist for one V only.**
+
+     A voice file's name carries the player's body type after the scene,
+     `_f_` or `_m_`. Most lines of other characters have only the `_f_`
+     file, which every V hears. Some have only `_m_`: lines of a scene that
+     plays differently for a male V. Johnny's "Chick's got taste." and "And
+     she's nice." (`sq026`, `0x1c5034defe2b6014` and `0x1c5034df002b600c`)
+     are two, from a scene that has a female V's version of its own.
+     Reused in a mod, such a line has no file for the other V; that it
+     then plays silent is inference, not measured. Read the
+     `audio` entries of a line in `tools/_vo_cache/corpus.json` (or the
+     file names in the voice archive) before picking it (read 2026-10-15).
+
+141. **A game patch moves the nodes a sector edit names, and the edit is
+     then refused with nothing visible in game.**
+
+     An ArchiveXL `nodeDeletions` entry names a sector's instance count and
+     an index into it. Game 2.5 added or dropped one instance in sectors
+     both copies of gig 04's room edits named (`exterior_-2_1_0_4`
+     1359 to 1360, `exterior_-3_2_0_3` 2043 to 2042), and renamed one node
+     type (`worldGenericProxyMeshNode` to `worldCookedGenericProxyMeshNode`).
+     ArchiveXL refused all of them, the occluders came back, and the room
+     showed the city through its doorway again (playtest 2026-11-01). The
+     only record is `ArchiveXL-<date>.log`, which names each refusal.
+     After every game patch, read that log for `The target sector has`
+     before playtesting anything that edits a sector.
+
+     WolvenKit 8.20 cannot read a 2.5 sector (it fails on an unknown node
+     class); 10.0.0-beta.1 can, and needs the .NET 10 runtime. Keep the
+     old entries beside the new ones: ArchiveXL applies only the entry
+     whose count and types match, so one manifest serves both versions.
+
+     On game 2.5 with ArchiveXL 1.28.0, deleting a node of a cooked or
+     instanced type crashes the game on every load of a save near it. The
+     crash is an access violation reading 0xFFFFFFFFFFFFFFFF, always at the
+     same address in the game's own code, with no mod code on the stack.
+     Deleting two `worldInstancedOccluderNode` instances of
+     `exterior_-3_2_0_3` crashed four loads at that address (playtest
+     2026-11-01). The same two deletions load on 2.31. Deleting the
+     renamed proxy alone, under its 2.5 type, crashes at the same address.
+     Deleting a static occluder, an entity node, an entity proxy or an AI
+     spot does not crash. WolvenKit 10.0.0-beta.1 still reads part of
+     2.5's instanced occluder rows as unnamed fields.
+
+     The cause is ArchiveXL 1.28.0, not the edit. Its deletion swaps in a
+     dummy node and leaves the entry's `instanceIndex`, which a 2.5 cooked
+     or instanced node uses to pick one of many inner meshes (ArchiveXL
+     issue #36, the same address; fixed in 1.28.2, commit fdaea03). On
+     2.5 one cooked proxy node has a whole sector's distant copies: the
+     building's is inner mesh 6 of 112. Deletions of these types need
+     ArchiveXL 1.28.2 or newer; say so on the mod page. To hide one
+     entry on any 1.28 version, scale it to zero instead of deleting it:
+
+         nodeMutations:
+           - index: 102
+             type: worldCookedGenericProxyMeshNode
+             scale: [0, 0, 0]
+
+     The same patch changed the navigation sector gig 04 replaces whole
+     (`navigation_-6_6_-2_3`). A replacement built from the old file ships
+     the old file's mesh into the new game; regenerate it from the patched
+     copy (`gen_navmesh.py --refresh`).
+
+142. **COMBAT can stay on after every enemy is dead, held by a person the
+     fight never reached.** The player has a threat list of his own, the
+     same `TargetTrackerComponent` an NPC has. While anything standing is
+     on it, the HUD says COMBAT.
+
+     Playtest, 2026-11-01. Gig 04's room fight ended with all six of its
+     enemies dead, and COMBAT held for 33 seconds more. A far red marker
+     showed on the minimap. The player's list had one entry: Stamps, an
+     informant of the same gig, standing at his bar 410 m away. His record
+     is built on a Tyger Claw's, and he is spawned by the same community as
+     the room's Claws. That the fight reached him through them is inference.
+     When he dropped off the list, COMBAT ended.
+
+     To find who holds it, read the player's list after the fight:
+     `player.GetTargetTrackerComponent().GetHostileThreats(false)`, and log
+     each entry's class, record and distance. To clear one entry, call the
+     tracker's own `RemoveThreat(tt.MapThreat(entity))`, on the player's
+     list and on the NPC's. Set the NPC's attitude to the player back to
+     neutral as well. Do it only when the NPC is far from the player, so a
+     fight the player starts with him still runs.
+
+143. **Switching several people of a community on at once can freeze the
+     game as they are placed.** A quest's `Activate` on a community entry
+     does not place the body; the game places it when the player comes
+     near. Entries switched on together are placed together.
+
+     Playtest, game 2.5: gig 04 switched its room's four people on in one
+     step, half a kilometre away. Riding in on a bike, the game froze for a
+     second or two about 175 m from the building. The room's 258 mesh
+     pieces were ruled out first: they stream at 99 m, and moving them to
+     120-160 m changed nothing. ArchiveXL's log showed no sector loading at
+     that moment.
+
+     Switching them on in two groups removed the freeze. Two are switched
+     on as before. The other two wait on a `questDistanceCondition` (120 m)
+     to a body of the first group, so the game places two people at a
+     time. A tiny hitch remains closer in, too short to notice. The new
+     nodes take ids above the phase's last release (gotcha 123), and the
+     old slots write a readout fact so no other id moves.

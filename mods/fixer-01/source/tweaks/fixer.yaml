@@ -1,0 +1,164 @@
+# The fixer's Character record, and the five flats that make a record a
+# FIXER'S in the eyes of the map tooltip.
+#
+# WHAT THE TOOLTIP READS, off `MappinUIUtils.GetFixerVariantData` in the
+# decompiled scripts: the character
+# record the map icon belongs to, then five flats on it by name:
+#
+#   tooltipAvatar          a UIIcon record, the portrait on the tooltip
+#   amountOfQuests         the total, the "10" in "3/10"
+#   factCounterName        the fact holding the count, the "3"
+#   thresholds             int array, splits the count into reward stages
+#   additionalDescription  optional LocKey under the bar
+#
+# THE BASE IS AN ANONYMOUS CIVILIAN, NOT A FIXER (the design call,
+# 2026-09-18: nothing of a real character's comes along unless a fixer needs
+# it). `Character.SlackerFemale` is the record gig 02 built Char on: captured
+# in play, a body that stands at a community spot and is acquired by a scene,
+# and nobody's. Its one appearance is pinned so the community cannot roll one
+# of its twenty faces at random.
+#
+# HER LOOK IS HER OWN. `entityTemplatePath` and `appearanceName` point at the
+# entity and appearance tools/fixer01/gen_npv.py builds from the preset saved
+# at the mirror on 2026-09-18 (`character-presets\female\fixer01.preset`),
+# on the NPV recipe; the civilian base supplies everything a body needs that
+# is not visual. The appearance file itself carries the meshes.
+#
+# THE FIVE FIXER FLATS ARE NEW FLATS, defined standalone with an explicit
+# type, which is how TweakXL creates a flat that does not exist. They are not
+# properties of the Character record class: of the game's own Character
+# records only the fixers carry them (ten of them, read off the TweakDB
+# string table), so the game itself adds them the same way, and the tooltip
+# reads them by full name through TweakDBInterface rather than off the class.
+# `thresholds` is left undefined: the tooltip reads an empty array for a
+# missing one and takes the no-stages path.
+#
+# UNPLAYED IN THIS SHAPE. The dev menu's READ THE RECORD prints all five off
+# the running game, which is the check that they exist; TweakXL's log names
+# any it refused.
+#
+# `displayName` and `fullDisplayName` are LocKey#<FNV1a64 of the bare key>,
+# which is the hash ArchiveXL registers our own localization string under.
+# The key is `cc-f01-fixer-name`, in tools/fixer01/gen_localization.py. Both
+# are set, because the scanner reads the full one (gig 01's Hoshino), and so
+# does the tooltip (`FullDisplayName()`). `skipDisplayArchetype` stops the
+# scanner reading the base's archetype over her name.
+#
+# THE VALUES: a total of 0, which each installed gig raises by one at
+# launch (source/scripts/Fixer01_Gigs.reds), our own counter fact
+# (tools/fixer01/fixer01_config.py names both), her portrait
+# (source/tweaks/portrait.yaml, drawn by tools/fixer01/gen_photo.py), no
+# extra line. Johnny's face stood in for the portrait on the first playtest,
+# chosen because it could not be mistaken for a fixer's; the square came up
+# blank, which gen_photo.py's header explains.
+
+Character.cc_f01_fixer:
+  $base: Character.SlackerFemale
+  entityTemplatePath: mod\fixer01\npv\fixer01.ent
+  appearanceName: fixer01
+  displayName: LocKey#1805542304300499190
+  fullDisplayName: LocKey#1805542304300499190
+  skipDisplayArchetype: true
+  # WHAT MAKES A FIXER'S RECORD A FIXER'S, past the five tooltip flats:
+  # every value on which Dino's and Regina's records differ from the
+  # civilian hers is based on, read off the running game on 2026-09-18
+  # (the dev menu's record dump; the first playtest scanned her as a
+  # civilian and could shoot her). The two fixers agree on all of these.
+  # `Invulnerable` is the tag that makes her unkillable; `friendly` and
+  # `NoReaction` are why she neither flinches nor turns on V; `Unaffiliated`
+  # and `QuestSettings` are what the scanner and the nameplate read;
+  # `Elite`, `Quest` and `SideQuest` are how the game ranks her among the
+  # people it spawns; the stat modifiers and pools are the game's generic
+  # quest-NPC set (`Character.Quest_NPC_Base`), not Dino's own. `items` is
+  # emptied because the civilian's own clothes would be equipped over the
+  # appearance file's.
+  tags: [Invulnerable]
+  affiliation: Factions.Unaffiliated
+  baseAttitudeGroup: friendly
+  reactionPreset: ReactionPresets.NoReaction
+  uiNameplate: UINameplate.QuestSettings
+  rarity: NPCRarity.Elite
+  priority: SpawnableObjectPriority.Quest
+  quest: NPCQuestAffiliation.SideQuest
+  isCrowd: false
+  isBumpable: false
+  savable: true
+  enableSensesOnStart: true
+  dropsWeaponOnDeath: true
+  communitySquad: Squad_Basic
+  crowdMemberSettings: Crowds.DefaultCrowdPackage
+  abilities: [Ability.CanCrouch, Ability.CanSprint]
+  items: []
+  statModifierGroups: [Character.NPC_Base_Primary_Stat_ModGroup]
+  statModifiers:
+    - Character.Quest_NPC_Base_inline0
+    - Character.Quest_NPC_Base_inline1
+    - Character.Quest_NPC_Base_inline2
+    - Character.Quest_NPC_Base_inline3
+    - Character.Quest_NPC_Base_inline4
+    - Character.Quest_NPC_Base_inline5
+  statPools:
+    - BaseStatPools.Puppet_Health_Base
+    - BaseStatPools.Puppet_Stamina_Base
+    - BaseStatPools.Fear
+    - BaseStatPools.Poise
+    - BaseStatPools.CPO_NPC_Importance
+  objectActions:
+    - GenericInteraction.PickUpBody
+    - GenericInteraction.Talk
+    - GenericInteraction.ReturnTalk
+    - Takedown.Grapple
+    - Takedown.LethalTakedown
+    - Takedown.NonLethalTakedown
+    - Takedown.AerialTakedown
+    - Takedown.BlackwallTakedown
+    - Takedown.NewPerkFinisher
+    - Takedown.NewPerkFinisherBlunt
+    - Takedown.NewPerkFinisherBluntHold
+    - QuickHack.RemoteBreach
+    - QuickHack.SuicideHackBase
+    - QuickHack.GrenadeHackBase
+    - QuickHack.SystemCollapseHackBase
+    - QuickHack.MadnessHackBase
+    - QuickHack.BaseBlackWallHack
+    - QuickHack.BaseOverheatHack
+    - QuickHack.BaseContagionHack
+    - QuickHack.OverloadBaseHack
+    - QuickHack.BrainMeltBaseHack
+    - QuickHack.BaseBlindHack
+    - QuickHack.BaseWeaponMalfunctionHack
+    - QuickHack.BaseLocomotionMalfunctionHack
+    - QuickHack.BaseCyberwareMalfunctionHack
+    - QuickHack.BaseCommsCallInHack
+    - QuickHack.BaseCommsNoiseHack
+    - QuickHack.BasePingHack
+    - QuickHack.BaseMemoryWipeHack
+    - QuickHack.BaseWhistleHack
+    - MinigameAction.NetworkSuicideHack
+    - MinigameAction.NetworkJamWeaponHack
+    - MinigameAction.NetworkPingHack
+    - MinigameAction.NetworkAutoJamHack
+    - MinigameAction.NetworkAutoBlindHack
+    - MinigameAction.NetworkAutoLocomotionHack
+    - MinigameAction.NetworkWeakNPCs
+    - MinigameAction.NetworkVulnerableNPCs
+    - MinigameAction.NetworkMadnessHack
+    - MinigameAction.NetworkWeaponMalfunctionHack
+    - MinigameAction.NetworkCyberwareMalfunctionHack
+    - MinigameAction.NetworkLowerICEMinorFirst
+    - MinigameAction.NetworkLowerICEMinorSecond
+    - MinigameAction.NetworkLowerICEMinorThird
+    - MinigameAction.NetworkLowerICEMedium
+    - MinigameAction.NetworkLowerICETutorial
+    - MinigameAction.NetworkLowerICEMajor
+
+Character.cc_f01_fixer.tooltipAvatar: t"UIJournalIcons.cc_f01_fixer"
+# ZERO ON PURPOSE. The total is the number of her gigs that are INSTALLED,
+# and a tweak file cannot know that. Each gig mod registers itself at launch
+# through `Fixer01Gigs.Register` (source/scripts/Fixer01_Gigs.reds), which
+# TweakXL runs after every tweak file has been applied, and the register
+# writes the count back here. With no gig installed the icon carries no
+# counter at all (the same script hides the bar at zero).
+Character.cc_f01_fixer.amountOfQuests: 0
+Character.cc_f01_fixer.factCounterName: n"cc_f01_fixer_count"
+Character.cc_f01_fixer.additionalDescription: n"None"

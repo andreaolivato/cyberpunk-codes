@@ -1,0 +1,109 @@
+{
+  "Header": {
+    "WolvenKitVersion": "8.20.0",
+    "WKitJsonVersion": "0.0.9",
+    "GameVersion": 2310,
+    "DataType": "CR2W",
+    "ArchiveFileName": "cc_g04_world.streamingblock"
+  },
+  "Data": {
+    "Version": 195,
+    "BuildVersion": 0,
+    "RootChunk": {
+      "$type": "worldStreamingBlock",
+      "cookingPlatform": "PLATFORM_PC",
+      "descriptors": [
+        {
+          "$type": "worldStreamingSectorDescriptor",
+          "blockIndex": {
+            "$type": "worldStreamingBlockIndex",
+            "oup": "Base",
+            "rldGridCell": 1058742
+          },
+          "category": "Exterior",
+          "data": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "mod\\worlds\\03_night_city\\_compiled\\default\\cc_g04_world.streamingsector"
+            },
+            "Flags": "Soft"
+          },
+          "level": 1,
+          "numNodeRanges": 1,
+          "questPrefabNodeRef": {
+            "$type": "NodeRef",
+            "$storage": "uint64",
+            "$value": "0"
+          },
+          "streamingBox": {
+            "$type": "Box",
+            "Max": {
+              "$type": "Vector4",
+              "W": 1,
+              "X": -1002.4398860000001,
+              "Y": 2235.560114,
+              "Z": 223.000114
+            },
+            "Min": {
+              "$type": "Vector4",
+              "W": 1,
+              "X": -1431.860114,
+              "Y": 1806.139886,
+              "Z": -206.420114
+            }
+          },
+          "variants": []
+        },
+        {
+          "$type": "worldStreamingSectorDescriptor",
+          "blockIndex": {
+            "$type": "worldStreamingBlockIndex",
+            "oup": "Base",
+            "rldGridCell": 1057970
+          },
+          "category": "Exterior",
+          "data": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "mod\\worlds\\03_night_city\\_compiled\\default\\cc_g04_van.streamingsector"
+            },
+            "Flags": "Soft"
+          },
+          "level": 1,
+          "numNodeRanges": 1,
+          "questPrefabNodeRef": {
+            "$type": "NodeRef",
+            "$storage": "uint64",
+            "$value": "0"
+          },
+          "streamingBox": {
+            "$type": "Box",
+            "Max": {
+              "$type": "Vector4",
+              "W": 1,
+              "X": -1513.115886,
+              "Y": 1437.3301139999999,
+              "Z": 233.947114
+            },
+            "Min": {
+              "$type": "Vector4",
+              "W": 1,
+              "X": -1955.3101139999999,
+              "Y": 998.289886,
+              "Z": -196.506114
+            }
+          },
+          "variants": []
+        }
+      ],
+      "index": {
+        "$type": "worldStreamingBlockIndex",
+        "oup": "Base",
+        "rldGridCell": 0
+      }
+    },
+    "EmbeddedFiles": []
+  }
+}

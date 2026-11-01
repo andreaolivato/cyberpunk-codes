@@ -1121,6 +1121,53 @@ multi = [n['Data']['nodeId']['id'] for n in graph
 
 Anything it lists should be a deliberate branch you can point at.
 
+## A choice that checks an attribute or costs money
+
+The game's own "[Body 6]" and price buttons are a condition on the option,
+not on the hub. The option's `bluelineCondition` holds it. The game draws
+the attribute or the price on the button, beside the player's own value. A
+check the player fails is red and cannot be picked.
+
+Read off the Kabuki street stories, field for field:
+
+| What | Vanilla example | Condition |
+|---|---|---|
+| Body | `sts_wat_lch_03_dojo_owner.scene`, node 462 | `questStatsCondition` > `questBuild_ConditionType` > `Build_ScriptConditionType`, `buildId: PlayerBuilds.Solo` |
+| Intelligence | `sts_wat_kab_04_receptionist.scene`, node 56 | the same, `PlayerBuilds.Netrunner`, plus `ChoiceCaptionParts.HackingIcon` in `iconTagIds` |
+| A fixed price | `mq060_identify.scene`, node 28 | `questPaymentCondition` > `questPaymentFixedAmount_ConditionType` > `PaymentFixedAmount_ScriptConditionType`, `payAmount` |
+| A price that scales | `sts_wat_kab_04_receptionist.scene`, node 56 | `PaymentBalanced_ScriptConditionType`, with an assignment and a difficulty |
+
+`type.properties` on the option carries the choice flags as bits of
+`gameinteractionsChoiceType`. A check is 256 (bit 8, Blueline). A payment
+is 257 (Blueline plus QuestImportant).
+
+**The number an attribute check asks for is not written in the scene.**
+`Build_ScriptConditionType` names a content assignment (`questAssignment`,
+a `DeviceContentAssignment` record) and a `difficulty`. The game turns the
+assignment's power level into a number through that difficulty's curve
+(`RPGManager.GetBluelineBuildCheckValue`). Borrow the assignment of a
+vanilla gig in the same district, and the check asks what the district's
+own gigs ask. The player's side is the attribute plus its skill-check
+bonus, capped at 20 (`RPGManager.GetBuildScore`).
+
+**A payment takes the money itself.** With `payWhenSucceded` set, the
+game removes the amount as the player picks the option
+(`PaymentConditionTypeBase.ExecuteBluelineAction`). Do not also take it
+from a script on the branch's exit, or the player pays twice.
+
+**Leave the player a way out.** A player who fails every check and cannot
+pay has no button to press. The game nearly always keeps one option with
+no check: the receptionist's hub has a plain option between the payment
+and the Intelligence check. Give every hub of the conversation its own
+walk-away exit as well, not only the first: a hub without one holds the
+player in the conversation for as long as none of its buttons can be
+picked.
+
+`questkit.scene.attribute_check()` and `payment_check()` build these, and
+`Scene.choice(..., checks=[...])` takes one per option. Gig 04's booth
+scene is the worked example. This is read off vanilla data and compiles; it
+has not been played yet.
+
 ## Where the text really comes from (the blank-subtitle trap)
 
 A scene line points at a `scnlocLocstringId` RUID. The scene's own embedded
@@ -2110,6 +2157,46 @@ ends at its own exit point and the quest phase does the fact work, so there is
 one graph builder to maintain instead of two. Revisit only if something needs to
 happen part-way through a section: that is what `scneventsSocket` is for.
 
+### A line that depends on a fact: fork inside the scene
+
+The exception to the rule above is an answer in a choice hub that has to
+differ by what the save has done, because the hub is inside the scene and
+the phase cannot see which button was pressed. The game forks a scene on a
+fact with a `questConditionNodeDefinition` wrapped in a `scnQuestNode`,
+with two out sockets named `True` and `False` (ordinals 0 and 1): Wakako's
+debrief call for the Charter Hill gig, `sts_wbr_hil_01_holocall_debriefs.scene`
+node 65, forks on `hil_01_combat` that way. The same node is built by
+`Scene.add_fact_branch_node(fact, value, cmp)`, and both its sockets are
+filled by `link_branch(fork, true_dst, false_dst)`; link into it with
+`link_section_quest`, because its `In` is input ordinal 1 like every
+`scnQuestNode`.
+
+The fixer's district answer is the worked example: V's question section
+goes into the fork, `True` goes to the answer for a save where the gig
+upstairs is finished, `False` to the answer for one where it is not, and
+both return to the hub. The fact is the game's own: a base-game gig adds
+1 to `<code>_finished` at its reward phase (`sts_wbr_hil_01_open_world.questphase`,
+node 30), and its top phase waits on the same fact before cleaning up, so
+"greater than 0" is the test the game itself uses for "done".
+
+### A fact from a line
+
+A scene can tell the quest or a script that a given line has started. The
+talk does not wait for it. Measured 2026-10-14 in gig 04's room scene, two
+ways in one talk: Reynaldo gets up as his line b02 starts, and Orbital Air
+is turned on the player as V's warning line starts.
+
+1. Build a fact node: `Scene.add_fact_node(fact, value)`, a `scnQuestNode`
+   holding a `questSetVar_NodeType`, vanilla's node 116 of
+   `sts_wat_kab_03_johnny.scene`.
+2. Fire it from the line's section with `Scene.fire_event(section, node,
+   start_time)`. That adds an events socket to the section and wires it to
+   the node's input ordinal 1.
+3. Wait on the fact in the quest phase, or read it from a script.
+
+`start_time` 0 is the moment the line starts. The node is terminal: nothing
+hangs off it, so a fact that is never read changes nothing.
+
 ## An NPC who turns on the player when the conversation ends
 
 A conversation that changes nothing is a cutscene. This is the recipe for one
@@ -2405,19 +2492,38 @@ the marker, and the workspot node goes on the events socket so the scene is
 never waiting on it. Gotcha 107 and the fire-and-forget note in
 `fire_workspot`.
 
+The option itself is the Claire races' (`sq024_05_big_race.scene`, choice
+1125). It carries `ChoiceCaptionParts.WaitIcon`. Its `questCondition` is a
+`questCharacterCombat_ConditionType` on the player, inverted, so the prompt
+is not offered in combat. `questkit.scene.wait_option()` returns both, for
+the choice's `checks`.
+
 **5 and 6. The graph owns the pacing, and vanilla's nodes do the work.**
 
 ```
 fork --> scene node                              (side branch, gates nothing)
      |
      +-> pause <taken> -> delay 3 s -> fade out -> set <shift>
-                       -> delay 2 s -> set <release> -> delay 1 s -> fade in
+     |                            |  -> delay 2 s -> set <release> -> delay 1 s -> fade in
+     |                            |                              |
+     |                            +-> glitch                     +-> delay 0.4 s -> glitch
      |
      +-> race( game delay , pause <release> ) -> cut( scene, both arms )
+                                              -> delay 6 s -> next beat
 ```
 
 - `questRenderFxManagerNodeDefinition` / `questSetFadeInOut_NodeType` is the
   fade. Seconds, in a pair, and 0 is a cut. Gotcha 109.
+- `questFXManagerNodeDefinition` / `questPlayFX_NodeType` with `isPlayer` 1
+  plays an effect on V. All four Claire waits play `fast_travel_glitch` going
+  in and coming out. In the Claire races each glitch comes 0.6 s before an
+  instant cut, to black and back. Gig 04 plays the first glitch with its
+  fade out. It plays the second 0.4 s after the release, 0.6 s before the
+  fade back. A fade under the glitch works as well and is less abrupt.
+  `questkit.questgraph.add_player_fx()` builds the node.
+- If the next beat is a phone call, give V time to stand. A call that rings
+  as the fade ends rings while V is still leaving the pose, and is easy to
+  miss. Six seconds from the release is enough.
 - `questTimeManagerNodeDefinition` / `questShiftTime_NodeType` moves the clock
   by an amount, and `questSetTime_NodeType` sets a time of day. Reach for these
   before writing a script. Gig 02 uses a script only because it wants the
@@ -2440,13 +2546,52 @@ Take them in order. Each answer is what makes the next question worth asking.
 2. No prompt anywhere except at the spot.
 3. The prompt survives walking right up to it.
 4. V is in the pose, in the right place, facing the right way.
-5. The fade reads as time passing rather than as a cut.
+5. The fade reads as time passing rather than as a cut, and the glitch plays
+   at both ends.
 6. The clock has moved.
 7. V is standing afterwards, and the prompt is gone.
 
 Then play the same wait twice more without taking the spot: once in normal
 play, once skipping time from the menu. All three routes were clean for gig
 02 on 2026-09-08.
+
+## A PERSON WHO GETS UP, WAITS, AND WALKS
+
+Gig 04's Reynaldo sits on a cell floor when the player finds him. During the
+talk he gets up, he stands through a fight, and afterwards he walks to the
+middle of the next room and says goodbye there before he runs. Played
+2026-10-14. Each step waits for the one before:
+
+1. **He sits** on his community spot, a floor-sitting workspot.
+2. **He gets up on his line.** The line raises a fact (above, "A fact from
+   a line"). The script sends the sitting pose's fast exit, which plays the
+   get-up, and in the same tick an `AIUseWorkspotCommand` to a standing spot
+   of the cast's own by the cell door.
+3. **He stands through the fight.** The order holds him in that pose, in
+   combat too (`continueInCombat`). Nothing sends him back to the floor.
+4. **He walks after the fight,** once the script has the doors open: the
+   fast exit out of the standing pose, the order he is on cancelled, and a
+   new order to a standing spot in the next room.
+5. **The goodbye opens when he is there.** The script sets a fact when his
+   body is within 1.5 m of that spot. The talk is offered from then on.
+6. **He runs after the goodbye.** The script cancels his order and sends
+   the fast exit. The quest's patrol order then has nothing in front of it.
+
+Approaches that do not work, and the gotcha for each:
+
+| tried | what happened | gotcha |
+|---|---|---|
+| a patrol order to the cell door after the talk | it waited while he sat, ran after the fight, and replaced the walk to the next room | 135 |
+| the goodbye waiting on the walk's `Success` | it never fired; he stood at the end with no talk | 136 |
+| a standing pose played on him by the scene | he snapped up with no animation and sat again as the scene ended | 137 |
+| the next order sent while the last one held him | it waited a long while | 134 |
+
+Each standing spot is a `worldAISpotNode` in the cast's own sector with the
+plain standing idle (`generic__stand_ground__stand_around__01.workspot`) and
+no markings, so the crowd never takes it (gotcha 96). Each order goes out
+once per body, so a body a reload brings back is sent again. Gig 04's
+`Gig04_Places.reds` (`PlaceBayani`, `ReleaseBayani`, `OutOfPose`) is the
+code.
 
 ## Validating offline
 

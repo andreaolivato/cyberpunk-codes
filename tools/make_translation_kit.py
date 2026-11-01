@@ -79,6 +79,15 @@ GIGS = {
               ['the journal entry and briefing', "Dino's messages and V's replies",
                'the objectives and map captions', 'the shard', 'the terminal documents',
                'the notices and alerts on screen']),
+    'fixer01': ('fixer-01', 'fixer01', 'Hodan Warsame', 'fixer01_lines.json',
+                'Hodan', 'V and Johnny',
+                ['her name and the title of her conversation',
+                 'her codex entry and the card she sends']),
+    'gig04': ('gig-04-return-ticket', 'return_ticket', 'Return Ticket', 'gig04_lines.json',
+              'Hodan, Maricel, Stamps and Reynaldo', 'V and Johnny',
+              ['the journal entry and briefing', "Hodan's messages",
+               'the objectives and map captions', 'the two shards', 'the scanner clues',
+               'the names the scanner shows']),
 }
 LANGS = ('it-it, de-de, fr-fr, es-es, es-mx, pl-pl, ru-ru, pt-br, jp-jp, kr-kr, zh-cn, '
          'zh-tw, cz-cz, hu-hu, ar-ar, th-th, tr-tr, ua-ua')
@@ -143,6 +152,7 @@ def zip_dir(folder, out_zip):
 
 def build(gig):
     mod, folder, title, lines_name, invented, cast, content = GIGS[gig]
+    what = 'mod' if gig.startswith('fixer') else 'gig'
     loc = os.path.join(REPO, 'mods', mod, 'source', 'wkit', 'raw', 'mod', folder, 'localization')
     kit = os.path.join(REPO, 'mods', mod, 'translation-kit')
     archive = '0_%s_translation' % folder
@@ -188,6 +198,17 @@ def build(gig):
         e['femaleVariant'] = kiroshi(e['femaleVariant'])
         e['maleVariant'] = kiroshi(e['maleVariant'])
         kept.append(e)
+    # 2b. THE DIALOGUE BUTTONS, as plain English to translate: every entry
+    #     with no voice at all (audit 2026-11-01: the kits had only the
+    #     spoken lines, so no translator could reach a button). A line with a
+    #     clip that is not an invented character's is the game's own
+    #     recording, already translated by the game, and stays out.
+    voiced = {e['stringId'] for e in entries(load(os.path.join(loc, 'vomap.json.json')))}
+    spoken = {e['stringId'] for e in kept}
+    buttons = [copy.deepcopy(e) for e in entries(en_lines)
+               if e['stringId'] not in voiced and e['stringId'] not in spoken]
+    has_actors = bool(kept)
+    kept += buttons
     if kept:
         lines_doc = copy.deepcopy(en_lines)
         entries(lines_doc)[:] = kept
@@ -206,17 +227,18 @@ def build(gig):
           '      - %sstrings.json\n') % (title, LANGS, yours)
     if kept:
         xl += ('  subtitles:\n'
-               '    <lang>: %ssubtitles.json\n'
-               '  # Only if you recorded %s in your language, and only once every\n'
+               '    <lang>: %ssubtitles.json\n') % yours
+    if has_actors:
+        xl += ('  # Only if you recorded %s in your language, and only once every\n'
                '  # clip is in place (optional-voice/README.md):\n'
                '  # vomaps:\n'
-               '  #   <lang>: %svomap.json\n') % (yours, invented, yours)
+               '  #   <lang>: %svomap.json\n') % (invented, yours)
     write_text(os.path.join(project, 'source', 'resources', archive + '.archive.xl'), xl)
 
     # 4. the voice map, apart from the project: registered without its clips
     #    it silences those lines (the translation loads first, and the game
     #    takes the first clip entry it meets)
-    if kept:
+    if has_actors:
         vomap = load(os.path.join(loc, 'vomap.json.json'))
         want = {str(locstring_ruid(*line.split('/'))): line for line in actors}
         vo_entries = []
@@ -232,7 +254,7 @@ def build(gig):
         save(vomap_doc, os.path.join(kit, 'optional-voice', 'vomap.json.json'), 'vomap.json')
         write_text(os.path.join(kit, 'optional-voice', 'README.md'),
                    '# Only if you record %s in your language\n\n'
-                   'This voice map points each of their lines at a clip you supply. Put the\n'
+                   'This voice map points each of the lines at a clip you supply. Put the\n'
                    'clips (`.wem`) under `source\\archive\\mod\\%s_translation\\vo\\` in\n'
                    'the project, named as the map says (`%s.wem` and so on). Copy this\n'
                    '`vomap.json.json` next to `strings.json.json` under `raw`, right-click\n'
@@ -259,11 +281,13 @@ def build(gig):
         '',
         '## What needs to be translated',
         '',
-        'Everything that is original to the gig needs to be translated:',
+        'Everything that is original to the %s needs to be translated:' % what,
     ] + ['- ' + c for c in content] + ([
-        '- the subtitles for the NPCs invented for this gig: %s.' % invented,
+        '- the dialogue buttons.',
+    ] if buttons else []) + ([
+        '- the subtitles for the characters invented for this %s: %s.' % (what, invented),
         '- (optional) the voice of %s.' % invented,
-    ] if kept else []) + [
+    ] if has_actors else []) + [
         '',
         'All these texts require a translation and this guide shows how to create',
         'one, use it for yourself and publish it for other players to use.',
@@ -276,7 +300,7 @@ def build(gig):
         '',
         '- [WolvenKit](https://wiki.redmodding.org/wolvenkit), the modding tool the',
         '  whole community uses. Install it and open it once so it finds the game.',
-        '- A copy of the original gig mod installed to test.',
+        '- A copy of the original %s installed to test.' % ('mod' if what == 'mod' else 'gig mod'),
         '',
         'Nothing else.',
         '',
@@ -292,16 +316,26 @@ def build(gig):
         '   `secondaryKey`. It must always stay the same. Save.',
     ]
     if kept:
-        steps += [
-            '3. Open `lines.json` in the same folder: the subtitles of %s:' % invented,
-            '',
-            '   ```',
-            '   ' + kept[0]['femaleVariant'],
-            '   ```',
-            '',
-            '   Replace ONLY the text inside `t="..."` with your translation and leave',
-            '   `o="..."` alone. To show your language only, replace the whole tag with',
-            '   plain text. Save.',
+        three = ['3. Open `lines.json` in the same folder.']
+        if buttons:
+            three += [
+                '   The dialogue buttons are plain English: type your translation into',
+                '   `femaleVariant` and `maleVariant` over it, as in `strings.json`.',
+            ]
+        if has_actors:
+            three += [
+                '   The subtitles of %s look like this:' % invented,
+                '',
+                '   ```',
+                '   ' + kept[0]['femaleVariant'],
+                '   ```',
+                '',
+                '   Replace ONLY the text inside `t="..."` with your translation and leave',
+                '   `o="..."` alone. To show your language only, replace the whole tag with',
+                '   plain text.',
+            ]
+        three[-1] += ' Save.'
+        steps += three + [
             '4. Under `resources`, open `%s.archive.xl` and replace' % archive,
             '   `<lang>` with your language\'s code, on every line it appears on:',
             '   `it-it`, `de-de`, `fr-fr`, `es-es`, `es-mx`, `pl-pl`, `ru-ru`, `pt-br`,',
@@ -310,7 +344,7 @@ def build(gig):
             '5. When you\'re all done, click "Install mod" to send it to your game. Then',
             '   start the game and test that your translations are correctly shown.',
             '6. When the test is successful, click "Create zip" to produce the archive',
-            '   you\'ll upload on Nexus Mods, as a translation of the gig.',
+            '   you\'ll upload on Nexus Mods, as a translation of the %s.' % what,
         ]
     else:
         steps += [
@@ -322,7 +356,7 @@ def build(gig):
             '4. When you\'re all done, click "Install mod" to send it to your game. Then',
             '   start the game and test that your translations are correctly shown.',
             '5. When the test is successful, click "Create zip" to produce the archive',
-            '   you\'ll upload on Nexus Mods, as a translation of the gig.',
+            '   you\'ll upload on Nexus Mods, as a translation of the %s.' % what,
         ]
     steps += [
         '',
@@ -330,7 +364,7 @@ def build(gig):
         'anything apart from what you see above.',
         '',
     ]
-    if kept:
+    if has_actors:
         steps += [
             '## Recording %s' % invented,
             '',
@@ -349,13 +383,13 @@ def build(gig):
     steps += [
         '## Publishing',
         '',
-        'Publish it on Nexus Mods as a translation of the gig. When you upload the',
+        'Publish it on Nexus Mods as a translation of the %s. When you upload the' % what,
         '.zip it asks if your mod is a translation of another mod. Just select that',
         'and then your language.',
         '',
-        'Say in your description which gig version you translated.',
+        'Say in your description which %s version you translated.' % what,
         '',
-        '## When the gig updates',
+        '## When the %s updates' % what,
         '',
         'I try not to change texts when I release a new version, but in case I do,',
         'the translation kit is regenerated with every build, so diff the new',

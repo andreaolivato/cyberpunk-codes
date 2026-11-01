@@ -1,0 +1,242 @@
+{
+ "entropy_c_baremetal": [
+  {
+   "$type": "entStaticOccluderMeshComponent",
+   "color": {
+    "$type": "Color",
+    "Alpha": 0,
+    "Blue": 0,
+    "Green": 0,
+    "Red": 0
+   },
+   "id": "1976569113988304896",
+   "isReplicable": 0,
+   "localTransform": {
+    "$type": "WorldTransform",
+    "Orientation": {
+     "$type": "Quaternion",
+     "i": 0,
+     "j": 0,
+     "k": 0,
+     "r": 1
+    },
+    "Position": {
+     "$type": "WorldPosition",
+     "x": {
+      "$type": "FixedPoint",
+      "Bits": -98304
+     },
+     "y": {
+      "$type": "FixedPoint",
+      "Bits": 0
+     },
+     "z": {
+      "$type": "FixedPoint",
+      "Bits": 163840
+     }
+    }
+   },
+   "mesh": {
+    "DepotPath": {
+     "$type": "ResourcePath",
+     "$storage": "string",
+     "$value": "engine\\meshes\\editor\\box_occluder.w2mesh"
+    },
+    "Flags": "Default"
+   },
+   "name": {
+    "$type": "CName",
+    "$storage": "string",
+    "$value": "occluder"
+   },
+   "occluderAutohideDistanceScale": 255,
+   "occluderType": "Default",
+   "parentTransform": null,
+   "scale": {
+    "$type": "Vector3",
+    "X": 1.79999995,
+    "Y": 0.0299999993,
+    "Z": 2.5999999
+   }
+  },
+  {
+   "$type": "entStaticOccluderMeshComponent",
+   "color": {
+    "$type": "Color",
+    "Alpha": 0,
+    "Blue": 0,
+    "Green": 0,
+    "Red": 0
+   },
+   "id": "2198217307932508160",
+   "isReplicable": 0,
+   "localTransform": {
+    "$type": "WorldTransform",
+    "Orientation": {
+     "$type": "Quaternion",
+     "i": 0,
+     "j": 0,
+     "k": 0,
+     "r": 1
+    },
+    "Position": {
+     "$type": "WorldPosition",
+     "x": {
+      "$type": "FixedPoint",
+      "Bits": -2723
+     },
+     "y": {
+      "$type": "FixedPoint",
+      "Bits": 0
+     },
+     "z": {
+      "$type": "FixedPoint",
+      "Bits": 0
+     }
+    }
+   },
+   "mesh": {
+    "DepotPath": {
+     "$type": "ResourcePath",
+     "$storage": "string",
+     "$value": "base\\environment\\decoration\\doors\\sliding\\door_sliding_j_frame_occluder.mesh"
+    },
+    "Flags": "Obligatory"
+   },
+   "name": {
+    "$type": "CName",
+    "$storage": "string",
+    "$value": "StaticOccluderMesh1881"
+   },
+   "occluderAutohideDistanceScale": 255,
+   "occluderType": "Default",
+   "parentTransform": null,
+   "scale": {
+    "$type": "Vector3",
+    "X": 0.5,
+    "Y": 1,
+    "Z": 1
+   }
+  }
+ ],
+ "kitsch_g": [
+  {
+   "$type": "entStaticOccluderMeshComponent",
+   "color": {
+    "$type": "Color",
+    "Alpha": 0,
+    "Blue": 0,
+    "Green": 0,
+    "Red": 0
+   },
+   "id": "1976228757862092800",
+   "isReplicable": 0,
+   "localTransform": {
+    "$type": "WorldTransform",
+    "Orientation": {
+     "$type": "Quaternion",
+     "i": 0,
+     "j": 0,
+     "k": 0,
+     "r": 1
+    },
+    "Position": {
+     "$type": "WorldPosition",
+     "x": {
+      "$type": "FixedPoint",
+      "Bits": 0
+     },
+     "y": {
+      "$type": "FixedPoint",
+      "Bits": 0
+     },
+     "z": {
+      "$type": "FixedPoint",
+      "Bits": 163840
+     }
+    }
+   },
+   "mesh": {
+    "DepotPath": {
+     "$type": "ResourcePath",
+     "$storage": "string",
+     "$value": "engine\\meshes\\editor\\box_occluder.w2mesh"
+    },
+    "Flags": "Default"
+   },
+   "name": {
+    "$type": "CName",
+    "$storage": "string",
+    "$value": "occluder"
+   },
+   "occluderAutohideDistanceScale": 255,
+   "occluderType": "Default",
+   "parentTransform": null,
+   "scale": {
+    "$type": "Vector3",
+    "X": 3.4000001,
+    "Y": 0.0299999993,
+    "Z": 2.79999995
+   }
+  },
+  {
+   "$type": "entStaticOccluderMeshComponent",
+   "color": {
+    "$type": "Color",
+    "Alpha": 0,
+    "Blue": 0,
+    "Green": 0,
+    "Red": 0
+   },
+   "id": "2198182635215175680",
+   "isReplicable": 0,
+   "localTransform": {
+    "$type": "WorldTransform",
+    "Orientation": {
+     "$type": "Quaternion",
+     "i": 0,
+     "j": 0,
+     "k": 0,
+     "r": 1
+    },
+    "Position": {
+     "$type": "WorldPosition",
+     "x": {
+      "$type": "FixedPoint",
+      "Bits": 189828
+     },
+     "y": {
+      "$type": "FixedPoint",
+      "Bits": 0
+     },
+     "z": {
+      "$type": "FixedPoint",
+      "Bits": 0
+     }
+    }
+   },
+   "mesh": {
+    "DepotPath": {
+     "$type": "ResourcePath",
+     "$storage": "string",
+     "$value": "base\\environment\\decoration\\doors\\sliding\\door_sliding_j_frame_occluder.mesh"
+    },
+    "Flags": "Obligatory"
+   },
+   "name": {
+    "$type": "CName",
+    "$storage": "string",
+    "$value": "StaticOccluderMesh8518"
+   },
+   "occluderAutohideDistanceScale": 255,
+   "occluderType": "Default",
+   "parentTransform": null,
+   "scale": {
+    "$type": "Vector3",
+    "X": 1,
+    "Y": 1,
+    "Z": 1
+   }
+  }
+ ]
+}

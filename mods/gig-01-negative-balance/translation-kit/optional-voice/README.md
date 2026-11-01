@@ -1,6 +1,6 @@
 # Only if you record Elena and Hoshino in your language
 
-This voice map points each of their lines at a clip you supply. Put the
+This voice map points each of the lines at a clip you supply. Put the
 clips (`.wem`) under `source\archive\mod\negative_balance_translation\vo\` in
 the project, named as the map says (`gig01_elena_call__e01.wem` and so on). Copy this
 `vomap.json.json` next to `strings.json.json` under `raw`, right-click

@@ -5,6 +5,11 @@ gig's own directory under `tools\` and its config module
 (`gig02_config.py`), which is where `docs/conventions.md` says a gig's paths
 and prefixes live.
 
+A FIXER IS A MOD TOO, since 2026-09-18, and it is not a gig: `--gig fixer01`
+picks `tools\fixer01\fixer01_config.py`. The flag keeps its name because
+every tool that takes it already calls it that; `stem()` is what turns the
+value into the file stem the generators write (`gig02`, `fixer01`).
+
 READ BEFORE argparse, not by it. A tool that imports one of the gig's
 generators at module level needs the number before the import runs, so the
 flag is picked out of `sys.argv` by hand and argparse declares it again only
@@ -14,7 +19,7 @@ import importlib
 import os
 import sys
 
-GIGS = ('01', '02', '03', '04')
+GIGS = ('01', '02', '03', '04', 'fixer01')
 TOOLS = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -33,12 +38,17 @@ def from_argv(default='01', argv=None):
     return gig
 
 
+def stem(gig):
+    """The file stem a mod's generators write: `gig02`, or `fixer01`."""
+    return 'gig' + gig if gig.isdigit() else gig
+
+
 def config(gig):
-    """That gig's config module, with its own directory on the path."""
-    d = os.path.join(TOOLS, 'gig' + gig)
+    """That mod's config module, with its own directory on the path."""
+    d = os.path.join(TOOLS, stem(gig))
     if d not in sys.path:
         sys.path.insert(0, d)
-    return importlib.import_module('gig%s_config' % gig)
+    return importlib.import_module('%s_config' % stem(gig))
 
 
 def add_argument(parser, default='01'):

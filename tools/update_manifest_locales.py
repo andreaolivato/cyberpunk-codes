@@ -45,7 +45,7 @@ def main():
 
     # Find the mod's depot folder and lipmap stem from the existing lines.
     text = '\n'.join(lines)
-    folder = re.search(r'(mod\\[a-z_]+)\\localization\\en-us\.json', text).group(1)
+    folder = re.search(r'(mod\\[a-z0-9_]+)\\localization\\en-us\.json', text).group(1)
     lipmap = re.search(r'localization\\([a-z0-9_]+)\.lipmap', text).group(1)
     B = chr(92)
 

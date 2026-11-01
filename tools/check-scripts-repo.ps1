@@ -45,19 +45,22 @@ Copy-Item "$game\r6\cache\final.redscripts" (Join-Path $root "r6\cache\final.red
 # The deploy folder is the SHIP name, not the mod folder name
 # (gig-01-negative-balance -> NegativeBalance), and copying the repo in beside
 # an already-deployed copy makes the mod collide with itself.
-$shipName = (($modDir.Name -split "-", 3)[2] -split "-" | ForEach-Object {
-    $_.Substring(0, 1).ToUpper() + $_.Substring(1)
-}) -join ""
+# The module tag and the ship name come from the mod folder. gig-01-negative-balance
+# is Gig01 and NegativeBalance; fixer-01 is Fixer01 twice, because a fixer mod
+# carries no display name until the design gives him one (then fixer-01-<name>).
+if ($modDir.Name -notmatch '^(gig|fixer)-(\d+)(?:-(.+))?$') { throw "cannot derive a mod tag from '$($modDir.Name)': expected gig-NN-name or fixer-NN[-name]" }
+$modTag = $Matches[1].Substring(0, 1).ToUpper() + $Matches[1].Substring(1) + $Matches[2]
+$shipName = if ($Matches[3]) {
+    ($Matches[3] -split "-" | ForEach-Object { $_.Substring(0, 1).ToUpper() + $_.Substring(1) }) -join ""
+} else { $modTag }
 $dst = Join-Path $scripts $shipName
 Remove-Item $dst -Recurse -Force -ErrorAction SilentlyContinue
 Copy-Item (Join-Path $modDir.FullName "source\scripts") $dst -Recurse -Force
 Get-ChildItem $dst -Filter *.md -File | Remove-Item -Force
-# Derive the gig number from the MOD FOLDER (gig-01-...), not the ship name -
-# the ship name has no number in it, so matching against it silently yields
-# Gig01 for every gig and hands two mods the same module.
-$gig = ($modDir.Name -replace '^gig-(\d+).*$', 'Gig$1')
-if ($gig -notmatch '^Gig\d+$') { throw "cannot derive a gig number from '$($modDir.Name)'" }
-& (Join-Path $PSScriptRoot "vendor-shared.ps1") -Dst $dst -Gig $gig
+# The module tag comes from the MOD FOLDER (gig-01-..., fixer-01), not the
+# ship name: the ship name has no number in it, so matching against it would
+# hand two mods the same module.
+& (Join-Path $PSScriptRoot "vendor-shared.ps1") -Dst $dst -Gig $modTag
 
 $output = & "$game\engine\tools\scc.exe" -compile $scripts 2>&1
 $exit = $LASTEXITCODE
@@ -79,4 +82,4 @@ if ($warnings) {
     Write-Host "Warnings:" -ForegroundColor Yellow
     $warnings | ForEach-Object { $_.Line; $_.Context.PostContext }
 }
-Write-Host "Repo scripts compile cleanly (vendored as CyberpunkCodes.Shared.$gig)." -ForegroundColor Green
+Write-Host "Repo scripts compile cleanly (vendored as CyberpunkCodes.Shared.$modTag)." -ForegroundColor Green

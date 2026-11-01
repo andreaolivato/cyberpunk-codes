@@ -1,0 +1,407 @@
+{
+ "sector": "exterior_-25_18_0_0.streamingsector",
+ "node": 1634,
+ "instance": 1976,
+ "expectedNodes": 4009,
+ "instanceRecord": {
+  "Id": "2513229927888",
+  "NodeIndex": 1634,
+  "Position": {
+   "$type": "Vector4",
+   "W": 0,
+   "X": -1558.43945,
+   "Y": 1205.61548,
+   "Z": 16.6101799
+  },
+  "Orientation": {
+   "$type": "Quaternion",
+   "i": 0,
+   "j": 0,
+   "k": 0.900183022,
+   "r": 0.435512006
+  },
+  "Scale": {
+   "$type": "Vector3",
+   "X": 1,
+   "Y": 1,
+   "Z": 1
+  },
+  "Pivot": {
+   "$type": "Vector3",
+   "X": -1708.96851,
+   "Y": 1270.23669,
+   "Z": 241.399994
+  },
+  "Bounds": {
+   "$type": "Box",
+   "Max": {
+    "$type": "Vector4",
+    "W": 0,
+    "X": -1558.43945,
+    "Y": 1205.61548,
+    "Z": 16.6101799
+   },
+   "Min": {
+    "$type": "Vector4",
+    "W": 0,
+    "X": -1558.43945,
+    "Y": 1205.61548,
+    "Z": 16.6101799
+   }
+  },
+  "QuestPrefabRefHash": {
+   "$type": "NodeRef",
+   "$storage": "string",
+   "$value": "$/03_night_city/c_watson/little_china/wlc_02/wlc_02_gameplay_prefabP4UA37Y/wlc_02_devices_prefabBAFHZ5A/{mq_035_double_door_ozob}_prefabOBD5DVA/#mq_035_double_door_01"
+  },
+  "UkHash1": {
+   "$type": "NodeRef",
+   "$storage": "uint64",
+   "$value": "0"
+  },
+  "CookedPrefabData": {
+   "DepotPath": {
+    "$type": "ResourcePath",
+    "$storage": "uint64",
+    "$value": "0"
+   },
+   "Flags": "Default"
+  },
+  "MaxStreamingDistance": 4946.13672,
+  "UkFloat1": 64,
+  "Uk10": 1056,
+  "Uk11": 25610,
+  "Uk12": 0,
+  "Uk13": "0",
+  "Uk14": "0"
+ },
+ "data": {
+  "$type": "worldEntityNode",
+  "appearanceName": {
+   "$type": "CName",
+   "$storage": "string",
+   "$value": "doors_double_kitsch_g"
+  },
+  "debugName": {
+   "$type": "CName",
+   "$storage": "string",
+   "$value": "double_door_simple_1"
+  },
+  "entityLod": 0,
+  "entityTemplate": {
+   "DepotPath": {
+    "$type": "ResourcePath",
+    "$storage": "string",
+    "$value": "base\\gameplay\\devices\\doors\\final\\double_door.ent"
+   },
+   "Flags": "Soft"
+  },
+  "instanceData": {
+   "HandleId": "2424",
+   "Data": {
+    "$type": "entEntityInstanceData",
+    "buffer": {
+     "BufferId": "31",
+     "Flags": 4063232,
+     "Type": "WolvenKit.RED4.Archive.Buffer.RedPackage, WolvenKit.RED4, Version=8.20.0.0, Culture=neutral, PublicKeyToken=null",
+     "Data": {
+      "Version": 4,
+      "Sections": 6,
+      "CruidIndex": -1,
+      "CruidDict": {
+       "0": "1193887807258071040"
+      },
+      "Chunks": [
+       {
+        "$type": "DoorController",
+        "id": "0",
+        "isReplicable": 0,
+        "name": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "Component"
+        },
+        "persistentState": {
+         "HandleId": "2425",
+         "Data": {
+          "$type": "DoorControllerPS",
+          "actionsWithDisabledRPGChecks": [],
+          "activationState": "NONE",
+          "activeContexts": [],
+          "alarmRaised": 0,
+          "allowUICameraZoomDynamicSwitch": 0,
+          "authorizationProperties": {
+           "$type": "AuthorizationData",
+           "alwaysExposeActions": 0,
+           "authorizationDataEntry": {
+            "$type": "SecurityAccessLevelEntryClient",
+            "keycard": {
+             "$type": "TweakDBID",
+             "$storage": "string",
+             "$value": ""
+            },
+            "level": "ESL_NONE",
+            "password": {
+             "$type": "CName",
+             "$storage": "string",
+             "$value": "None"
+            }
+           },
+           "isAuthorizationModuleOn": 1
+          },
+          "autoToggleQuestMark": 1,
+          "availableQuickHacks": [],
+          "availableSpiderbotActions": [],
+          "backdoorBreachDifficulty": "EASY",
+          "backdoorObjectiveData": null,
+          "blackboard": null,
+          "blockSecurityWakeUp": 0,
+          "cachedDeviceState": "OFF",
+          "callbackToDisableQuestMarkID": 0,
+          "canBeInDeviceChain": 0,
+          "canBeTrapped": 0,
+          "canHandleAdvancedInteraction": 0,
+          "canPlayerTakeOverControl": 0,
+          "connectionHighlightObjects": [],
+          "contentScale": {
+           "$type": "TweakDBID",
+           "$storage": "string",
+           "$value": ""
+          },
+          "controlPanelObjectiveData": null,
+          "currentlyAuthorizedUsers": [],
+          "currentSpiderbotActionPerformed": null,
+          "debugDevice": 0,
+          "debugExposeQuickHacks": 0,
+          "debugID": 0,
+          "debugName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "None"
+          },
+          "debugPath": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "None"
+          },
+          "destructionProperties": {
+           "$type": "DestructionData",
+           "canBeFixed": 0,
+           "durabilityType": "INVULNERABLE"
+          },
+          "deviceName": "LocKey#69",
+          "deviceOperationsSetup": null,
+          "deviceState": "ON",
+          "deviceUIStyle": "LightBlue",
+          "disablePersonalLinkAutoDisconnect": 0,
+          "disableQuickHacks": 0,
+          "disassembleProperties": {
+           "$type": "DisassembleOptions",
+           "canBeDisassembled": 0
+          },
+          "distractExecuted": 0,
+          "distractionTimeCompleted": 0,
+          "doorProperties": {
+           "$type": "DoorSetup",
+           "authorizationSide": "BOTH",
+           "automaticallyClosesItself": 1,
+           "canPayToUnlock": 0,
+           "canPlayerRemotelyAuthorize": 0,
+           "canPlayerToggleLockState": 0,
+           "canPlayerToggleSealState": 0,
+           "doorOpeningStimRange": 5,
+           "doorOpeningTime": 1,
+           "doorTriggerSide": "OUTSIDE",
+           "doorType": "INTERACTIVE",
+           "doorTypeSideOne": "NONE",
+           "doorTypeSideTwo": "NONE",
+           "exposeQuickHacksIfNotConnectedToAP": 0,
+           "initialDoorState": "SEALED",
+           "isShutter": 0,
+           "openingSpeed": 1,
+           "paymentRecordID": {
+            "$type": "TweakDBID",
+            "$storage": "string",
+            "$value": ""
+           },
+           "skillCheckSide": "BOTH"
+          },
+          "doorSkillChecks": {
+           "HandleId": "2426",
+           "Data": {
+            "$type": "EngDemoContainer",
+            "demolitionCheck": {
+             "HandleId": "2427",
+             "Data": {
+              "$type": "DemolitionSkillCheck",
+              "additionalRequirements": null,
+              "alternativeName": {
+               "$type": "TweakDBID",
+               "$storage": "string",
+               "$value": ""
+              },
+              "baseSkill": null,
+              "difficulty": "NONE",
+              "duration": 0,
+              "isActive": 0,
+              "isDynamic": 0,
+              "skillCheckPerformed": 0,
+              "skillToCheck": "Athletics",
+              "wasPassed": 0
+             }
+            },
+            "demolitionCheckSlot": null,
+            "engineeringCheck": {
+             "HandleId": "2428",
+             "Data": {
+              "$type": "EngineeringSkillCheck",
+              "additionalRequirements": null,
+              "alternativeName": {
+               "$type": "TweakDBID",
+               "$storage": "string",
+               "$value": ""
+              },
+              "baseSkill": null,
+              "difficulty": "NONE",
+              "duration": 0,
+              "isActive": 0,
+              "isDynamic": 0,
+              "skillCheckPerformed": 0,
+              "skillToCheck": "Engineering",
+              "wasPassed": 0
+             }
+            },
+            "engineeringCheckSlot": null,
+            "hackingCheckSlot": null,
+            "isInitialized": 0
+           }
+          },
+          "drawGridLink": 0,
+          "durabilityState": "NOMINAL",
+          "exposeQuickHacks": 0,
+          "factToDisableQuestMark": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "None"
+          },
+          "flatheadScavengeProperties": {
+           "$type": "SpiderbotScavengeOptions",
+           "scavengableBySpiderbot": 0
+          },
+          "forceResolveStateOnAttach": 0,
+          "forceVisibilityInAnimSystemOnLogicReady": 0,
+          "fullDepth": 1,
+          "hackingMinigameState": "Unknown",
+          "hasAuthorizationModule": 1,
+          "hasBeenScavenged": 0,
+          "hasFullScreenUI": 0,
+          "hasNetworkBackdoor": 0,
+          "hasNPCWorkspotKillInteraction": 0,
+          "hasPersonalLinkSlot": 0,
+          "hasUICameraZoom": 0,
+          "illegalActions": {
+           "$type": "IllegalActionTypes",
+           "quickHacks": 0,
+           "regularActions": 0,
+           "skillChecks": 1
+          },
+          "isAdvancedInteractionModeOn": 0,
+          "isAttachedToGame": 0,
+          "isBeingScanned": 0,
+          "isBusy": 0,
+          "isControlledByThePlayer": 0,
+          "isGlitching": 0,
+          "isHighlightedInFocusMode": 0,
+          "isInitialized": 0,
+          "isInitialStateOperationPerformed": 0,
+          "isInteractive": 1,
+          "isKeyloggerInstalled": 0,
+          "isLiftDoor": 0,
+          "isLinkDynamic": 0,
+          "isLocked": 0,
+          "isLockedViaSequencer": 0,
+          "isLogicReady": 0,
+          "isOpened": 0,
+          "isPlayerAuthorised": 0,
+          "isRestarting": 0,
+          "isScanned": 0,
+          "isSealed": 0,
+          "isSpiderbotInteractionOrdered": 0,
+          "isTimedTurnOff": 0,
+          "isUnderEMPEffect": 0,
+          "juryrigTrapState": "UNARMED",
+          "lastPerformedQuickHack": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "None"
+          },
+          "markAsQuest": 0,
+          "masters": [],
+          "mastersCached": 0,
+          "maxDevicesToExtractInOneFrame": 10,
+          "minigameAttempt": 1,
+          "minigameDefinition": {
+           "$type": "TweakDBID",
+           "$storage": "string",
+           "$value": ""
+          },
+          "openingTokens": [],
+          "performedActions": [],
+          "personalLinkCustomInteraction": {
+           "$type": "TweakDBID",
+           "$storage": "string",
+           "$value": ""
+          },
+          "personalLinkForced": 0,
+          "personalLinkStatus": "NOT_CONNECTED",
+          "playstyles": [],
+          "quickHackVulnerabilties": [],
+          "quickHackVulnerabiltiesInitialized": 0,
+          "revealDevicesGrid": 1,
+          "revealDevicesGridWhenUnpowered": 0,
+          "shouldNPCWorkspotFinishLoop": 0,
+          "shouldScannerShowAttitude": 0,
+          "shouldScannerShowHealth": 0,
+          "shouldScannerShowNetwork": 1,
+          "shouldScannerShowRole": 0,
+          "shouldScannerShowStatus": 1,
+          "shouldSkipNetrunnerMinigame": 0,
+          "skillCheckContainer": null,
+          "tweakDBDescriptionRecord": {
+           "$type": "TweakDBID",
+           "$storage": "uint64",
+           "$value": "104841659775"
+          },
+          "tweakDBRecord": {
+           "$type": "TweakDBID",
+           "$storage": "string",
+           "$value": "Devices.Door"
+          },
+          "virtualNetworkShapeID": {
+           "$type": "TweakDBID",
+           "$storage": "string",
+           "$value": ""
+          },
+          "wasQuickHackAttempt": 0,
+          "wasQuickHacked": 0,
+          "wasRevealedInNetworkPing": 0,
+          "wasStateCached": 0,
+          "wasStateSet": 0,
+          "willingInvestigators": []
+         }
+        }
+       }
+      ]
+     }
+    }
+   }
+  },
+  "ioPriority": "Paramount",
+  "isHostOnly": 0,
+  "isVisibleInGame": 1,
+  "proxyScale": null,
+  "sourcePrefabHash": "5056540938101141909",
+  "tag": "None",
+  "tagExt": "None"
+ }
+}

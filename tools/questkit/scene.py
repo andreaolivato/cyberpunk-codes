@@ -531,6 +531,116 @@ def osock(name, ordinal, dests):
 
 
 # ------------------------------------------------------------------ builder
+
+# THE GAME'S OWN DIALOGUE CHECKS ("bluelines"), field for field off the
+# Kabuki street stories that use them: `sts_wat_kab_04_receptionist.scene`
+# (an Intelligence check and a payment in one choice, node 56),
+# `sts_wat_lch_03_dojo_owner.scene` (a Body check, node 462) and
+# `mq060_identify.scene` (a fixed payment, node 28). The condition sits in
+# the option's `bluelineCondition`; `type.properties` carries the choice
+# flags as bits of `gameinteractionsChoiceType`: 256 is bit 8, Blueline,
+# and 257 adds bit 0, QuestImportant.
+#
+# THE NUMBER AN ATTRIBUTE CHECK ASKS FOR IS THE GAME'S, NOT OURS.
+# `Build_ScriptConditionType.Evaluate` (questCondition.swift) compares
+# `RPGManager.GetBuildScore` (the attribute plus its skill-check bonus, at
+# most 20) with `GetBluelineBuildCheckValue`, which reads the content
+# assignment's power level through the difficulty's curve. So the check is
+# named by a content assignment and a difficulty, and the number follows
+# the game's own rule for that place. `PlayerBuilds.Solo` is Body,
+# `PlayerBuilds.Netrunner` Intelligence, `Techie` Technical Ability.
+#
+# A PAYMENT TAKES THE MONEY ITSELF. `PaymentConditionTypeBase
+# .ExecuteBluelineAction` removes the amount from the player when the
+# option is picked and `payWhenSucceded` is set, so nothing else may take
+# it again.
+
+
+def _player_ref():
+    return {'HandleId': '@blref', 'Data': {
+        '$type': 'questUniversalRef',
+        'entityReference': {
+            '$type': 'gameEntityReference',
+            'dynamicEntityUniqueName': cname(None),
+            'names': [],
+            'reference': noderef(None),
+            'sceneActorContextName': cname(None),
+            'slotName': cname(None),
+            'type': 'EntityRef'},
+        'mainPlayerObject': 0,
+        'refLocalPlayer': 1}}
+
+
+def attribute_check(build, assignment, difficulty='MEDIUM', icon=None):
+    """An option that asks for an attribute: `build` is a PlayerBuilds
+    record (`PlayerBuilds.Solo` for Body), `assignment` a
+    DeviceContentAssignment record, `difficulty` an EGameplayChallengeLevel
+    name. `icon` is an extra caption icon; the receptionist's Intelligence
+    option carries `ChoiceCaptionParts.HackingIcon`, the dojo's Body option
+    none."""
+    return {
+        'bluelineCondition': {'HandleId': '@bl', 'Data': {
+            '$type': 'questStatsCondition',
+            'type': {'HandleId': '@blt', 'Data': {
+                '$type': 'questBuild_ConditionType',
+                'entityRef': _player_ref(),
+                'scriptCondition': {'HandleId': '@bls', 'Data': {
+                    '$type': 'Build_ScriptConditionType',
+                    'buildId': tdbid(build),
+                    'comparisonType': 'CO_GreaterEq',
+                    'difficulty': difficulty,
+                    'questAssignment': tdbid(assignment)}}}}}},
+        'iconTagIds': [tdbid(icon)] if icon else [],
+        'isSingleChoice': 1,
+        'type': {'$type': 'gameinteractionsChoiceTypeWrapper', 'properties': 256},
+    }
+
+
+def payment_check(amount):
+    """An option that costs `amount` eddies, drawn red when V has less and
+    paid by the game when picked (mq060_identify's shape, the Kabuki
+    receptionist's pay icon)."""
+    return {
+        'bluelineCondition': {'HandleId': '@bl', 'Data': {
+            '$type': 'questPaymentCondition',
+            'type': {'HandleId': '@blt', 'Data': {
+                '$type': 'questPaymentFixedAmount_ConditionType',
+                'scriptCondition': {'HandleId': '@bls', 'Data': {
+                    '$type': 'PaymentFixedAmount_ScriptConditionType',
+                    'inverted': 0,
+                    'payAmount': int(amount),
+                    'payWhenSucceded': 1}}}}}},
+        'iconTagIds': [tdbid('ChoiceCaptionParts.PayIcon')],
+        'type': {'$type': 'gameinteractionsChoiceTypeWrapper', 'properties': 257},
+    }
+
+def wait_option():
+    """A waiting spot's option: the game's wait icon, and offered only while
+    V is out of combat. Read off the big Claire race's lean
+    (`sq024_05_big_race.scene`, choice 1125) on 2026-11-01: `iconTagIds`
+    `ChoiceCaptionParts.WaitIcon`, `questCondition` a
+    `questCharacterCombat_ConditionType` on the player, inverted, and the
+    choice type's `properties` 1."""
+    return {
+        'iconTagIds': [tdbid('ChoiceCaptionParts.WaitIcon')],
+        'questCondition': {'HandleId': '@wc', 'Data': {
+            '$type': 'questCharacterCondition',
+            'type': {'HandleId': '@wct', 'Data': {
+                '$type': 'questCharacterCombat_ConditionType',
+                'inverted': 1,
+                'isPlayer': 1,
+                'objectRef': {
+                    '$type': 'gameEntityReference',
+                    'dynamicEntityUniqueName': cname(None),
+                    'names': [],
+                    'reference': {'$type': 'NodeRef', '$storage': 'uint64', '$value': '0'},
+                    'sceneActorContextName': cname(None),
+                    'slotName': cname(None),
+                    'type': 'EntityRef'}}}}},
+        'type': {'$type': 'gameinteractionsChoiceTypeWrapper', 'properties': 1},
+    }
+
+
 class Scene:
     def __init__(self, name, marker, category='dialoguesQuests'):
         self.name = name
@@ -1413,8 +1523,27 @@ class Scene:
         return nid
 
     def choice(self, option_indices, in_world=False, radius=1.2,
-               yaw_limit=120, offset=(0.0, 0.0, 0.0)):
+               yaw_limit=120, offset=(0.0, 0.0, 0.0), attach_actor=None,
+               checks=None):
         """A dialogue hub. One output socket per option, in order.
+
+        `checks`, if given, has one entry per option: None for a plain
+        option, or what `attribute_check()` / `payment_check()` return. A
+        checked option is the game's own "blueline": the game draws the
+        attribute or the price on the button, and the player's own value
+        beside it, green when it passes and red when it does not, and a red
+        one cannot be picked. A payment option takes the money itself when
+        it is picked. See those two helpers for where the shape comes from.
+
+        `attach_actor=<actor id>` PINS THE HUB TO A PERSON, the way the
+        game's own fixers offer their conversation: the prompt hangs over
+        the body and is offered only when V is close and facing it, at the
+        interaction range the `normal` preset gives (no custom range, no yaw
+        limit). Read field for field off the hub of `dyno_default.scene`
+        (node 9, `attachToActor`, `ataParams.actorId` 0, `preset: normal`,
+        every range 0), which is one hub serving the in-person talk and the
+        phone call both. Without it a hub in a scene that acquires a placed
+        body is offered from wherever V stands, as the note below says.
 
         `in_world=True` PINS THE HUB TO A PLACE instead of to whoever is
         talking, which is what a prompt on a railing needs.
@@ -1440,7 +1569,8 @@ class Scene:
             '$type': 'scnChoiceNode',
             'alwaysUseBrainGender': 0,
             'ataParams': {'$type': 'scnChoiceNodeNsAttachToActorParams',
-                          'actorId': actor_id(None), 'visualizerStyle': 'onScreen'},
+                          'actorId': actor_id(attach_actor),
+                          'visualizerStyle': 'onScreen'},
             'atgoParams': {'$type': 'scnChoiceNodeNsAttachToGameObjectParams',
                            'nodeRef': noderef(None), 'visualizerStyle': 'inWorld'},
             'atpParams': {'$type': 'scnChoiceNodeNsAttachToPropParams',
@@ -1482,7 +1612,8 @@ class Scene:
                 '$type': 'scnChoiceNodeNsMappinParams',
                 'locationType': 'Nameplate',
                 'mappinSettings': tdbid('MappinUISettings.SceneDialogNPCSettings')}},
-            'mode': 'attachToWorld' if in_world else 'attachToScreen',
+            'mode': ('attachToActor' if attach_actor is not None else
+                     'attachToWorld' if in_world else 'attachToScreen'),
             'nodeId': node_id(nid),
             'options': [{
                 '$type': 'scnChoiceNodeOption',
@@ -1511,15 +1642,25 @@ class Scene:
             'shapeParams': {'HandleId': '@shape', 'Data': {
                 '$type': 'scnInteractionShapeParams',
                 'activationBaseLength': 1, 'activationHeight': 3,
-                'activationYawLimit': yaw_limit if in_world else 160,
-                'customActivationRange': radius if in_world else 1.5,
-                'customIndicationRange': radius if in_world else 1.5,
+                'activationYawLimit': (0 if attach_actor is not None else
+                                       yaw_limit if in_world else 160),
+                'customActivationRange': (0 if attach_actor is not None else
+                                          radius if in_world else 1.5),
+                'customIndicationRange': (0 if attach_actor is not None else
+                                          radius if in_world else 1.5),
                 'offset': {'$type': 'Vector3', 'X': 0, 'Y': 0, 'Z': 0},
-                'preset': 'small',
+                'preset': 'normal' if attach_actor is not None else 'small',
                 'rotation': {'$type': 'Quaternion', 'i': 0, 'j': 0, 'k': 0, 'r': 1}}},
             'timedParams': None,
             'timedSectionCondition': None,
         })
+        if checks is not None:
+            if len(checks) != len(option_indices):
+                raise ValueError('choice: %d checks for %d options'
+                                 % (len(checks), len(option_indices)))
+            for opt, chk in zip(self.nodes[-1]['options'], checks):
+                if chk is not None:
+                    opt.update(chk)
         return nid
 
     # -- workspots ---------------------------------------------------------
@@ -1933,6 +2074,109 @@ class Scene:
                         'comparisonType': cmp,
                         'factName': fact,
                         'value': value,
+                    }},
+                }},
+                'id': nid,
+                'sockets': [quest_socket('CutDestination', 'CutDestination'),
+                            quest_socket('In', 'Input'),
+                            quest_socket('Out', 'Output')],
+            }},
+        })
+        return nid
+
+    def add_fact_branch_node(self, fact, value=0, cmp='Greater'):
+        """Fork the scene's flow on a fact: True out one socket, False the other.
+
+        The in-scene counterpart to the quest graph's condition node, and how
+        a line can differ by what the save has done: Wakako's own debrief
+        call for the Charter Hill gig forks on `hil_01_combat` this way
+        (`sts_wbr_hil_01_holocall_debriefs.scene` node 65, a
+        questConditionNodeDefinition wrapped in scnQuestNode with "True" and
+        "False" out sockets, ordinals 0 and 1). Same shape here.
+
+        Link INTO it with link_section_quest (its "In" is input ordinal 1,
+        the CutDestination trap of every scnQuestNode), and out of it with
+        link_branch, which fills both sockets at once.
+        """
+        nid = self._nid()
+        self.nodes.append({
+            '$type': 'scnQuestNode',
+            'ffStrategy': 'automatic',
+            'isockMappings': [cname('CutDestination'), cname('In')],
+            'nodeId': node_id(nid),
+            'osockMappings': [cname('True'), cname('False')],
+            'outputSockets': [],
+            'questNode': {'HandleId': '@qn', 'Data': {
+                '$type': 'questConditionNodeDefinition',
+                'condition': {'HandleId': '@qc', 'Data': {
+                    '$type': 'questFactsDBCondition',
+                    'type': {'HandleId': '@qt', 'Data': {
+                        '$type': 'questVarComparison_ConditionType',
+                        'comparisonType': cmp,
+                        'factName': fact,
+                        'value': value,
+                    }},
+                }},
+                'id': nid,
+                'sockets': [quest_socket('CutDestination', 'CutDestination'),
+                            quest_socket('In', 'Input'),
+                            quest_socket('True', 'Output'),
+                            quest_socket('False', 'Output')],
+            }},
+        })
+        return nid
+
+    def link_branch(self, src, true_dst, false_dst):
+        """Both outs of a fact branch: ordinal 0 is True, ordinal 1 is False,
+        each into a section's default input. Set rather than appended, for
+        the same reason as link_quest."""
+        node = self._node(src)
+        node['outputSockets'] = [osock(0, 0, [(true_dst, 0)]),
+                                 osock(0, 1, [(false_dst, 0)])]
+
+    def add_wait_distance_node(self, node_ref, meters, entry=None, cmp='Less'):
+        """Hold the scene's flow until V is within, or beyond, a distance of
+        a placed body.
+
+        The in-scene counterpart to the quest graph's add_pause_distance, and
+        the shape of `dyno_default.scene` node 145, which is how a fixer's
+        phone call turns into a face-to-face talk when V walks up to him mid
+        call. Here it is what lets an in-person conversation end when V walks
+        away from it instead of waiting for a goodbye that never comes: the
+        hub and this wait are fed from one hub node, and whichever completes
+        first carries the scene on. Same input trap as every scnQuestNode:
+        link INTO it with in_ordinal 1.
+        """
+        nid = self._nid()
+        self.nodes.append({
+            '$type': 'scnQuestNode',
+            'ffStrategy': 'automatic',
+            'isockMappings': [cname('CutDestination'), cname('In')],
+            'nodeId': node_id(nid),
+            'osockMappings': [cname('Out')],
+            'outputSockets': [],
+            'questNode': {'HandleId': '@qn', 'Data': {
+                '$type': 'questPauseConditionNodeDefinition',
+                'condition': {'HandleId': '@qc', 'Data': {
+                    '$type': 'questDistanceCondition',
+                    'type': {'HandleId': '@qt', 'Data': {
+                        '$type': 'questDistanceComparison_ConditionType',
+                        'comparisonType': cmp,
+                        'distanceDefinition1': {'HandleId': '@qd1', 'Data': {
+                            '$type': 'questObjectDistance',
+                            'entityRef': {'HandleId': '@qe', 'Data': {
+                                '$type': 'questUniversalRef',
+                                'entityReference': entity_ref(),
+                                'mainPlayerObject': 0,
+                                'refLocalPlayer': 1}},
+                            'nodeRef2': (community_ref(node_ref, entry)
+                                         if entry else
+                                         entity_ref(node_ref=node_ref)),
+                        }},
+                        'distanceDefinition2': {'HandleId': '@qd2', 'Data': {
+                            '$type': 'questValueDistance',
+                            'distanceValue': meters,
+                        }},
                     }},
                 }},
                 'id': nid,

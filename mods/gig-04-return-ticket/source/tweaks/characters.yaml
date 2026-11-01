@@ -1,0 +1,100 @@
+# Return Ticket's Character records.
+#
+# THREE RECORDS, one per invented speaker: a scene line takes its speaker
+# name from the speaker's Character record, and a community entry places the
+# body the record describes. The eight Tyger Claws are the game's own records
+# and need nothing here (tools/gig04/gen_community.py).
+#
+# ONE FACE EACH, AND THE SAME FACE EVERY TIME. A crowd record rolls one of
+# its appearances on every spawn, so Ligaya was a different woman on each
+# load (playtest 2026-10-01, "always use the same NPCs for these
+# characters"). Each record pins an `appearanceName`, and gen_community.py
+# and gen_scenes.py name the same one on the entry and the actor, gig 02's
+# rule (tools/gig02/gen_community.py, APPEARANCE).
+#
+# THE PAIRS ARE THE GAME'S OWN. Read off the community registry in
+# `always_loaded_1` (2026-10-01): `Character.AsianVendorFemale` is placed
+# with `service__vendor_wa_vendor_asian_01/02/03`, `Character.AsianVendorMale`
+# with the `_ma_` three, dozens of times each. Southeast Asian faces in
+# market clothes, which is what three Filipinos at a Kabuki Market stall
+# wear; the game itself puts `vendor_ma_vendor_asian_01` on a plain civilian
+# (`sts_wat_kab_01_civilian_inside`). Yoko in gig 02 wears `_wa_02`, so
+# Ligaya does not.
+#
+# BARE HEADS. The looks were read off `service__vendor_wa.app` and
+# `service__vendor_ma.app` (2026-10-01): the female `vendor_asian_01` wears
+# a conical hat and a skull mask, the male `_03` a conical hat and a
+# headkerchief, the male `_01` a bandana. Playtest 2026-10-01: "sister:
+# remove the hat and the mask. brother: remove the hat". The female `_03`
+# is a bun with chopsticks and nothing on the face; the male `_02` is
+# short hair and no hat. Stamps keeps the bandana.
+#
+# `displayName` is LocKey#<FNV1a64 of the bare key>, the hash ArchiveXL
+# registers our own localization string under; the strings are in
+# tools/gig04/gen_localization.py.
+
+# NO POLICE. Hitting a civilian, a vendor or a crowd body calls the police,
+# unless the victim's record carries the tag `DoNotTriggerPrevention`
+# (preventionSystem.swift, read 2026-10-02: the tag is checked before the
+# civilian test). Playtest 2026-10-02: shooting Stamps brought the police,
+# and gig 02's fight does not. `!append-once` adds to the base record's tags
+# rather than replacing them.
+#
+# LIGAYA MANALO, the client, at her noodle stall.
+Character.cc_g04_ligaya:
+  $base: Character.AsianVendorFemale
+  appearanceName: service__vendor_wa_vendor_asian_03
+  displayName: LocKey#4794390962090850833
+  fullDisplayName: LocKey#4794390962090850833
+  skipDisplayArchetype: true
+  tags:
+    - !append-once DoNotTriggerPrevention
+
+# STAMPS, who sells a new name cheap, on his bar stool.
+#
+# HE FIGHTS BACK, WITH HIS FISTS (the design call, 2026-10-13: Stamps took
+# the beating standing still). His behaviour is a Kabuki Tyger Claw's who
+# fights unarmed, the gang he sells names for ("They pay you, you pay us");
+# his body and face stay the vendor's, so the same man sits on the stool:
+# the record's entity is the vendor's, and its appearance is his. Neutral
+# until the fight; Gig04_Places.reds turns him on V for it. A vendor's own
+# record ran from the fight (audit 2026-10-02), and with no reaction he
+# stood and took it.
+# PASSIVE, not the Claw's own aggressive reactions: an aggressive ganger
+# turns on a V who draws a weapon near him, which would start the fight
+# with no hit and no conversation (audit 2026-10-13). The game's passive
+# ganger fights when it is attacked.
+Character.cc_g04_stamps:
+  $base: Character.kab_tyger_claws_gangster1_melee1_fists_ma
+  entityTemplatePath: base\characters\entities\service\service__vendor_ma.ent
+  baseAttitudeGroup: neutral
+  reactionPreset: ReactionPresets.Ganger_Passive
+  appearanceName: service__vendor_ma_vendor_asian_01
+  displayName: LocKey#6547461684713842090
+  fullDisplayName: LocKey#6547461684713842090
+  skipDisplayArchetype: true
+  tags:
+    - !append-once DoNotTriggerPrevention
+
+# BAYANI MANALO, held in the room.
+#
+# NO REACTION. A vendor's record puts him on the civilian side, and a
+# civilian in a firefight goes into Fear: playtest 2026-10-01, after the
+# Claws, he knelt with his arms over his head and took no order to leave.
+# `NoReaction` is what the fixer and gig 02's invented people carry; he is
+# invulnerable (Gig04_Places.reds) so there is nothing for him to fear.
+#
+# ON V'S SIDE. `friendly` is the group the fixer carries: the scanner and
+# the minimap draw him as a friend, and the reticle will not lock on him,
+# so V does not shoot the man she came for in the fight round him (the
+# design call, 2026-10-01: "make him friendly, like green dot").
+Character.cc_g04_bayani:
+  $base: Character.AsianVendorMale
+  appearanceName: service__vendor_ma_vendor_asian_02
+  displayName: LocKey#7680766890516834076
+  fullDisplayName: LocKey#7680766890516834076
+  skipDisplayArchetype: true
+  tags:
+    - !append-once DoNotTriggerPrevention
+  reactionPreset: ReactionPresets.NoReaction
+  baseAttitudeGroup: friendly

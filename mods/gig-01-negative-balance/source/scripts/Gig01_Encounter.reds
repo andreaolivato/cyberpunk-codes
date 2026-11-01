@@ -2151,9 +2151,21 @@ public class NegativeBalanceEncounter extends ScriptableSystem {
                         // whole line of work started from.
                         let hostileNow: Bool = this.m_hoshinoProvoked;
                         if !hostileNow {
-                            let hp: Float = GameInstance.GetStatPoolsSystem(game)
-                                .GetStatPoolValue(Cast<StatsObjectID>(this.m_hoshinoId),
-                                                  gamedataStatPoolType.Health, false);
+                            // A PERCENTAGE, 2026-10-24: the `false` read is
+                            // raw points, so `< 99.0` used to mean "nearly
+                            // dead" on a high-level Hoshino. Points over max,
+                            // and a max of 0 (still resolving) reads 0, which
+                            // the guard below already treats as untouched.
+                            // Gotcha 106.
+                            let pools: ref<StatPoolsSystem> = GameInstance.GetStatPoolsSystem(game);
+                            let hpMax: Float = pools.GetStatPoolMaxPointValue(
+                                Cast<StatsObjectID>(this.m_hoshinoId), gamedataStatPoolType.Health);
+                            let hp: Float = 0.0;
+                            if hpMax > 0.0 {
+                                hp = 100.0 * pools.GetStatPoolValue(
+                                    Cast<StatsObjectID>(this.m_hoshinoId),
+                                    gamedataStatPoolType.Health, false) / hpMax;
+                            }
                             // THREE WAYS IN, and the second is the one the
                             // story wants. He turns on V when the conversation
                             // ends, because the ledger is closed and he knows

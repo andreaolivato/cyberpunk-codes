@@ -1,0 +1,101 @@
+{
+  "Header": {
+    "WolvenKitVersion": "8.20.0",
+    "WKitJsonVersion": "0.0.9",
+    "GameVersion": 2310,
+    "DataType": "CR2W",
+    "ArchiveFileName": "fixer01_kr-kr.lipmap"
+  },
+  "Data": {
+    "Version": 195,
+    "BuildVersion": 0,
+    "RootChunk": {
+      "$type": "animLipsyncMapping",
+      "cookingPlatform": "PLATFORM_PC",
+      "languageCodeName": {
+        "$type": "CName",
+        "$storage": "string",
+        "$value": "kr-kr"
+      },
+      "sceneEntries": [
+        {
+          "$type": "animLipsyncMappingSceneEntry",
+          "actorVoiceTags": [
+            "3417640185774860446"
+          ],
+          "animSets": [
+            {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "string",
+                "$value": "mod\\fixer01\\localization\\en-us\\lipsync\\fixer01_intro\\hodan.anims"
+              },
+              "Flags": "Soft"
+            }
+          ]
+        },
+        {
+          "$type": "animLipsyncMappingSceneEntry",
+          "actorVoiceTags": [
+            "3417640185774860446"
+          ],
+          "animSets": [
+            {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "string",
+                "$value": "mod\\fixer01\\localization\\en-us\\lipsync\\fixer01_face\\hodan.anims"
+              },
+              "Flags": "Soft"
+            }
+          ]
+        },
+        {
+          "$type": "animLipsyncMappingSceneEntry",
+          "actorVoiceTags": [
+            "3417640185774860446"
+          ],
+          "animSets": [
+            {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "string",
+                "$value": "mod\\fixer01\\localization\\en-us\\lipsync\\fixer01_call\\hodan.anims"
+              },
+              "Flags": "Soft"
+            }
+          ]
+        },
+        {
+          "$type": "animLipsyncMappingSceneEntry",
+          "actorVoiceTags": [
+            "7212454026578381994"
+          ],
+          "animSets": [
+            {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "string",
+                "$value": "base\\localization\\kr-kr\\lipsync\\base\\quest\\main_quests\\part1\\q104\\scenes\\q104_01b_calibration\\johnny.anims"
+              },
+              "Flags": "Soft"
+            }
+          ]
+        }
+      ],
+      "scenePaths": [
+        "17641586611972893021",
+        "13118505439092039184",
+        "3830744944839814161",
+        "15785794381321389705"
+      ],
+      "scenePreviewPaths": [
+        "7392584060435385487",
+        "8011652675264724692",
+        "10360538962800445739",
+        "10803075700788519875"
+      ]
+    },
+    "EmbeddedFiles": []
+  }
+}

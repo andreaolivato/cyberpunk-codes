@@ -31,7 +31,7 @@ GIG = gigs.from_argv('02')
 cfg = gigs.config(GIG)
 PREFIX = cfg.LOCKEY_PREFIX
 RAW = cfg.RAW_MOD
-STEM = 'gig' + GIG
+STEM = gigs.stem(GIG)
 
 doc = json.load(open(os.path.join(RAW, 'localization', 'en-us.json.json'),
                      encoding='utf-8'))

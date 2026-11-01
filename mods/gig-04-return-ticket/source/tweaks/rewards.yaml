@@ -1,0 +1,31 @@
+# THE FEE, THE GAME'S OWN WAY.
+#
+# One completion reward of the kind a fixer's gigs carry, handed to
+# `RPGManager.GiveReward` by source/scripts/Gig04_Pay.reds, which is what the
+# game's own quest reward node calls. The money notice on screen, the level scaling of the XP and the
+# telemetry are then vanilla's rather than ours. docs/architecture.md, "Paying
+# the player", has both routes and why this is the one for a fixer's gig.
+#
+# The base is `sts_wbr_hil_01_completion` (4,200 eddies, 1,000 XP, 1,136 Street
+# Cred), the gig that plays out above her couch. Only the money changes. The
+# currency entry and its quantity modifier are the base's own inline records,
+# cloned and given a new value, so no record type has to be named here.
+#
+# THE XP SCALES AND THE EDDIES DO NOT. The game applies
+# `CalculateStreetStoryReward` to any reward whose `name` begins with `sts_`,
+# so the Street Cred is right for the player's level while the fee stays the
+# figure below.
+#
+# 9,000. Getting a person out pays more than data (her own line), and the
+# gig upstairs pays 4,200 for a shard.
+
+QuestRewards.sts_cc_g04_qty_completion:
+  $base: QuestRewards.sts_wbr_hil_01_completion_inline5
+  value: 9000
+QuestRewards.sts_cc_g04_money_completion:
+  $base: QuestRewards.sts_wbr_hil_01_completion_inline4
+  quantityModifiers: [ QuestRewards.sts_cc_g04_qty_completion ]
+QuestRewards.sts_cc_g04_completion:
+  $base: QuestRewards.sts_wbr_hil_01_completion
+  name: sts_cc_g04_completion
+  currencyPackage: [ QuestRewards.sts_cc_g04_money_completion ]

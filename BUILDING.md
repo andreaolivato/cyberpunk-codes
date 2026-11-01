@@ -67,20 +67,27 @@ and nothing needs rebuilding or replaying.
 Windows tool. Cyberpunk itself runs elsewhere, but this toolchain does not.
 
 Versions are what it was built and tested against. Newer usually works; if
-something behaves oddly, check these first.
+something behaves oddly, check these first. Gigs 01 to 03 were built on game
+2.31 and tested on 2.5 with the versions below. The fixer and gig 04 were
+built and tested on 2.5. Game 2.5 refuses
+RED4ext and Cyber Engine Tweaks versions older than the ones listed.
 
 | Need | Version | Get it |
 |---|---|---|
-| Cyberpunk 2077 | 2.31, Steam | default path `C:\Program Files (x86)\Steam\steamapps\common\Cyberpunk 2077` |
+| Cyberpunk 2077 | 2.5, Steam | default path `C:\Program Files (x86)\Steam\steamapps\common\Cyberpunk 2077` |
 | Python | 3.13 | https://www.python.org/downloads/ Standard library only, nothing to `pip install` |
 | WolvenKit GUI + Console | 8.20.0 | https://github.com/WolvenKit/WolvenKit/releases Keep both at the same version |
-| RED4ext | 1.30.0 | https://github.com/WopsS/RED4ext/releases |
-| ArchiveXL | 1.27.1 | https://github.com/psiberx/cp2077-archive-xl/releases |
-| TweakXL | 1.11.4 | https://github.com/psiberx/cp2077-tweak-xl/releases |
-| Codeware | 1.20.3 | https://github.com/psiberx/cp2077-codeware/releases |
-| redscript | ships with the game | `engine\tools\scc.exe` |
-| Cyber Engine Tweaks | 1.37.1 | https://github.com/maximegmd/CyberEngineTweaks/releases Dev menu only, never shipped |
+| RED4ext | 1.31.0 | https://github.com/WopsS/RED4ext/releases |
+| ArchiveXL | 1.28.6 | https://github.com/psiberx/cp2077-archive-xl/releases Gig 04 needs 1.28.2 or newer: on game 2.5, 1.28.0 crashes when it deletes the sector nodes gig 04 deletes (gotcha 141) |
+| TweakXL | 1.12.0 | https://github.com/psiberx/cp2077-tweak-xl/releases |
+| Codeware | 1.21.0 | https://github.com/psiberx/cp2077-codeware/releases |
+| redscript | 0.5.32 | https://github.com/jac3km4/redscript/releases Installs `engine\tools\scc.exe` |
+| Cyber Engine Tweaks | 1.38.0 | https://github.com/maximegmd/CyberEngineTweaks/releases Dev menu only, never shipped |
 | Lipsync animator | first release | https://github.com/andreaolivato/cyberpunk2077-lipsync-animator Clone it beside this repo, or name its folder in `LIPSYNC_ANIMATOR`. Only `gen_lipsync.py` uses it, and only when a line's clip or words change |
+
+WolvenKit 8.20 cannot read game 2.5 world sectors. WolvenKit 10.0.0-beta.1
+can, and it needs the .NET 10 runtime. Use it for `gen_navmesh.py --refresh`
+(gotcha 141).
 
 The CLI is expected at
 `%LOCALAPPDATA%\Programs\WolvenKit.CLI\WolvenKit.CLI.exe`. If yours is

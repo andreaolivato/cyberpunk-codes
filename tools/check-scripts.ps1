@@ -86,7 +86,9 @@ if (-not $SelfTest) {
             # the compile check at all, i.e. exactly the blind spot it exists to
             # close.
             $gig = "Gig01"
-            if ($src.FullName -match "\\mods\\gig-(\d+)-") { $gig = "Gig$($Matches[1])" }
+            if ($src.FullName -match "\\mods\\(gig|fixer)-(\d+)") {
+                $gig = $Matches[1].Substring(0, 1).ToUpper() + $Matches[1].Substring(1) + $Matches[2]
+            }
             $want = [System.IO.File]::ReadAllText($src.FullName) -replace
                     "(?m)^import CyberpunkCodes\.Shared\.\*$", "import CyberpunkCodes.Shared.$gig.*"
             $have = [System.IO.File]::ReadAllText($dst.FullName)

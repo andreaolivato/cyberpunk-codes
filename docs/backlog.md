@@ -10122,7 +10122,7 @@ right visemes on two.
   held. What `NoMovement` stops exactly is unmeasured before this;
   `cc_g03_dbg_hold` reads 1 while held and 2 once lifted.
 
-### 48-ADDENDUM-1. Two Dinos, again: his own phase puts him back. Reported on Nexus 2026-09-20, fixed at the desk, not yet played
+### 48-ADDENDUM-1. Two Dinos, again: his own phase puts him back. Reported on Nexus 2026-09-20, fixed the same day, SHIPPED in 1.1.1
 
 The keeper above was never going to hold, and the reason is in the game's
 own file rather than in ours. `base/open_world/fixers/dyno/phases/dyno.questphase`
@@ -10161,9 +10161,8 @@ Three things changed, all in `gen_questphase.trip_to_dino`,
   widened to any puppet), and writes `cc_g03_dbg_dino_route` with the route
   that last found him.
 
-Gotcha 122 is the reusable half. Not yet played: a run from the pre-choice
-save that walks into the bar slowly is the test, since that is the approach
-that doubled him every time.
+Gotcha 122 is the reusable half. Playtest 2026-09-20, from the pre-choice
+save: one Dino at the bar, and the build shipped as 1.1.1.
 
 ## 49. Playing the gigs in nineteen languages. BUILT 2026-09-18, first playtest 2026-09-19
 
@@ -10359,3 +10358,204 @@ had lost the tie.
 Playtest: "Everything works." Necks steady on the copied lines (Yoko, the
 five outside Afterlife), on the made ones (the merc, Char, Wakako), and on
 the three scenes whose copies come from several vanilla sets.
+
+## 52. Consoles and mod.io: what patch 2.5 lets a story mod ship. READ 2026-10-28, nothing built
+
+Patch 2.5 (2026-10-22) added an in-game mod menu on PC, Mac, PlayStation 5,
+Xbox Series and Switch 2, served by mod.io. This entry is what the published
+rules say a mod like these gigs can and cannot be there. None of it is
+measured yet. The first console-format build is the next step, and what it
+finds goes here.
+
+Sources: mod.io's own guides for the game ("How-to: Create Mods for
+Cross-Platform Mod Support", "Mod Content available in Cross-Platform Mod
+Support", "Submitting Mods with REDmod", the FAQ) and the REDmodding wiki's
+"What can I upload on mod.io?". The two disagree in one place, noted below.
+
+**What a console mod is.** A REDmod-shaped folder. `r6/scripts` has the
+sources, `r6/cache` the compiled scripts, `r6/tweaks` the records as JSON,
+`archive/pc/mod` the archive and its `.archive.xl` as JSON. REDmod converts
+the YAML files and compiles the scripts (`validate-mod-scripts -compile`),
+and mod.io compiles them again in the cloud on upload. Local testing on PC:
+the compiled files go in `r6/c77` under the game, and the game is launched
+with `-LoadScriptMods`.
+
+**No script extenders.** RED4ext, Codeware and Cyber Engine Tweaks do not
+exist on consoles. Everything a gig does through them has to be done with
+the game's own functions, or not at all. In these gigs that is
+`DynamicEntitySystem` (gig 02's placed bodies and guards, and the shared
+attitude lookup), `Reflection` (removing bodies in gigs 02 and 03),
+`EntityID.FromHash` (gig 03's Dino) and the voiceset mute in gig 01.
+
+**Scripts compile, in a different spelling.** The official compiler takes
+`@wrapMethod`, `@addMethod`, `@replaceMethod` and `@addField`, so every hook
+the gigs use is allowed. It does not take the community spellings for the
+basics. `IsDefined(x)` is `if (x)`, `Equals(a, b)` is `a == b`,
+`ArraySize(a)` is `a.Size()`, `ArrayPush(a, x)` is `a.PushBack(x)`, and
+`EnumInt(e)` is `e as Int32`. The full table is in the how-to. Counted in the
+shipped scripts: 211 `IsDefined`, 45 `ArraySize`, 38 `ArrayPush`, 32
+`Equals` and 13 others, in about 5,000 lines. String interpolation is not
+supported. The compiler also refuses a list of engine functions on console.
+The list is not published; the compile reports each one.
+
+**What the manifest can do.** Supported on every platform: streaming,
+journal, localization, customizations, factories, resource scope, resource
+link. Not supported: resource patch, animations. The `quest: phases:` key
+these gigs start from (`architecture.md`, "Quest phase") is in neither list.
+`.quest` and `.questphase` are listed as supported resources by mod.io; the
+wiki's page says "no quest patching, you can overwrite original files". So
+whether a gig can plug its phase into the root quest on console is the first
+thing to measure. Voiceover maps and lipsync maps sit under `localization`
+in the manifest, and neither source names them.
+
+**Tweaks.** Adding records, cloning records, modifying flats and adding flats
+to existing records work. Enums do not yet. The gigs only add records.
+
+**Limits and rules.** 900 MB uncompressed per mod on PlayStation 5 and Xbox.
+250 MB on Switch 2, with no file over 64 MB. Trophies are off on a console
+save with mods. Every upload is tested by CD Projekt Red staff on each
+console chosen, and a crash fails it. Content must be the author's own.
+
+**Two routes to a hook, if `quest: phases:` does not work.**
+
+- Ship a copy of the game's root quest file with the phase node added, which
+  is what ArchiveXL does in memory today (entry 10: the root is the only file
+  it patches). One replacement per file is allowed on console, so
+  three gigs would share one copy, and any other mod replacing the root
+  would block all three.
+- Per gig, ship a copy of a small vanilla quest file that is still running
+  in every save, with the node added. Deceptious Quest Core does this with
+  an apartment quest and numbered slots.
+
+The design call (2026-10-28): the second route, one different file per gig,
+so no other mod can block a gig. Never a shared core and never a shared
+copy. Which files qualify is unmeasured. So is whether a node added to a
+sub-phase starts on a save where that phase already runs; the root does,
+and a sub-phase is not the root.
+
+## 53. A fixer's gig offered at its place, not on a clock. PLAYED 2026-10-14
+
+The game offers a street gig when V comes near it, after its icon has been
+on the map (`sts_wbr_hil_01_open_world.questphase`: a pause on V inside the
+gig's start area, then the icon, then the fixer's call). Gig 04 does the
+same for the fixer in `mods/fixer-01`. Three things had to change in play
+before the call came every time.
+
+### The call, armed by distance
+
+The icon appears once her introduction call is done. The call rings when V
+comes within 150 m of the client's stall. It is armed only after V has been
+250 m from both the stall and the bar since the introduction
+(`cc_g04_offer_armed`). Without the arming, a save made beside the stall
+rang at once, before the client had appeared (gotcha 132).
+
+### Free to ring
+
+Her calls wait on `cc_g04_fixer_free`. Her own graph keeps
+`cc_f01_talk_mode` at 1 while V talks to her in person and 2 on the phone.
+Leaving the in-person talk by a teleport left it at 1, and the gig's call
+never came (playtest 2026-10-13). An in-person talk now counts as over once
+V is 100 m from her sofa. A phone call is never overruled.
+
+### Her introduction, near her
+
+The district fact her introduction waits on was found at 1 with V 2.3 km
+away in another district (playtest 2026-10-13). Her graph sets it back to 0
+only on an "outside" wait, which a teleport or a load can miss. The
+introduction now also needs V within 900 m of her sofa
+(`Fixer01_Intro.reds`).
+
+### Saves resume by node id
+
+Adding and removing nodes before the gig's first wait moved that wait from
+node 22 to 20, and a save parked at 22 resumed past the client's switch-on
+(gotcha 123). The generator now pins the wait at 22 (`skip_ids_to`) and
+appends new nodes after it.
+
+## 54. A clue hunt instead of a fight at the false lead. PLAYED 2026-10-14
+
+Gig 04's middle beat was a fight with three Tyger Claws at a flop, with
+their shard on the first one down. The design call replaced it with an
+investigation: the Claws' van, three scanner clues counted on the
+objective, and the Claws' shard on the pallets behind it. The recipe is
+`docs/clue-playbook.md`; this entry is how each part was found.
+
+- The clue objects are the NCPD activity `ma_bls_ina_se1_07`'s own two
+  entity files, lifted whole with four fields changed.
+- The counter stayed at 0/3 through three finished scans. The clue had no
+  step in `extendedClueRecords`, so its facts never fired (gotcha 133). An
+  earlier build had a step with the conclusion's own record, which listed
+  each clue twice.
+- The scanner's header read the raw key in capitals until the entity's
+  `displayName` carried `LocKey#` and the key's FNV-1a 64 hash.
+- The duffel bag sat almost half a metre in the ground: its mesh hangs from
+  its origin (`boundingBox` Z from -0.467 to 0.015).
+- The shard was placed three times off pallets read from the sector
+  (`cargo_pallet_a`, an instanced destructible node whose instances sit in
+  a transform buffer). One pallet lies turned across the stack. Its deck
+  has oval holes, and a case over a hole read as floating.
+- Taking the shard before all three scans now ends the hunt too: one pause
+  on "all three found" OR "shard taken".
+- The minimap draws the search area. A circle round the clues was replaced
+  by six corners captured in game.
+- Two searched spots for the van failed in play, a yard closed behind a
+  building and a kerb in the middle of a road. The third was captured in
+  game. A spot read off the navigation mesh needs a reachability check and
+  an in-game look.
+
+## 55. A client missing at her stall. SOLVED 2026-10-14, played once
+
+Maricel, gig 04's client, was sometimes missing at her stall for the first
+talk. Four things were tried in turn.
+
+1. Switched on with V far away (gotcha 132). Better, not cured.
+2. The community's area node streamed from 120 m round the middle of a cast
+   spread over a kilometre. A trace (FTLog, one line every 10 s) showed her
+   and another character appearing 100 to 150 s after the switch. The game's
+   own community area nodes all carry float max; gig 04's now does.
+3. A recovery loop: the script raises `cc_g04_ligaya_missing` when the stall
+   has no body, and the quest switches her off and on. In one run it did
+   nothing three times in a row, with V beside the stall.
+4. `alwaysSpawned: true_` on every spawn phase of the cast. The base game
+   sets it on 1,499 phases, its quest characters' among them, and leaves
+   the rest at the default. Played once since, with her there.
+
+Open: one run is not proof of an intermittent fault. The recovery loop
+stays.
+
+## 56. People who do what the story says: Reynaldo's walk and Stamps's stool. PLAYED 2026-10-14
+
+Two characters in gig 04 needed their bodies to follow the beat exactly.
+
+Reynaldo gets up during his first talk, stands through a fight and walks to
+the next room for his goodbye. Four builds failed on the way, each for a
+reason that is now a gotcha (134 to 137). The working sequence is in
+`docs/scene-playbook.md`, "A person who gets up, waits, and walks". The
+playtest that settled it read the trace for each order the script sent
+and when, which is what showed an order sent on time and carried out late.
+
+Stamps sits on a bar stool, and a passer-by from the crowd sat on it with
+him twice. Neither deleting the game's own seat nor a crowd null area
+stopped it; a script that removes crowd bodies within a metre of the stool
+did (gotcha 138).
+
+## 57. The fixer's first call as an unknown caller. CLOSED, will not do
+
+The design asked for her first call to ring as an unknown caller and show
+her face once it connects, as the game's own first calls were thought to.
+
+- The vanilla fixers ring from their own contact on the first call too
+  (`CallContact`, video, visuals Default). The phone takes the name and
+  picture from the calling contact. No script check of "known or not" sits
+  in between.
+- The game adds a fixer to the contact list after the first call, with
+  `questAddRemoveContact_NodeType` (Dino's phase node 47, Regina's node 97).
+  One build removed her from the list before the first ring and added her
+  back after. The ringing screen still showed her name and picture.
+- An unknown look needs a second, generic contact to ring from
+  (`contacts/unknown`, "UNKNOWN NUMBER", or `contacts/fixer`, "Fixer", both
+  with the unknown avatar). Its name then stays for the whole call, the
+  same limit as gig 01's caller in 3c.
+
+The design call withdrew it: "remove all custom code and let's make a
+normal call". Her first call rings from her own contact.

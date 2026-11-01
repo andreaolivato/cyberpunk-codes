@@ -87,7 +87,11 @@ Pass `-Rebuild` when you want fresh output, and expect the archive line
 to say "same size" rather than "identical".
 
 Three things it refuses to package, each of which fails silently otherwise: a
-wrapper folder, `source/cet-dev/`, and anything under `base\`.
+wrapper folder, `source/cet-dev/`, and a base-game file under `base\` or `ep1\`
+in `source/wkit/raw/`. One kind of base-game file is allowed there: a
+navigation sector (`navigation_<x>_<y>_<z>_<n>.streamingsector.json`). A room
+built inside a base-game building needs one (gotcha 129). The build prints a
+NOTE for each, because the last mod loaded wins a replaced file.
 
 Before building, deploy what you tested:
 

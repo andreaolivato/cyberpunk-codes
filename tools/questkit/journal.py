@@ -245,6 +245,42 @@ def map_pin(pin_id, anchor):
     })
 
 
+def npc_pin(pin_id, community_ref, entry):
+    """A pin on a placed body: `Mappins.NPCMappinDefinition` with `NPCVariant`,
+    the shape of `guard_1` in the shipped journal (a `gameJournalQuestMapPin`
+    whose reference is the community node and the entry name, no GPS, half a
+    metre up). The caption is one key for all of them, `pin-npc`."""
+    return wrap({
+        '$type': 'gameJournalQuestMapPin',
+        'enableGPS': 0,
+        'entries': [],
+        'id': pin_id,
+        'journalEntryOverrideDataList': [],
+        'mappinData': {
+            '$type': 'gamemappinsMappinData',
+            'active': 1,
+            'debugCaption': '',
+            'localizedCaption': lockey('pin-npc'),
+            'mappinType': tweak('Mappins.NPCMappinDefinition'),
+            'scriptData': None,
+            'variant': 'NPCVariant',
+            'visibleThroughWalls': 1,
+        },
+        'offset': vec3(0, 0, 0.5),
+        'reference': {
+            '$type': 'gameEntityReference',
+            'dynamicEntityUniqueName': cname('None'),
+            'names': [cname(entry)],
+            'reference': noderef(community_ref),
+            'sceneActorContextName': cname('None'),
+            'slotName': cname('None'),
+            'type': 'EntityRef',
+        },
+        'slotName': cname('UI_Interaction'),
+        'uiAnimation': tweak(None),
+    })
+
+
 def codex_link(lid, class_name, real_path):
     """A `gameJournalQuestCodexLink`: a link the Journal shows on an objective.
 
@@ -270,8 +306,12 @@ def codex_link(lid, class_name, real_path):
     })
 
 
-def objective(oid, suffix, anchor, links=()):
-    """`links` is a list of (id, className, realPath) for codex_link."""
+def objective(oid, suffix, anchor, links=(), extra=(), counter=0):
+    """`links` is a list of (id, className, realPath) for codex_link;
+    `extra` is ready-made pin entries (npc_pin) to carry as well.
+    `counter` is the total of a counted objective, which the tracker shows
+    as "[0/3]" (q000's "scan all targets"); the quest phase adds one with
+    questgraph.add_objective_counter."""
     children = []
     if isinstance(anchor, list):
         # An explicit list of (pin_id, anchor). Used where one objective owns
@@ -280,9 +320,10 @@ def objective(oid, suffix, anchor, links=()):
     elif anchor:
         children.append(map_pin('pin_' + oid.replace('obj_', ''), anchor))
     children.extend(codex_link(*link) for link in links)
+    children.extend(extra)
     return wrap({
         '$type': 'gameJournalQuestObjective',
-        'counter': 0,
+        'counter': counter,
         'description': lockey(suffix),
         'districtID': '',
         'entries': children,

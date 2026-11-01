@@ -1,0 +1,2419 @@
+{
+ "props": {
+  "poor_sofa_a_old.mesh": {
+   "sector": "interior_-8_6_2_1",
+   "node": {
+    "$type": "worldStaticMeshNode",
+    "castLocalShadows": "Never",
+    "castRayTracedGlobalShadows": "Always",
+    "castRayTracedLocalShadows": "Always",
+    "castShadows": "Always",
+    "debugName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "poor_sofa_a_old"
+    },
+    "forceAutoHideDistance": 81.6386566,
+    "isHostOnly": 0,
+    "isVisibleInGame": 1,
+    "lodLevelScales": 4294967295,
+    "mesh": {
+     "DepotPath": {
+      "$type": "ResourcePath",
+      "$storage": "string",
+      "$value": "base\\environment\\decoration\\furniture\\living_room\\poor_sofa\\poor_sofa_a_old.mesh"
+     },
+     "Flags": "Soft"
+    },
+    "meshAppearance": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "default"
+    },
+    "occluderAutohideDistanceScale": 255,
+    "occluderType": "Default",
+    "proxyScale": null,
+    "removeFromRainMap": 0,
+    "renderSceneLayerMask": "Default",
+    "sourcePrefabHash": "12958003898527328402",
+    "tag": "None",
+    "tagExt": "None",
+    "version": 2,
+    "windImpulseEnabled": 1
+   },
+   "flags": {
+    "MaxStreamingDistance": 2760.11133,
+    "UkFloat1": 81.6386566,
+    "Uk10": 1088,
+    "Uk11": 20610,
+    "Uk12": 0,
+    "Uk13": "0",
+    "Uk14": "0"
+   },
+   "orientation": {
+    "$type": "Quaternion",
+    "i": -0.0141428765,
+    "j": -0.0090100076,
+    "k": -0.843272924,
+    "r": 0.537224054
+   }
+  },
+  "diner_sofa_01_c.mesh": {
+   "sector": "interior_-8_6_2_1",
+   "node": {
+    "$type": "worldStaticMeshNode",
+    "castLocalShadows": "Always",
+    "castRayTracedGlobalShadows": "Always",
+    "castRayTracedLocalShadows": "Always",
+    "castShadows": "Always",
+    "debugName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "restaurant_diner_set_a_sofa_c_001"
+    },
+    "forceAutoHideDistance": 65.1294632,
+    "isHostOnly": 0,
+    "isVisibleInGame": 1,
+    "lodLevelScales": 4294967295,
+    "mesh": {
+     "DepotPath": {
+      "$type": "ResourcePath",
+      "$storage": "string",
+      "$value": "base\\environment\\decoration\\furniture\\restaurant\\diner_sofa_01\\diner_sofa_01_c.mesh"
+     },
+     "Flags": "Soft"
+    },
+    "meshAppearance": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "used_black"
+    },
+    "occluderAutohideDistanceScale": 255,
+    "occluderType": "Default",
+    "proxyScale": null,
+    "removeFromRainMap": 0,
+    "renderSceneLayerMask": "Default",
+    "sourcePrefabHash": "2057812496188217889",
+    "tag": "None",
+    "tagExt": "None",
+    "version": 2,
+    "windImpulseEnabled": 1
+   },
+   "flags": {
+    "MaxStreamingDistance": 2760.11133,
+    "UkFloat1": 65.1294632,
+    "Uk10": 1088,
+    "Uk11": 20610,
+    "Uk12": 0,
+    "Uk13": "0",
+    "Uk14": "0"
+   },
+   "orientation": {
+    "$type": "Quaternion",
+    "i": 0,
+    "j": 0,
+    "k": 0.953716874,
+    "r": -0.300705999
+   }
+  },
+  "poor_braindance_a_base.mesh": {
+   "sector": "interior_-8_6_2_1",
+   "node": {
+    "$type": "worldStaticMeshNode",
+    "castLocalShadows": "Never",
+    "castRayTracedGlobalShadows": "Always",
+    "castRayTracedLocalShadows": "Always",
+    "castShadows": "Always",
+    "debugName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "poor_braindance_machine_base"
+    },
+    "forceAutoHideDistance": 74.5627289,
+    "isHostOnly": 0,
+    "isVisibleInGame": 1,
+    "lodLevelScales": 4294967295,
+    "mesh": {
+     "DepotPath": {
+      "$type": "ResourcePath",
+      "$storage": "string",
+      "$value": "base\\environment\\decoration\\electronics\\devices\\poor_braindance\\poor_braindance_a_base.mesh"
+     },
+     "Flags": "Soft"
+    },
+    "meshAppearance": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "green"
+    },
+    "occluderAutohideDistanceScale": 255,
+    "occluderType": "Default",
+    "proxyScale": null,
+    "removeFromRainMap": 0,
+    "renderSceneLayerMask": "Default",
+    "sourcePrefabHash": "12958003898527328402",
+    "tag": "None",
+    "tagExt": "None",
+    "version": 2,
+    "windImpulseEnabled": 1
+   },
+   "flags": {
+    "MaxStreamingDistance": 2760.11133,
+    "UkFloat1": 74.5627289,
+    "Uk10": 1088,
+    "Uk11": 20610,
+    "Uk12": 0,
+    "Uk13": "0",
+    "Uk14": "0"
+   },
+   "orientation": {
+    "$type": "Quaternion",
+    "i": 0,
+    "j": 0,
+    "k": 0.953716993,
+    "r": 0.300705612
+   }
+  },
+  "medical_cart_c.mesh": {
+   "sector": "interior_-14_13_4_0",
+   "node": {
+    "$type": "worldStaticMeshNode",
+    "castLocalShadows": "Always",
+    "castRayTracedGlobalShadows": "Always",
+    "castRayTracedLocalShadows": "Always",
+    "castShadows": "Always",
+    "debugName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "medical_cart_c"
+    },
+    "forceAutoHideDistance": 53.2975082,
+    "isHostOnly": 0,
+    "isVisibleInGame": 1,
+    "lodLevelScales": 4294967295,
+    "mesh": {
+     "DepotPath": {
+      "$type": "ResourcePath",
+      "$storage": "string",
+      "$value": "base\\environment\\decoration\\furniture\\lab\\medical_cart\\medical_cart_c.mesh"
+     },
+     "Flags": "Soft"
+    },
+    "meshAppearance": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "default"
+    },
+    "occluderAutohideDistanceScale": 255,
+    "occluderType": "Default",
+    "proxyScale": null,
+    "removeFromRainMap": 0,
+    "renderSceneLayerMask": "Default",
+    "sourcePrefabHash": "17555055634570136725",
+    "tag": "None",
+    "tagExt": "None",
+    "version": 2,
+    "windImpulseEnabled": 1
+   },
+   "flags": {
+    "MaxStreamingDistance": 2760.11133,
+    "UkFloat1": 53.2975082,
+    "Uk10": 1088,
+    "Uk11": 20610,
+    "Uk12": 0,
+    "Uk13": "0",
+    "Uk14": "0"
+   },
+   "orientation": {
+    "$type": "Quaternion",
+    "i": 0,
+    "j": 0,
+    "k": 0.887010813,
+    "r": -0.461748719
+   }
+  },
+  "medical_jar_b.mesh": {
+   "sector": "interior_-21_24_4_0",
+   "node": {
+    "$type": "worldStaticMeshNode",
+    "castLocalShadows": "Always",
+    "castRayTracedGlobalShadows": "Always",
+    "castRayTracedLocalShadows": "Always",
+    "castShadows": "Always",
+    "debugName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "medical_jar_b_002"
+    },
+    "forceAutoHideDistance": 23.2432747,
+    "isHostOnly": 0,
+    "isVisibleInGame": 1,
+    "lodLevelScales": 4294967295,
+    "mesh": {
+     "DepotPath": {
+      "$type": "ResourcePath",
+      "$storage": "string",
+      "$value": "base\\environment\\decoration\\containers\\bottles\\medical_jar\\medical_jar_b.mesh"
+     },
+     "Flags": "Soft"
+    },
+    "meshAppearance": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "default"
+    },
+    "occluderAutohideDistanceScale": 255,
+    "occluderType": "Default",
+    "proxyScale": null,
+    "removeFromRainMap": 0,
+    "renderSceneLayerMask": "Default",
+    "sourcePrefabHash": "3560037334485945834",
+    "tag": "None",
+    "tagExt": "None",
+    "version": 2,
+    "windImpulseEnabled": 1
+   },
+   "flags": {
+    "MaxStreamingDistance": 2760.11133,
+    "UkFloat1": 23.2432747,
+    "Uk10": 1088,
+    "Uk11": 20610,
+    "Uk12": 0,
+    "Uk13": "0",
+    "Uk14": "0"
+   },
+   "orientation": {
+    "$type": "Quaternion",
+    "i": 0,
+    "j": 0,
+    "k": 0.955826163,
+    "r": 0.293932527
+   }
+  },
+  "industrial_shelf_a.mesh": {
+   "sector": "interior_-8_6_2_1",
+   "node": {
+    "$type": "worldStaticMeshNode",
+    "castLocalShadows": "Always",
+    "castRayTracedGlobalShadows": "Always",
+    "castRayTracedLocalShadows": "Always",
+    "castShadows": "Always",
+    "debugName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "node"
+    },
+    "forceAutoHideDistance": 71.8750763,
+    "isHostOnly": 0,
+    "isVisibleInGame": 1,
+    "lodLevelScales": 4294967295,
+    "mesh": {
+     "DepotPath": {
+      "$type": "ResourcePath",
+      "$storage": "string",
+      "$value": "base\\environment\\decoration\\furniture\\industrial\\industrial_shelf\\industrial_shelf_a.mesh"
+     },
+     "Flags": "Soft"
+    },
+    "meshAppearance": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "default"
+    },
+    "occluderAutohideDistanceScale": 255,
+    "occluderType": "Default",
+    "proxyScale": null,
+    "removeFromRainMap": 0,
+    "renderSceneLayerMask": "Default",
+    "sourcePrefabHash": "7899150144742201707",
+    "tag": "None",
+    "tagExt": "None",
+    "version": 2,
+    "windImpulseEnabled": 1
+   },
+   "flags": {
+    "MaxStreamingDistance": 2760.11133,
+    "UkFloat1": 71.8750763,
+    "Uk10": 1088,
+    "Uk11": 20610,
+    "Uk12": 0,
+    "Uk13": "0",
+    "Uk14": "0"
+   },
+   "orientation": {
+    "$type": "Quaternion",
+    "i": 0,
+    "j": 0,
+    "k": 0.906307936,
+    "r": 0.422617912
+   }
+  },
+  "industrial_shelf_c.mesh": {
+   "sector": "interior_-8_6_2_1",
+   "node": {
+    "$type": "worldStaticMeshNode",
+    "castLocalShadows": "Always",
+    "castRayTracedGlobalShadows": "Always",
+    "castRayTracedLocalShadows": "Always",
+    "castShadows": "Always",
+    "debugName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "industrial_shelf_c_002"
+    },
+    "forceAutoHideDistance": 66.3465195,
+    "isHostOnly": 0,
+    "isVisibleInGame": 1,
+    "lodLevelScales": 4294967295,
+    "mesh": {
+     "DepotPath": {
+      "$type": "ResourcePath",
+      "$storage": "string",
+      "$value": "base\\environment\\decoration\\furniture\\industrial\\industrial_shelf\\industrial_shelf_c.mesh"
+     },
+     "Flags": "Soft"
+    },
+    "meshAppearance": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "default"
+    },
+    "occluderAutohideDistanceScale": 255,
+    "occluderType": "Default",
+    "proxyScale": null,
+    "removeFromRainMap": 0,
+    "renderSceneLayerMask": "Default",
+    "sourcePrefabHash": "2057812496188217889",
+    "tag": "None",
+    "tagExt": "NonClimbable",
+    "version": 2,
+    "windImpulseEnabled": 1
+   },
+   "flags": {
+    "MaxStreamingDistance": 2760.11133,
+    "UkFloat1": 66.3465195,
+    "Uk10": 1088,
+    "Uk11": 20610,
+    "Uk12": 0,
+    "Uk13": "0",
+    "Uk14": "0"
+   },
+   "orientation": {
+    "$type": "Quaternion",
+    "i": 0,
+    "j": 0,
+    "k": 0.887010813,
+    "r": -0.461748838
+   }
+  },
+  "industrial_shelf_f.mesh": {
+   "sector": "interior_-8_6_2_1",
+   "node": {
+    "$type": "worldStaticMeshNode",
+    "castLocalShadows": "Never",
+    "castRayTracedGlobalShadows": "Always",
+    "castRayTracedLocalShadows": "Always",
+    "castShadows": "Always",
+    "debugName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "industrial_shelf_f"
+    },
+    "forceAutoHideDistance": 65.8966522,
+    "isHostOnly": 0,
+    "isVisibleInGame": 1,
+    "lodLevelScales": 4294967295,
+    "mesh": {
+     "DepotPath": {
+      "$type": "ResourcePath",
+      "$storage": "string",
+      "$value": "base\\environment\\decoration\\furniture\\industrial\\industrial_shelf\\industrial_shelf_f.mesh"
+     },
+     "Flags": "Soft"
+    },
+    "meshAppearance": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "default"
+    },
+    "occluderAutohideDistanceScale": 255,
+    "occluderType": "Default",
+    "proxyScale": null,
+    "removeFromRainMap": 0,
+    "renderSceneLayerMask": "Default",
+    "sourcePrefabHash": "4118788179537112793",
+    "tag": "None",
+    "tagExt": "None",
+    "version": 2,
+    "windImpulseEnabled": 1
+   },
+   "flags": {
+    "MaxStreamingDistance": 2760.11133,
+    "UkFloat1": 65.8966522,
+    "Uk10": 1088,
+    "Uk11": 20610,
+    "Uk12": 0,
+    "Uk13": "0",
+    "Uk14": "0"
+   },
+   "orientation": {
+    "$type": "Quaternion",
+    "i": 0,
+    "j": 0,
+    "k": 0.953716993,
+    "r": -0.30070591
+   }
+  },
+  "gas_tank_d.mesh": {
+   "sector": "interior_-26_69_1_0",
+   "node": {
+    "$type": "worldStaticMeshNode",
+    "castLocalShadows": "Never",
+    "castRayTracedGlobalShadows": "Always",
+    "castRayTracedLocalShadows": "Always",
+    "castShadows": "Always",
+    "debugName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "tanks_gas_d_014"
+    },
+    "forceAutoHideDistance": 47.9451447,
+    "isHostOnly": 0,
+    "isVisibleInGame": 1,
+    "lodLevelScales": 4294967295,
+    "mesh": {
+     "DepotPath": {
+      "$type": "ResourcePath",
+      "$storage": "string",
+      "$value": "base\\environment\\decoration\\containers\\tanks\\gas_tank\\gas_tank_d.mesh"
+     },
+     "Flags": "Soft"
+    },
+    "meshAppearance": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "default"
+    },
+    "occluderAutohideDistanceScale": 255,
+    "occluderType": "Default",
+    "proxyScale": null,
+    "removeFromRainMap": 0,
+    "renderSceneLayerMask": "Default",
+    "sourcePrefabHash": "10860766952000034043",
+    "tag": "None",
+    "tagExt": "None",
+    "version": 2,
+    "windImpulseEnabled": 1
+   },
+   "flags": {
+    "MaxStreamingDistance": 153.785294,
+    "UkFloat1": 47.9451447,
+    "Uk10": 1088,
+    "Uk11": 20610,
+    "Uk12": 0,
+    "Uk13": "0",
+    "Uk14": "0"
+   },
+   "orientation": {
+    "$type": "Quaternion",
+    "i": -0.632756472,
+    "j": 0.31562525,
+    "k": 0.315625161,
+    "r": -0.632756412
+   }
+  },
+  "military_case_i.mesh": {
+   "sector": "interior_-15_13_4_0",
+   "node": {
+    "$type": "worldStaticMeshNode",
+    "castLocalShadows": "Always",
+    "castRayTracedGlobalShadows": "Always",
+    "castRayTracedLocalShadows": "Always",
+    "castShadows": "Always",
+    "debugName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "military_case_i_007"
+    },
+    "forceAutoHideDistance": 38.1044121,
+    "isHostOnly": 0,
+    "isVisibleInGame": 1,
+    "lodLevelScales": 4294967295,
+    "mesh": {
+     "DepotPath": {
+      "$type": "ResourcePath",
+      "$storage": "string",
+      "$value": "base\\environment\\decoration\\containers\\cases\\military_case\\military_case_i.mesh"
+     },
+     "Flags": "Soft"
+    },
+    "meshAppearance": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "default"
+    },
+    "occluderAutohideDistanceScale": 255,
+    "occluderType": "Default",
+    "proxyScale": null,
+    "removeFromRainMap": 0,
+    "renderSceneLayerMask": "Default",
+    "sourcePrefabHash": "4118788179537112793",
+    "tag": "None",
+    "tagExt": "None",
+    "version": 2,
+    "windImpulseEnabled": 1
+   },
+   "flags": {
+    "MaxStreamingDistance": 2760.11133,
+    "UkFloat1": 38.1044121,
+    "Uk10": 1088,
+    "Uk11": 20610,
+    "Uk12": 0,
+    "Uk13": "0",
+    "Uk14": "0"
+   },
+   "orientation": {
+    "$type": "Quaternion",
+    "i": 0,
+    "j": 0,
+    "k": -0.447952628,
+    "r": -0.894057393
+   }
+  },
+  "cardboard_box_b_closed.mesh": {
+   "sector": "interior_-124_-203_2_0",
+   "node": {
+    "$type": "worldStaticMeshNode",
+    "castLocalShadows": "Always",
+    "castRayTracedGlobalShadows": "Always",
+    "castRayTracedLocalShadows": "Always",
+    "castShadows": "Always",
+    "debugName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "cardboard_box_b_closed_005"
+    },
+    "forceAutoHideDistance": 37.2330132,
+    "isHostOnly": 0,
+    "isVisibleInGame": 1,
+    "lodLevelScales": 4294967295,
+    "mesh": {
+     "DepotPath": {
+      "$type": "ResourcePath",
+      "$storage": "string",
+      "$value": "base\\environment\\decoration\\containers\\packaging\\cardboard_box\\cardboard_box_b_closed.mesh"
+     },
+     "Flags": "Soft"
+    },
+    "meshAppearance": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "default"
+    },
+    "occluderAutohideDistanceScale": 255,
+    "occluderType": "Default",
+    "proxyScale": null,
+    "removeFromRainMap": 0,
+    "renderSceneLayerMask": "Default",
+    "sourcePrefabHash": "11063664618276740180",
+    "tag": "None",
+    "tagExt": "None",
+    "version": 2,
+    "windImpulseEnabled": 1
+   },
+   "flags": {
+    "MaxStreamingDistance": 3.40282347e+38,
+    "UkFloat1": 37.2330132,
+    "Uk10": 1088,
+    "Uk11": 20610,
+    "Uk12": 0,
+    "Uk13": "0",
+    "Uk14": "0"
+   },
+   "orientation": {
+    "$type": "Quaternion",
+    "i": 0,
+    "j": 0,
+    "k": 0.5604164,
+    "r": 0.828211129
+   }
+  },
+  "garbage_bag_l_pile.mesh": {
+   "sector": "interior_-11_12_2_1",
+   "node": {
+    "$type": "worldStaticMeshNode",
+    "castLocalShadows": "Always",
+    "castRayTracedGlobalShadows": "Always",
+    "castRayTracedLocalShadows": "Always",
+    "castShadows": "Always",
+    "debugName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "garbage_bag_l_pile"
+    },
+    "forceAutoHideDistance": 88.1826248,
+    "isHostOnly": 0,
+    "isVisibleInGame": 1,
+    "lodLevelScales": 4294967295,
+    "mesh": {
+     "DepotPath": {
+      "$type": "ResourcePath",
+      "$storage": "string",
+      "$value": "base\\environment\\decoration\\garbage\\trash\\garbage_bag\\garbage_bag_l_pile.mesh"
+     },
+     "Flags": "Soft"
+    },
+    "meshAppearance": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "default"
+    },
+    "occluderAutohideDistanceScale": 255,
+    "occluderType": "None",
+    "proxyScale": null,
+    "removeFromRainMap": 0,
+    "renderSceneLayerMask": "Default",
+    "sourcePrefabHash": "17585452604619370847",
+    "tag": "None",
+    "tagExt": "None",
+    "version": 2,
+    "windImpulseEnabled": 1
+   },
+   "flags": {
+    "MaxStreamingDistance": 50.4854431,
+    "UkFloat1": 64.5550079,
+    "Uk10": 1088,
+    "Uk11": 20610,
+    "Uk12": 0,
+    "Uk13": "0",
+    "Uk14": "0"
+   },
+   "orientation": {
+    "$type": "Quaternion",
+    "i": 0,
+    "j": 0,
+    "k": 0.937242627,
+    "r": -0.348677754
+   }
+  },
+  "garbage_bag_c.mesh": {
+   "sector": "interior_-46_40_3_0",
+   "node": {
+    "$type": "worldStaticMeshNode",
+    "castLocalShadows": "Always",
+    "castRayTracedGlobalShadows": "Always",
+    "castRayTracedLocalShadows": "Always",
+    "castShadows": "Always",
+    "debugName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "garbage_bag_c_001"
+    },
+    "forceAutoHideDistance": 33.9555435,
+    "isHostOnly": 0,
+    "isVisibleInGame": 1,
+    "lodLevelScales": 4294967295,
+    "mesh": {
+     "DepotPath": {
+      "$type": "ResourcePath",
+      "$storage": "string",
+      "$value": "base\\environment\\decoration\\garbage\\trash\\garbage_bag\\garbage_bag_c.mesh"
+     },
+     "Flags": "Soft"
+    },
+    "meshAppearance": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "default"
+    },
+    "occluderAutohideDistanceScale": 255,
+    "occluderType": "Default",
+    "proxyScale": null,
+    "removeFromRainMap": 0,
+    "renderSceneLayerMask": "Default",
+    "sourcePrefabHash": "77301877084937267",
+    "tag": "None",
+    "tagExt": "None",
+    "version": 2,
+    "windImpulseEnabled": 1
+   },
+   "flags": {
+    "MaxStreamingDistance": 4946.13672,
+    "UkFloat1": 33.9555435,
+    "Uk10": 1088,
+    "Uk11": 20610,
+    "Uk12": 0,
+    "Uk13": "0",
+    "Uk14": "0"
+   },
+   "orientation": {
+    "$type": "Quaternion",
+    "i": 0,
+    "j": 0,
+    "k": -0.67558974,
+    "r": -0.737277806
+   }
+  },
+  "barrel_drum_e_destroyed.mesh": {
+   "sector": "interior_-44_41_3_0",
+   "node": {
+    "$type": "worldStaticMeshNode",
+    "castLocalShadows": "Always",
+    "castRayTracedGlobalShadows": "Always",
+    "castRayTracedLocalShadows": "Always",
+    "castShadows": "Always",
+    "debugName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "barrel_drum_e_destroyed"
+    },
+    "forceAutoHideDistance": 45.6557159,
+    "isHostOnly": 0,
+    "isVisibleInGame": 1,
+    "lodLevelScales": 4294967295,
+    "mesh": {
+     "DepotPath": {
+      "$type": "ResourcePath",
+      "$storage": "string",
+      "$value": "base\\environment\\decoration\\containers\\barrel\\drum\\barrel_drum_e_destroyed.mesh"
+     },
+     "Flags": "Soft"
+    },
+    "meshAppearance": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "default"
+    },
+    "occluderAutohideDistanceScale": 255,
+    "occluderType": "Default",
+    "proxyScale": null,
+    "removeFromRainMap": 0,
+    "renderSceneLayerMask": "Default",
+    "sourcePrefabHash": "17839222206141516761",
+    "tag": "None",
+    "tagExt": "None",
+    "version": 2,
+    "windImpulseEnabled": 1
+   },
+   "flags": {
+    "MaxStreamingDistance": 4946.13672,
+    "UkFloat1": 45.6557159,
+    "Uk10": 1088,
+    "Uk11": 20610,
+    "Uk12": 0,
+    "Uk13": "0",
+    "Uk14": "0"
+   },
+   "orientation": {
+    "$type": "Quaternion",
+    "i": 0,
+    "j": 0,
+    "k": 0.999048233,
+    "r": 0.0436200127
+   }
+  },
+  "floor_carpet_b.mesh": {
+   "sector": "interior_-8_6_2_1",
+   "node": {
+    "$type": "worldStaticMeshNode",
+    "castLocalShadows": "Never",
+    "castRayTracedGlobalShadows": "Always",
+    "castRayTracedLocalShadows": "Always",
+    "castShadows": "Always",
+    "debugName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "floor_carpet_b"
+    },
+    "forceAutoHideDistance": 68.4413071,
+    "isHostOnly": 0,
+    "isVisibleInGame": 1,
+    "lodLevelScales": 4294967295,
+    "mesh": {
+     "DepotPath": {
+      "$type": "ResourcePath",
+      "$storage": "string",
+      "$value": "base\\environment\\decoration\\textiles\\carpet\\floor_carpet\\floor_carpet_b.mesh"
+     },
+     "Flags": "Soft"
+    },
+    "meshAppearance": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "default"
+    },
+    "occluderAutohideDistanceScale": 255,
+    "occluderType": "Default",
+    "proxyScale": null,
+    "removeFromRainMap": 0,
+    "renderSceneLayerMask": "Default",
+    "sourcePrefabHash": "12958003898527328402",
+    "tag": "None",
+    "tagExt": "None",
+    "version": 2,
+    "windImpulseEnabled": 1
+   },
+   "flags": {
+    "MaxStreamingDistance": 2760.11133,
+    "UkFloat1": 68.4413071,
+    "Uk10": 1088,
+    "Uk11": 20610,
+    "Uk12": 0,
+    "Uk13": "0",
+    "Uk14": "0"
+   },
+   "orientation": {
+    "$type": "Quaternion",
+    "i": 0,
+    "j": 0,
+    "k": 0.992570996,
+    "r": -0.121667147
+   }
+  },
+  "floor_carpet_c.mesh": {
+   "sector": "interior_-8_6_2_1",
+   "node": {
+    "$type": "worldStaticMeshNode",
+    "castLocalShadows": "Never",
+    "castRayTracedGlobalShadows": "Always",
+    "castRayTracedLocalShadows": "Always",
+    "castShadows": "Always",
+    "debugName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "floor_carpet_c"
+    },
+    "forceAutoHideDistance": 79.4461746,
+    "isHostOnly": 0,
+    "isVisibleInGame": 1,
+    "lodLevelScales": 4294967295,
+    "mesh": {
+     "DepotPath": {
+      "$type": "ResourcePath",
+      "$storage": "string",
+      "$value": "base\\environment\\decoration\\textiles\\carpet\\floor_carpet\\floor_carpet_c.mesh"
+     },
+     "Flags": "Soft"
+    },
+    "meshAppearance": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "default"
+    },
+    "occluderAutohideDistanceScale": 255,
+    "occluderType": "Default",
+    "proxyScale": null,
+    "removeFromRainMap": 0,
+    "renderSceneLayerMask": "Default",
+    "sourcePrefabHash": "12853091545336523360",
+    "tag": "None",
+    "tagExt": "None",
+    "version": 2,
+    "windImpulseEnabled": 1
+   },
+   "flags": {
+    "MaxStreamingDistance": 2760.11133,
+    "UkFloat1": 79.4461746,
+    "Uk10": 1088,
+    "Uk11": 20610,
+    "Uk12": 0,
+    "Uk13": "0",
+    "Uk14": "0"
+   },
+   "orientation": {
+    "$type": "Quaternion",
+    "i": 0,
+    "j": 0,
+    "k": 0.675590336,
+    "r": 0.73727721
+   }
+  },
+  "plastic_floor_mat_a.mesh": {
+   "sector": "interior_-8_6_2_1",
+   "node": {
+    "$type": "worldStaticMeshNode",
+    "castLocalShadows": "Never",
+    "castRayTracedGlobalShadows": "Always",
+    "castRayTracedLocalShadows": "Always",
+    "castShadows": "Always",
+    "debugName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "node_001"
+    },
+    "forceAutoHideDistance": 71.746254,
+    "isHostOnly": 0,
+    "isVisibleInGame": 1,
+    "lodLevelScales": 4294967295,
+    "mesh": {
+     "DepotPath": {
+      "$type": "ResourcePath",
+      "$storage": "string",
+      "$value": "base\\environment\\decoration\\textiles\\carpet\\plastic_floor_mat\\plastic_floor_mat_a.mesh"
+     },
+     "Flags": "Soft"
+    },
+    "meshAppearance": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "carpet"
+    },
+    "occluderAutohideDistanceScale": 255,
+    "occluderType": "Default",
+    "proxyScale": null,
+    "removeFromRainMap": 0,
+    "renderSceneLayerMask": "Default",
+    "sourcePrefabHash": "4118788179537112793",
+    "tag": "None",
+    "tagExt": "None",
+    "version": 2,
+    "windImpulseEnabled": 1
+   },
+   "flags": {
+    "MaxStreamingDistance": 2760.11133,
+    "UkFloat1": 71.746254,
+    "Uk10": 1088,
+    "Uk11": 20610,
+    "Uk12": 0,
+    "Uk13": "0",
+    "Uk14": "0"
+   },
+   "orientation": {
+    "$type": "Quaternion",
+    "i": 0,
+    "j": 0,
+    "k": 0.47770679,
+    "r": 0.878519356
+   }
+  },
+  "cardboard_trash_a.mesh": {
+   "sector": "interior_-8_6_2_1",
+   "node": {
+    "$type": "worldStaticMeshNode",
+    "castLocalShadows": "Never",
+    "castRayTracedGlobalShadows": "Always",
+    "castRayTracedLocalShadows": "Always",
+    "castShadows": "Always",
+    "debugName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "cardboard_trash_a_019"
+    },
+    "forceAutoHideDistance": 64.79216,
+    "isHostOnly": 0,
+    "isVisibleInGame": 1,
+    "lodLevelScales": 4294967295,
+    "mesh": {
+     "DepotPath": {
+      "$type": "ResourcePath",
+      "$storage": "string",
+      "$value": "base\\environment\\decoration\\garbage\\trash\\cardboard_trash\\cardboard_trash_a.mesh"
+     },
+     "Flags": "Soft"
+    },
+    "meshAppearance": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "default"
+    },
+    "occluderAutohideDistanceScale": 255,
+    "occluderType": "Default",
+    "proxyScale": null,
+    "removeFromRainMap": 0,
+    "renderSceneLayerMask": "Default",
+    "sourcePrefabHash": "12853091545336523360",
+    "tag": "None",
+    "tagExt": "None",
+    "version": 2,
+    "windImpulseEnabled": 1
+   },
+   "flags": {
+    "MaxStreamingDistance": 2760.11133,
+    "UkFloat1": 64.79216,
+    "Uk10": 1216,
+    "Uk11": 20610,
+    "Uk12": 0,
+    "Uk13": "0",
+    "Uk14": "0"
+   },
+   "orientation": {
+    "$type": "Quaternion",
+    "i": 0,
+    "j": 0,
+    "k": 0.537299514,
+    "r": -0.843391597
+   }
+  },
+  "newspaper_b_full.mesh": {
+   "sector": "interior_-10_-52_0_0",
+   "node": {
+    "$type": "worldStaticMeshNode",
+    "castLocalShadows": "Never",
+    "castRayTracedGlobalShadows": "Always",
+    "castRayTracedLocalShadows": "Always",
+    "castShadows": "Always",
+    "debugName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "node_022"
+    },
+    "forceAutoHideDistance": 42.0168076,
+    "isHostOnly": 0,
+    "isVisibleInGame": 1,
+    "lodLevelScales": 4294967295,
+    "mesh": {
+     "DepotPath": {
+      "$type": "ResourcePath",
+      "$storage": "string",
+      "$value": "base\\environment\\decoration\\misc\\paper\\newspaper\\newspaper_b_full.mesh"
+     },
+     "Flags": "Soft"
+    },
+    "meshAppearance": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "default"
+    },
+    "occluderAutohideDistanceScale": 255,
+    "occluderType": "Default",
+    "proxyScale": null,
+    "removeFromRainMap": 0,
+    "renderSceneLayerMask": "Default",
+    "sourcePrefabHash": "10977439877810917646",
+    "tag": "None",
+    "tagExt": "None",
+    "version": 2,
+    "windImpulseEnabled": 1
+   },
+   "flags": {
+    "MaxStreamingDistance": 9215.2002,
+    "UkFloat1": 42.0168076,
+    "Uk10": 1216,
+    "Uk11": 20610,
+    "Uk12": 0,
+    "Uk13": "0",
+    "Uk14": "0"
+   },
+   "orientation": {
+    "$type": "Quaternion",
+    "i": 0,
+    "j": 0,
+    "k": -0.587786019,
+    "r": 0.809016466
+   }
+  },
+  "newspaper_k_pile.mesh": {
+   "sector": "interior_-15_45_1_0",
+   "node": {
+    "$type": "worldStaticMeshNode",
+    "castLocalShadows": "Never",
+    "castRayTracedGlobalShadows": "Always",
+    "castRayTracedLocalShadows": "Always",
+    "castShadows": "Always",
+    "debugName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "newspaper_k_pile"
+    },
+    "forceAutoHideDistance": 29.321558,
+    "isHostOnly": 0,
+    "isVisibleInGame": 1,
+    "lodLevelScales": 4294967295,
+    "mesh": {
+     "DepotPath": {
+      "$type": "ResourcePath",
+      "$storage": "string",
+      "$value": "base\\environment\\decoration\\misc\\paper\\newspaper\\newspaper_k_pile.mesh"
+     },
+     "Flags": "Soft"
+    },
+    "meshAppearance": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "default"
+    },
+    "occluderAutohideDistanceScale": 255,
+    "occluderType": "Default",
+    "proxyScale": null,
+    "removeFromRainMap": 0,
+    "renderSceneLayerMask": "Default",
+    "sourcePrefabHash": "5946955085309434107",
+    "tag": "None",
+    "tagExt": "None",
+    "version": 2,
+    "windImpulseEnabled": 1
+   },
+   "flags": {
+    "MaxStreamingDistance": 2760.11133,
+    "UkFloat1": 29.321558,
+    "Uk10": 1088,
+    "Uk11": 20610,
+    "Uk12": 0,
+    "Uk13": "0",
+    "Uk14": "0"
+   },
+   "orientation": {
+    "$type": "Quaternion",
+    "i": 0,
+    "j": 0,
+    "k": 0.945518732,
+    "r": 0.325567871
+   }
+  },
+  "street_trash_d.mesh": {
+   "sector": "interior_-8_6_2_1",
+   "node": {
+    "$type": "worldStaticMeshNode",
+    "castLocalShadows": "Never",
+    "castRayTracedGlobalShadows": "Always",
+    "castRayTracedLocalShadows": "Always",
+    "castShadows": "Always",
+    "debugName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "street_trash_d"
+    },
+    "forceAutoHideDistance": 73.4880142,
+    "isHostOnly": 0,
+    "isVisibleInGame": 1,
+    "lodLevelScales": 4294967295,
+    "mesh": {
+     "DepotPath": {
+      "$type": "ResourcePath",
+      "$storage": "string",
+      "$value": "base\\environment\\decoration\\garbage\\trash\\street_trash\\street_trash_d.mesh"
+     },
+     "Flags": "Soft"
+    },
+    "meshAppearance": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "default"
+    },
+    "occluderAutohideDistanceScale": 255,
+    "occluderType": "Default",
+    "proxyScale": null,
+    "removeFromRainMap": 0,
+    "renderSceneLayerMask": "Default",
+    "sourcePrefabHash": "12168100809309826894",
+    "tag": "None",
+    "tagExt": "None",
+    "version": 2,
+    "windImpulseEnabled": 1
+   },
+   "flags": {
+    "MaxStreamingDistance": 2760.11133,
+    "UkFloat1": 73.4880142,
+    "Uk10": 1088,
+    "Uk11": 20610,
+    "Uk12": 0,
+    "Uk13": "0",
+    "Uk14": "0"
+   },
+   "orientation": {
+    "$type": "Quaternion",
+    "i": 0,
+    "j": 0,
+    "k": -0.887010813,
+    "r": 0.4617486
+   }
+  },
+  "drink_bottle_b_wine.mesh": {
+   "sector": "interior_-11_7_5_0",
+   "node": {
+    "$type": "worldStaticMeshNode",
+    "castLocalShadows": "Always",
+    "castRayTracedGlobalShadows": "Always",
+    "castRayTracedLocalShadows": "Always",
+    "castShadows": "Always",
+    "debugName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "drink_bottle_b_wine"
+    },
+    "forceAutoHideDistance": 18.5627766,
+    "isHostOnly": 0,
+    "isVisibleInGame": 1,
+    "lodLevelScales": 4294967295,
+    "mesh": {
+     "DepotPath": {
+      "$type": "ResourcePath",
+      "$storage": "string",
+      "$value": "base\\environment\\decoration\\food\\drinks\\drink_bottle\\drink_bottle_b_wine.mesh"
+     },
+     "Flags": "Soft"
+    },
+    "meshAppearance": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "default"
+    },
+    "occluderAutohideDistanceScale": 255,
+    "occluderType": "Default",
+    "proxyScale": null,
+    "removeFromRainMap": 0,
+    "renderSceneLayerMask": "Default",
+    "sourcePrefabHash": "12919186742082610205",
+    "tag": "None",
+    "tagExt": "None",
+    "version": 2,
+    "windImpulseEnabled": 1
+   },
+   "flags": {
+    "MaxStreamingDistance": 1789.42334,
+    "UkFloat1": 18.5627766,
+    "Uk10": 1088,
+    "Uk11": 20610,
+    "Uk12": 0,
+    "Uk13": "0",
+    "Uk14": "0"
+   },
+   "orientation": {
+    "$type": "Quaternion",
+    "i": 0,
+    "j": 0,
+    "k": 0,
+    "r": 1
+   }
+  },
+  "cable_coil_c.mesh": {
+   "sector": "interior_-8_6_2_1",
+   "node": {
+    "$type": "worldStaticMeshNode",
+    "castLocalShadows": "Never",
+    "castRayTracedGlobalShadows": "Always",
+    "castRayTracedLocalShadows": "Always",
+    "castShadows": "Always",
+    "debugName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "cable_coil_c_002"
+    },
+    "forceAutoHideDistance": 64.9803543,
+    "isHostOnly": 0,
+    "isVisibleInGame": 1,
+    "lodLevelScales": 4294967295,
+    "mesh": {
+     "DepotPath": {
+      "$type": "ResourcePath",
+      "$storage": "string",
+      "$value": "base\\environment\\decoration\\industrial\\equipment\\cable_coil\\cable_coil_c.mesh"
+     },
+     "Flags": "Soft"
+    },
+    "meshAppearance": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "default"
+    },
+    "occluderAutohideDistanceScale": 255,
+    "occluderType": "Default",
+    "proxyScale": null,
+    "removeFromRainMap": 0,
+    "renderSceneLayerMask": "Default",
+    "sourcePrefabHash": "12853091545336523360",
+    "tag": "None",
+    "tagExt": "None",
+    "version": 2,
+    "windImpulseEnabled": 1
+   },
+   "flags": {
+    "MaxStreamingDistance": 2760.11133,
+    "UkFloat1": 64.9803543,
+    "Uk10": 1088,
+    "Uk11": 20610,
+    "Uk12": 0,
+    "Uk13": "0",
+    "Uk14": "0"
+   },
+   "orientation": {
+    "$type": "Quaternion",
+    "i": 0,
+    "j": 0,
+    "k": 0.422618032,
+    "r": -0.906307876
+   }
+  },
+  "postal_box_e.mesh": {
+   "sector": "interior_-19_-53_0_0",
+   "node": {
+    "$type": "worldStaticMeshNode",
+    "castLocalShadows": "Always",
+    "castRayTracedGlobalShadows": "Always",
+    "castRayTracedLocalShadows": "Always",
+    "castShadows": "Always",
+    "debugName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "postal_box_e_005"
+    },
+    "forceAutoHideDistance": 30.0383301,
+    "isHostOnly": 0,
+    "isVisibleInGame": 1,
+    "lodLevelScales": 4294967295,
+    "mesh": {
+     "DepotPath": {
+      "$type": "ResourcePath",
+      "$storage": "string",
+      "$value": "base\\environment\\decoration\\containers\\packaging\\postal_box\\postal_box_e.mesh"
+     },
+     "Flags": "Soft"
+    },
+    "meshAppearance": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "default"
+    },
+    "occluderAutohideDistanceScale": 255,
+    "occluderType": "Default",
+    "proxyScale": null,
+    "removeFromRainMap": 0,
+    "renderSceneLayerMask": "Default",
+    "sourcePrefabHash": "5630909017931199147",
+    "tag": "None",
+    "tagExt": "None",
+    "version": 2,
+    "windImpulseEnabled": 1
+   },
+   "flags": {
+    "MaxStreamingDistance": 6794.55029,
+    "UkFloat1": 30.0383301,
+    "Uk10": 1088,
+    "Uk11": 20610,
+    "Uk12": 0,
+    "Uk13": "0",
+    "Uk14": "0"
+   },
+   "orientation": {
+    "$type": "Quaternion",
+    "i": 0,
+    "j": 0,
+    "k": -0.948816061,
+    "r": -0.315829366
+   }
+  },
+  "cleaning_rag_c_bloody.mesh": {
+   "sector": "interior_-102_-211_3_0",
+   "node": {
+    "$type": "worldStaticMeshNode",
+    "castLocalShadows": "Always",
+    "castRayTracedGlobalShadows": "Always",
+    "castRayTracedLocalShadows": "Always",
+    "castShadows": "Always",
+    "debugName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "cleaning_rag_c_bloody"
+    },
+    "forceAutoHideDistance": 12.1768637,
+    "isHostOnly": 0,
+    "isVisibleInGame": 1,
+    "lodLevelScales": 4294967295,
+    "mesh": {
+     "DepotPath": {
+      "$type": "ResourcePath",
+      "$storage": "string",
+      "$value": "base\\environment\\decoration\\textiles\\cleaning\\cleaning_rag\\cleaning_rag_c_bloody.mesh"
+     },
+     "Flags": "Soft"
+    },
+    "meshAppearance": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "default"
+    },
+    "occluderAutohideDistanceScale": 255,
+    "occluderType": "Default",
+    "proxyScale": null,
+    "removeFromRainMap": 0,
+    "renderSceneLayerMask": "Default",
+    "sourcePrefabHash": "3301231012507369559",
+    "tag": "None",
+    "tagExt": "None",
+    "version": 2,
+    "windImpulseEnabled": 1
+   },
+   "flags": {
+    "MaxStreamingDistance": 3.40282347e+38,
+    "UkFloat1": 12.1768637,
+    "Uk10": 1216,
+    "Uk11": 20610,
+    "Uk12": 0,
+    "Uk13": "0",
+    "Uk14": "0"
+   },
+   "orientation": {
+    "$type": "Quaternion",
+    "i": -0.00599977374,
+    "j": 0.00672721863,
+    "k": -0.974742413,
+    "r": 0.223150015
+   }
+  },
+  "cleaning_rag_b.mesh": {
+   "sector": "interior_-102_-211_3_0",
+   "node": {
+    "$type": "worldStaticMeshNode",
+    "castLocalShadows": "Never",
+    "castRayTracedGlobalShadows": "Always",
+    "castRayTracedLocalShadows": "Always",
+    "castShadows": "Always",
+    "debugName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "cleaning_rag_b"
+    },
+    "forceAutoHideDistance": 27.8508797,
+    "isHostOnly": 0,
+    "isVisibleInGame": 1,
+    "lodLevelScales": 4294967295,
+    "mesh": {
+     "DepotPath": {
+      "$type": "ResourcePath",
+      "$storage": "string",
+      "$value": "base\\environment\\decoration\\textiles\\cleaning\\cleaning_rag\\cleaning_rag_b.mesh"
+     },
+     "Flags": "Soft"
+    },
+    "meshAppearance": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "default"
+    },
+    "occluderAutohideDistanceScale": 255,
+    "occluderType": "Default",
+    "proxyScale": null,
+    "removeFromRainMap": 0,
+    "renderSceneLayerMask": "Default",
+    "sourcePrefabHash": "3301231012507369559",
+    "tag": "None",
+    "tagExt": "None",
+    "version": 2,
+    "windImpulseEnabled": 1
+   },
+   "flags": {
+    "MaxStreamingDistance": 3.40282347e+38,
+    "UkFloat1": 27.8508797,
+    "Uk10": 1088,
+    "Uk11": 20610,
+    "Uk12": 0,
+    "Uk13": "0",
+    "Uk14": "0"
+   },
+   "orientation": {
+    "$type": "Quaternion",
+    "i": 0,
+    "j": 0,
+    "k": 0.505241752,
+    "r": 0.862977862
+   }
+  },
+  "drink_bottle_e_beer.mesh": {
+   "sector": "interior_-12_15_0_0",
+   "node": {
+    "$type": "worldStaticMeshNode",
+    "castLocalShadows": "Always",
+    "castRayTracedGlobalShadows": "Always",
+    "castRayTracedLocalShadows": "Always",
+    "castShadows": "Always",
+    "debugName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "organic_bottle_k_beer"
+    },
+    "forceAutoHideDistance": 18.4977703,
+    "isHostOnly": 0,
+    "isVisibleInGame": 1,
+    "lodLevelScales": 4294967295,
+    "mesh": {
+     "DepotPath": {
+      "$type": "ResourcePath",
+      "$storage": "string",
+      "$value": "base\\environment\\decoration\\food\\drinks\\drink_bottle\\drink_bottle_e_beer.mesh"
+     },
+     "Flags": "Soft"
+    },
+    "meshAppearance": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "default"
+    },
+    "occluderAutohideDistanceScale": 255,
+    "occluderType": "None",
+    "proxyScale": null,
+    "removeFromRainMap": 0,
+    "renderSceneLayerMask": "Default",
+    "sourcePrefabHash": "15438643826812444872",
+    "tag": "None",
+    "tagExt": "None",
+    "version": 2,
+    "windImpulseEnabled": 1
+   },
+   "flags": {
+    "MaxStreamingDistance": 2760.11133,
+    "UkFloat1": 18.4977703,
+    "Uk10": 1088,
+    "Uk11": 20610,
+    "Uk12": 0,
+    "Uk13": "0",
+    "Uk14": "0"
+   },
+   "orientation": {
+    "$type": "Quaternion",
+    "i": 0,
+    "j": 0,
+    "k": -0.878817141,
+    "r": -0.477158874
+   }
+  },
+  "braindance_cable_set_b.mesh": {
+   "sector": "interior_-12_14_0_0",
+   "node": {
+    "$type": "worldStaticMeshNode",
+    "castLocalShadows": "Never",
+    "castRayTracedGlobalShadows": "Always",
+    "castRayTracedLocalShadows": "Always",
+    "castShadows": "Always",
+    "debugName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "braindance_cable_set_b"
+    },
+    "forceAutoHideDistance": 18.4035912,
+    "isHostOnly": 0,
+    "isVisibleInGame": 1,
+    "lodLevelScales": 4294967295,
+    "mesh": {
+     "DepotPath": {
+      "$type": "ResourcePath",
+      "$storage": "string",
+      "$value": "base\\environment\\decoration\\public_utility\\cable\\braindance_cable_set\\braindance_cable_set_b.mesh"
+     },
+     "Flags": "Soft"
+    },
+    "meshAppearance": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "default"
+    },
+    "occluderAutohideDistanceScale": 255,
+    "occluderType": "None",
+    "proxyScale": null,
+    "removeFromRainMap": 0,
+    "renderSceneLayerMask": "Default",
+    "sourcePrefabHash": "8329333787088228282",
+    "tag": "None",
+    "tagExt": "None",
+    "version": 2,
+    "windImpulseEnabled": 1
+   },
+   "flags": {
+    "MaxStreamingDistance": 2760.11133,
+    "UkFloat1": 10,
+    "Uk10": 1088,
+    "Uk11": 20610,
+    "Uk12": 0,
+    "Uk13": "0",
+    "Uk14": "0"
+   },
+   "orientation": {
+    "$type": "Quaternion",
+    "i": 0,
+    "j": 0,
+    "k": 0.976367176,
+    "r": -0.216118813
+   }
+  },
+  "ceiling_lamp_long_a.mesh": {
+   "sector": "interior_-12_14_0_0",
+   "node": {
+    "$type": "worldStaticMeshNode",
+    "castLocalShadows": "Always",
+    "castRayTracedGlobalShadows": "Always",
+    "castRayTracedLocalShadows": "Always",
+    "castShadows": "Always",
+    "debugName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "ceiling_lamp_long_a_005"
+    },
+    "forceAutoHideDistance": 59.6480293,
+    "isHostOnly": 0,
+    "isVisibleInGame": 1,
+    "lodLevelScales": 4294967295,
+    "mesh": {
+     "DepotPath": {
+      "$type": "ResourcePath",
+      "$storage": "string",
+      "$value": "base\\environment\\decoration\\lighting\\residential\\ceiling_lamp\\ceiling_lamp_long_a.mesh"
+     },
+     "Flags": "Soft"
+    },
+    "meshAppearance": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "off"
+    },
+    "occluderAutohideDistanceScale": 255,
+    "occluderType": "None",
+    "proxyScale": null,
+    "removeFromRainMap": 0,
+    "renderSceneLayerMask": "Default",
+    "sourcePrefabHash": "10085801828836878020",
+    "tag": "None",
+    "tagExt": "None",
+    "version": 2,
+    "windImpulseEnabled": 1
+   },
+   "flags": {
+    "MaxStreamingDistance": 2760.11133,
+    "UkFloat1": 59.6480293,
+    "Uk10": 1088,
+    "Uk11": 20610,
+    "Uk12": 0,
+    "Uk13": "0",
+    "Uk14": "0"
+   },
+   "orientation": {
+    "$type": "Quaternion",
+    "i": 0,
+    "j": 0,
+    "k": -0.0871556699,
+    "r": -0.99619472
+   }
+  },
+  "poor_sofa_b_old.mesh": {
+   "sector": "interior_-15_13_4_0",
+   "node": {
+    "$type": "worldStaticMeshNode",
+    "castLocalShadows": "Never",
+    "castRayTracedGlobalShadows": "Always",
+    "castRayTracedLocalShadows": "Always",
+    "castShadows": "Always",
+    "debugName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "poor_sofa_b_old"
+    },
+    "forceAutoHideDistance": 62.7046204,
+    "isHostOnly": 0,
+    "isVisibleInGame": 1,
+    "lodLevelScales": 4294967295,
+    "mesh": {
+     "DepotPath": {
+      "$type": "ResourcePath",
+      "$storage": "string",
+      "$value": "base\\environment\\decoration\\furniture\\living_room\\poor_sofa\\poor_sofa_b_old.mesh"
+     },
+     "Flags": "Soft"
+    },
+    "meshAppearance": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "default"
+    },
+    "occluderAutohideDistanceScale": 255,
+    "occluderType": "Default",
+    "proxyScale": null,
+    "removeFromRainMap": 0,
+    "renderSceneLayerMask": "Default",
+    "sourcePrefabHash": "4118788179537112793",
+    "tag": "None",
+    "tagExt": "None",
+    "version": 2,
+    "windImpulseEnabled": 1
+   },
+   "flags": {
+    "MaxStreamingDistance": 2760.11133,
+    "UkFloat1": 62.7046204,
+    "Uk10": 1088,
+    "Uk11": 20610,
+    "Uk12": 0,
+    "Uk13": "0",
+    "Uk14": "0"
+   },
+   "orientation": {
+    "$type": "Quaternion",
+    "i": 0,
+    "j": 0,
+    "k": -0.99862957,
+    "r": 0.0523360968
+   }
+  },
+  "poor_sofa_a.mesh": {
+   "sector": "interior_-10_-3_0_1",
+   "node": {
+    "$type": "worldStaticMeshNode",
+    "castLocalShadows": "Never",
+    "castRayTracedGlobalShadows": "Always",
+    "castRayTracedLocalShadows": "Always",
+    "castShadows": "Always",
+    "debugName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "poor_sofa_a"
+    },
+    "forceAutoHideDistance": 81.7992783,
+    "isHostOnly": 0,
+    "isVisibleInGame": 1,
+    "lodLevelScales": 4294967295,
+    "mesh": {
+     "DepotPath": {
+      "$type": "ResourcePath",
+      "$storage": "string",
+      "$value": "base\\environment\\decoration\\furniture\\living_room\\poor_sofa\\poor_sofa_a.mesh"
+     },
+     "Flags": "Soft"
+    },
+    "meshAppearance": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "default"
+    },
+    "occluderAutohideDistanceScale": 255,
+    "occluderType": "Default",
+    "proxyScale": null,
+    "removeFromRainMap": 0,
+    "renderSceneLayerMask": "Default",
+    "sourcePrefabHash": "13218151001797926761",
+    "tag": "None",
+    "tagExt": "None",
+    "version": 2,
+    "windImpulseEnabled": 1
+   },
+   "flags": {
+    "MaxStreamingDistance": 3549.00952,
+    "UkFloat1": 81.7992783,
+    "Uk10": 1088,
+    "Uk11": 20610,
+    "Uk12": 0,
+    "Uk13": "0",
+    "Uk14": "0"
+   },
+   "orientation": {
+    "$type": "Quaternion",
+    "i": 0,
+    "j": 0,
+    "k": -0.970295787,
+    "r": -0.241921693
+   }
+  },
+  "poor_sofa_b.mesh": {
+   "sector": "interior_-124_-203_2_0",
+   "node": {
+    "$type": "worldStaticMeshNode",
+    "castLocalShadows": "Always",
+    "castRayTracedGlobalShadows": "Always",
+    "castRayTracedLocalShadows": "Always",
+    "castShadows": "Always",
+    "debugName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "poor_sofa_b"
+    },
+    "forceAutoHideDistance": 62.3219566,
+    "isHostOnly": 0,
+    "isVisibleInGame": 1,
+    "lodLevelScales": 4294967295,
+    "mesh": {
+     "DepotPath": {
+      "$type": "ResourcePath",
+      "$storage": "string",
+      "$value": "base\\environment\\decoration\\furniture\\living_room\\poor_sofa\\poor_sofa_b.mesh"
+     },
+     "Flags": "Soft"
+    },
+    "meshAppearance": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "default"
+    },
+    "occluderAutohideDistanceScale": 255,
+    "occluderType": "Default",
+    "proxyScale": null,
+    "removeFromRainMap": 0,
+    "renderSceneLayerMask": "Default",
+    "sourcePrefabHash": "11063664618276740180",
+    "tag": "None",
+    "tagExt": "None",
+    "version": 2,
+    "windImpulseEnabled": 1
+   },
+   "flags": {
+    "MaxStreamingDistance": 3.40282347e+38,
+    "UkFloat1": 62.3219566,
+    "Uk10": 1088,
+    "Uk11": 20610,
+    "Uk12": 0,
+    "Uk13": "0",
+    "Uk14": "0"
+   },
+   "orientation": {
+    "$type": "Quaternion",
+    "i": 0,
+    "j": 0,
+    "k": 0.608761609,
+    "r": 0.793353319
+   }
+  },
+  "poor_residential_chair_c.mesh": {
+   "sector": "interior_-124_-203_2_0",
+   "node": {
+    "$type": "worldStaticMeshNode",
+    "castLocalShadows": "Never",
+    "castRayTracedGlobalShadows": "Always",
+    "castRayTracedLocalShadows": "Always",
+    "castShadows": "Always",
+    "debugName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "poor_residential_chair_c"
+    },
+    "forceAutoHideDistance": 42.6521111,
+    "isHostOnly": 0,
+    "isVisibleInGame": 1,
+    "lodLevelScales": 4294967295,
+    "mesh": {
+     "DepotPath": {
+      "$type": "ResourcePath",
+      "$storage": "string",
+      "$value": "base\\environment\\decoration\\furniture\\living_room\\poor_residential_chair\\poor_residential_chair_c.mesh"
+     },
+     "Flags": "Soft"
+    },
+    "meshAppearance": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "default"
+    },
+    "occluderAutohideDistanceScale": 255,
+    "occluderType": "Default",
+    "proxyScale": null,
+    "removeFromRainMap": 0,
+    "renderSceneLayerMask": "Default",
+    "sourcePrefabHash": "11063664618276740180",
+    "tag": "None",
+    "tagExt": "None",
+    "version": 2,
+    "windImpulseEnabled": 1
+   },
+   "flags": {
+    "MaxStreamingDistance": 3.40282347e+38,
+    "UkFloat1": 42.6521111,
+    "Uk10": 1088,
+    "Uk11": 20610,
+    "Uk12": 0,
+    "Uk13": "0",
+    "Uk14": "0"
+   },
+   "orientation": {
+    "$type": "Quaternion",
+    "i": 0,
+    "j": 0,
+    "k": 0.997557163,
+    "r": -0.0698558986
+   }
+  },
+  "diner_sofa_02_d.mesh": {
+   "sector": "interior_-36_-33_0_1",
+   "node": {
+    "$type": "worldStaticMeshNode",
+    "castLocalShadows": "Always",
+    "castRayTracedGlobalShadows": "Always",
+    "castRayTracedLocalShadows": "Always",
+    "castShadows": "Always",
+    "debugName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "diner_sofa_02_d_074"
+    },
+    "forceAutoHideDistance": 80,
+    "isHostOnly": 0,
+    "isVisibleInGame": 1,
+    "lodLevelScales": 4294967295,
+    "mesh": {
+     "DepotPath": {
+      "$type": "ResourcePath",
+      "$storage": "string",
+      "$value": "base\\environment\\decoration\\furniture\\restaurant\\diner_sofa_02\\diner_sofa_02_d.mesh"
+     },
+     "Flags": "Soft"
+    },
+    "meshAppearance": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "hotel"
+    },
+    "occluderAutohideDistanceScale": 255,
+    "occluderType": "None",
+    "proxyScale": null,
+    "removeFromRainMap": 0,
+    "renderSceneLayerMask": "Default",
+    "sourcePrefabHash": "12360710837248198761",
+    "tag": "None",
+    "tagExt": "None",
+    "version": 2,
+    "windImpulseEnabled": 1
+   },
+   "flags": {
+    "MaxStreamingDistance": 6378.30811,
+    "UkFloat1": 80,
+    "Uk10": 1088,
+    "Uk11": 20610,
+    "Uk12": 0,
+    "Uk13": "0",
+    "Uk14": "0"
+   },
+   "orientation": {
+    "$type": "Quaternion",
+    "i": 0,
+    "j": 0,
+    "k": -0.368445396,
+    "r": -0.929649353
+   }
+  }
+ },
+ "decals": {
+  "blood_g.mi": {
+   "sector": "interior_-12_14_0_0",
+   "node": {
+    "$type": "worldStaticDecalNode",
+    "alpha": 1,
+    "autoHideDistance": 45.2548332,
+    "debugName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "decals_054"
+    },
+    "decalNodeVersion": 0,
+    "decalRenderMode": "DRM_AllStatic",
+    "diffuseColorScale": {
+     "$type": "HDRColor",
+     "Alpha": 1,
+     "Blue": 1,
+     "Green": 1,
+     "Red": 1
+    },
+    "enableNormalTreshold": 1,
+    "forcedAutoHideDistance": 45.2548332,
+    "horizontalFlip": 0,
+    "isHostOnly": 0,
+    "isStretchingEnabled": 0,
+    "isVisibleInGame": 1,
+    "material": {
+     "DepotPath": {
+      "$type": "ResourcePath",
+      "$storage": "string",
+      "$value": "base\\environment\\architecture\\megabuilding\\decorations\\decals\\jigoku_gym\\blood_g.mi"
+     },
+     "Flags": "Soft"
+    },
+    "normalsBlendingMode": "AlphaBlending",
+    "normalThreshold": 1,
+    "orderNo": 0,
+    "proxyScale": null,
+    "roughnessScale": 1,
+    "shouldCollectWithRayTracing": 1,
+    "sourcePrefabHash": "10085801828836878020",
+    "surfaceType": "ROT_Static",
+    "tag": "None",
+    "tagExt": "None",
+    "verticalFlip": 0
+   },
+   "flags": {
+    "MaxStreamingDistance": 2760.11133,
+    "UkFloat1": 45.2548332,
+    "Uk10": 1088,
+    "Uk11": 518,
+    "Uk12": 0,
+    "Uk13": "0",
+    "Uk14": "0"
+   },
+   "orientation": {
+    "$type": "Quaternion",
+    "i": 0,
+    "j": 0,
+    "k": -0.766044438,
+    "r": -0.642787755
+   }
+  },
+  "blood_b.mi": {
+   "sector": "interior_-12_14_0_0",
+   "node": {
+    "$type": "worldStaticDecalNode",
+    "alpha": 1,
+    "autoHideDistance": 45.2548332,
+    "debugName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "decals_064"
+    },
+    "decalNodeVersion": 0,
+    "decalRenderMode": "DRM_AllStatic",
+    "diffuseColorScale": {
+     "$type": "HDRColor",
+     "Alpha": 1,
+     "Blue": 1,
+     "Green": 1,
+     "Red": 1
+    },
+    "enableNormalTreshold": 1,
+    "forcedAutoHideDistance": 45.2548332,
+    "horizontalFlip": 0,
+    "isHostOnly": 0,
+    "isStretchingEnabled": 0,
+    "isVisibleInGame": 1,
+    "material": {
+     "DepotPath": {
+      "$type": "ResourcePath",
+      "$storage": "string",
+      "$value": "base\\surfaces\\textures\\decals\\blood\\blood_b.mi"
+     },
+     "Flags": "Soft"
+    },
+    "normalsBlendingMode": "AlphaBlending",
+    "normalThreshold": 1,
+    "orderNo": 0,
+    "proxyScale": null,
+    "roughnessScale": 1,
+    "shouldCollectWithRayTracing": 1,
+    "sourcePrefabHash": "10085801828836878020",
+    "surfaceType": "ROT_Static",
+    "tag": "None",
+    "tagExt": "None",
+    "verticalFlip": 0
+   },
+   "flags": {
+    "MaxStreamingDistance": 2760.11133,
+    "UkFloat1": 45.2548332,
+    "Uk10": 1088,
+    "Uk11": 518,
+    "Uk12": 0,
+    "Uk13": "0",
+    "Uk14": "0"
+   },
+   "orientation": {
+    "$type": "Quaternion",
+    "i": 0,
+    "j": 0,
+    "k": -0.99619472,
+    "r": 0.0871556699
+   }
+  },
+  "blood_f.mi": {
+   "sector": "interior_-16_-61_0_0",
+   "node": {
+    "$type": "worldStaticDecalNode",
+    "alpha": 0.48951,
+    "autoHideDistance": 39.2556686,
+    "debugName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "decals_065"
+    },
+    "decalNodeVersion": 0,
+    "decalRenderMode": "DRM_AllStatic",
+    "diffuseColorScale": {
+     "$type": "HDRColor",
+     "Alpha": 1,
+     "Blue": 1,
+     "Green": 1,
+     "Red": 1
+    },
+    "enableNormalTreshold": 1,
+    "forcedAutoHideDistance": 39.2556686,
+    "horizontalFlip": 0,
+    "isHostOnly": 0,
+    "isStretchingEnabled": 0,
+    "isVisibleInGame": 1,
+    "material": {
+     "DepotPath": {
+      "$type": "ResourcePath",
+      "$storage": "string",
+      "$value": "base\\surfaces\\textures\\decals\\blood\\blood_f.mi"
+     },
+     "Flags": "Soft"
+    },
+    "normalsBlendingMode": "AlphaBlending",
+    "normalThreshold": 44.0559425,
+    "orderNo": 0,
+    "proxyScale": null,
+    "roughnessScale": 1,
+    "shouldCollectWithRayTracing": 1,
+    "sourcePrefabHash": "10507859748270822605",
+    "surfaceType": "ROT_Static",
+    "tag": "None",
+    "tagExt": "None",
+    "verticalFlip": 0
+   },
+   "flags": {
+    "MaxStreamingDistance": 6794.55029,
+    "UkFloat1": 39.2556686,
+    "Uk10": 1088,
+    "Uk11": 518,
+    "Uk12": 0,
+    "Uk13": "0",
+    "Uk14": "0"
+   },
+   "orientation": {
+    "$type": "Quaternion",
+    "i": 0,
+    "j": 0,
+    "k": 0.734907508,
+    "r": -0.678167403
+   }
+  },
+  "blood_decal_06.mi": {
+   "sector": "interior_-12_14_0_0",
+   "node": {
+    "$type": "worldStaticDecalNode",
+    "alpha": 1,
+    "autoHideDistance": 25,
+    "debugName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "d_blood_decal_008"
+    },
+    "decalNodeVersion": 0,
+    "decalRenderMode": "DRM_AllStatic",
+    "diffuseColorScale": {
+     "$type": "HDRColor",
+     "Alpha": 1,
+     "Blue": 1,
+     "Green": 1,
+     "Red": 1
+    },
+    "enableNormalTreshold": 1,
+    "forcedAutoHideDistance": 25,
+    "horizontalFlip": 0,
+    "isHostOnly": 0,
+    "isStretchingEnabled": 0,
+    "isVisibleInGame": 1,
+    "material": {
+     "DepotPath": {
+      "$type": "ResourcePath",
+      "$storage": "string",
+      "$value": "base\\surfaces\\textures\\decals\\blood\\blood_decal_06.mi"
+     },
+     "Flags": "Soft"
+    },
+    "normalsBlendingMode": "AlphaBlending",
+    "normalThreshold": 1,
+    "orderNo": 3,
+    "proxyScale": null,
+    "roughnessScale": 1,
+    "shouldCollectWithRayTracing": 1,
+    "sourcePrefabHash": "10085801828836878020",
+    "surfaceType": "ROT_Static",
+    "tag": "None",
+    "tagExt": "None",
+    "verticalFlip": 0
+   },
+   "flags": {
+    "MaxStreamingDistance": 2760.11133,
+    "UkFloat1": 25,
+    "Uk10": 1088,
+    "Uk11": 518,
+    "Uk12": 0,
+    "Uk13": "0",
+    "Uk14": "0"
+   },
+   "orientation": {
+    "$type": "Quaternion",
+    "i": 0,
+    "j": 0,
+    "k": -0.99619472,
+    "r": 0.0871556699
+   }
+  },
+  "dirt_f.mi": {
+   "sector": "interior_-2_-13_0_2",
+   "node": {
+    "$type": "worldStaticDecalNode",
+    "alpha": 0.425000012,
+    "autoHideDistance": 423.208893,
+    "debugName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "decals_237"
+    },
+    "decalNodeVersion": 0,
+    "decalRenderMode": "DRM_AllStatic",
+    "diffuseColorScale": {
+     "$type": "HDRColor",
+     "Alpha": 1,
+     "Blue": 0.674510002,
+     "Green": 0.654901981,
+     "Red": 0.647059023
+    },
+    "enableNormalTreshold": 1,
+    "forcedAutoHideDistance": 423.208893,
+    "horizontalFlip": 0,
+    "isHostOnly": 0,
+    "isStretchingEnabled": 0,
+    "isVisibleInGame": 1,
+    "material": {
+     "DepotPath": {
+      "$type": "ResourcePath",
+      "$storage": "string",
+      "$value": "base\\surfaces\\textures\\decals\\dirt\\dirt_f.mi"
+     },
+     "Flags": "Soft"
+    },
+    "normalsBlendingMode": "AlphaBlending",
+    "normalThreshold": 57.0999985,
+    "orderNo": 2,
+    "proxyScale": null,
+    "roughnessScale": 1,
+    "shouldCollectWithRayTracing": 1,
+    "sourcePrefabHash": "2642196483178037337",
+    "surfaceType": "ROT_Static",
+    "tag": "None",
+    "tagExt": "None",
+    "verticalFlip": 0
+   },
+   "flags": {
+    "MaxStreamingDistance": 9215.2002,
+    "UkFloat1": 128,
+    "Uk10": 1088,
+    "Uk11": 518,
+    "Uk12": 0,
+    "Uk13": "0",
+    "Uk14": "0"
+   },
+   "orientation": {
+    "$type": "Quaternion",
+    "i": 0,
+    "j": 0,
+    "k": -0.310276031,
+    "r": 0.950646579
+   }
+  },
+  "dirt_l.mi": {
+   "sector": "interior_-10_-13_0_1",
+   "node": {
+    "$type": "worldStaticDecalNode",
+    "alpha": 0.604650974,
+    "autoHideDistance": 79.881691,
+    "debugName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "d_dirt_l_004"
+    },
+    "decalNodeVersion": 0,
+    "decalRenderMode": "DRM_AllStatic",
+    "diffuseColorScale": {
+     "$type": "HDRColor",
+     "Alpha": 1,
+     "Blue": 1,
+     "Green": 1,
+     "Red": 1
+    },
+    "enableNormalTreshold": 1,
+    "forcedAutoHideDistance": 79.8816833,
+    "horizontalFlip": 0,
+    "isHostOnly": 0,
+    "isStretchingEnabled": 0,
+    "isVisibleInGame": 1,
+    "material": {
+     "DepotPath": {
+      "$type": "ResourcePath",
+      "$storage": "string",
+      "$value": "base\\surfaces\\textures\\decals\\dirt\\dirt_l.mi"
+     },
+     "Flags": "Soft"
+    },
+    "normalsBlendingMode": "AlphaBlending",
+    "normalThreshold": 2,
+    "orderNo": 4,
+    "proxyScale": null,
+    "roughnessScale": 1.5,
+    "shouldCollectWithRayTracing": 1,
+    "sourcePrefabHash": "17414194051447410989",
+    "surfaceType": "ROT_Static",
+    "tag": "None",
+    "tagExt": "None",
+    "verticalFlip": 0
+   },
+   "flags": {
+    "MaxStreamingDistance": 6794.55029,
+    "UkFloat1": 79.8816833,
+    "Uk10": 1088,
+    "Uk11": 518,
+    "Uk12": 0,
+    "Uk13": "0",
+    "Uk14": "0"
+   },
+   "orientation": {
+    "$type": "Quaternion",
+    "i": -0.00436463673,
+    "j": 0.00852404349,
+    "k": -0.890052915,
+    "r": 0.455756843
+   }
+  },
+  "decal_trash_06.mi": {
+   "sector": "interior_-8_6_2_1",
+   "node": {
+    "$type": "worldStaticDecalNode",
+    "alpha": 1,
+    "autoHideDistance": 68.469635,
+    "debugName": {
+     "$type": "CName",
+     "$storage": "string",
+     "$value": "decals_128"
+    },
+    "decalNodeVersion": 0,
+    "decalRenderMode": "DRM_AllStatic",
+    "diffuseColorScale": {
+     "$type": "HDRColor",
+     "Alpha": 1,
+     "Blue": 1,
+     "Green": 1,
+     "Red": 1
+    },
+    "enableNormalTreshold": 1,
+    "forcedAutoHideDistance": 68.469635,
+    "horizontalFlip": 0,
+    "isHostOnly": 0,
+    "isStretchingEnabled": 0,
+    "isVisibleInGame": 1,
+    "material": {
+     "DepotPath": {
+      "$type": "ResourcePath",
+      "$storage": "string",
+      "$value": "base\\surfaces\\textures\\decals\\decal_trash\\decal_trash_06.mi"
+     },
+     "Flags": "Soft"
+    },
+    "normalsBlendingMode": "AlphaBlending",
+    "normalThreshold": 0,
+    "orderNo": 6,
+    "proxyScale": null,
+    "roughnessScale": 1,
+    "shouldCollectWithRayTracing": 1,
+    "sourcePrefabHash": "12853091545336523360",
+    "surfaceType": "ROT_Static",
+    "tag": "None",
+    "tagExt": "None",
+    "verticalFlip": 0
+   },
+   "flags": {
+    "MaxStreamingDistance": 2760.11133,
+    "UkFloat1": 68.469635,
+    "Uk10": 1088,
+    "Uk11": 518,
+    "Uk12": 0,
+    "Uk13": "0",
+    "Uk14": "0"
+   },
+   "orientation": {
+    "$type": "Quaternion",
+    "i": -6.11523561e-08,
+    "j": 1.92812362e-08,
+    "k": 0.4277336,
+    "r": 0.903904855
+   }
+  }
+ }
+}

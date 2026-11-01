@@ -1,0 +1,29 @@
+# The gig's two shards: Stamps's, on the seat of his couch, and the Tyger
+# Claws', on the ground behind their van.
+#
+# It stands on its own container, placed by tools/gig04/gen_sector.py, and its
+# text is a journal entry written by tools/gig04/gen_journal.py. Read
+# docs/shard-playbook.md before changing any of the four parts; gig 03's
+# shard.yaml carries the three findings in full. In short: the title on screen
+# is the JOURNAL ENTRY's, the path comes from `itemSecondaryAction`, and the
+# base is `Items.Shard1`, the plain shard that inherits no story.
+
+ObjectAction.cc_g04_shard_read:
+  $base: Items.generic_hanako_flowers_shard_inline0
+  journalEntry: onscreens/emails/quests/street_stories/cc_g04_return_ticket/onscreens/cc_g04_shard_stamps
+
+ObjectAction.cc_g04_shard_flop_read:
+  $base: Items.generic_hanako_flowers_shard_inline0
+  journalEntry: onscreens/emails/quests/street_stories/cc_g04_return_ticket/onscreens/cc_g04_shard_flop
+
+Items.cc_g04_shard:
+  $base: Items.Shard1
+  displayName: cc-g04-shard-item
+  localizedDescription: cc-g04-shard-item-desc
+  itemSecondaryAction: ObjectAction.cc_g04_shard_read
+
+Items.cc_g04_shard_flop:
+  $base: Items.Shard1
+  displayName: cc-g04-shard2-item
+  localizedDescription: cc-g04-shard2-item-desc
+  itemSecondaryAction: ObjectAction.cc_g04_shard_flop_read

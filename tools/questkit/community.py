@@ -108,8 +108,18 @@ class Entry(object):
     """One person: which record, where, facing which way, in what pose."""
 
     def __init__(self, name, record, appearance, pos, yaw, workspot,
-                 markings=None, spot_name=None, route=None):
+                 markings=None, spot_name=None, route=None, phases=None):
         self.name = name
+        # MORE PHASES THAN THE COMMUNITY'S ONE. `phases` is {name: route},
+        # a second (third, ...) place for the same person, switched to by
+        # the quest phase's community node with that `phase` name
+        # (questgraph.add_community). A compiled community carries one
+        # `phasesData` and one template `phases` entry per phase, and that
+        # is how the game walks an NPC from one spot to another: the
+        # registry in always_loaded_1 has entries with several phases.
+        # Added 2026-10-01 for gig 04's Bayani, who walks out of the room
+        # after his talk. UNPLAYED; the single-phase path is unchanged.
+        self.phases = dict(phases or {})
         self.record = record
         self.appearance = appearance
         self.workspot = workspot
@@ -171,8 +181,27 @@ class Community(object):
     STREAMABLE = 'worldCompiledCommunityAreaNode_Streamable'
 
     def __init__(self, name, entries, spawnset=None, phase='default',
-                 period='Day', extra=None, area_class=None):
+                 period='Day', extra=None, area_class=None, area_distance=None,
+                 always_spawned=False):
         self.name = name
+        # THE GAME'S QUEST CHARACTERS ARE ALWAYS SPAWNED. `alwaysSpawned` on a
+        # spawn phase is `true_` on 1,499 phases of the base game's
+        # communities, Panam's quest phases in always_loaded_1 among them, and
+        # left at its default elsewhere, where the body appears only when the
+        # world's spawner gets to it. Gig 04's Ligaya, at the default, was
+        # there in some runs within 25 s and in one never, with the quest
+        # switching her off and on three times beside her stall (trace,
+        # playtest 2026-10-14).
+        self.always_spawned = always_spawned
+        # HOW FAR THE AREA NODE STREAMS FROM, measured from its one point, the
+        # middle of the box round every entry. 120 m (WB) is the bench value
+        # and fits a community in one place. A community spread over a
+        # district wants the game's own: every one of the 1,265 community
+        # area nodes in always_loaded_1 carries float max. Gig 04's, 1 km
+        # across, put its point near the hideout, and its people at the
+        # market took 100 to 150 s to appear with V standing beside their
+        # spots (trace, playtest 2026-10-14).
+        self.area_distance = area_distance or WB['maxdist']
         self.entries = entries
         # NODES THAT RIDE IN THE SAME SECTOR, as (node, position, ref) triples.
         #
@@ -205,18 +234,33 @@ class Community(object):
         used `$/03_night_city/...` and none of them spawned anybody."""
         return '$/mod/' + sector + '/#' + item
 
-    def spots(self, entry):
+    def spots(self, entry, phase=None):
         """The AI spot node refs for one entry, one per point on its route.
 
         A one-point entry keeps the name it has always had, so adding routes to
         this file does not rewrite the two communities that already ship: the
-        name is hashed into the spot's id.
+        name is hashed into the spot's id. An extra phase's spots carry the
+        phase name.
         """
         base = entry.spot_name or (self.name + '_' + entry.name)
+        if phase is not None and phase != self.phase:
+            base = base + '_' + phase
+            pts = entry.phases[phase]
+            if len(pts) == 1:
+                return [self.ref(self.sector, base)]
+            return [self.ref(self.sector, '%s_%02d' % (base, i + 1))
+                    for i in range(len(pts))]
         if not entry.patrols():
             return [self.ref(self.sector, base)]
         return [self.ref(self.sector, '%s_%02d' % (base, i + 1))
                 for i in range(len(entry.points))]
+
+    def phase_names(self, entry):
+        """The community's phase first, then the entry's own."""
+        return [self.phase] + [p for p in entry.phases if p != self.phase]
+
+    def points(self, entry, phase):
+        return entry.points if phase == self.phase else entry.phases[phase]
 
     def spot(self, entry):
         """Where the entry starts. Kept because most callers want one ref."""
@@ -233,6 +277,18 @@ class Community(object):
         supposed to be standing where the story put him is the whole thing
         going wrong.
         """
+        if workspot is None:
+            # A SPOT WITH NO POSE, which is what a community car stands on:
+            # `{q110_ws_voodoo_boy_lookout_car_hotel}` is a worldAISpotNode
+            # with `spot` and `spotDef` both null (2026-10-01).
+            return {
+                '$type': 'worldAISpotNode',
+                'debugName': cname('{%s}' % label),
+                'isWorkspotInfinite': 0,
+                'isWorkspotStatic': 0,
+                'markings': [cname(m) for m in markings],
+                'spot': None,
+            }
         return {
             '$type': 'worldAISpotNode',
             'debugName': cname('{%s}' % label),
@@ -289,16 +345,16 @@ class Community(object):
                     'entryName': cname(e.name),
                     'phasesData': [{
                         '$type': 'communityCommunityEntryPhaseSpotsData',
-                        'entryPhaseName': cname(self.phase),
+                        'entryPhaseName': cname(ph),
                         'timePeriodsData': [{
                             '$type': 'communityCommunityEntryPhaseTimePeriodData',
-                            'isSequence': 1 if e.patrols() else 0,
+                            'isSequence': 1 if len(self.points(e, ph)) > 1 else 0,
                             'periodName': cname(self.period),
                             'spotNodeIds': [{'$type': 'worldGlobalNodeID',
                                              'hash': node_id(ref)}
-                                            for ref in self.spots(e)],
+                                            for ref in self.spots(e, ph)],
                         }],
-                    }],
+                    } for ph in self.phase_names(e)],
                 } for e in self.entries],
             }},
             'debugName': cname('{%s_com}' % self.name),
@@ -366,11 +422,12 @@ class Community(object):
                                               '$storage': 'string',
                                               '$value': e.record},
                         'entryName': cname(e.name),
-                        'phases': [{'HandleId': str(100 + i), 'Data': {
+                        'phases': [{'HandleId': str(100 + i + 1000 * k), 'Data': {
                             '$type': 'communitySpawnPhase',
+                            'alwaysSpawned': 'true_' if self.always_spawned else 'default__false_',
                             # NEVER EMPTY. Recipe part 5, and eleven runs.
                             'appearances': [cname(e.appearance)],
-                            'phaseName': cname(self.phase),
+                            'phaseName': cname(ph),
                             # ONE period. Recipe part 6.
                             'timePeriods': [{
                                 '$type': 'communityPhaseTimePeriod',
@@ -378,13 +435,13 @@ class Community(object):
                                 # IN ORDER when there is a route to walk. Read
                                 # off Panam's `search_routine` and Oda's
                                 # `patrol` entries; see Entry.
-                                'isSequence': 1 if e.patrols() else 0,
+                                'isSequence': 1 if len(self.points(e, ph)) > 1 else 0,
                                 'markings': [],
                                 'quantity': 1,
                                 'spotNodeRefs': [noderef_str(ref)
-                                                 for ref in self.spots(e)],
+                                                 for ref in self.spots(e, ph)],
                             }],
-                        }}],
+                        }} for k, ph in enumerate(self.phase_names(e))],
                     }} for i, e in enumerate(self.entries)],
                 }},
             }],
@@ -419,7 +476,8 @@ class Community(object):
                                         'Bits': int(pos[2] * 131072)}},
                 'yaw': yaw,
             } for e in self.entries
-              for ref, (pos, yaw) in zip(self.spots(e), e.points)],
+              for ph in self.phase_names(e)
+              for ref, (pos, yaw) in zip(self.spots(e, ph), self.points(e, ph))],
         }
 
     # ---------------------------------------------------------------- sectors
@@ -432,15 +490,17 @@ class Community(object):
         """
         nodes, instances, refs = [], [], []
         for e in self.entries:
-            for spot, (pos, yaw) in zip(self.spots(e), e.points):
-                idx = len(nodes)
-                nodes.append(self.ai_spot_node(spot.rsplit('#', 1)[1],
-                                               e.workspot, e.markings))
-                instances.append(instance(idx, pos, spot, WB['maxdist'],
-                                          WB['ukfloat'], WB['uk10'],
-                                          WB['uk11'], yaw=yaw))
-                refs.append(spot)
-        pts = [pos for e in self.entries for pos, _yaw in e.points]
+            for ph in self.phase_names(e):
+                for spot, (pos, yaw) in zip(self.spots(e, ph), self.points(e, ph)):
+                    idx = len(nodes)
+                    nodes.append(self.ai_spot_node(spot.rsplit('#', 1)[1],
+                                                   e.workspot, e.markings))
+                    instances.append(instance(idx, pos, spot, WB['maxdist'],
+                                              WB['ukfloat'], WB['uk10'],
+                                              WB['uk11'], yaw=yaw))
+                    refs.append(spot)
+        pts = [pos for e in self.entries for ph in self.phase_names(e)
+               for pos, _yaw in self.points(e, ph)]
         lo = [min(p[i] for p in pts) for i in range(3)]
         hi = [max(p[i] for p in pts) for i in range(3)]
         centre = tuple((lo[i] + hi[i]) / 2.0 for i in range(3))
@@ -448,7 +508,7 @@ class Community(object):
         idx = len(nodes)
         nodes.append(self.area_node())
         instances.append(instance(idx, centre, self.community_ref,
-                                  WB['maxdist'], WB['ukfloat'], WB['uk10'],
+                                  self.area_distance, WB['ukfloat'], WB['uk10'],
                                   WB['uk11'], scale=span))
         refs.append(self.community_ref)
         for extra in self.extra:

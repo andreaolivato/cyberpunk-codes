@@ -2,6 +2,14 @@
 
 Prefix everything with `cc` (Cyberpunk.Codes) + gig number so four installed gigs never collide.
 
+A fixer of the mod's own is a mod too, and not a gig: he ships once and every
+gig of his requires him, because two gigs cannot both carry his record, his
+contact and his map icon. His folder is `mods/fixer-NN`, his tools
+`tools/fixerNN/`, and his prefixes take `f` where a gig takes `g`: facts
+`cc_f01_*`, LocKeys `cc-f01-*`, records `Character.cc_f01_*`, module
+`CyberpunkCodes.Fixer01`. The build scripts read the tag off the folder name
+either way, and `--gig fixer01` is how the checkers name him.
+
 ## Quest facts
 `cc_g01_<name>`: e.g. `cc_g01_intro_msg_sent`, `cc_g01_hoshino_dead`, `cc_g01_malware_done`.
 

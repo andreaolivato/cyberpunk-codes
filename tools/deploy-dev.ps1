@@ -30,10 +30,14 @@ $repo = Split-Path -Parent $PSScriptRoot
 $modDir = Get-ChildItem (Join-Path $repo "mods") -Directory | Where-Object { $_.Name -like "$Mod*" }
 if (-not $modDir -or $modDir.Count -gt 1) { throw "Mod '$Mod' not found or ambiguous under mods\" }
 
-# Ship name: gig-01-negative-balance -> NegativeBalance
-$shipName = (($modDir.Name -split "-", 3)[2] -split "-" | ForEach-Object {
-    $_.Substring(0, 1).ToUpper() + $_.Substring(1)
-}) -join ""
+# The module tag and the ship name come from the mod folder. gig-01-negative-balance
+# is Gig01 and NegativeBalance; fixer-01 is Fixer01 twice, because a fixer mod
+# carries no display name until the design gives him one (then fixer-01-<name>).
+if ($modDir.Name -notmatch '^(gig|fixer)-(\d+)(?:-(.+))?$') { throw "cannot derive a mod tag from '$($modDir.Name)': expected gig-NN-name or fixer-NN[-name]" }
+$modTag = $Matches[1].Substring(0, 1).ToUpper() + $Matches[1].Substring(1) + $Matches[2]
+$shipName = if ($Matches[3]) {
+    ($Matches[3] -split "-" | ForEach-Object { $_.Substring(0, 1).ToUpper() + $_.Substring(1) }) -join ""
+} else { $modTag }
 
 Write-Host "Deploying $($modDir.Name) as '$shipName' -> $GameDir"
 
@@ -46,9 +50,7 @@ if (Test-Path $src) {
     Get-ChildItem $dst -Filter *.md -File | Remove-Item -Force
     # Shared helpers, vendored under a per-gig module so two of our gigs can be
     # installed together. See tools/vendor-shared.ps1 for why that is mandatory.
-    $gig = ($modDir.Name -replace '^gig-(\d+).*$', 'Gig$1')
-    if ($gig -notmatch '^Gig\d+$') { throw "cannot derive a gig number from '$($modDir.Name)'" }
-    & (Join-Path $PSScriptRoot "vendor-shared.ps1") -Dst $dst -Gig $gig
+    & (Join-Path $PSScriptRoot "vendor-shared.ps1") -Dst $dst -Gig $modTag
     Write-Host "  scripts -> r6\scripts\$shipName"
 }
 
@@ -148,8 +150,14 @@ if ($packedArchive -and (Test-Path $rawDir)) {
 # Packed archive (built via WolvenKit GUI into source\wkit\packed for now)
 $src = $packedDir
 if (Test-Path $src) {
+    # The folder can be missing: an emptied install has none. Copy-Item into a
+    # path that does not exist writes a FILE of that name, so every archive
+    # landed on top of the last as one file called `mod` (2026-11-01).
+    $archiveDst = Join-Path $GameDir "archive\pc\mod"
+    if (Test-Path $archiveDst -PathType Leaf) { throw "$archiveDst is a file, not a folder" }
+    New-Item -ItemType Directory -Force $archiveDst | Out-Null
     Get-ChildItem $src -Filter "*.archive*" | ForEach-Object {
-        Copy-Item $_.FullName (Join-Path $GameDir "archive\pc\mod") -Force
+        Copy-Item $_.FullName (Join-Path $archiveDst $_.Name) -Force
         Write-Host "  archive -> archive\pc\mod\$($_.Name)"
     }
 }

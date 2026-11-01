@@ -1,0 +1,13 @@
+# THE PICTURE HODAN SENDS, Ligaya at her stall, as two icon records: the one a message names
+# through `imageId`, and its `_full` twin for the enlarged view. Generated
+# by tools/gig04/gen_photo.py, which also makes the texture and the atlas
+# they point at.
+
+UIJournalIcons.cc_g04_ligaya:
+  $type: UIIcon
+  atlasResourcePath: mod\return_ticket\gui\ligaya.inkatlas
+  atlasPartName: ligaya
+UIJournalIcons.cc_g04_ligaya_full:
+  $type: UIIcon
+  atlasResourcePath: mod\return_ticket\gui\ligaya.inkatlas
+  atlasPartName: ligaya

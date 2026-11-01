@@ -1,0 +1,2948 @@
+{
+  "Header": {
+    "WolvenKitVersion": "8.20.0",
+    "WKitJsonVersion": "0.0.9",
+    "GameVersion": 2310,
+    "DataType": "CR2W",
+    "ArchiveFileName": "poses.ent"
+  },
+  "Data": {
+    "Version": 195,
+    "BuildVersion": 0,
+    "RootChunk": {
+      "$type": "entEntityTemplate",
+      "appearances": [],
+      "backendDataOverrides": [],
+      "bindingOverrides": [],
+      "compiledEntityLODFlags": 0,
+      "componentResolveSettings": [],
+      "components": [
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000000",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "couch_01"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\couch\\generic__sit_couch__sit_around__01.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000001",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "couch_02"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\couch\\generic__sit_couch__sit_around__02.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000002",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "couch_03_arms_crossed"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\couch\\generic__sit_couch__sit_around__03.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000003",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "couch_tv_arms_crossed"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\couch\\generic__sit_couch_tv__watch__01.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000004",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "couch_tablet"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\couch\\generic__sit_couch_tablet__read__01.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000005",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "couch_champagne"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\couch\\generic__sit_couch_lean_back_champagne__drink__01.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000006",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "couch_bottle"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\couch\\generic__sit_couch_lean_back_bottle__drink__01.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000007",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "couch_gun_relax"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\couch\\big__sit_couch_lean_back_gun__relax__01.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000008",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "chair_01"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\chair\\generic__sit_chair__sit_around__01.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000009",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "chair_02"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\chair\\generic__sit_chair__sit_around__02.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000010",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "chair_03"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\chair\\generic__sit_chair__sit_around__03.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000011",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "chair_04"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\chair\\generic__sit_chair__sit_around__04.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000012",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "chair_05"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\chair\\generic__sit_chair__sit_around__05.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000013",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "chair_06"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\chair\\generic__sit_chair__sit_around__06.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000014",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "chair_07"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\chair\\generic__sit_chair__sit_around__07.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000015",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "chair_back_01"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\chair\\generic__sit_chair_lean_back__sit_around__01.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000016",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "chair_back_02"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\chair\\generic__sit_chair_lean_back__sit_around__02.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000017",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "chair_back_03"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\chair\\generic__sit_chair_lean_back__sit_around__03.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000018",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "chair_back_04"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\chair\\generic__sit_chair_lean_back__sit_around__04.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000019",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "chair_back_think"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\chair\\generic__sit_chair_lean_back__think__01.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000020",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "chair_back_observe"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\chair\\generic__sit_chair_lean_back__observe__01.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000021",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "chair_back_nails"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\chair\\generic__sit_chair_lean_back__look_at_nails__01.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000022",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "chair_back_knife"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\chair\\generic__sit_chair_lean_back_knife__sit_around__01.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000023",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "chair_back_gun"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\chair\\generic__sit_chair_lean_back_gun__show_off__01.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000024",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "chair_back_smoke"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\chair\\generic__sit_chair_lean_back_cigarette__smoke__01.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000025",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "chair_front_01"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\chair\\generic__sit_chair_lean_front__sit_around__01.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000026",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "chair_front_02"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\chair\\generic__sit_chair_lean_front__sit_around__02.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000027",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "chair_front_think_01"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\chair\\generic__sit_chair_lean_front__think__01.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000028",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "chair_front_think_02"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\chair\\generic__sit_chair_lean_front__think__02.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000029",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "chair_front_nervous"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\chair\\generic__sit_chair_lean_front__nervous__01.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000030",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "chair_front_smoke"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\chair\\generic__sit_chair_lean_front__smoke__01.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000031",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "chair_front_glass"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\chair\\generic__sit_chair_lean_front_glass__drink__01.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000032",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "chair_phone_talk"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\chair\\generic__sit_chair_cellphone__talk__01.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000033",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "chair_phone_check"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\chair\\generic__sit_chair_cellphone__check__01.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000034",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "chair_tablet"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\chair\\generic__sit_chair_tablet__read__01.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000035",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "chair_female_back"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\chair\\female__sit_chair_lean_back__sit_around__01.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000036",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "chair_female_backrest"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\chair\\female__sit_chair_backrest__sit_around__01.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000037",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "chair_big_back_01"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\chair\\big__sit_chair_lean_back__sit_around__01.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000038",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "chair_big_back_02"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\chair\\big__sit_chair_lean_back__sit_around__02.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000039",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "chair_backwards"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\chair\\generic__sit_chair_lean0__2h_on_backrest__01.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000040",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "table_feet_up"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\chair_table\\generic__sit_chair_table_lean_back__feet_up__01.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000041",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "bench_back_01"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\bench\\generic__sit_bench_lean_back__sit_around__01.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000042",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "bench_back_02"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\bench\\generic__sit_bench_lean_back__sit_around__02.workspot"
+            },
+            "Flags": "Default"
+          }
+        },
+        {
+          "$type": "workWorkspotResourceComponent",
+          "deviceWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1000043",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "bench_back_hand"
+          },
+          "npcWorkspotResourceSync": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "parentTransform": null,
+          "shouldCrouch": 0,
+          "syncSlotName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "workspotResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "base\\workspots\\common\\bench\\generic__sit_bench_lean_back_l_hand_on_back__talk__01.workspot"
+            },
+            "Flags": "Default"
+          }
+        }
+      ],
+      "cookingPlatform": "PLATFORM_PC",
+      "defaultAppearance": {
+        "$type": "CName",
+        "$storage": "string",
+        "$value": "default"
+      },
+      "entity": {
+        "HandleId": "10",
+        "Data": {
+          "$type": "gameObject",
+          "customCameraTarget": "ECCTV_All",
+          "renderSceneLayerMask": "Default"
+        }
+      },
+      "includeInstanceBuffer": null,
+      "includes": [],
+      "inplaceResources": [],
+      "localData": null,
+      "resolvedDependencies": [],
+      "visualTagsSchema": null
+    },
+    "EmbeddedFiles": []
+  }
+}

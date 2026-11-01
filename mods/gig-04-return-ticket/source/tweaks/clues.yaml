@@ -1,0 +1,23 @@
+# The three scanner clues at the Tyger Claws' van: what the scanner says
+# about each. tools/gig04/gen_clues.py builds the objects, each naming one
+# of these records as its clue, and tools/gig04/gen_localization.py writes
+# the text.
+#
+# Copies of the game's own clue records: the blood from the NCPD activity
+# whose clue objects gen_clues lifts (ma_bls_ina_se1_07), the two objects
+# from a case in a side quest (mq021). Only the name and the text are ours.
+
+scanning.cc_g04_clue_blood:
+  $base: scanning.ma_bls_ina_07_blood_trail_conclusion
+  localizedName: cc-g04-clue-blood-name
+  localizedDescription: cc-g04-clue-blood-desc
+
+scanning.cc_g04_clue_cuffs:
+  $base: scanning.mq021_case_conclusion
+  localizedName: cc-g04-clue-cuffs-name
+  localizedDescription: cc-g04-clue-cuffs-desc
+
+scanning.cc_g04_clue_bag:
+  $base: scanning.mq021_case_conclusion
+  localizedName: cc-g04-clue-bag-name
+  localizedDescription: cc-g04-clue-bag-desc

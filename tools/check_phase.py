@@ -39,7 +39,7 @@ B = chr(92)
 GIG = gigs.from_argv('02')
 cfg = gigs.config(GIG)
 RAW = cfg.RAW_MOD
-STEM = 'gig' + GIG
+STEM = gigs.stem(GIG)
 
 have = {}
 for f in sorted(os.listdir(os.path.join(RAW, 'scenes'))):
