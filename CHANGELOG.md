@@ -7,6 +7,15 @@ each mod's Nexus Changelog tab.
 
 # Return Ticket
 
+## 1.0.1 (2026-11-02)
+
+- **Added: game 2.31 support.** It needs the helper mods' last versions
+  before game 2.5, listed on the mod page.
+- **Changed: Phantom Liberty is no longer required.** Without it, corporate
+  security comes for Reynaldo instead of Orbital Air's own guards.
+
+Needs the Hodan Warsame mod. On game 2.5, ArchiveXL 1.28.2 or newer.
+
 ## 1.0.0 (2026-11-01)
 
 - **Added: Return Ticket, a full side gig.** Hodan Warsame sends you to find

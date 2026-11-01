@@ -568,6 +568,33 @@ def refresh():
     print('refreshed %d sector(s) into %s' % (len(files), SOURCE_DIR))
 
 
+# THE FILE IS WRITTEN AS GAME 2.31 WRITES IT, so one file loads on 2.31 and
+# on 2.5. Game 2.5 ships its sectors as version 68, and WolvenKit 8.20 reads
+# the node table of a 68 with the wrong layout: every NodeIndex 65535 and the
+# fields after it garbage. Game 2.31 read the shipped 68 and Reynaldo stood
+# where he sat, 0.00 m in 24 s of his walk order (playtest 2026-11-02, 2.31
+# without Phantom Liberty, gamelog). Game 2.5 reads a 62: the 2.31 build of
+# this file loaded there on 2026-11-01. The values below are the ones both
+# 2.31 copies have (base and expansion, read 2026-11-02); the tiles, ids and
+# positions stay the source's. Gotcha 144.
+V62_FLAGS = 4063232
+V62_ENTRY = {'Uk10': 32, 'Uk11': 519, 'Uk12': 0, 'Uk13': 0,
+             'UkFloat1': 274.923126, 'MaxStreamingDistance': 3.40282347e+38}
+
+
+def as_version_62(doc):
+    root = doc['Data']['RootChunk']
+    was = root['version']
+    if was == 62:
+        return
+    root['version'] = 62
+    root['nodeData']['Flags'] = V62_FLAGS
+    for i, nd in enumerate(root['nodeData']['Data']):
+        nd['NodeIndex'] = i
+        nd.update(V62_ENTRY)
+    print('    written as a version 62 sector (was %d)' % was)
+
+
 def room_tiles():
     """Every tile some part of the walkable floor lies in (a tile inside
     the floor's bounding box that no polygon reaches is left alone)."""
@@ -651,6 +678,7 @@ def main():
                       % (tx, ty, bi, before, added, sewn, len(new)))
         if not changed:
             continue
+        as_version_62(doc)
         out = os.path.join(OUT_DIR, name)
         with open(out, 'w', encoding='utf-8', newline='\n') as fh:
             json.dump(doc, fh, indent=2)

@@ -3466,3 +3466,25 @@ Never renumber. Append.
      time. A tiny hitch remains closer in, too short to notice. The new
      nodes take ids above the phase's last release (gotcha 123), and the
      old slots write a readout fact so no other id moves.
+
+144. **A sector copied from game 2.5 does not load on 2.31, and nothing
+     says so.** Game 2.5 ships its sectors as version 68. Game 2.31 ships
+     version 62 and cannot read a 68. A mod that replaces a base-game
+     sector with a 2.5 copy breaks that sector for every 2.31 player.
+
+     Playtest, game 2.31 without Phantom Liberty: gig 04 replaces the
+     navigation sector `navigation_-6_6_-2_3` with a copy built from 2.5.
+     Reynaldo got out of his pose and then moved 0.00 m in 24 seconds of a
+     walk order. No log named the sector. WolvenKit 8.20 read the 2.5 file
+     with the wrong layout for its node table: every `NodeIndex` came out
+     as 65535 and the fields after it as garbage. Both 2.31 copies (base
+     and Phantom Liberty) have `NodeIndex` 0 to 3 and the same constants in
+     the other fields.
+
+     Game 2.5 reads version 62 sectors. Every sector a mod builds from
+     scratch with WolvenKit 8.20 is a 62, and gig 04's 2.31 copy of this
+     navigation sector loaded on 2.5. So write a replaced sector as a 62:
+     take the tiles from the 2.5 copy, and set `version` to 62 and the node
+     table's fields to the 2.31 values (`gen_navmesh.py`, `as_version_62`).
+     Check the `version` field of every sector the mod ships after any
+     refresh from a newer game.

@@ -10559,3 +10559,10 @@ her face once it connects, as the game's own first calls were thought to.
 
 The design call withdrew it: "remove all custom code and let's make a
 normal call". Her first call rings from her own contact.
+
+## 58. Dead Ringer's Toji pin names a string it does not ship. OPEN
+
+`python tools\check_strings.py --gig 02` reports `cc-g02-pin-pin-toji-finish`
+as referenced by the journal and missing from the shipped strings. Present
+in 1.3.0 as released. Not looked at in game: the pin may show a raw key or
+no name. The fix is to ship the string or point the pin at one that exists.

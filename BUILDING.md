@@ -69,8 +69,14 @@ Windows tool. Cyberpunk itself runs elsewhere, but this toolchain does not.
 Versions are what it was built and tested against. Newer usually works; if
 something behaves oddly, check these first. Gigs 01 to 03 were built on game
 2.31 and tested on 2.5 with the versions below. The fixer and gig 04 were
-built and tested on 2.5. Game 2.5 refuses
-RED4ext and Cyber Engine Tweaks versions older than the ones listed.
+built on 2.5 and tested on 2.5 with Phantom Liberty and on 2.31 without
+it. Game 2.5 refuses RED4ext and Cyber Engine Tweaks versions older than
+the ones listed.
+
+On game 2.31 a player needs the last releases before game 2.5: RED4ext
+1.30.0, ArchiveXL 1.27.5, TweakXL 1.11.5, Codeware 1.20.6 and Cyber Engine
+Tweaks 1.37.1. RED4ext 1.31.0 refuses 2.31, and then no helper mod loads,
+so every script fails on a Codeware type.
 
 | Need | Version | Get it |
 |---|---|---|

@@ -51,11 +51,12 @@ The gig's own: Reynaldo, Maricel, Stamps and Liban; Orbital Air hiring station
 cleaners itself; Orbital Air paying to get a worker back; Stamps selling his
 customers.
 
-The gig requires Phantom Liberty. Its room's navigation sector is built
-from the expansion's copy of that area, and it replaces the file for every
-player. The base game's copy is different. With the expansion, Orbital
-Air's own guards come for Reynaldo; without it, the game's corporate
-security does.
+The gig runs on game 2.31 and 2.5, with or without Phantom Liberty. Its
+room's navigation sector is built from the expansion's 2.5 copy of that
+area and written in the 2.31 file format, so one file loads on both
+versions (gotcha 144). Inside the building the floor is the same in every
+copy. With the expansion, Orbital Air's own guards come for Reynaldo.
+Without it, the game's corporate security does.
 
 ## What is built
 
