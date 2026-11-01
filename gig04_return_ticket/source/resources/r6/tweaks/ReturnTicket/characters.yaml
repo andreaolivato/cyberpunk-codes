@@ -1,0 +1,36 @@
+# the client
+Character.cc_g04_ligaya:
+  $base: Character.AsianVendorFemale
+  appearanceName: service__vendor_wa_vendor_asian_03
+  displayName: LocKey#4794390962090850833
+  fullDisplayName: LocKey#4794390962090850833
+  skipDisplayArchetype: true
+  tags:
+    - !append-once DoNotTriggerPrevention
+
+Character.cc_g04_stamps:
+  $base: Character.kab_tyger_claws_gangster1_melee1_fists_ma
+  entityTemplatePath: base\characters\entities\service\service__vendor_ma.ent
+  baseAttitudeGroup: neutral
+  # hits back only
+  reactionPreset: ReactionPresets.Ganger_Passive
+  # bandana
+  appearanceName: service__vendor_ma_vendor_asian_01
+  displayName: LocKey#6547461684713842090
+  fullDisplayName: LocKey#6547461684713842090
+  skipDisplayArchetype: true
+  tags:
+    - !append-once DoNotTriggerPrevention
+
+# reynaldo
+Character.cc_g04_bayani:
+  $base: Character.AsianVendorMale
+  appearanceName: service__vendor_ma_vendor_asian_02
+  displayName: LocKey#7680766890516834076
+  fullDisplayName: LocKey#7680766890516834076
+  skipDisplayArchetype: true
+  tags:
+    - !append-once DoNotTriggerPrevention
+  reactionPreset: ReactionPresets.NoReaction
+  # green dot
+  baseAttitudeGroup: friendly

@@ -1,0 +1,110 @@
+{
+  "Header": {
+    "WolvenKitVersion": "8.20.0",
+    "WKitJsonVersion": "0.0.9",
+    "GameVersion": 2310,
+    "ExportedDateTime": "2026-10-15T08:25:28.9070448Z",
+    "DataType": "CR2W",
+    "ArchiveFileName": "C:\\Users\\andre\\OneDrive\\Desktop\\cyberpunk-gigs\\gig04_return_ticket\\source\\archive\\mod\\worlds\\03_night_city\\_compiled\\default\\cc_g04_world.streamingblock"
+  },
+  "Data": {
+    "Version": 195,
+    "BuildVersion": 0,
+    "RootChunk": {
+      "$type": "worldStreamingBlock",
+      "cookingPlatform": "PLATFORM_PC",
+      "descriptors": [
+        {
+          "$type": "worldStreamingSectorDescriptor",
+          "blockIndex": {
+            "$type": "worldStreamingBlockIndex",
+            "oup": "Base",
+            "rldGridCell": 1058742
+          },
+          "category": "Exterior",
+          "data": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "mod\\worlds\\03_night_city\\_compiled\\default\\cc_g04_world.streamingsector"
+            },
+            "Flags": "Soft"
+          },
+          "level": 1,
+          "numNodeRanges": 1,
+          "questPrefabNodeRef": {
+            "$type": "NodeRef",
+            "$storage": "uint64",
+            "$value": "0"
+          },
+          "streamingBox": {
+            "$type": "Box",
+            "Max": {
+              "$type": "Vector4",
+              "W": 1,
+              "X": -1002.43988,
+              "Y": 2235.56006,
+              "Z": 223.000107
+            },
+            "Min": {
+              "$type": "Vector4",
+              "W": 1,
+              "X": -1431.86011,
+              "Y": 1806.13989,
+              "Z": -206.42012
+            }
+          },
+          "variants": []
+        },
+        {
+          "$type": "worldStreamingSectorDescriptor",
+          "blockIndex": {
+            "$type": "worldStreamingBlockIndex",
+            "oup": "Base",
+            "rldGridCell": 1057970
+          },
+          "category": "Exterior",
+          "data": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "mod\\worlds\\03_night_city\\_compiled\\default\\cc_g04_van.streamingsector"
+            },
+            "Flags": "Soft"
+          },
+          "level": 1,
+          "numNodeRanges": 1,
+          "questPrefabNodeRef": {
+            "$type": "NodeRef",
+            "$storage": "uint64",
+            "$value": "0"
+          },
+          "streamingBox": {
+            "$type": "Box",
+            "Max": {
+              "$type": "Vector4",
+              "W": 1,
+              "X": -1513.11584,
+              "Y": 1437.33008,
+              "Z": 233.947113
+            },
+            "Min": {
+              "$type": "Vector4",
+              "W": 1,
+              "X": -1955.31006,
+              "Y": 998.289856,
+              "Z": -196.506119
+            }
+          },
+          "variants": []
+        }
+      ],
+      "index": {
+        "$type": "worldStreamingBlockIndex",
+        "oup": "Base",
+        "rldGridCell": 0
+      }
+    },
+    "EmbeddedFiles": []
+  }
+}

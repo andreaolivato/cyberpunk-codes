@@ -1,0 +1,11 @@
+QuestRewards.sts_cc_g04_qty_completion:
+  $base: QuestRewards.sts_wbr_hil_01_completion_inline5
+  # eddies
+  value: 9000
+QuestRewards.sts_cc_g04_money_completion:
+  $base: QuestRewards.sts_wbr_hil_01_completion_inline4
+  quantityModifiers: [ QuestRewards.sts_cc_g04_qty_completion ]
+QuestRewards.sts_cc_g04_completion:
+  $base: QuestRewards.sts_wbr_hil_01_completion
+  name: sts_cc_g04_completion
+  currencyPackage: [ QuestRewards.sts_cc_g04_money_completion ]

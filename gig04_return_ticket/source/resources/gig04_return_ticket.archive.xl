@@ -1,0 +1,196 @@
+journal:
+  - mod\return_ticket\journal\gig04.journal
+localization:
+  onscreens:
+    en-us:
+      - mod\return_ticket\localization\en-us.json
+  subtitles:
+    ar-ar: mod\return_ticket\localization\subtitles_ar-ar.json
+    cz-cz: mod\return_ticket\localization\subtitles_cz-cz.json
+    de-de: mod\return_ticket\localization\subtitles_de-de.json
+    en-us: mod\return_ticket\localization\subtitles.json
+    es-es: mod\return_ticket\localization\subtitles_es-es.json
+    es-mx: mod\return_ticket\localization\subtitles_es-mx.json
+    fr-fr: mod\return_ticket\localization\subtitles_fr-fr.json
+    hu-hu: mod\return_ticket\localization\subtitles_hu-hu.json
+    it-it: mod\return_ticket\localization\subtitles_it-it.json
+    jp-jp: mod\return_ticket\localization\subtitles_jp-jp.json
+    kr-kr: mod\return_ticket\localization\subtitles_kr-kr.json
+    pl-pl: mod\return_ticket\localization\subtitles_pl-pl.json
+    pt-br: mod\return_ticket\localization\subtitles_pt-br.json
+    ru-ru: mod\return_ticket\localization\subtitles_ru-ru.json
+    th-th: mod\return_ticket\localization\subtitles_th-th.json
+    tr-tr: mod\return_ticket\localization\subtitles_tr-tr.json
+    ua-ua: mod\return_ticket\localization\subtitles_ua-ua.json
+    zh-cn: mod\return_ticket\localization\subtitles_zh-cn.json
+    zh-tw: mod\return_ticket\localization\subtitles_zh-tw.json
+  vomaps:
+    ar-ar: mod\return_ticket\localization\vomap.json
+    cz-cz: mod\return_ticket\localization\vomap.json
+    de-de: mod\return_ticket\localization\vomap_de-de.json
+    en-us: mod\return_ticket\localization\vomap.json
+    es-es: mod\return_ticket\localization\vomap_es-es.json
+    es-mx: mod\return_ticket\localization\vomap.json
+    fr-fr: mod\return_ticket\localization\vomap_fr-fr.json
+    hu-hu: mod\return_ticket\localization\vomap.json
+    it-it: mod\return_ticket\localization\vomap_it-it.json
+    jp-jp: mod\return_ticket\localization\vomap_jp-jp.json
+    kr-kr: mod\return_ticket\localization\vomap_kr-kr.json
+    pl-pl: mod\return_ticket\localization\vomap_pl-pl.json
+    pt-br: mod\return_ticket\localization\vomap_pt-br.json
+    ru-ru: mod\return_ticket\localization\vomap_ru-ru.json
+    th-th: mod\return_ticket\localization\vomap.json
+    tr-tr: mod\return_ticket\localization\vomap.json
+    ua-ua: mod\return_ticket\localization\vomap.json
+    zh-cn: mod\return_ticket\localization\vomap_zh-cn.json
+    zh-tw: mod\return_ticket\localization\vomap.json
+  lipmaps:
+    ar-ar: mod\return_ticket\localization\gig04.lipmap
+    cz-cz: mod\return_ticket\localization\gig04.lipmap
+    de-de: mod\return_ticket\localization\gig04_de-de.lipmap
+    en-us: mod\return_ticket\localization\gig04.lipmap
+    es-es: mod\return_ticket\localization\gig04_es-es.lipmap
+    es-mx: mod\return_ticket\localization\gig04.lipmap
+    fr-fr: mod\return_ticket\localization\gig04_fr-fr.lipmap
+    hu-hu: mod\return_ticket\localization\gig04.lipmap
+    it-it: mod\return_ticket\localization\gig04_it-it.lipmap
+    jp-jp: mod\return_ticket\localization\gig04_jp-jp.lipmap
+    kr-kr: mod\return_ticket\localization\gig04_kr-kr.lipmap
+    pl-pl: mod\return_ticket\localization\gig04_pl-pl.lipmap
+    pt-br: mod\return_ticket\localization\gig04_pt-br.lipmap
+    ru-ru: mod\return_ticket\localization\gig04_ru-ru.lipmap
+    th-th: mod\return_ticket\localization\gig04.lipmap
+    tr-tr: mod\return_ticket\localization\gig04.lipmap
+    ua-ua: mod\return_ticket\localization\gig04.lipmap
+    zh-cn: mod\return_ticket\localization\gig04_zh-cn.lipmap
+    zh-tw: mod\return_ticket\localization\gig04.lipmap
+streaming:
+  blocks:
+    - mod\worlds\03_night_city\_compiled\default\cc_g04_cast.streamingblock
+    - mod\worlds\03_night_city\_compiled\default\cc_g04_room.streamingblock
+    - mod\worlds\03_night_city\_compiled\default\cc_g04_world.streamingblock
+  sectors:
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-23_24_0_0.streamingsector
+      expectedNodes: 974
+      nodeDeletions:
+        - index: 451
+          type: worldEntityNode
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-12_11_0_1.streamingsector
+      expectedNodes: 2120
+      nodeDeletions:
+        - index: 102
+          type: worldGenericProxyMeshNode
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-12_11_0_1.streamingsector
+      expectedNodes: 2091
+      nodeDeletions:
+        - index: 102
+          type: worldGenericProxyMeshNode
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-12_11_0_1.streamingsector
+      expectedNodes: 2120
+      nodeMutations:
+        - index: 102
+          type: worldCookedGenericProxyMeshNode
+          scale: [0, 0, 0]
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-12_11_0_1.streamingsector
+      expectedNodes: 2091
+      nodeMutations:
+        - index: 102
+          type: worldCookedGenericProxyMeshNode
+          scale: [0, 0, 0]
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-12_12_0_1.streamingsector
+      expectedNodes: 1600
+      nodeDeletions:
+        - index: 232
+          type: worldEntityProxyMeshNode
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-12_12_0_1.streamingsector
+      expectedNodes: 1595
+      nodeDeletions:
+        - index: 232
+          type: worldEntityProxyMeshNode
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-10_15_0_1.streamingsector
+      expectedNodes: 2600
+      nodeDeletions:
+        - index: 988
+          type: worldCompiledCommunityAreaNode_Streamable
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-2_1_0_4.streamingsector
+      expectedNodes: 1359
+      nodeDeletions:
+        - index: 355
+          type: worldStaticOccluderMeshNode
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-2_1_0_4.streamingsector
+      expectedNodes: 1347
+      nodeDeletions:
+        - index: 356
+          type: worldStaticOccluderMeshNode
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-2_1_0_4.streamingsector
+      expectedNodes: 1360
+      nodeDeletions:
+        - index: 355
+          type: worldStaticOccluderMeshNode
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-2_1_0_4.streamingsector
+      expectedNodes: 1348
+      nodeDeletions:
+        - index: 355
+          type: worldStaticOccluderMeshNode
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-3_2_0_3.streamingsector
+      expectedNodes: 2043
+      nodeDeletions:
+        - index: 1662
+          type: worldInstancedOccluderNode
+        - index: 1725
+          type: worldInstancedOccluderNode
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-3_2_0_3.streamingsector
+      expectedNodes: 2033
+      nodeDeletions:
+        - index: 1665
+          type: worldInstancedOccluderNode
+        - index: 1728
+          type: worldInstancedOccluderNode
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-3_2_0_3.streamingsector
+      expectedNodes: 2042
+      nodeDeletions:
+        - index: 1661
+          type: worldInstancedOccluderNode
+        - index: 1724
+          type: worldInstancedOccluderNode
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-3_2_0_3.streamingsector
+      expectedNodes: 2032
+      nodeDeletions:
+        - index: 1664
+          type: worldInstancedOccluderNode
+        - index: 1727
+          type: worldInstancedOccluderNode
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-20_31_0_0.streamingsector
+      expectedNodes: 2609
+      nodeDeletions:
+        - index: 17
+          type: worldAISpotNode
+        - index: 18
+          type: worldAISpotNode
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-19_31_0_0.streamingsector
+      expectedNodes: 5051
+      nodeDeletions:
+        - index: 178
+          type: worldAISpotNode
+        - index: 193
+          type: worldAISpotNode
+        - index: 194
+          type: worldAISpotNode
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-19_31_0_0.streamingsector
+      expectedNodes: 5048
+      nodeDeletions:
+        - index: 178
+          type: worldAISpotNode
+        - index: 193
+          type: worldAISpotNode
+        - index: 194
+          type: worldAISpotNode
+    - path: base\worlds\03_night_city\_compiled\default\exterior_-11_15_0_1.streamingsector
+      expectedNodes: 1023
+      nodeDeletions:
+        - index: 80
+          type: worldAISpotNode
+quest:
+  phases:
+    - path: mod\return_ticket\quest\gig04.questphase
+      parent: cyberpunk2077.quest

@@ -1,0 +1,377 @@
+{
+  "Header": {
+    "WolvenKitVersion": "8.20.0",
+    "WKitJsonVersion": "0.0.9",
+    "GameVersion": 2310,
+    "ExportedDateTime": "2026-11-01T11:07:13.4553353Z",
+    "DataType": "CR2W",
+    "ArchiveFileName": "C:\\Users\\andre\\OneDrive\\Desktop\\cyberpunk-gigs\\gig04_return_ticket\\source\\archive\\mod\\return_ticket\\localization\\en-us.json"
+  },
+  "Data": {
+    "Version": 195,
+    "BuildVersion": 0,
+    "RootChunk": {
+      "$type": "JsonResource",
+      "cookingPlatform": "PLATFORM_PC",
+      "root": {
+        "HandleId": "0",
+        "Data": {
+          "$type": "localizationPersistenceOnScreenEntries",
+          "entries": [
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Return Ticket",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-gig-title"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Gig type: SOS: Merc Needed\nObjective: Find Reynaldo Manalo and get him out\nLocation: Maricel Manalo\u0027s noodle stall, Kabuki Market\nDetails:\n\nReynaldo Manalo signed with Orbital Air for fifteen years, to clean rooms on the Crystal Palace. The flight up and the rent in the workers\u0027 hotel come out of the salary. After seven years he owed more than on the day he signed.\n\nAn old friend of mine, Liban, got him down to Night City in cargo. He hid at his sister\u0027s stall in Kabuki Market. Last night the Tyger Claws took him. If Orbital Air gets him, he goes back up.\n\nHis sister Maricel is the client. Her picture is attached. Nobody knows where he is, so start with her. She knows you\u0027re coming.\n\nOrbital Air will send people for him. Get him out first. I will call you once he is safe. Location attached.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-gig-brief"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Talk to Maricel at her stall",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-obj-stall"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Find Stamps",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-obj-couch"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Read Stamps\u0027 shard",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-obj-read"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Find Stamps at the bar",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-obj-bar"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Beat the address out of Stamps",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-obj-beat"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Find the Tyger Claws\u0027 van",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-obj-flop"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Scan the area for clues",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-obj-clues"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Take the Tyger Claws\u0027 shard",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-obj-flop-take"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Read the Tyger Claws\u0027 shard",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-obj-flop-read"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Fight off Orbital Air\u0027s security",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-obj-oa"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Go to the Tyger Claws\u0027 hideout",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-obj-room"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Find Reynaldo",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-obj-bayani"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Talk to Reynaldo",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-obj-bye"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Leave the area",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-obj-leave"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Wait for Hodan\u0027s call",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-obj-wait"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Maricel\u0027s stall",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-pin-pin-stall"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Stamps\u0027 couch",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-pin-pin-couch"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Stamps",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-pin-pin-bar"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Tyger Claws\u0027 van",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-pin-pin-flop"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Tyger Claws\u0027 van",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-pin-pin-clues"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Tyger Claws\u0027 shard",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-pin-pin-flop-take"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Waiting Spot",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-pin-pin-wait"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Tyger Claws\u0027 hideout",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-pin-pin-room"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Reynaldo",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-pin-pin-bayani"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Reynaldo",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-pin-pin-bye"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Stamps",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-pin-pin-beat"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Orbital Air",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-pin-pin-oa"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Tyger Claws\u0027 hideout",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-pin-pin-leave"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Maricel Manalo",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-ligaya-name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Stamps",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-stamps-name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Reynaldo Manalo",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-bayani-name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Blood",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-clue-blood-name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "A few drops by the back doors. A split lip or a broken nose, not a gunshot.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-clue-blood-desc"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Handcuffs",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-clue-cuffs-name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Unlocked, not cut. They took them off him before they moved him.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-clue-cuffs-desc"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Duffel bag",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-clue-bag-name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "R. MANALO on the tag. They took it from the stall with him. Inside, folded, an Orbital Air janitor\u0027s coveralls.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-clue-bag-desc"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Stamps\u0027 shard",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-shard-item"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Left on the seat of a couch in the alley behind Kabuki Market.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-shard-item-desc"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "MESSAGES // STAMPS",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-shard-title"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "KAZ: You still owe me for last week. Pay that and the stool is yours.\n\nSTAMPS: Got paid today. Pour the good stuff. On my way.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-shard-body"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Tyger Claws\u0027 shard",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-shard2-item"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Found behind the Tyger Claws\u0027 van in Little China.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-shard2-item-desc"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "MESSAGES // JUNICHI",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-shard2-title"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "JUNICHI: Moving the janitor now. Stamps knows about the van, and Stamps talks to anyone who pays.\n\nHIROKI: Where to?\n\nJUNICHI: The shop in Little China. Shutters down, double doors on the street. Keep him there till their team comes.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-shard2-body"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Gig type: SOS: Merc Needed\nObjective: Find Reynaldo Manalo and get him out\nLocation: Maricel Manalo\u0027s noodle stall, Kabuki Market\nDetails:\n\nReynaldo Manalo signed with Orbital Air for fifteen years, to clean rooms on the Crystal Palace. The flight up and the rent in the workers\u0027 hotel come out of the salary. After seven years he owed more than on the day he signed.\n\nAn old friend of mine, Liban, got him down to Night City in cargo. He hid at his sister\u0027s stall in Kabuki Market. Last night the Tyger Claws took him. If Orbital Air gets him, he goes back up.\n\nHis sister Maricel is the client. Her picture is attached. Nobody knows where he is, so start with her. She knows you\u0027re coming.\n\nOrbital Air will send people for him. Get him out first. I will call you once he is safe. Location attached.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-msg-brief"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "His sister called. He\u0027s out of Night City. My friend drove him out tonight. Well done, V. Your fee will be in your account shortly. Take care.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-msg-close"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "His sister called. He\u0027s out of Night City. My friend drove him out tonight. Stamps is dead. Maricel still has to live in that market. Well done, V. Your fee will be in your account shortly. Take care.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g04-msg-close-dead"
+            }
+          ]
+        }
+      }
+    },
+    "EmbeddedFiles": []
+  }
+}

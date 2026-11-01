@@ -5,6 +5,44 @@ each mod's Nexus Changelog tab.
 
 ---
 
+# Return Ticket
+
+## 1.0.0 (2026-11-01)
+
+- **Added: Return Ticket, a full side gig.** Hodan Warsame sends you to find
+  Reynaldo Manalo, a runaway Orbital Air janitor the Tyger Claws have taken,
+  and get him out of Night City.
+- **Added: every line is spoken and subtitled.** Hodan, Maricel, Stamps and
+  Reynaldo are recorded by voice actors. V and Johnny use the game's own
+  voice lines.
+- **Added: four ways to make Stamps talk.** Body, Intelligence, 1,000 eddies,
+  or a fight.
+- **Added: a clue hunt at the Claws' van and a new building to break into
+  in Little China.**
+- **Added: a waiting spot.** Lean on the railing to skip the wait for
+  Hodan's last call.
+
+Needs the Hodan Warsame mod, game 2.5 with Phantom Liberty, and ArchiveXL
+1.28.2 or newer.
+
+---
+
+# Hodan Warsame
+
+## 1.0.0 (2026-11-01)
+
+- **Added: Hodan Warsame, a new fixer in Charter Hill.** She calls you the
+  first time you're in Charter Hill after the prologue, and you can visit her
+  couch or call her any time after.
+- **Added: the fixer icon on the map with a gig counter.** Each gig mod of
+  hers you install adds one to the total.
+- **Added: her conversation, fully voiced.** Who she is, what's going on in
+  the building, work and business, in person or on the phone.
+- **Added: a way for other modders to write gigs for her.** The description
+  explains how.
+
+---
+
 # Acceptable Loss
 
 ## 1.2.0 (2026-10-27)

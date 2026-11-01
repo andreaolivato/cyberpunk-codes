@@ -11,9 +11,17 @@ My mods on Nexus Mods:
 - [Negative Balance](https://www.nexusmods.com/cyberpunk2077/mods/32694)
 - [Dead Ringer](https://www.nexusmods.com/cyberpunk2077/mods/33571)
 - [Acceptable Loss](https://www.nexusmods.com/cyberpunk2077/mods/33959)
+- [Hodan Warsame](https://www.nexusmods.com/cyberpunk2077/mods/36816)
+- [Return Ticket](https://www.nexusmods.com/cyberpunk2077/mods/36829)
 
 This repo also has the translation kits for my gigs, if you want to translate them into your language:
 
 - [Negative Balance](mods/gig-01-negative-balance/translation-kit/README.md)
 - [Dead Ringer](mods/gig-02-dead-ringer/translation-kit/README.md)
 - [Acceptable Loss](mods/gig-03-acceptable-loss/translation-kit/README.md)
+- [Hodan Warsame](mods/fixer-01/translation-kit/README.md)
+- [Return Ticket](mods/gig-04-return-ticket/translation-kit/README.md)
+
+And a guide if you want to create your own gig for the new fixer I created, Hodan Warsame:
+
+- [Writing a gig for Hodan Warsame](mods/fixer-01/docs/design.md)
