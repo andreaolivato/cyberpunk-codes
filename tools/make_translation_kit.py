@@ -88,6 +88,10 @@ GIGS = {
               ['the journal entry and briefing', "Hodan's messages",
                'the objectives and map captions', 'the two shards', 'the scanner clues',
                'the names the scanner shows']),
+    'gig05': ('gig-05-trauma-team', 'trauma_team', 'Join Trauma Team', 'gig05_lines.json',
+              'Nisha and Brekke', 'V, Wrona and Raman',
+              ['the journal entry and briefing', "Dispatch's messages",
+               'the objectives and map captions', 'the names the scanner shows']),
 }
 LANGS = ('it-it, de-de, fr-fr, es-es, es-mx, pl-pl, ru-ru, pt-br, jp-jp, kr-kr, zh-cn, '
          'zh-tw, cz-cz, hu-hu, ar-ar, th-th, tr-tr, ua-ua')

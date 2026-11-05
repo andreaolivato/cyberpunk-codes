@@ -3488,3 +3488,313 @@ Never renumber. Append.
      table's fields to the 2.31 values (`gen_navmesh.py`, `as_version_62`).
      Check the `version` field of every sector the mod ships after any
      refresh from a newer game.
+
+145. **An AV on a flight path faces the way the path goes, so a path that
+     goes straight up or down spins it.** A spline point with nothing to
+     either side has no heading, and the AV turns on the spot to whatever
+     the next stretch says.
+
+     Playtest, gig 05: legs that climbed straight up over the spot and came
+     straight down over the next one turned on the spot in both columns,
+     and a 3 m sideways run at each foot made the path double back. Laid
+     instead as a straight takeoff and landing along the AV's nose, joined
+     by turns of at least 50 to 90 m radius (a Dubins path: turn, straight,
+     turn), the same AV flies them smoothly. `tools/gig05/flight_paths.py`
+     has the method. A cubic curve between two headings that face apart
+     folds into a cusp; the radius has to be enforced, not hoped for.
+
+146. **A raycast only sees buildings near the player, about 200 m out.**
+     Past that the city's collision is not loaded and every ray comes back
+     clear. A probe that checks a flight path from the ground called two
+     paths clear that then flew through towers 200 and 215 m from where V
+     stood.
+
+     So the player has to go along. Teleported into the air, V falls
+     through a city that has not loaded yet and dies, god mode or not.
+     Re-placing V every frame to hold it there keeps the game in a loading
+     screen. What works: set the world's clock almost to a stop
+     (`TimeSystem.SetTimeDilation(reason, 0.001)`), teleport once, and wait
+     until a ray from V finds ground below before casting. Under that
+     dilation CET's `dt` stops too, so count frames. The rays a moving AV
+     casts itself (`flight_clear.txt` in gig 05's dev menu) are the only
+     check that sees every building on the way.
+
+     Two CET details from the same probe: `package` is nil in a mod's
+     sandbox, and `require` keeps the first copy of a file until the game
+     restarts. A second file under a new name is the way to load new data
+     into a running session.
+
+147. **An AV put back in the air by a community phase takes no second flight
+     order.** Gig 05 first skipped a flight by switching the AV off and on
+     in a phase on the flight path, 250 m before the landing, and sending a
+     new spline order. It worked on later flights and on the first it left V
+     hanging over the city: the AV stood at the phase's spot and never moved
+     (`flight_log.txt`: over a minute at one height). The skip now leaves the
+     AV alone: under a fade, `TimeSystem.SetTimeDilation` runs the world at
+     8x until V is 420 m from the landing, and the flight finishes itself.
+
+148. **The Arasaka tower lobby's wall pieces are not drawn outdoors.**
+     `int_arasaka_tower_lobby_a_wall_a_*.mesh`, placed on a roof as static
+     meshes, could not be seen from either side; only the lift wall's frame
+     showed. The Arroyo industrial guardhouse set
+     (`std_arr_industrial_a_guardhouse_*`) is made for outdoors and draws
+     from both sides.
+
+149. **An AV's nose moves steadily along the whole flight path to the slope
+     at the path's last point.** With `KeepYawRoll_WorldSpacePitch` at
+     position 0 the pitch starts level and changes in a straight line with
+     distance, up or down, to whatever the last two points make. Measured on
+     gig 05's first flight, logged every tenth of a second: 0 degrees at
+     takeoff, -19 at touchdown, on a path ending 9 m down over 26 m. So a
+     landing on a slope arrives tilted, and levelling the AV at touchdown is
+     seen as a jump. V stands side-on in the AV, so the tilt reads as the
+     whole picture rolling. End every path on a point at the end's own
+     height, 2 m short of it. After that the pitch stayed under 6 degrees on
+     all four flights.
+
+150. **A roof the game never expects you on can draw its surface above its
+     collision.** The Medical Center's top roof looks like a plain red plane.
+     A ray finds its floor at 128.86, and the plane is about 0.35 m above
+     that, so V and any NPC stand in it, the game's own Trauma Team soldier
+     included. Guessing a height for the NPCs in a pose put them in the air.
+     The fix is a floor: one `worldCollisionNode` box over the whole roof,
+     its top on the plane (129.2, gig 05's `ROOF_FLOOR`, gig 04's room for
+     the node's shape). V and the crew then stand on the same surface, and
+     the AV's spot, the markers and the props use that one height.
+
+     A posed body keeps the height written, so on uneven ground check it
+     with a ray. At gig 05's street call the kerb under the soldier is 17 cm
+     above the AV's spot.
+
+151. **Level XP has no bar on screen, and Street Cred's stops at the cap.**
+     `ProgressionWidgetGameController.OnCharacterProficiencyUpdated` lists
+     Street Cred and the skills and not `Level`, and a progress of 0 draws
+     nothing. A reward record's 1,000 Level XP is paid in silence, and on a
+     save at Street Cred 50 its 1,136 Street Cred draws nothing either. Read
+     `PlayerDevelopmentSystem.GetData(player)` before calling a missing XP
+     notice a bug. The money notice is drawn either way.
+
+152. **`HasItem` with a bare record id misses an item the quest handed over.**
+     The item carries a seed that `ItemID.FromTDBID` does not have. Gig 05's
+     `HasItem` came back false, the script gave the uniform again, and V
+     ended the shift with two. Find the item in `GetItemList` by its record
+     and use that `ItemID`. `Items.Trauma_Team_Outfit` also never reached the
+     wardrobe, whatever was stored: see 154.
+
+153. **An NPC appearance without its visual controller draws nothing.**
+     Gig 05 took the `AppearanceVisualController` and the proxy out of a
+     copied nurse appearance. The NPC stood there, could be targeted and
+     spoken to, and no mesh was drawn. Keep the component and rewrite its
+     `appearanceDependency` list to the meshes the appearance now has. The
+     proxy can point at any other figure's proxy mesh.
+
+154. **A full-body outfit lives under the Outfit slot, in Special Outfits.**
+     `Items.Trauma_Team_Outfit` has `equipArea: EquipmentArea.Outfit`. It is
+     not in the wardrobe's six sets or in the clothing lists. Open Inventory,
+     then the Outfit slot: the game's own item is there with its picture, and
+     it draws the whole suit. Nothing else is needed. Gig 05 first built a
+     copy for the Upper Body slot, with a factory and a root entity. V wore
+     nothing, because the root entity's names did not carry the suffixes the
+     item asks for (`name_&Female&FPP`, wiki, ArchiveXL suffixes), and its
+     picture was a full photo drawn over the neighbouring slots: an atlas
+     part draws at its own size, and an item icon is 160 by 160. It was
+     removed. Give the kit once: a second copy is a second tile.
+
+155. **A borrowed garment collapses at arm's length, and a body's chunk mask
+     hides it at any range.** Two faults looked like one. Nurse 06 wears a
+     skirt, so her body draws the legs, and trousers put on that body sit
+     under the skin: take the mask from an appearance of the same file that
+     wears trousers (nurse 05's). And Garment Support runs only at top
+     detail: a mesh with no garment data for that body folds to nothing when
+     V stands close, and looks right from 3 m. Make the pants' component a
+     plain `entSkinnedMeshComponent`. Check clothes at arm's length.
+
+156. **A Trauma Team soldier's combat lines come from his entity.**
+     `corpo__traumateam_ma.ent` names `combatVoSettingsName:
+     generic_gang_ma_voice` on its `scnVoicesetComponent`, which is why the
+     crew shouted ganger threats. The record's `voiceTag` is empty and is no
+     use. Gig 05's crew have a copy of the entity with that name set to None
+     and `areVoicesetLinesEnabled` 0 (`tools/gig05/gen_recruiter.py`).
+
+157. **A scene's `workspots` list must be sorted by `dataId`.** The game
+     searches it as a sorted list. questkit derives each id from a hash of
+     the path, so the list came out in any order. Out of order, an actor
+     played another's pose, with each man on his right spot: a man on a seat
+     spot stood, a man in mid-cabin sat on nothing. On a miss the game
+     crashed reading `0xFFFFFFFFFFFFFFFF` (`Cyberpunk2077.exe+0x2b8bde`) as
+     the scene started. That also crashes any save made while the scene
+     runs, on load. It looked like a bad pose or a bad slot, and it is
+     neither: V's own pose on `player_standing`, three different poses on
+     the boss, a pose on `tt_2` and a pose on `player_standing` all crashed
+     or not depending only on how the hashes fell. `Scene` now sorts on
+     write.
+
+158. **An AV's `.ent` is built from its compiled package.** A component added
+     to `components` only is never created, and one appended to the package's
+     chunks crashed the game. Put it in the appearance: a copy of the `.app`
+     with `compiledData` removed, `components` extended, and the `.ent`'s
+     `appearanceResource` pointed at the copy (gig 05's grab bar,
+     `build_av_app`). Components on the AV can be moved live from CET with
+     `FindComponentByName(...):SetLocalPosition(...)`, which is the fast way
+     to fit one.
+
+159. **A facing limit can hide a world prompt.** A 60 degree `yaw_limit` on
+     gig 05's street door hid the prompt with V right in front of the door.
+     It is gone, and a 1.6 m radius keeps the prompt from showing over the
+     recruiter's.
+
+160. **`lookAtParams` with a zero `auxiliaryRelativePoint` turns V at the feet
+     when an in-world prompt is taken.** That is a point at V's own feet. It
+     reads as V spinning and staring down, and V keeps that pitch through a
+     teleport. Put the point ahead and up (`Scene.choice(no_look=True)`: 0, 5,
+     1.6).
+
+161. **A world prompt's scene has to start with V near it.** Gig 05's way down
+     started as V stepped off the AV. With V up to 31.6 m from the marker
+     the prompt came up; from 32.2 m and more it never did, not when V walked
+     up to it, though the quest was waiting on it. The run to the failing
+     case: 31.6 m worked, then 32.2, 32.8 and 36.4 m did not. Start the scene
+     when V is close: gig 05 sets a fact from its script at 20 m.
+
+162. **A lift placed by a mod needs three files, not one.** The sector holds
+     the lift node and its terminals. Two world files have to be merged in by
+     ArchiveXL's `resource: patch:`:
+
+     - A `.devices` file, patching `03_night_city.devices` and
+       `03_night_city_init.devices`. Without it `GetFloors()` on the lift
+       returned 0. It is a `gameDeviceResource` with one
+       `gameDeviceResourceData_Cls1` per device. Each entry's hash is FNV1a64
+       of the node's path, `$/mod/<folder>/<name>`, with any `#` removed.
+     - A `.psrep` file, patching `03_night_city.psrep`. This is what World
+       Builder's Persistent box writes. Without it the terminals are only known
+       while loaded: after a save load the doors stayed shut and the keypad
+       marked a floor reached without moving. It is a
+       `gamePersistentStateDataResource` whose buffer has one chunk per
+       terminal, the node's own `persistentState`, keyed in `CruidDict` by
+       `PersistentID.ForComponent(entEntityID.new({hash = <node hash>}),
+       CName.new('controller')):ToHash()`. Ask CET for that number. The same
+       call returns the vanilla file's key for a vanilla terminal.
+
+     Gig 05's `gen_lift.py` is the worked example. The rest of the shape comes
+     from the vanilla lift in `exterior_-14_34_0_0`:
+
+     - The lift node is `megabuilding_lift_1.ent`, instance data `None`, with
+       `deviceConnections` to its terminals.
+     - Each floor has a terminal, `elevator_floor_terminal_1.ent`, with
+       `isVisibleInGame` 1, `sourcePrefabHash` '0' and a marker in
+       `floorMarker`. A terminal faces along its own -x, so yaw 180 faces west.
+     - The example terminal is saved `DISABLED`, switched on by its quest. Set
+       `deviceState` to `ON`, or the panel is a black slab. Clear
+       `hasAuthorizationModule` and `isAuthorizationModuleOn`.
+     - Give the markers more streaming range than the lift. The sector default
+       of 120 m is too close to a 111 m shaft. The vanilla value is 3849.
+     - Leave `floorDisplayName` as `None` and the keypad numbers the floors 00
+       and 01. A plain word drew a blank button, and a key of the gig's own drew
+       the numbers anyway.
+     - A marker's yaw is the way V faces when put in the car. The car's front
+       door is opposite its wall of screens.
+
+     The in-car screen's buttons hold their action by weak reference. With V
+     back in the car after stepping out, the lower button stopped reaching
+     `LiftControllerPS.OnGoToFloor`, and `RefreshUI` did not help. Gig 05 wraps
+     `OnDeviceActionCallback` and `OnExecuteButtonAction` on
+     `DeviceInkGameControllerBase` for its own lift and queues
+     `ActionQuestGoToFloor` to the other stop. `Observe` from CET's `onInit` is
+     how the press was traced; registered from the console it only took hold
+     once.
+
+     A height read as `player.GetWorldPosition().Z` was always wrong in
+     redscript: put the position in a local first (`pos.Z`). The lift entity's
+     own `GetWorldPosition` stays at the bottom stop while the car moves.
+
+     Check the shaft before placing anything. The dev menu's
+     `GetMod("trauma_team_dev").scan(...)` casts a ray down every grid cell and
+     lists every floor in the column. A clear column proves nothing about the
+     way to it. Gig 05's first clear column was in an unlit hollow inside the
+     Medical Center, behind a wall drawn only from the yard side and solid from
+     both. Rays and `flood(...)` both called it connected, through fake doors
+     and past that wall, and V had only been teleported in. Walk the route with
+     real keys from where the player starts. Gig 05's lift stands in the tank
+     yard with a 50 m walkway to the roof.
+
+     The keypad's hit area is the middle of a button, and V has to be right up
+     against it.
+
+     The panel on the wall did nothing when pressed, with no error. It looked
+     finished until the car was away from V's stop for the first time. Gig 05
+     sends the press straight to the lift. Why the game's own call failed here
+     was not established.
+
+     A stop above the ground needs a door, or the player walks into the empty
+     shaft when the car is away. The wiki's "Custom Elevator Doors" has the
+     recipe, and gig 05 uses gig 04's double door with it: `doorType` AUTOMATIC,
+     `initialDoorState` LOCKED, the terminal's `deviceConnections` naming the
+     door, and the door as the terminal's child in the `.devices` patch. There
+     is no flag for it: `CheckIfLiftDoors` makes it a lift door when a floor
+     terminal is its parent. The terminal then locks it when the car leaves and
+     unlocks it when the car arrives, and the game offers Call Elevator at the
+     door. That double door is 2.3 m high, and its leaves swing out over the
+     wall beside it, so a lift door here is the sliding single door instead.
+
+     The game's own lifts have the call panel on the door's wall, 1.6 m to the
+     side of the car's centre line and 1.45 m up. Measure from that, not from
+     the outside of the car.
+
+     A character's whole-figure proxy, under
+     `base\characters\appearances\...\proxy\`, is one static mesh with feet at
+     zero, and a sector mesh node draws it, facing its own +y. It is made for
+     distance: seen across a room it looks pixelated, so it does not work as a
+     uniform on display.
+
+     Some meshes in the scavengers' gym set (`gym_lockers`, `gym_lockeroom_bench`)
+     are grey blocks with no textures. The two halves of the lootable weapon
+     locker do not line up when placed at one spot: the door lands at the
+     floor. `industrial_locker_02_b_middle` stands alone and repeats every 0.46 m
+     as a locker wall.
+
+     Gig 04's interior kit is drawn from one side only, so a corridor of it in
+     the open is invisible from outside. A second row of the same walls turned
+     to face out closes it. Stretching the game's guardhouse block as a skin did
+     not: its long sides have window openings. Kit pieces butted edge to edge
+     also leave slits of sky, because nothing is drawn behind them. Overlap the
+     corners, and run the ceiling over the tops of the walls.
+
+163. **An AV path needs even points, and its tangents set by hand.** The flight
+     log of a mod AV showed three faults, and all three came from the points.
+     Short spans beside long ones gave a 6 degree flick in a tenth of a second.
+     A corner on the last approach swung the AV 40 degrees and back in 1.5 s.
+     In a turn the heading moved in steps, one at each point.
+
+     Three changes removed them. Cut the path every 2 m and blur it, leaving the
+     first 40 m and the last 14 m alone. Write it back as even points 8 m apart.
+     Set `automaticTangents` to 0 and give each point the tangents `[-t, t]`,
+     with `t = (next - prev) / 6`. `questkit.avflight.fair` and `speed_spline`
+     do this. Pitch then stayed within 3 degrees over a whole shift, and the
+     fastest turn was 33 degrees a second.
+
+     The path's rotation mode `KeepYawRoll_WorldSpacePitch` moves the nose steadily
+     along the whole path towards the slope at the last point. A path that ends on
+     a slope snaps flat at touchdown, so its last points have to be level. A path
+     that has been blurred also moves off the line it was checked on: run the
+     clearance check again after any change, not only after a change of route.
+
+     When reading a flight log, a speed that jumps 10 percent up and down on
+     alternate lines is the rounding of the log's own time stamp (0.10 against
+     0.11 s), not a shake. Divide over 10 lines before calling it a fault.
+
+164. **A choice hub with no speaker still draws its name box.** A prompt pinned to
+     a place, with no actor, shows a small dark mark left of the key. One space as
+     the title draws a dark block. `displayNameOverride` on the choice node fills the
+     box, and the game shows it in capitals in the same red tag as a person's name.
+     `Scene.choice(title=...)` sets it. The game's own prompts name the object: 166
+     of 171 place-pinned prompts sampled have a title such as Couch, Door or Freezer,
+     as a `LocKey#` so it is translated. The mark is unrelated to the option's
+     QuestImportant flag, which only makes the prompt yellow.
+
+165. **The game's city scenes run on spots that look empty.** A clear street with room
+     to land can be a stage for `base\open_world\city_scenes`, and the game's own scene
+     can start beside yours. Search `tools\_sector_cache\index_trauma.json` or run a new
+     `sector_scan index` near a chosen spot. A fact such as
+     `cs_cct_dtn_intervention_disabled` removes a running intervention scene as well.
+     Read the district from the spot's NodeRef in its sector: the map name can be
+     wrong (gig 05's coast spot is Downtown's). Street story branches have no such fact.

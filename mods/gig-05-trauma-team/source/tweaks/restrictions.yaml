@@ -1,0 +1,19 @@
+# The restrictions a shift applies, each the mod's own copy with saving
+# off (docs/gameplay-restrictions.md: a base-game restriction is savable and
+# does not expire, so one left on by an uninstall is a control lost for the
+# rest of the save). A clone still blocks, because the gate reads the
+# gameplay tag the clone inherits.
+#
+# The quest phase applies and lifts them. Gig05_Shift.reds lifts the ride on the
+# first pass of every session in case a load caught it on.
+
+# THE RIDE. Last Caress applies `VehicleScene` for the whole flight
+# (q113_05_av_flight, docs/gig05-av-research.md 3): no getting out, no
+# weapons drawn while the AV moves.
+GameplayRestriction.cc_g05_ride:
+  $base: GameplayRestriction.VehicleScene
+  savable: false
+# NO FAST TRAVEL DURING A SHIFT, from boarding until V is back on the street.
+GameplayRestriction.cc_g05_no_travel:
+  $base: GameplayRestriction.BlockFastTravel
+  savable: false

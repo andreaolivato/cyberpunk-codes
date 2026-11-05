@@ -1,0 +1,141 @@
+{
+ "Header": {
+  "WolvenKitVersion": "8.20.0",
+  "WKitJsonVersion": "0.0.9",
+  "GameVersion": 2500,
+  "ExportedDateTime": "2026-11-04T00:00:00Z",
+  "DataType": "CR2W",
+  "ArchiveFileName": "lift.devices"
+ },
+ "Data": {
+  "Version": 195,
+  "BuildVersion": 0,
+  "RootChunk": {
+   "$type": "gameDeviceResource",
+   "cookingPlatform": "PLATFORM_PC",
+   "data": {
+    "HandleId": "0",
+    "Data": {
+     "$type": "gameDeviceResourceData",
+     "unk1": [
+      {
+       "$type": "gameDeviceResourceData_Cls1",
+       "children": [
+        "9783228533132838568",
+        "9783229632644466779"
+       ],
+       "className": {
+        "$type": "CName",
+        "$storage": "string",
+        "$value": "LiftControllerPS"
+       },
+       "hash": "15055248099512151738",
+       "nodePosition": {
+        "$type": "Vector3",
+        "X": -1261.5,
+        "Y": 1769.0,
+        "Z": 18.2
+       },
+       "parents": []
+      },
+      {
+       "$type": "gameDeviceResourceData_Cls1",
+       "children": [],
+       "className": {
+        "$type": "CName",
+        "$storage": "string",
+        "$value": "ElevatorFloorTerminalControllerPS"
+       },
+       "hash": "9783228533132838568",
+       "nodePosition": {
+        "$type": "Vector3",
+        "X": -1259.9,
+        "Y": 1765.66,
+        "Z": 19.599999999999998
+       },
+       "parents": [
+        "15055248099512151738"
+       ]
+      },
+      {
+       "$type": "gameDeviceResourceData_Cls1",
+       "children": [
+        "3320314990957037207"
+       ],
+       "className": {
+        "$type": "CName",
+        "$storage": "string",
+        "$value": "ElevatorFloorTerminalControllerPS"
+       },
+       "hash": "9783229632644466779",
+       "nodePosition": {
+        "$type": "Vector3",
+        "X": -1262.78,
+        "Y": 1765.81,
+        "Z": 130.6
+       },
+       "parents": [
+        "15055248099512151738"
+       ]
+      },
+      {
+       "$type": "gameDeviceResourceData_Cls1",
+       "children": [],
+       "className": {
+        "$type": "CName",
+        "$storage": "string",
+        "$value": "DoorControllerPS"
+       },
+       "hash": "3320314990957037207",
+       "nodePosition": {
+        "$type": "Vector3",
+        "X": -1260.75,
+        "Y": 1765.8000000000002,
+        "Z": 129.2
+       },
+       "parents": [
+        "9783229632644466779"
+       ]
+      },
+      {
+       "$type": "gameDeviceResourceData_Cls1",
+       "children": [],
+       "className": {
+        "$type": "CName",
+        "$storage": "string",
+        "$value": "DoorControllerPS"
+       },
+       "hash": "1430085040079766977",
+       "nodePosition": {
+        "$type": "Vector3",
+        "X": -1321.3500000000001,
+        "Y": 1764.4,
+        "Z": 129.2
+       },
+       "parents": []
+      },
+      {
+       "$type": "gameDeviceResourceData_Cls1",
+       "children": [],
+       "className": {
+        "$type": "CName",
+        "$storage": "string",
+        "$value": "DoorControllerPS"
+       },
+       "hash": "11909649157641710467",
+       "nodePosition": {
+        "$type": "Vector3",
+        "X": -1309.1,
+        "Y": 1765.15,
+        "Z": 129.2
+       },
+       "parents": []
+      }
+     ],
+     "version": 2
+    }
+   }
+  },
+  "EmbeddedFiles": []
+ }
+}

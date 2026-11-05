@@ -1,0 +1,51 @@
+# THE PAY, THE GAME'S OWN WAY: one `QuestRewards` record per tier, paid by the
+# quest phase's reward node, the route gigs 02 to 04 pay through
+# (docs/architecture.md, "Paying the player").
+#
+# Gig 04's records, re-pointed: the base is `sts_wbr_hil_01_completion`, and
+# only the money changes. The `sts_` name keeps the game's scaling of the XP.
+#
+# A SHIFT CLOSES NO QUEST. The three calls pay together, back on the street.
+#
+# THE FIGURES are set against the game's own pay (quest_rewards tweak
+# sources, game 2.5): an incident is about one NCPD hustle's fight, so it
+# pays like one, and a job V can repeat daily stays under one-off gigs.
+# NCPD hustles: 752 to 7,950, median 3,900, Watson median 2,100. Fixer gigs:
+# median about 8,000. Silver 1,500, Gold 2,500, Platinum 4,000 (the hustle
+# median).
+
+QuestRewards.sts_cc_g05_qty_silver:
+  $base: QuestRewards.sts_wbr_hil_01_completion_inline5
+  value: 1500
+QuestRewards.sts_cc_g05_money_silver:
+  $base: QuestRewards.sts_wbr_hil_01_completion_inline4
+  quantityModifiers: [ QuestRewards.sts_cc_g05_qty_silver ]
+QuestRewards.sts_cc_g05_silver:
+  $base: QuestRewards.sts_wbr_hil_01_completion
+  name: sts_cc_g05_silver
+  currencyPackage: [ QuestRewards.sts_cc_g05_money_silver ]
+
+QuestRewards.sts_cc_g05_qty_gold:
+  $base: QuestRewards.sts_wbr_hil_01_completion_inline5
+  value: 2500
+QuestRewards.sts_cc_g05_money_gold:
+  $base: QuestRewards.sts_wbr_hil_01_completion_inline4
+  quantityModifiers: [ QuestRewards.sts_cc_g05_qty_gold ]
+QuestRewards.sts_cc_g05_gold:
+  $base: QuestRewards.sts_wbr_hil_01_completion
+  name: sts_cc_g05_gold
+  currencyPackage: [ QuestRewards.sts_cc_g05_money_gold ]
+
+QuestRewards.sts_cc_g05_qty_platinum:
+  $base: QuestRewards.sts_wbr_hil_01_completion_inline5
+  value: 4000
+QuestRewards.sts_cc_g05_money_platinum:
+  $base: QuestRewards.sts_wbr_hil_01_completion_inline4
+  quantityModifiers: [ QuestRewards.sts_cc_g05_qty_platinum ]
+QuestRewards.sts_cc_g05_platinum:
+  $base: QuestRewards.sts_wbr_hil_01_completion
+  name: sts_cc_g05_platinum
+  currencyPackage: [ QuestRewards.sts_cc_g05_money_platinum ]
+
+# A CLIENT LOST TO THE FLATLINE CLOCK still pays something: the crew flew
+# and fought.

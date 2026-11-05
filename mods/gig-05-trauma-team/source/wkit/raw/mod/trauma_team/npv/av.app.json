@@ -1,0 +1,4699 @@
+{
+ "Header": {
+  "WolvenKitVersion": "8.20.0",
+  "WKitJsonVersion": "0.0.9",
+  "GameVersion": 2310,
+  "ExportedDateTime": "2026-11-04T02:08:02.0786537Z",
+  "DataType": "CR2W",
+  "ArchiveFileName": "av.app"
+ },
+ "Data": {
+  "Version": 195,
+  "BuildVersion": 0,
+  "RootChunk": {
+   "$type": "appearanceAppearanceResource",
+   "alternateAppearanceMapping": [],
+   "alternateAppearanceSettingName": {
+    "$type": "CName",
+    "$storage": "string",
+    "$value": "None"
+   },
+   "alternateAppearanceSuffixes": [],
+   "appearances": [
+    {
+     "HandleId": "1",
+     "Data": {
+      "$type": "appearanceAppearanceDefinition",
+      "censorFlags": 0,
+      "components": [
+       {
+        "$type": "entSkinnedMeshComponent",
+        "acceptDismemberment": 1,
+        "autoHideDistance": 0,
+        "castLocalShadows": "Always",
+        "castShadows": "Always",
+        "chunkMask": "9223372036854775807",
+        "forcedLodDistance": "Default",
+        "forceLODLevel": -1,
+        "id": "1963345418501230592",
+        "isEnabled": 1,
+        "isReplicable": 0,
+        "localTransform": {
+         "$type": "WorldTransform",
+         "Orientation": {
+          "$type": "Quaternion",
+          "i": 0,
+          "j": 0,
+          "k": 0,
+          "r": 1
+         },
+         "Position": {
+          "$type": "WorldPosition",
+          "x": {
+           "$type": "FixedPoint",
+           "Bits": 0
+          },
+          "y": {
+           "$type": "FixedPoint",
+           "Bits": 0
+          },
+          "z": {
+           "$type": "FixedPoint",
+           "Bits": 0
+          }
+         }
+        },
+        "LODMode": "Appearance",
+        "mesh": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "string",
+          "$value": "base\\vehicles\\special\\av_zetatech_atlus\\entities\\meshes\\av_zetatech_atlus__ext01_body_decals_trama.mesh"
+         },
+         "Flags": "Default"
+        },
+        "meshAppearance": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "default"
+        },
+        "name": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "av_zetatech_atlus__ext01_body_decals_trama"
+        },
+        "navigationImpact": {
+         "$type": "NavGenNavigationSetting",
+         "navmeshImpact": "Ignored"
+        },
+        "order": 0,
+        "overrideMeshNavigationImpact": 1,
+        "parentTransform": {
+         "HandleId": "31",
+         "Data": {
+          "$type": "entHardTransformBinding",
+          "bindName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "root"
+          },
+          "enabled": 1,
+          "enableMask": {
+           "$type": "entTagMask",
+           "excludedTags": {
+            "$type": "redTagList",
+            "tags": [
+             {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "NoBinding"
+             }
+            ]
+           },
+           "hardTags": {
+            "$type": "redTagList",
+            "tags": []
+           },
+           "softTags": {
+            "$type": "redTagList",
+            "tags": []
+           }
+          },
+          "slotName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "None"
+          }
+         }
+        },
+        "renderingPlaneAnimationParam": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "renderSceneLayerMask": "Default",
+        "skinning": {
+         "HandleId": "32",
+         "Data": {
+          "$type": "entSkinningBinding",
+          "bindName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "root"
+          },
+          "enabled": 1,
+          "enableMask": {
+           "$type": "entTagMask",
+           "excludedTags": {
+            "$type": "redTagList",
+            "tags": [
+             {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "NoBinding"
+             }
+            ]
+           },
+           "hardTags": {
+            "$type": "redTagList",
+            "tags": []
+           },
+           "softTags": {
+            "$type": "redTagList",
+            "tags": []
+           }
+          }
+         }
+        },
+        "useProxyMeshAsShadowMesh": 0,
+        "useSkinningLOD": 0,
+        "version": 1,
+        "visibilityAnimationParam": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        }
+       },
+       {
+        "$type": "entPhysicalSkinnedMeshComponent",
+        "acceptDismemberment": 1,
+        "autoHideDistance": 0,
+        "castLocalShadows": "Always",
+        "castShadows": "Always",
+        "chunkMask": "9223372036854775807",
+        "filterData": {
+         "HandleId": "33",
+         "Data": {
+          "$type": "physicsFilterData",
+          "customFilterData": null,
+          "preset": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "None"
+          },
+          "queryFilter": {
+           "$type": "physicsQueryFilter",
+           "mask1": "0",
+           "mask2": "0"
+          },
+          "simulationFilter": {
+           "$type": "physicsSimulationFilter",
+           "mask1": "0",
+           "mask2": "0"
+          }
+         }
+        },
+        "filterDataSource": "Collider",
+        "forcedLodDistance": "Default",
+        "forceLODLevel": -1,
+        "id": "2321576187943899136",
+        "isEnabled": 1,
+        "isReplicable": 0,
+        "localTransform": {
+         "$type": "WorldTransform",
+         "Orientation": {
+          "$type": "Quaternion",
+          "i": 0,
+          "j": 0,
+          "k": 0,
+          "r": 1
+         },
+         "Position": {
+          "$type": "WorldPosition",
+          "x": {
+           "$type": "FixedPoint",
+           "Bits": 0
+          },
+          "y": {
+           "$type": "FixedPoint",
+           "Bits": 0
+          },
+          "z": {
+           "$type": "FixedPoint",
+           "Bits": 0
+          }
+         }
+        },
+        "LODMode": "Appearance",
+        "mesh": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "string",
+          "$value": "base\\vehicles\\special\\av_zetatech_atlus\\entities\\meshes\\av_zetatech_atlus__ext01_camera_guns_01.mesh"
+         },
+         "Flags": "Default"
+        },
+        "meshAppearance": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "default"
+        },
+        "name": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "av_zetatech_atlus__ext01_camera_guns_01"
+        },
+        "navigationImpact": {
+         "$type": "NavGenNavigationSetting",
+         "navmeshImpact": "Ignored"
+        },
+        "order": 0,
+        "overrideMeshNavigationImpact": 1,
+        "parentTransform": {
+         "HandleId": "34",
+         "Data": {
+          "$type": "entHardTransformBinding",
+          "bindName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "root"
+          },
+          "enabled": 1,
+          "enableMask": {
+           "$type": "entTagMask",
+           "excludedTags": {
+            "$type": "redTagList",
+            "tags": [
+             {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "NoBinding"
+             }
+            ]
+           },
+           "hardTags": {
+            "$type": "redTagList",
+            "tags": []
+           },
+           "softTags": {
+            "$type": "redTagList",
+            "tags": []
+           }
+          },
+          "slotName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "None"
+          }
+         }
+        },
+        "renderingPlaneAnimationParam": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "renderSceneLayerMask": "Default",
+        "simulationType": "Kinematic",
+        "skinning": {
+         "HandleId": "35",
+         "Data": {
+          "$type": "entSkinningBinding",
+          "bindName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "root"
+          },
+          "enabled": 1,
+          "enableMask": {
+           "$type": "entTagMask",
+           "excludedTags": {
+            "$type": "redTagList",
+            "tags": [
+             {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "NoBinding"
+             }
+            ]
+           },
+           "hardTags": {
+            "$type": "redTagList",
+            "tags": []
+           },
+           "softTags": {
+            "$type": "redTagList",
+            "tags": []
+           }
+          }
+         }
+        },
+        "startInactive": 0,
+        "useProxyMeshAsShadowMesh": 0,
+        "useResourceSimulationType": 0,
+        "useSkinningLOD": 0,
+        "version": 1,
+        "visibilityAnimationParam": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        }
+       },
+       {
+        "$type": "entSkinnedMeshComponent",
+        "acceptDismemberment": 1,
+        "autoHideDistance": 0,
+        "castLocalShadows": "Always",
+        "castShadows": "Always",
+        "chunkMask": "9223372036854775807",
+        "forcedLodDistance": "VehicleInterior",
+        "forceLODLevel": -1,
+        "id": "1961949770036023296",
+        "isEnabled": 1,
+        "isReplicable": 0,
+        "localTransform": {
+         "$type": "WorldTransform",
+         "Orientation": {
+          "$type": "Quaternion",
+          "i": 0,
+          "j": 0,
+          "k": 0,
+          "r": 1
+         },
+         "Position": {
+          "$type": "WorldPosition",
+          "x": {
+           "$type": "FixedPoint",
+           "Bits": 0
+          },
+          "y": {
+           "$type": "FixedPoint",
+           "Bits": 0
+          },
+          "z": {
+           "$type": "FixedPoint",
+           "Bits": 0
+          }
+         }
+        },
+        "LODMode": "Appearance",
+        "mesh": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "string",
+          "$value": "base\\vehicles\\special\\av_zetatech_atlus\\entities\\meshes\\av_zetatech_atlus__int01_interior_01.mesh"
+         },
+         "Flags": "Default"
+        },
+        "meshAppearance": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "default"
+        },
+        "name": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "av_zetatech_atlus__int01_interior_01"
+        },
+        "navigationImpact": {
+         "$type": "NavGenNavigationSetting",
+         "navmeshImpact": "Ignored"
+        },
+        "order": 0,
+        "overrideMeshNavigationImpact": 1,
+        "parentTransform": {
+         "HandleId": "36",
+         "Data": {
+          "$type": "entHardTransformBinding",
+          "bindName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "root"
+          },
+          "enabled": 1,
+          "enableMask": {
+           "$type": "entTagMask",
+           "excludedTags": {
+            "$type": "redTagList",
+            "tags": [
+             {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "NoBinding"
+             }
+            ]
+           },
+           "hardTags": {
+            "$type": "redTagList",
+            "tags": []
+           },
+           "softTags": {
+            "$type": "redTagList",
+            "tags": []
+           }
+          },
+          "slotName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "None"
+          }
+         }
+        },
+        "renderingPlaneAnimationParam": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "renderSceneLayerMask": "Default",
+        "skinning": {
+         "HandleId": "37",
+         "Data": {
+          "$type": "entSkinningBinding",
+          "bindName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "root"
+          },
+          "enabled": 1,
+          "enableMask": {
+           "$type": "entTagMask",
+           "excludedTags": {
+            "$type": "redTagList",
+            "tags": [
+             {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "NoBinding"
+             }
+            ]
+           },
+           "hardTags": {
+            "$type": "redTagList",
+            "tags": []
+           },
+           "softTags": {
+            "$type": "redTagList",
+            "tags": []
+           }
+          }
+         }
+        },
+        "useProxyMeshAsShadowMesh": 0,
+        "useSkinningLOD": 0,
+        "version": 1,
+        "visibilityAnimationParam": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        }
+       },
+       {
+        "$type": "entSkinnedMeshComponent",
+        "acceptDismemberment": 1,
+        "autoHideDistance": 0,
+        "castLocalShadows": "Always",
+        "castShadows": "Always",
+        "chunkMask": "9223372036854775807",
+        "forcedLodDistance": "Default",
+        "forceLODLevel": -1,
+        "id": "4036102691093045248",
+        "isEnabled": 1,
+        "isReplicable": 0,
+        "localTransform": {
+         "$type": "WorldTransform",
+         "Orientation": {
+          "$type": "Quaternion",
+          "i": 0,
+          "j": 0,
+          "k": 0,
+          "r": 1
+         },
+         "Position": {
+          "$type": "WorldPosition",
+          "x": {
+           "$type": "FixedPoint",
+           "Bits": 0
+          },
+          "y": {
+           "$type": "FixedPoint",
+           "Bits": 0
+          },
+          "z": {
+           "$type": "FixedPoint",
+           "Bits": 0
+          }
+         }
+        },
+        "LODMode": "Appearance",
+        "mesh": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "string",
+          "$value": "base\\vehicles\\special\\av_zetatech_atlus\\entities\\meshes\\av_zetatech_atlus_fx_cutout.mesh"
+         },
+         "Flags": "Default"
+        },
+        "meshAppearance": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "default"
+        },
+        "name": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "atlus_fx_cutout"
+        },
+        "navigationImpact": {
+         "$type": "NavGenNavigationSetting",
+         "navmeshImpact": "Ignored"
+        },
+        "order": 0,
+        "overrideMeshNavigationImpact": 1,
+        "parentTransform": {
+         "HandleId": "38",
+         "Data": {
+          "$type": "entHardTransformBinding",
+          "bindName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "root"
+          },
+          "enabled": 1,
+          "enableMask": {
+           "$type": "entTagMask",
+           "excludedTags": {
+            "$type": "redTagList",
+            "tags": [
+             {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "NoBinding"
+             }
+            ]
+           },
+           "hardTags": {
+            "$type": "redTagList",
+            "tags": []
+           },
+           "softTags": {
+            "$type": "redTagList",
+            "tags": []
+           }
+          },
+          "slotName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "None"
+          }
+         }
+        },
+        "renderingPlaneAnimationParam": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "renderSceneLayerMask": "Default",
+        "skinning": {
+         "HandleId": "39",
+         "Data": {
+          "$type": "entSkinningBinding",
+          "bindName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "root"
+          },
+          "enabled": 1,
+          "enableMask": {
+           "$type": "entTagMask",
+           "excludedTags": {
+            "$type": "redTagList",
+            "tags": [
+             {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "NoBinding"
+             }
+            ]
+           },
+           "hardTags": {
+            "$type": "redTagList",
+            "tags": []
+           },
+           "softTags": {
+            "$type": "redTagList",
+            "tags": []
+           }
+          }
+         }
+        },
+        "useProxyMeshAsShadowMesh": 0,
+        "useSkinningLOD": 0,
+        "version": 1,
+        "visibilityAnimationParam": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        }
+       },
+       {
+        "$type": "entSkinnedMeshComponent",
+        "acceptDismemberment": 1,
+        "autoHideDistance": 0,
+        "castLocalShadows": "Always",
+        "castShadows": "Always",
+        "chunkMask": "9223372036854775807",
+        "forcedLodDistance": "Default",
+        "forceLODLevel": -1,
+        "id": "2127555760281468928",
+        "isEnabled": 1,
+        "isReplicable": 0,
+        "localTransform": {
+         "$type": "WorldTransform",
+         "Orientation": {
+          "$type": "Quaternion",
+          "i": 0,
+          "j": 0,
+          "k": 0,
+          "r": 1
+         },
+         "Position": {
+          "$type": "WorldPosition",
+          "x": {
+           "$type": "FixedPoint",
+           "Bits": 0
+          },
+          "y": {
+           "$type": "FixedPoint",
+           "Bits": 0
+          },
+          "z": {
+           "$type": "FixedPoint",
+           "Bits": 0
+          }
+         }
+        },
+        "LODMode": "Appearance",
+        "mesh": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "string",
+          "$value": "base\\vehicles\\special\\av_zetatech_atlus\\entities\\meshes\\av_zetatech_atlus__ext01_lights_front_police.mesh"
+         },
+         "Flags": "Default"
+        },
+        "meshAppearance": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "default"
+        },
+        "name": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "av_zetatech_atlus__front_policelight"
+        },
+        "navigationImpact": {
+         "$type": "NavGenNavigationSetting",
+         "navmeshImpact": "Ignored"
+        },
+        "order": 0,
+        "overrideMeshNavigationImpact": 1,
+        "parentTransform": {
+         "HandleId": "40",
+         "Data": {
+          "$type": "entHardTransformBinding",
+          "bindName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "root"
+          },
+          "enabled": 1,
+          "enableMask": {
+           "$type": "entTagMask",
+           "excludedTags": {
+            "$type": "redTagList",
+            "tags": [
+             {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "NoBinding"
+             }
+            ]
+           },
+           "hardTags": {
+            "$type": "redTagList",
+            "tags": []
+           },
+           "softTags": {
+            "$type": "redTagList",
+            "tags": []
+           }
+          },
+          "slotName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "None"
+          }
+         }
+        },
+        "renderingPlaneAnimationParam": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "renderSceneLayerMask": "Default",
+        "skinning": {
+         "HandleId": "41",
+         "Data": {
+          "$type": "entSkinningBinding",
+          "bindName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "root"
+          },
+          "enabled": 1,
+          "enableMask": {
+           "$type": "entTagMask",
+           "excludedTags": {
+            "$type": "redTagList",
+            "tags": [
+             {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "NoBinding"
+             }
+            ]
+           },
+           "hardTags": {
+            "$type": "redTagList",
+            "tags": []
+           },
+           "softTags": {
+            "$type": "redTagList",
+            "tags": []
+           }
+          }
+         }
+        },
+        "useProxyMeshAsShadowMesh": 0,
+        "useSkinningLOD": 0,
+        "version": 1,
+        "visibilityAnimationParam": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        }
+       },
+       {
+        "$type": "vehicleLightComponent",
+        "allowDistantLight": 1,
+        "allowSeparateEmissiveColor": 0,
+        "areaRectSideA": 1,
+        "areaRectSideB": 1,
+        "areaShape": "ALS_Capsule",
+        "areaTwoSided": 1,
+        "attenuation": "LA_InverseSquare",
+        "autoHideDistance": 30,
+        "autoHideRange": 0,
+        "capsuleLength": 1,
+        "clampAttenuation": 0,
+        "colliderName": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "colliderTag": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "color": {
+         "$type": "Color",
+         "Alpha": 255,
+         "Blue": 255,
+         "Green": 61,
+         "Red": 0
+        },
+        "colorGroupSaturation": 100,
+        "contactShadows": "CSR_None",
+        "destructionEffect": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "string",
+          "$value": "base\\fx\\devices\\_damage\\street_lamps\\d_damage_street_lamp_destruction_01.effect"
+         },
+         "Flags": "Soft"
+        },
+        "directional": 0,
+        "emissiveColor": {
+         "$type": "Color",
+         "Alpha": 0,
+         "Blue": 0,
+         "Green": 0,
+         "Red": 0
+        },
+        "emissiveOnly": 1,
+        "enableContactShadows": 0,
+        "enableLocalShadows": 0,
+        "enableLocalShadowsForceStaticsOnly": 0,
+        "enableShadowAngleControl": 0,
+        "envColorGroup": "ECG_Default",
+        "EV": 0,
+        "flicker": {
+         "$type": "rendSLightFlickering",
+         "flickerPeriod": 0.200000003,
+         "flickerStrength": 0,
+         "positionOffset": 0
+        },
+        "forceLODLevel": -1,
+        "genericCurveSetOverride": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "uint64",
+          "$value": "0"
+         },
+         "Flags": "Default"
+        },
+        "group": "LG_Group0",
+        "highBeamConeMultiplier": 1,
+        "highBeamPitchAngle": 0,
+        "highBeamRadiusMultiplier": 2,
+        "id": "2309805002547523584",
+        "iesProfile": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "uint64",
+          "$value": "0"
+         },
+         "Flags": "Soft"
+        },
+        "initialTransform": null,
+        "innerAngle": 30,
+        "intensity": 800,
+        "isDestructible": 1,
+        "isEnabled": 1,
+        "isReplicable": 0,
+        "lightChannel": "0",
+        "lightType": "Head",
+        "localTransform": {
+         "$type": "WorldTransform",
+         "Orientation": {
+          "$type": "Quaternion",
+          "i": 0,
+          "j": 0,
+          "k": 0,
+          "r": 1
+         },
+         "Position": {
+          "$type": "WorldPosition",
+          "x": {
+           "$type": "FixedPoint",
+           "Bits": -34266
+          },
+          "y": {
+           "$type": "FixedPoint",
+           "Bits": 599117
+          },
+          "z": {
+           "$type": "FixedPoint",
+           "Bits": 199388
+          }
+         }
+        },
+        "loopCurve": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "police_b"
+        },
+        "loopTime": 0.5,
+        "materialZone": "One",
+        "meshBrokenAppearance": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "name": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "vehicleLight8070"
+        },
+        "noSpecular": 0,
+        "onStrength": 1,
+        "outerAngle": 111.923531,
+        "parentTransform": {
+         "HandleId": "42",
+         "Data": {
+          "$type": "entHardTransformBinding",
+          "bindName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "av_zetatech_atlus__front_policelight"
+          },
+          "enabled": 1,
+          "enableMask": {
+           "$type": "entTagMask",
+           "excludedTags": {
+            "$type": "redTagList",
+            "tags": [
+             {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "NoBinding"
+             }
+            ]
+           },
+           "hardTags": {
+            "$type": "redTagList",
+            "tags": []
+           },
+           "softTags": {
+            "$type": "redTagList",
+            "tags": []
+           }
+          },
+          "slotName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "None"
+          }
+         }
+        },
+        "pathTracingLightUsage": "PTLU_Everywhere",
+        "pathTracingOverrideScaleGI": 1,
+        "placedEditorData": null,
+        "portalAngleCutoff": 0,
+        "radius": 7,
+        "rayTracedShadowsPlatform": "RLSP_All",
+        "rayTracingContactShadowRange": -1,
+        "rayTracingIntensityScale": 1,
+        "rayTracingLightSourceRadius": -1,
+        "renderSceneLayerMask": "Default",
+        "roughnessBias": 0,
+        "rtxdiShadowStartingDistance": -1,
+        "scaleEnvProbes": 0,
+        "scaleGI": 0,
+        "scaleVolFog": 0,
+        "sceneDiffuse": 1,
+        "sceneSpecular": 0,
+        "sceneSpecularScale": 100,
+        "shadowAngle": -1,
+        "shadowFadeDistance": 10,
+        "shadowFadeRange": 5,
+        "shadowRadius": -1,
+        "shadowSoftnessMode": "LSSM_Default",
+        "softness": 2,
+        "sourceRadius": 0.0500000007,
+        "spotCapsule": 0,
+        "synchronizedLoop": 0,
+        "temperature": -1,
+        "turnOffCurve": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "turnOffTime": 0.300000012,
+        "turnOnByDefault": 0,
+        "turnOnCurve": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "turnOnTime": 0.300000012,
+        "type": "LT_Spot",
+        "unit": "LU_Lumen",
+        "useInEnvProbes": 0,
+        "useInFog": 0,
+        "useInGI": 0,
+        "useInParticles": 1,
+        "useInTransparents": 1
+       },
+       {
+        "$type": "vehicleLightComponent",
+        "allowDistantLight": 1,
+        "allowSeparateEmissiveColor": 0,
+        "areaRectSideA": 1,
+        "areaRectSideB": 1,
+        "areaShape": "ALS_Capsule",
+        "areaTwoSided": 1,
+        "attenuation": "LA_InverseSquare",
+        "autoHideDistance": 30,
+        "autoHideRange": 0,
+        "capsuleLength": 1,
+        "clampAttenuation": 0,
+        "colliderName": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "colliderTag": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "color": {
+         "$type": "Color",
+         "Alpha": 255,
+         "Blue": 0,
+         "Green": 0,
+         "Red": 255
+        },
+        "colorGroupSaturation": 100,
+        "contactShadows": "CSR_None",
+        "destructionEffect": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "string",
+          "$value": "base\\fx\\devices\\_damage\\street_lamps\\d_damage_street_lamp_destruction_01.effect"
+         },
+         "Flags": "Soft"
+        },
+        "directional": 0,
+        "emissiveColor": {
+         "$type": "Color",
+         "Alpha": 0,
+         "Blue": 0,
+         "Green": 0,
+         "Red": 0
+        },
+        "emissiveOnly": 1,
+        "enableContactShadows": 0,
+        "enableLocalShadows": 0,
+        "enableLocalShadowsForceStaticsOnly": 0,
+        "enableShadowAngleControl": 0,
+        "envColorGroup": "ECG_Default",
+        "EV": 0,
+        "flicker": {
+         "$type": "rendSLightFlickering",
+         "flickerPeriod": 0.200000003,
+         "flickerStrength": 0,
+         "positionOffset": 0
+        },
+        "forceLODLevel": -1,
+        "genericCurveSetOverride": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "uint64",
+          "$value": "0"
+         },
+         "Flags": "Default"
+        },
+        "group": "LG_Group0",
+        "highBeamConeMultiplier": 1,
+        "highBeamPitchAngle": 0,
+        "highBeamRadiusMultiplier": 2,
+        "id": "2309805002564300800",
+        "iesProfile": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "uint64",
+          "$value": "0"
+         },
+         "Flags": "Soft"
+        },
+        "initialTransform": null,
+        "innerAngle": 30,
+        "intensity": 800,
+        "isDestructible": 1,
+        "isEnabled": 1,
+        "isReplicable": 0,
+        "lightChannel": "0",
+        "lightType": "Head",
+        "localTransform": {
+         "$type": "WorldTransform",
+         "Orientation": {
+          "$type": "Quaternion",
+          "i": 0,
+          "j": 0,
+          "k": 0,
+          "r": 1
+         },
+         "Position": {
+          "$type": "WorldPosition",
+          "x": {
+           "$type": "FixedPoint",
+           "Bits": 37356
+          },
+          "y": {
+           "$type": "FixedPoint",
+           "Bits": 596496
+          },
+          "z": {
+           "$type": "FixedPoint",
+           "Bits": 199388
+          }
+         }
+        },
+        "loopCurve": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "police_a"
+        },
+        "loopTime": 0.5,
+        "materialZone": "Zero",
+        "meshBrokenAppearance": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "name": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "vehicleLight4576"
+        },
+        "noSpecular": 0,
+        "onStrength": 1,
+        "outerAngle": 111.923531,
+        "parentTransform": {
+         "HandleId": "43",
+         "Data": {
+          "$type": "entHardTransformBinding",
+          "bindName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "av_zetatech_atlus__front_policelight"
+          },
+          "enabled": 1,
+          "enableMask": {
+           "$type": "entTagMask",
+           "excludedTags": {
+            "$type": "redTagList",
+            "tags": [
+             {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "NoBinding"
+             }
+            ]
+           },
+           "hardTags": {
+            "$type": "redTagList",
+            "tags": []
+           },
+           "softTags": {
+            "$type": "redTagList",
+            "tags": []
+           }
+          },
+          "slotName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "None"
+          }
+         }
+        },
+        "pathTracingLightUsage": "PTLU_Everywhere",
+        "pathTracingOverrideScaleGI": 1,
+        "placedEditorData": null,
+        "portalAngleCutoff": 0,
+        "radius": 7,
+        "rayTracedShadowsPlatform": "RLSP_All",
+        "rayTracingContactShadowRange": -1,
+        "rayTracingIntensityScale": 1,
+        "rayTracingLightSourceRadius": -1,
+        "renderSceneLayerMask": "Default",
+        "roughnessBias": 0,
+        "rtxdiShadowStartingDistance": -1,
+        "scaleEnvProbes": 0,
+        "scaleGI": 0,
+        "scaleVolFog": 0,
+        "sceneDiffuse": 1,
+        "sceneSpecular": 0,
+        "sceneSpecularScale": 100,
+        "shadowAngle": -1,
+        "shadowFadeDistance": 10,
+        "shadowFadeRange": 5,
+        "shadowRadius": -1,
+        "shadowSoftnessMode": "LSSM_Default",
+        "softness": 2,
+        "sourceRadius": 0.0500000007,
+        "spotCapsule": 0,
+        "synchronizedLoop": 0,
+        "temperature": -1,
+        "turnOffCurve": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "turnOffTime": 0.300000012,
+        "turnOnByDefault": 0,
+        "turnOnCurve": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "turnOnTime": 0.300000012,
+        "type": "LT_Spot",
+        "unit": "LU_Lumen",
+        "useInEnvProbes": 0,
+        "useInFog": 0,
+        "useInGI": 0,
+        "useInParticles": 1,
+        "useInTransparents": 1
+       },
+       {
+        "$type": "entSkinnedMeshComponent",
+        "acceptDismemberment": 1,
+        "autoHideDistance": 0,
+        "castLocalShadows": "Always",
+        "castShadows": "Always",
+        "chunkMask": "9223372036854775807",
+        "forcedLodDistance": "Default",
+        "forceLODLevel": -1,
+        "id": "2299959313185370112",
+        "isEnabled": 1,
+        "isReplicable": 0,
+        "localTransform": {
+         "$type": "WorldTransform",
+         "Orientation": {
+          "$type": "Quaternion",
+          "i": 0,
+          "j": 0,
+          "k": 0,
+          "r": 1
+         },
+         "Position": {
+          "$type": "WorldPosition",
+          "x": {
+           "$type": "FixedPoint",
+           "Bits": 0
+          },
+          "y": {
+           "$type": "FixedPoint",
+           "Bits": 0
+          },
+          "z": {
+           "$type": "FixedPoint",
+           "Bits": 0
+          }
+         }
+        },
+        "LODMode": "Appearance",
+        "mesh": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "string",
+          "$value": "base\\vehicles\\special\\av_zetatech_atlus\\entities\\meshes\\av_zetatech_atlus__ext01_lights_body.mesh"
+         },
+         "Flags": "Default"
+        },
+        "meshAppearance": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "default"
+        },
+        "name": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "lights_navmarkers"
+        },
+        "navigationImpact": {
+         "$type": "NavGenNavigationSetting",
+         "navmeshImpact": "Ignored"
+        },
+        "order": 0,
+        "overrideMeshNavigationImpact": 1,
+        "parentTransform": {
+         "HandleId": "44",
+         "Data": {
+          "$type": "entHardTransformBinding",
+          "bindName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "root"
+          },
+          "enabled": 1,
+          "enableMask": {
+           "$type": "entTagMask",
+           "excludedTags": {
+            "$type": "redTagList",
+            "tags": [
+             {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "NoBinding"
+             }
+            ]
+           },
+           "hardTags": {
+            "$type": "redTagList",
+            "tags": []
+           },
+           "softTags": {
+            "$type": "redTagList",
+            "tags": []
+           }
+          },
+          "slotName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "None"
+          }
+         }
+        },
+        "renderingPlaneAnimationParam": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "renderSceneLayerMask": "Default",
+        "skinning": {
+         "HandleId": "45",
+         "Data": {
+          "$type": "entSkinningBinding",
+          "bindName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "root"
+          },
+          "enabled": 1,
+          "enableMask": {
+           "$type": "entTagMask",
+           "excludedTags": {
+            "$type": "redTagList",
+            "tags": [
+             {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "NoBinding"
+             }
+            ]
+           },
+           "hardTags": {
+            "$type": "redTagList",
+            "tags": []
+           },
+           "softTags": {
+            "$type": "redTagList",
+            "tags": []
+           }
+          }
+         }
+        },
+        "useProxyMeshAsShadowMesh": 0,
+        "useSkinningLOD": 0,
+        "version": 1,
+        "visibilityAnimationParam": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        }
+       },
+       {
+        "$type": "entSkinnedMeshComponent",
+        "acceptDismemberment": 1,
+        "autoHideDistance": 0,
+        "castLocalShadows": "Always",
+        "castShadows": "Always",
+        "chunkMask": "9223372036854775807",
+        "forcedLodDistance": "Default",
+        "forceLODLevel": -1,
+        "id": "2299959349273161728",
+        "isEnabled": 1,
+        "isReplicable": 0,
+        "localTransform": {
+         "$type": "WorldTransform",
+         "Orientation": {
+          "$type": "Quaternion",
+          "i": 0,
+          "j": 0,
+          "k": 0,
+          "r": 1
+         },
+         "Position": {
+          "$type": "WorldPosition",
+          "x": {
+           "$type": "FixedPoint",
+           "Bits": 0
+          },
+          "y": {
+           "$type": "FixedPoint",
+           "Bits": 0
+          },
+          "z": {
+           "$type": "FixedPoint",
+           "Bits": 0
+          }
+         }
+        },
+        "LODMode": "Appearance",
+        "mesh": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "string",
+          "$value": "base\\vehicles\\special\\av_zetatech_atlus\\entities\\meshes\\av_zetatech_atlus__ext01_lights_siren.mesh"
+         },
+         "Flags": "Default"
+        },
+        "meshAppearance": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "default"
+        },
+        "name": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "lights_sirens"
+        },
+        "navigationImpact": {
+         "$type": "NavGenNavigationSetting",
+         "navmeshImpact": "Ignored"
+        },
+        "order": 0,
+        "overrideMeshNavigationImpact": 1,
+        "parentTransform": {
+         "HandleId": "46",
+         "Data": {
+          "$type": "entHardTransformBinding",
+          "bindName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "root"
+          },
+          "enabled": 1,
+          "enableMask": {
+           "$type": "entTagMask",
+           "excludedTags": {
+            "$type": "redTagList",
+            "tags": [
+             {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "NoBinding"
+             }
+            ]
+           },
+           "hardTags": {
+            "$type": "redTagList",
+            "tags": []
+           },
+           "softTags": {
+            "$type": "redTagList",
+            "tags": []
+           }
+          },
+          "slotName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "None"
+          }
+         }
+        },
+        "renderingPlaneAnimationParam": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "renderSceneLayerMask": "Default",
+        "skinning": {
+         "HandleId": "47",
+         "Data": {
+          "$type": "entSkinningBinding",
+          "bindName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "root"
+          },
+          "enabled": 1,
+          "enableMask": {
+           "$type": "entTagMask",
+           "excludedTags": {
+            "$type": "redTagList",
+            "tags": [
+             {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "NoBinding"
+             }
+            ]
+           },
+           "hardTags": {
+            "$type": "redTagList",
+            "tags": []
+           },
+           "softTags": {
+            "$type": "redTagList",
+            "tags": []
+           }
+          }
+         }
+        },
+        "useProxyMeshAsShadowMesh": 0,
+        "useSkinningLOD": 0,
+        "version": 1,
+        "visibilityAnimationParam": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        }
+       },
+       {
+        "$type": "vehicleLightComponent",
+        "allowDistantLight": 1,
+        "allowSeparateEmissiveColor": 0,
+        "areaRectSideA": 1,
+        "areaRectSideB": 1,
+        "areaShape": "ALS_Capsule",
+        "areaTwoSided": 1,
+        "attenuation": "LA_InverseSquare",
+        "autoHideDistance": 15,
+        "autoHideRange": 0,
+        "capsuleLength": 1,
+        "clampAttenuation": 0,
+        "colliderName": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "colliderTag": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "color": {
+         "$type": "Color",
+         "Alpha": 0,
+         "Blue": 0,
+         "Green": 0,
+         "Red": 0
+        },
+        "colorGroupSaturation": 100,
+        "contactShadows": "CSR_None",
+        "destructionEffect": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "string",
+          "$value": "base\\fx\\devices\\_damage\\street_lamps\\d_damage_street_lamp_destruction_01.effect"
+         },
+         "Flags": "Soft"
+        },
+        "directional": 0,
+        "emissiveColor": {
+         "$type": "Color",
+         "Alpha": 0,
+         "Blue": 0,
+         "Green": 0,
+         "Red": 0
+        },
+        "emissiveOnly": 1,
+        "enableContactShadows": 0,
+        "enableLocalShadows": 0,
+        "enableLocalShadowsForceStaticsOnly": 0,
+        "enableShadowAngleControl": 0,
+        "envColorGroup": "ECG_Default",
+        "EV": 0,
+        "flicker": {
+         "$type": "rendSLightFlickering",
+         "flickerPeriod": 0.200000003,
+         "flickerStrength": 0,
+         "positionOffset": 0
+        },
+        "forceLODLevel": -1,
+        "genericCurveSetOverride": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "uint64",
+          "$value": "0"
+         },
+         "Flags": "Default"
+        },
+        "group": "LG_Group0",
+        "highBeamConeMultiplier": 1,
+        "highBeamPitchAngle": 0,
+        "highBeamRadiusMultiplier": 2,
+        "id": "2309668048087670784",
+        "iesProfile": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "uint64",
+          "$value": "0"
+         },
+         "Flags": "Soft"
+        },
+        "initialTransform": null,
+        "innerAngle": 163.25,
+        "intensity": 180000,
+        "isDestructible": 1,
+        "isEnabled": 1,
+        "isReplicable": 0,
+        "lightChannel": "LC_Channel7, LC_Channel8, LC_ChannelWorld",
+        "lightType": "Head",
+        "localTransform": {
+         "$type": "WorldTransform",
+         "Orientation": {
+          "$type": "Quaternion",
+          "i": 0.2775262,
+          "j": 0.286551923,
+          "k": 0.637951851,
+          "r": 0.658699274
+         },
+         "Position": {
+          "$type": "WorldPosition",
+          "x": {
+           "$type": "FixedPoint",
+           "Bits": -110117
+          },
+          "y": {
+           "$type": "FixedPoint",
+           "Bits": 70988
+          },
+          "z": {
+           "$type": "FixedPoint",
+           "Bits": 347615
+          }
+         }
+        },
+        "loopCurve": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "police_a"
+        },
+        "loopTime": 1,
+        "materialZone": "Zero",
+        "meshBrokenAppearance": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "name": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "vehicleLight8135"
+        },
+        "noSpecular": 0,
+        "onStrength": 1,
+        "outerAngle": 191.409103,
+        "parentTransform": {
+         "HandleId": "48",
+         "Data": {
+          "$type": "entHardTransformBinding",
+          "bindName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "lights_sirens"
+          },
+          "enabled": 1,
+          "enableMask": {
+           "$type": "entTagMask",
+           "excludedTags": {
+            "$type": "redTagList",
+            "tags": [
+             {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "NoBinding"
+             }
+            ]
+           },
+           "hardTags": {
+            "$type": "redTagList",
+            "tags": []
+           },
+           "softTags": {
+            "$type": "redTagList",
+            "tags": []
+           }
+          },
+          "slotName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "None"
+          }
+         }
+        },
+        "pathTracingLightUsage": "PTLU_Everywhere",
+        "pathTracingOverrideScaleGI": 1,
+        "placedEditorData": null,
+        "portalAngleCutoff": 0,
+        "radius": 20,
+        "rayTracedShadowsPlatform": "RLSP_All",
+        "rayTracingContactShadowRange": -1,
+        "rayTracingIntensityScale": 1,
+        "rayTracingLightSourceRadius": -1,
+        "renderSceneLayerMask": "Default",
+        "roughnessBias": 0,
+        "rtxdiShadowStartingDistance": -1,
+        "scaleEnvProbes": 0,
+        "scaleGI": 0,
+        "scaleVolFog": 0,
+        "sceneDiffuse": 1,
+        "sceneSpecular": 0,
+        "sceneSpecularScale": 100,
+        "shadowAngle": -1,
+        "shadowFadeDistance": 10,
+        "shadowFadeRange": 5,
+        "shadowRadius": -1,
+        "shadowSoftnessMode": "LSSM_Default",
+        "softness": 2,
+        "sourceRadius": 0.0500000007,
+        "spotCapsule": 0,
+        "synchronizedLoop": 0,
+        "temperature": -1,
+        "turnOffCurve": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "turnOffTime": 0.300000012,
+        "turnOnByDefault": 0,
+        "turnOnCurve": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "turnOnTime": 0.300000012,
+        "type": "LT_Spot",
+        "unit": "LU_Lumen",
+        "useInEnvProbes": 0,
+        "useInFog": 0,
+        "useInGI": 0,
+        "useInParticles": 1,
+        "useInTransparents": 0
+       },
+       {
+        "$type": "vehicleLightComponent",
+        "allowDistantLight": 1,
+        "allowSeparateEmissiveColor": 0,
+        "areaRectSideA": 1,
+        "areaRectSideB": 1,
+        "areaShape": "ALS_Capsule",
+        "areaTwoSided": 1,
+        "attenuation": "LA_InverseSquare",
+        "autoHideDistance": 15,
+        "autoHideRange": 0,
+        "capsuleLength": 1,
+        "clampAttenuation": 0,
+        "colliderName": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "colliderTag": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "color": {
+         "$type": "Color",
+         "Alpha": 255,
+         "Blue": 255,
+         "Green": 15,
+         "Red": 1
+        },
+        "colorGroupSaturation": 100,
+        "contactShadows": "CSR_None",
+        "destructionEffect": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "string",
+          "$value": "base\\fx\\devices\\_damage\\street_lamps\\d_damage_street_lamp_destruction_01.effect"
+         },
+         "Flags": "Soft"
+        },
+        "directional": 0,
+        "emissiveColor": {
+         "$type": "Color",
+         "Alpha": 0,
+         "Blue": 0,
+         "Green": 0,
+         "Red": 0
+        },
+        "emissiveOnly": 1,
+        "enableContactShadows": 0,
+        "enableLocalShadows": 0,
+        "enableLocalShadowsForceStaticsOnly": 0,
+        "enableShadowAngleControl": 0,
+        "envColorGroup": "ECG_Default",
+        "EV": 0,
+        "flicker": {
+         "$type": "rendSLightFlickering",
+         "flickerPeriod": 0.200000003,
+         "flickerStrength": 0,
+         "positionOffset": 0
+        },
+        "forceLODLevel": -1,
+        "genericCurveSetOverride": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "uint64",
+          "$value": "0"
+         },
+         "Flags": "Default"
+        },
+        "group": "LG_Group0",
+        "highBeamConeMultiplier": 1,
+        "highBeamPitchAngle": 0,
+        "highBeamRadiusMultiplier": 2,
+        "id": "2309672245931663360",
+        "iesProfile": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "uint64",
+          "$value": "0"
+         },
+         "Flags": "Soft"
+        },
+        "initialTransform": null,
+        "innerAngle": 163.25,
+        "intensity": 180000,
+        "isDestructible": 1,
+        "isEnabled": 1,
+        "isReplicable": 0,
+        "lightChannel": "LC_Channel7, LC_Channel8, LC_ChannelWorld",
+        "lightType": "Head",
+        "localTransform": {
+         "$type": "WorldTransform",
+         "Orientation": {
+          "$type": "Quaternion",
+          "i": 0.573697329,
+          "j": 0.592355072,
+          "k": 0.393541247,
+          "r": 0.406339943
+         },
+         "Position": {
+          "$type": "WorldPosition",
+          "x": {
+           "$type": "FixedPoint",
+           "Bits": 116347
+          },
+          "y": {
+           "$type": "FixedPoint",
+           "Bits": 66182
+          },
+          "z": {
+           "$type": "FixedPoint",
+           "Bits": 341875
+          }
+         }
+        },
+        "loopCurve": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "police_b"
+        },
+        "loopTime": 1,
+        "materialZone": "One",
+        "meshBrokenAppearance": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "name": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "vehicleLight0175"
+        },
+        "noSpecular": 0,
+        "onStrength": 1,
+        "outerAngle": 191.409103,
+        "parentTransform": {
+         "HandleId": "49",
+         "Data": {
+          "$type": "entHardTransformBinding",
+          "bindName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "lights_sirens"
+          },
+          "enabled": 1,
+          "enableMask": {
+           "$type": "entTagMask",
+           "excludedTags": {
+            "$type": "redTagList",
+            "tags": [
+             {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "NoBinding"
+             }
+            ]
+           },
+           "hardTags": {
+            "$type": "redTagList",
+            "tags": []
+           },
+           "softTags": {
+            "$type": "redTagList",
+            "tags": []
+           }
+          },
+          "slotName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "None"
+          }
+         }
+        },
+        "pathTracingLightUsage": "PTLU_Everywhere",
+        "pathTracingOverrideScaleGI": 1,
+        "placedEditorData": null,
+        "portalAngleCutoff": 0,
+        "radius": 20,
+        "rayTracedShadowsPlatform": "RLSP_All",
+        "rayTracingContactShadowRange": -1,
+        "rayTracingIntensityScale": 1,
+        "rayTracingLightSourceRadius": -1,
+        "renderSceneLayerMask": "Default",
+        "roughnessBias": 0,
+        "rtxdiShadowStartingDistance": -1,
+        "scaleEnvProbes": 0,
+        "scaleGI": 0,
+        "scaleVolFog": 0,
+        "sceneDiffuse": 1,
+        "sceneSpecular": 0,
+        "sceneSpecularScale": 100,
+        "shadowAngle": -1,
+        "shadowFadeDistance": 10,
+        "shadowFadeRange": 5,
+        "shadowRadius": -1,
+        "shadowSoftnessMode": "LSSM_Default",
+        "softness": 2,
+        "sourceRadius": 0.0500000007,
+        "spotCapsule": 0,
+        "synchronizedLoop": 0,
+        "temperature": -1,
+        "turnOffCurve": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "turnOffTime": 0.300000012,
+        "turnOnByDefault": 0,
+        "turnOnCurve": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "turnOnTime": 0.300000012,
+        "type": "LT_Spot",
+        "unit": "LU_Lumen",
+        "useInEnvProbes": 0,
+        "useInFog": 0,
+        "useInGI": 0,
+        "useInParticles": 1,
+        "useInTransparents": 0
+       },
+       {
+        "$type": "vehicleLightComponent",
+        "allowDistantLight": 1,
+        "allowSeparateEmissiveColor": 0,
+        "areaRectSideA": 1,
+        "areaRectSideB": 1,
+        "areaShape": "ALS_Capsule",
+        "areaTwoSided": 1,
+        "attenuation": "LA_InverseSquare",
+        "autoHideDistance": 15,
+        "autoHideRange": 0,
+        "capsuleLength": 1,
+        "clampAttenuation": 0,
+        "colliderName": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "colliderTag": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "color": {
+         "$type": "Color",
+         "Alpha": 255,
+         "Blue": 0,
+         "Green": 0,
+         "Red": 255
+        },
+        "colorGroupSaturation": 100,
+        "contactShadows": "CSR_None",
+        "destructionEffect": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "string",
+          "$value": "base\\fx\\devices\\_damage\\street_lamps\\d_damage_street_lamp_destruction_01.effect"
+         },
+         "Flags": "Soft"
+        },
+        "directional": 0,
+        "emissiveColor": {
+         "$type": "Color",
+         "Alpha": 0,
+         "Blue": 0,
+         "Green": 0,
+         "Red": 0
+        },
+        "emissiveOnly": 1,
+        "enableContactShadows": 0,
+        "enableLocalShadows": 0,
+        "enableLocalShadowsForceStaticsOnly": 0,
+        "enableShadowAngleControl": 0,
+        "envColorGroup": "ECG_Default",
+        "EV": 0,
+        "flicker": {
+         "$type": "rendSLightFlickering",
+         "flickerPeriod": 0.200000003,
+         "flickerStrength": 0,
+         "positionOffset": 0
+        },
+        "forceLODLevel": -1,
+        "genericCurveSetOverride": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "uint64",
+          "$value": "0"
+         },
+         "Flags": "Default"
+        },
+        "group": "LG_Group0",
+        "highBeamConeMultiplier": 1,
+        "highBeamPitchAngle": 0,
+        "highBeamRadiusMultiplier": 2,
+        "id": "2309677535636873216",
+        "iesProfile": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "uint64",
+          "$value": "0"
+         },
+         "Flags": "Soft"
+        },
+        "initialTransform": null,
+        "innerAngle": 163.25,
+        "intensity": 180000,
+        "isDestructible": 1,
+        "isEnabled": 1,
+        "isReplicable": 0,
+        "lightChannel": "LC_Channel7, LC_Channel8, LC_ChannelWorld",
+        "lightType": "Head",
+        "localTransform": {
+         "$type": "WorldTransform",
+         "Orientation": {
+          "$type": "Quaternion",
+          "i": 0.600531816,
+          "j": 0.620062292,
+          "k": 0.351233363,
+          "r": 0.362656176
+         },
+         "Position": {
+          "$type": "WorldPosition",
+          "x": {
+           "$type": "FixedPoint",
+           "Bits": 122551
+          },
+          "y": {
+           "$type": "FixedPoint",
+           "Bits": -178615
+          },
+          "z": {
+           "$type": "FixedPoint",
+           "Bits": 344738
+          }
+         }
+        },
+        "loopCurve": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "police_b"
+        },
+        "loopTime": 1,
+        "materialZone": "Three",
+        "meshBrokenAppearance": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "name": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "vehicleLight4860"
+        },
+        "noSpecular": 0,
+        "onStrength": 1,
+        "outerAngle": 191.409103,
+        "parentTransform": {
+         "HandleId": "50",
+         "Data": {
+          "$type": "entHardTransformBinding",
+          "bindName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "lights_sirens"
+          },
+          "enabled": 1,
+          "enableMask": {
+           "$type": "entTagMask",
+           "excludedTags": {
+            "$type": "redTagList",
+            "tags": [
+             {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "NoBinding"
+             }
+            ]
+           },
+           "hardTags": {
+            "$type": "redTagList",
+            "tags": []
+           },
+           "softTags": {
+            "$type": "redTagList",
+            "tags": []
+           }
+          },
+          "slotName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "None"
+          }
+         }
+        },
+        "pathTracingLightUsage": "PTLU_Everywhere",
+        "pathTracingOverrideScaleGI": 1,
+        "placedEditorData": null,
+        "portalAngleCutoff": 0,
+        "radius": 20,
+        "rayTracedShadowsPlatform": "RLSP_All",
+        "rayTracingContactShadowRange": -1,
+        "rayTracingIntensityScale": 1,
+        "rayTracingLightSourceRadius": -1,
+        "renderSceneLayerMask": "Default",
+        "roughnessBias": 0,
+        "rtxdiShadowStartingDistance": -1,
+        "scaleEnvProbes": 0,
+        "scaleGI": 0,
+        "scaleVolFog": 0,
+        "sceneDiffuse": 1,
+        "sceneSpecular": 0,
+        "sceneSpecularScale": 100,
+        "shadowAngle": -1,
+        "shadowFadeDistance": 10,
+        "shadowFadeRange": 5,
+        "shadowRadius": -1,
+        "shadowSoftnessMode": "LSSM_Default",
+        "softness": 2,
+        "sourceRadius": 0.0500000007,
+        "spotCapsule": 0,
+        "synchronizedLoop": 0,
+        "temperature": -1,
+        "turnOffCurve": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "turnOffTime": 0.300000012,
+        "turnOnByDefault": 0,
+        "turnOnCurve": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "turnOnTime": 0.300000012,
+        "type": "LT_Spot",
+        "unit": "LU_Lumen",
+        "useInEnvProbes": 0,
+        "useInFog": 0,
+        "useInGI": 0,
+        "useInParticles": 1,
+        "useInTransparents": 0
+       },
+       {
+        "$type": "vehicleLightComponent",
+        "allowDistantLight": 1,
+        "allowSeparateEmissiveColor": 0,
+        "areaRectSideA": 1,
+        "areaRectSideB": 1,
+        "areaShape": "ALS_Capsule",
+        "areaTwoSided": 1,
+        "attenuation": "LA_InverseSquare",
+        "autoHideDistance": 15,
+        "autoHideRange": 0,
+        "capsuleLength": 1,
+        "clampAttenuation": 0,
+        "colliderName": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "colliderTag": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "color": {
+         "$type": "Color",
+         "Alpha": 0,
+         "Blue": 0,
+         "Green": 0,
+         "Red": 0
+        },
+        "colorGroupSaturation": 100,
+        "contactShadows": "CSR_None",
+        "destructionEffect": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "string",
+          "$value": "base\\fx\\devices\\_damage\\street_lamps\\d_damage_street_lamp_destruction_01.effect"
+         },
+         "Flags": "Soft"
+        },
+        "directional": 0,
+        "emissiveColor": {
+         "$type": "Color",
+         "Alpha": 0,
+         "Blue": 0,
+         "Green": 0,
+         "Red": 0
+        },
+        "emissiveOnly": 1,
+        "enableContactShadows": 0,
+        "enableLocalShadows": 0,
+        "enableLocalShadowsForceStaticsOnly": 0,
+        "enableShadowAngleControl": 0,
+        "envColorGroup": "ECG_Default",
+        "EV": 0,
+        "flicker": {
+         "$type": "rendSLightFlickering",
+         "flickerPeriod": 0.200000003,
+         "flickerStrength": 0,
+         "positionOffset": 0
+        },
+        "forceLODLevel": -1,
+        "genericCurveSetOverride": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "uint64",
+          "$value": "0"
+         },
+         "Flags": "Default"
+        },
+        "group": "LG_Group0",
+        "highBeamConeMultiplier": 1,
+        "highBeamPitchAngle": 0,
+        "highBeamRadiusMultiplier": 2,
+        "id": "2309677939900669952",
+        "iesProfile": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "uint64",
+          "$value": "0"
+         },
+         "Flags": "Soft"
+        },
+        "initialTransform": null,
+        "innerAngle": 163.25,
+        "intensity": 180000,
+        "isDestructible": 1,
+        "isEnabled": 1,
+        "isReplicable": 0,
+        "lightChannel": "LC_Channel7, LC_Channel8, LC_ChannelWorld",
+        "lightType": "Head",
+        "localTransform": {
+         "$type": "WorldTransform",
+         "Orientation": {
+          "$type": "Quaternion",
+          "i": 0.259256959,
+          "j": 0.267688513,
+          "k": 0.645592153,
+          "r": 0.666588008
+         },
+         "Position": {
+          "$type": "WorldPosition",
+          "x": {
+           "$type": "FixedPoint",
+           "Bits": -100864
+          },
+          "y": {
+           "$type": "FixedPoint",
+           "Bits": -163567
+          },
+          "z": {
+           "$type": "FixedPoint",
+           "Bits": 345925
+          }
+         }
+        },
+        "loopCurve": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "police_a"
+        },
+        "loopTime": 1,
+        "materialZone": "Two",
+        "meshBrokenAppearance": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "name": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "vehicleLight4610"
+        },
+        "noSpecular": 0,
+        "onStrength": 1,
+        "outerAngle": 191.409103,
+        "parentTransform": {
+         "HandleId": "51",
+         "Data": {
+          "$type": "entHardTransformBinding",
+          "bindName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "lights_sirens"
+          },
+          "enabled": 1,
+          "enableMask": {
+           "$type": "entTagMask",
+           "excludedTags": {
+            "$type": "redTagList",
+            "tags": [
+             {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "NoBinding"
+             }
+            ]
+           },
+           "hardTags": {
+            "$type": "redTagList",
+            "tags": []
+           },
+           "softTags": {
+            "$type": "redTagList",
+            "tags": []
+           }
+          },
+          "slotName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "None"
+          }
+         }
+        },
+        "pathTracingLightUsage": "PTLU_Everywhere",
+        "pathTracingOverrideScaleGI": 1,
+        "placedEditorData": null,
+        "portalAngleCutoff": 0,
+        "radius": 20,
+        "rayTracedShadowsPlatform": "RLSP_All",
+        "rayTracingContactShadowRange": -1,
+        "rayTracingIntensityScale": 1,
+        "rayTracingLightSourceRadius": -1,
+        "renderSceneLayerMask": "Default",
+        "roughnessBias": 0,
+        "rtxdiShadowStartingDistance": -1,
+        "scaleEnvProbes": 0,
+        "scaleGI": 0,
+        "scaleVolFog": 0,
+        "sceneDiffuse": 1,
+        "sceneSpecular": 0,
+        "sceneSpecularScale": 100,
+        "shadowAngle": -1,
+        "shadowFadeDistance": 10,
+        "shadowFadeRange": 5,
+        "shadowRadius": -1,
+        "shadowSoftnessMode": "LSSM_Default",
+        "softness": 2,
+        "sourceRadius": 0.0500000007,
+        "spotCapsule": 0,
+        "synchronizedLoop": 0,
+        "temperature": -1,
+        "turnOffCurve": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "turnOffTime": 0.300000012,
+        "turnOnByDefault": 0,
+        "turnOnCurve": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "turnOnTime": 0.300000012,
+        "type": "LT_Spot",
+        "unit": "LU_Lumen",
+        "useInEnvProbes": 0,
+        "useInFog": 0,
+        "useInGI": 0,
+        "useInParticles": 1,
+        "useInTransparents": 0
+       },
+       {
+        "$type": "vehicleLightComponent",
+        "allowDistantLight": 1,
+        "allowSeparateEmissiveColor": 0,
+        "areaRectSideA": 1,
+        "areaRectSideB": 1,
+        "areaShape": "ALS_Capsule",
+        "areaTwoSided": 1,
+        "attenuation": "LA_InverseSquare",
+        "autoHideDistance": 20,
+        "autoHideRange": 0,
+        "capsuleLength": 1,
+        "clampAttenuation": 0,
+        "colliderName": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "colliderTag": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "color": {
+         "$type": "Color",
+         "Alpha": 255,
+         "Blue": 161,
+         "Green": 161,
+         "Red": 255
+        },
+        "colorGroupSaturation": 100,
+        "contactShadows": "CSR_None",
+        "destructionEffect": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "string",
+          "$value": "base\\fx\\devices\\_damage\\street_lamps\\d_damage_street_lamp_destruction_01.effect"
+         },
+         "Flags": "Soft"
+        },
+        "directional": 0,
+        "emissiveColor": {
+         "$type": "Color",
+         "Alpha": 0,
+         "Blue": 0,
+         "Green": 0,
+         "Red": 0
+        },
+        "emissiveOnly": 0,
+        "enableContactShadows": 0,
+        "enableLocalShadows": 0,
+        "enableLocalShadowsForceStaticsOnly": 0,
+        "enableShadowAngleControl": 0,
+        "envColorGroup": "ECG_Default",
+        "EV": 0,
+        "flicker": {
+         "$type": "rendSLightFlickering",
+         "flickerPeriod": 0.200000003,
+         "flickerStrength": 0,
+         "positionOffset": 0
+        },
+        "forceLODLevel": -1,
+        "genericCurveSetOverride": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "uint64",
+          "$value": "0"
+         },
+         "Flags": "Default"
+        },
+        "group": "LG_Group0",
+        "highBeamConeMultiplier": 1,
+        "highBeamPitchAngle": 0,
+        "highBeamRadiusMultiplier": 2,
+        "id": "2309686312100552704",
+        "iesProfile": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "uint64",
+          "$value": "0"
+         },
+         "Flags": "Soft"
+        },
+        "initialTransform": null,
+        "innerAngle": 30,
+        "intensity": 2000,
+        "isDestructible": 1,
+        "isEnabled": 1,
+        "isReplicable": 0,
+        "lightChannel": "LC_Channel7, LC_Channel8, LC_ChannelWorld",
+        "lightType": "Head",
+        "localTransform": {
+         "$type": "WorldTransform",
+         "Orientation": {
+          "$type": "Quaternion",
+          "i": 0.301551342,
+          "j": 0,
+          "k": 0,
+          "r": 0.953449965
+         },
+         "Position": {
+          "$type": "WorldPosition",
+          "x": {
+           "$type": "FixedPoint",
+           "Bits": -39
+          },
+          "y": {
+           "$type": "FixedPoint",
+           "Bits": 268547
+          },
+          "z": {
+           "$type": "FixedPoint",
+           "Bits": 308771
+          }
+         }
+        },
+        "loopCurve": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "loopTime": 0,
+        "materialZone": "One",
+        "meshBrokenAppearance": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "name": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "vehicleLight1885"
+        },
+        "noSpecular": 0,
+        "onStrength": 1,
+        "outerAngle": 279.970123,
+        "parentTransform": {
+         "HandleId": "52",
+         "Data": {
+          "$type": "entHardTransformBinding",
+          "bindName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "lights_navmarkers"
+          },
+          "enabled": 1,
+          "enableMask": {
+           "$type": "entTagMask",
+           "excludedTags": {
+            "$type": "redTagList",
+            "tags": [
+             {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "NoBinding"
+             }
+            ]
+           },
+           "hardTags": {
+            "$type": "redTagList",
+            "tags": []
+           },
+           "softTags": {
+            "$type": "redTagList",
+            "tags": []
+           }
+          },
+          "slotName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "None"
+          }
+         }
+        },
+        "pathTracingLightUsage": "PTLU_Everywhere",
+        "pathTracingOverrideScaleGI": 1,
+        "placedEditorData": null,
+        "portalAngleCutoff": 0,
+        "radius": 5,
+        "rayTracedShadowsPlatform": "RLSP_All",
+        "rayTracingContactShadowRange": -1,
+        "rayTracingIntensityScale": 1,
+        "rayTracingLightSourceRadius": -1,
+        "renderSceneLayerMask": "Default",
+        "roughnessBias": 0,
+        "rtxdiShadowStartingDistance": -1,
+        "scaleEnvProbes": 0,
+        "scaleGI": 0,
+        "scaleVolFog": 0,
+        "sceneDiffuse": 1,
+        "sceneSpecular": 0,
+        "sceneSpecularScale": 100,
+        "shadowAngle": -1,
+        "shadowFadeDistance": 10,
+        "shadowFadeRange": 5,
+        "shadowRadius": -1,
+        "shadowSoftnessMode": "LSSM_Default",
+        "softness": 2,
+        "sourceRadius": 0.0500000007,
+        "spotCapsule": 1,
+        "synchronizedLoop": 0,
+        "temperature": -1,
+        "turnOffCurve": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "turnOffTime": 0.300000012,
+        "turnOnByDefault": 0,
+        "turnOnCurve": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "turnOnTime": 0.300000012,
+        "type": "LT_Area",
+        "unit": "LU_Nit",
+        "useInEnvProbes": 0,
+        "useInFog": 0,
+        "useInGI": 0,
+        "useInParticles": 1,
+        "useInTransparents": 0
+       },
+       {
+        "$type": "vehicleLightComponent",
+        "allowDistantLight": 1,
+        "allowSeparateEmissiveColor": 0,
+        "areaRectSideA": 1,
+        "areaRectSideB": 1,
+        "areaShape": "ALS_Capsule",
+        "areaTwoSided": 1,
+        "attenuation": "LA_InverseSquare",
+        "autoHideDistance": 15,
+        "autoHideRange": 0,
+        "capsuleLength": 1,
+        "clampAttenuation": 0,
+        "colliderName": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "colliderTag": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "color": {
+         "$type": "Color",
+         "Alpha": 0,
+         "Blue": 0,
+         "Green": 0,
+         "Red": 0
+        },
+        "colorGroupSaturation": 100,
+        "contactShadows": "CSR_None",
+        "destructionEffect": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "string",
+          "$value": "base\\fx\\devices\\_damage\\street_lamps\\d_damage_street_lamp_destruction_01.effect"
+         },
+         "Flags": "Soft"
+        },
+        "directional": 0,
+        "emissiveColor": {
+         "$type": "Color",
+         "Alpha": 0,
+         "Blue": 0,
+         "Green": 0,
+         "Red": 0
+        },
+        "emissiveOnly": 1,
+        "enableContactShadows": 0,
+        "enableLocalShadows": 0,
+        "enableLocalShadowsForceStaticsOnly": 0,
+        "enableShadowAngleControl": 0,
+        "envColorGroup": "ECG_Default",
+        "EV": 0,
+        "flicker": {
+         "$type": "rendSLightFlickering",
+         "flickerPeriod": 0.200000003,
+         "flickerStrength": 0,
+         "positionOffset": 0
+        },
+        "forceLODLevel": -1,
+        "genericCurveSetOverride": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "uint64",
+          "$value": "0"
+         },
+         "Flags": "Default"
+        },
+        "group": "LG_Group0",
+        "highBeamConeMultiplier": 1,
+        "highBeamPitchAngle": 0,
+        "highBeamRadiusMultiplier": 2,
+        "id": "2312482933465014272",
+        "iesProfile": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "uint64",
+          "$value": "0"
+         },
+         "Flags": "Soft"
+        },
+        "initialTransform": null,
+        "innerAngle": 30,
+        "intensity": 100,
+        "isDestructible": 1,
+        "isEnabled": 1,
+        "isReplicable": 0,
+        "lightChannel": "LC_Channel1, LC_Channel2, LC_Channel3, LC_Channel4, LC_Channel5, LC_Channel6, LC_Channel7, LC_Channel8, LC_ChannelWorld",
+        "lightType": "Head",
+        "localTransform": {
+         "$type": "WorldTransform",
+         "Orientation": {
+          "$type": "Quaternion",
+          "i": 0,
+          "j": 0,
+          "k": 0,
+          "r": 1
+         },
+         "Position": {
+          "$type": "WorldPosition",
+          "x": {
+           "$type": "FixedPoint",
+           "Bits": 3783
+          },
+          "y": {
+           "$type": "FixedPoint",
+           "Bits": -504203
+          },
+          "z": {
+           "$type": "FixedPoint",
+           "Bits": 282303
+          }
+         }
+        },
+        "loopCurve": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "loopTime": 0,
+        "materialZone": "Two",
+        "meshBrokenAppearance": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "name": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "vehicleLight6331"
+        },
+        "noSpecular": 0,
+        "onStrength": 1,
+        "outerAngle": 45,
+        "parentTransform": {
+         "HandleId": "53",
+         "Data": {
+          "$type": "entHardTransformBinding",
+          "bindName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "lights_navmarkers"
+          },
+          "enabled": 1,
+          "enableMask": {
+           "$type": "entTagMask",
+           "excludedTags": {
+            "$type": "redTagList",
+            "tags": [
+             {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "NoBinding"
+             }
+            ]
+           },
+           "hardTags": {
+            "$type": "redTagList",
+            "tags": []
+           },
+           "softTags": {
+            "$type": "redTagList",
+            "tags": []
+           }
+          },
+          "slotName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "None"
+          }
+         }
+        },
+        "pathTracingLightUsage": "PTLU_Everywhere",
+        "pathTracingOverrideScaleGI": 1,
+        "placedEditorData": null,
+        "portalAngleCutoff": 0,
+        "radius": 5,
+        "rayTracedShadowsPlatform": "RLSP_All",
+        "rayTracingContactShadowRange": -1,
+        "rayTracingIntensityScale": 1,
+        "rayTracingLightSourceRadius": -1,
+        "renderSceneLayerMask": "Default",
+        "roughnessBias": 0,
+        "rtxdiShadowStartingDistance": -1,
+        "scaleEnvProbes": 100,
+        "scaleGI": 100,
+        "scaleVolFog": 0,
+        "sceneDiffuse": 1,
+        "sceneSpecular": 0,
+        "sceneSpecularScale": 100,
+        "shadowAngle": -1,
+        "shadowFadeDistance": 10,
+        "shadowFadeRange": 5,
+        "shadowRadius": -1,
+        "shadowSoftnessMode": "LSSM_Default",
+        "softness": 2,
+        "sourceRadius": 0.0500000007,
+        "spotCapsule": 0,
+        "synchronizedLoop": 0,
+        "temperature": -1,
+        "turnOffCurve": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "turnOffTime": 0.300000012,
+        "turnOnByDefault": 0,
+        "turnOnCurve": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "turnOnTime": 0.300000012,
+        "type": "LT_Point",
+        "unit": "LU_Lumen",
+        "useInEnvProbes": 0,
+        "useInFog": 0,
+        "useInGI": 0,
+        "useInParticles": 1,
+        "useInTransparents": 1
+       },
+       {
+        "$type": "entPhysicalSkinnedMeshComponent",
+        "acceptDismemberment": 1,
+        "autoHideDistance": 0,
+        "castLocalShadows": "Always",
+        "castShadows": "Always",
+        "chunkMask": "9223372036854775807",
+        "filterData": {
+         "HandleId": "54",
+         "Data": {
+          "$type": "physicsFilterData",
+          "customFilterData": null,
+          "preset": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "None"
+          },
+          "queryFilter": {
+           "$type": "physicsQueryFilter",
+           "mask1": "0",
+           "mask2": "0"
+          },
+          "simulationFilter": {
+           "$type": "physicsSimulationFilter",
+           "mask1": "0",
+           "mask2": "0"
+          }
+         }
+        },
+        "filterDataSource": "Collider",
+        "forcedLodDistance": "Default",
+        "forceLODLevel": -1,
+        "id": "2321572064137760768",
+        "isEnabled": 1,
+        "isReplicable": 0,
+        "localTransform": {
+         "$type": "WorldTransform",
+         "Orientation": {
+          "$type": "Quaternion",
+          "i": 0,
+          "j": 0,
+          "k": 0,
+          "r": 1
+         },
+         "Position": {
+          "$type": "WorldPosition",
+          "x": {
+           "$type": "FixedPoint",
+           "Bits": 0
+          },
+          "y": {
+           "$type": "FixedPoint",
+           "Bits": 0
+          },
+          "z": {
+           "$type": "FixedPoint",
+           "Bits": 0
+          }
+         }
+        },
+        "LODMode": "Appearance",
+        "mesh": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "string",
+          "$value": "base\\vehicles\\special\\av_zetatech_atlus\\entities\\meshes\\av_zetatech_atlus__ext01_body_01.mesh"
+         },
+         "Flags": "Default"
+        },
+        "meshAppearance": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "default"
+        },
+        "name": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "av_zetatech_atlus__ext01_body_01"
+        },
+        "navigationImpact": {
+         "$type": "NavGenNavigationSetting",
+         "navmeshImpact": "Ignored"
+        },
+        "order": 0,
+        "overrideMeshNavigationImpact": 1,
+        "parentTransform": {
+         "HandleId": "55",
+         "Data": {
+          "$type": "entHardTransformBinding",
+          "bindName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "root"
+          },
+          "enabled": 1,
+          "enableMask": {
+           "$type": "entTagMask",
+           "excludedTags": {
+            "$type": "redTagList",
+            "tags": [
+             {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "NoBinding"
+             }
+            ]
+           },
+           "hardTags": {
+            "$type": "redTagList",
+            "tags": []
+           },
+           "softTags": {
+            "$type": "redTagList",
+            "tags": []
+           }
+          },
+          "slotName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "None"
+          }
+         }
+        },
+        "renderingPlaneAnimationParam": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "renderSceneLayerMask": "Default",
+        "simulationType": "Kinematic",
+        "skinning": {
+         "HandleId": "56",
+         "Data": {
+          "$type": "entSkinningBinding",
+          "bindName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "root"
+          },
+          "enabled": 1,
+          "enableMask": {
+           "$type": "entTagMask",
+           "excludedTags": {
+            "$type": "redTagList",
+            "tags": [
+             {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "NoBinding"
+             }
+            ]
+           },
+           "hardTags": {
+            "$type": "redTagList",
+            "tags": []
+           },
+           "softTags": {
+            "$type": "redTagList",
+            "tags": []
+           }
+          }
+         }
+        },
+        "startInactive": 0,
+        "useProxyMeshAsShadowMesh": 0,
+        "useResourceSimulationType": 0,
+        "useSkinningLOD": 0,
+        "version": 1,
+        "visibilityAnimationParam": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        }
+       },
+       {
+        "$type": "vehicleLightComponent",
+        "allowDistantLight": 1,
+        "allowSeparateEmissiveColor": 0,
+        "areaRectSideA": 1,
+        "areaRectSideB": 1,
+        "areaShape": "ALS_Capsule",
+        "areaTwoSided": 1,
+        "attenuation": "LA_InverseSquare",
+        "autoHideDistance": 15,
+        "autoHideRange": 0,
+        "capsuleLength": 1,
+        "clampAttenuation": 0,
+        "colliderName": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "colliderTag": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "color": {
+         "$type": "Color",
+         "Alpha": 255,
+         "Blue": 79,
+         "Green": 79,
+         "Red": 255
+        },
+        "colorGroupSaturation": 100,
+        "contactShadows": "CSR_None",
+        "destructionEffect": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "string",
+          "$value": "base\\fx\\devices\\_damage\\street_lamps\\d_damage_street_lamp_destruction_01.effect"
+         },
+         "Flags": "Soft"
+        },
+        "directional": 0,
+        "emissiveColor": {
+         "$type": "Color",
+         "Alpha": 0,
+         "Blue": 0,
+         "Green": 0,
+         "Red": 0
+        },
+        "emissiveOnly": 1,
+        "enableContactShadows": 0,
+        "enableLocalShadows": 0,
+        "enableLocalShadowsForceStaticsOnly": 0,
+        "enableShadowAngleControl": 0,
+        "envColorGroup": "ECG_Default",
+        "EV": 0,
+        "flicker": {
+         "$type": "rendSLightFlickering",
+         "flickerPeriod": 0.200000003,
+         "flickerStrength": 0,
+         "positionOffset": 0
+        },
+        "forceLODLevel": -1,
+        "genericCurveSetOverride": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "uint64",
+          "$value": "0"
+         },
+         "Flags": "Default"
+        },
+        "group": "LG_Group0",
+        "highBeamConeMultiplier": 1,
+        "highBeamPitchAngle": 0,
+        "highBeamRadiusMultiplier": 2,
+        "id": "2309674565851537408",
+        "iesProfile": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "uint64",
+          "$value": "0"
+         },
+         "Flags": "Soft"
+        },
+        "initialTransform": null,
+        "innerAngle": 30,
+        "intensity": 100,
+        "isDestructible": 1,
+        "isEnabled": 1,
+        "isReplicable": 0,
+        "lightChannel": "LC_Channel1, LC_Channel2, LC_Channel3, LC_Channel4, LC_Channel5, LC_Channel6, LC_Channel7, LC_Channel8, LC_ChannelWorld",
+        "lightType": "Head",
+        "localTransform": {
+         "$type": "WorldTransform",
+         "Orientation": {
+          "$type": "Quaternion",
+          "i": 0,
+          "j": 0,
+          "k": 0,
+          "r": 1
+         },
+         "Position": {
+          "$type": "WorldPosition",
+          "x": {
+           "$type": "FixedPoint",
+           "Bits": 138883
+          },
+          "y": {
+           "$type": "FixedPoint",
+           "Bits": 241009
+          },
+          "z": {
+           "$type": "FixedPoint",
+           "Bits": 289794
+          }
+         }
+        },
+        "loopCurve": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "police_a"
+        },
+        "loopTime": 1,
+        "materialZone": "Three",
+        "meshBrokenAppearance": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "name": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "vehicleLight2414"
+        },
+        "noSpecular": 0,
+        "onStrength": 1,
+        "outerAngle": 45,
+        "parentTransform": {
+         "HandleId": "57",
+         "Data": {
+          "$type": "entHardTransformBinding",
+          "bindName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "av_zetatech_atlus__ext01_engines_01"
+          },
+          "enabled": 1,
+          "enableMask": {
+           "$type": "entTagMask",
+           "excludedTags": {
+            "$type": "redTagList",
+            "tags": [
+             {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "NoBinding"
+             }
+            ]
+           },
+           "hardTags": {
+            "$type": "redTagList",
+            "tags": []
+           },
+           "softTags": {
+            "$type": "redTagList",
+            "tags": []
+           }
+          },
+          "slotName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "None"
+          }
+         }
+        },
+        "pathTracingLightUsage": "PTLU_Everywhere",
+        "pathTracingOverrideScaleGI": 1,
+        "placedEditorData": null,
+        "portalAngleCutoff": 0,
+        "radius": 5,
+        "rayTracedShadowsPlatform": "RLSP_All",
+        "rayTracingContactShadowRange": -1,
+        "rayTracingIntensityScale": 1,
+        "rayTracingLightSourceRadius": -1,
+        "renderSceneLayerMask": "Default",
+        "roughnessBias": 0,
+        "rtxdiShadowStartingDistance": -1,
+        "scaleEnvProbes": 100,
+        "scaleGI": 100,
+        "scaleVolFog": 0,
+        "sceneDiffuse": 1,
+        "sceneSpecular": 0,
+        "sceneSpecularScale": 100,
+        "shadowAngle": -1,
+        "shadowFadeDistance": 10,
+        "shadowFadeRange": 5,
+        "shadowRadius": -1,
+        "shadowSoftnessMode": "LSSM_Default",
+        "softness": 2,
+        "sourceRadius": 0.0500000007,
+        "spotCapsule": 0,
+        "synchronizedLoop": 0,
+        "temperature": -1,
+        "turnOffCurve": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "turnOffTime": 0.300000012,
+        "turnOnByDefault": 0,
+        "turnOnCurve": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "turnOnTime": 0.300000012,
+        "type": "LT_Point",
+        "unit": "LU_Lumen",
+        "useInEnvProbes": 0,
+        "useInFog": 0,
+        "useInGI": 0,
+        "useInParticles": 1,
+        "useInTransparents": 1
+       },
+       {
+        "$type": "vehicleLightComponent",
+        "allowDistantLight": 1,
+        "allowSeparateEmissiveColor": 0,
+        "areaRectSideA": 1,
+        "areaRectSideB": 1,
+        "areaShape": "ALS_Capsule",
+        "areaTwoSided": 1,
+        "attenuation": "LA_InverseSquare",
+        "autoHideDistance": 15,
+        "autoHideRange": 0,
+        "capsuleLength": 1,
+        "clampAttenuation": 0,
+        "colliderName": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "colliderTag": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "color": {
+         "$type": "Color",
+         "Alpha": 255,
+         "Blue": 79,
+         "Green": 79,
+         "Red": 255
+        },
+        "colorGroupSaturation": 100,
+        "contactShadows": "CSR_None",
+        "destructionEffect": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "string",
+          "$value": "base\\fx\\devices\\_damage\\street_lamps\\d_damage_street_lamp_destruction_01.effect"
+         },
+         "Flags": "Soft"
+        },
+        "directional": 0,
+        "emissiveColor": {
+         "$type": "Color",
+         "Alpha": 0,
+         "Blue": 0,
+         "Green": 0,
+         "Red": 0
+        },
+        "emissiveOnly": 0,
+        "enableContactShadows": 0,
+        "enableLocalShadows": 0,
+        "enableLocalShadowsForceStaticsOnly": 0,
+        "enableShadowAngleControl": 0,
+        "envColorGroup": "ECG_Default",
+        "EV": 0,
+        "flicker": {
+         "$type": "rendSLightFlickering",
+         "flickerPeriod": 0.200000003,
+         "flickerStrength": 0,
+         "positionOffset": 0
+        },
+        "forceLODLevel": -1,
+        "genericCurveSetOverride": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "uint64",
+          "$value": "0"
+         },
+         "Flags": "Default"
+        },
+        "group": "LG_Group0",
+        "highBeamConeMultiplier": 1,
+        "highBeamPitchAngle": 0,
+        "highBeamRadiusMultiplier": 2,
+        "id": "2309674659602620416",
+        "iesProfile": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "uint64",
+          "$value": "0"
+         },
+         "Flags": "Soft"
+        },
+        "initialTransform": null,
+        "innerAngle": 234.146515,
+        "intensity": 2000,
+        "isDestructible": 1,
+        "isEnabled": 1,
+        "isReplicable": 0,
+        "lightChannel": "LC_Channel7, LC_Channel8, LC_ChannelWorld",
+        "lightType": "Head",
+        "localTransform": {
+         "$type": "WorldTransform",
+         "Orientation": {
+          "$type": "Quaternion",
+          "i": 0.717286766,
+          "j": 0,
+          "k": 0,
+          "r": 0.696778178
+         },
+         "Position": {
+          "$type": "WorldPosition",
+          "x": {
+           "$type": "FixedPoint",
+           "Bits": -188098
+          },
+          "y": {
+           "$type": "FixedPoint",
+           "Bits": -394712
+          },
+          "z": {
+           "$type": "FixedPoint",
+           "Bits": 232310
+          }
+         }
+        },
+        "loopCurve": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "police_a"
+        },
+        "loopTime": 1,
+        "materialZone": "Two",
+        "meshBrokenAppearance": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "name": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "vehicleLight3556"
+        },
+        "noSpecular": 0,
+        "onStrength": 1,
+        "outerAngle": 266.374115,
+        "parentTransform": {
+         "HandleId": "58",
+         "Data": {
+          "$type": "entHardTransformBinding",
+          "bindName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "av_zetatech_atlus__ext01_engines_01"
+          },
+          "enabled": 1,
+          "enableMask": {
+           "$type": "entTagMask",
+           "excludedTags": {
+            "$type": "redTagList",
+            "tags": [
+             {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "NoBinding"
+             }
+            ]
+           },
+           "hardTags": {
+            "$type": "redTagList",
+            "tags": []
+           },
+           "softTags": {
+            "$type": "redTagList",
+            "tags": []
+           }
+          },
+          "slotName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "None"
+          }
+         }
+        },
+        "pathTracingLightUsage": "PTLU_Everywhere",
+        "pathTracingOverrideScaleGI": 1,
+        "placedEditorData": null,
+        "portalAngleCutoff": 0,
+        "radius": 15,
+        "rayTracedShadowsPlatform": "RLSP_All",
+        "rayTracingContactShadowRange": -1,
+        "rayTracingIntensityScale": 1,
+        "rayTracingLightSourceRadius": -1,
+        "renderSceneLayerMask": "Default",
+        "roughnessBias": 0,
+        "rtxdiShadowStartingDistance": -1,
+        "scaleEnvProbes": 0,
+        "scaleGI": 0,
+        "scaleVolFog": 0,
+        "sceneDiffuse": 1,
+        "sceneSpecular": 0,
+        "sceneSpecularScale": 100,
+        "shadowAngle": -1,
+        "shadowFadeDistance": 10,
+        "shadowFadeRange": 5,
+        "shadowRadius": -1,
+        "shadowSoftnessMode": "LSSM_Default",
+        "softness": 2,
+        "sourceRadius": 0.0500000007,
+        "spotCapsule": 0,
+        "synchronizedLoop": 0,
+        "temperature": -1,
+        "turnOffCurve": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "turnOffTime": 0.300000012,
+        "turnOnByDefault": 0,
+        "turnOnCurve": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "turnOnTime": 0.300000012,
+        "type": "LT_Spot",
+        "unit": "LU_Lumen",
+        "useInEnvProbes": 0,
+        "useInFog": 0,
+        "useInGI": 0,
+        "useInParticles": 1,
+        "useInTransparents": 0
+       },
+       {
+        "$type": "vehicleLightComponent",
+        "allowDistantLight": 1,
+        "allowSeparateEmissiveColor": 0,
+        "areaRectSideA": 1,
+        "areaRectSideB": 1,
+        "areaShape": "ALS_Capsule",
+        "areaTwoSided": 1,
+        "attenuation": "LA_InverseSquare",
+        "autoHideDistance": 15,
+        "autoHideRange": 0,
+        "capsuleLength": 1,
+        "clampAttenuation": 0,
+        "colliderName": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "colliderTag": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "color": {
+         "$type": "Color",
+         "Alpha": 255,
+         "Blue": 255,
+         "Green": 79,
+         "Red": 76
+        },
+        "colorGroupSaturation": 100,
+        "contactShadows": "CSR_None",
+        "destructionEffect": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "string",
+          "$value": "base\\fx\\devices\\_damage\\street_lamps\\d_damage_street_lamp_destruction_01.effect"
+         },
+         "Flags": "Soft"
+        },
+        "directional": 0,
+        "emissiveColor": {
+         "$type": "Color",
+         "Alpha": 0,
+         "Blue": 0,
+         "Green": 0,
+         "Red": 0
+        },
+        "emissiveOnly": 1,
+        "enableContactShadows": 0,
+        "enableLocalShadows": 0,
+        "enableLocalShadowsForceStaticsOnly": 0,
+        "enableShadowAngleControl": 0,
+        "envColorGroup": "ECG_Default",
+        "EV": 0,
+        "flicker": {
+         "$type": "rendSLightFlickering",
+         "flickerPeriod": 0.200000003,
+         "flickerStrength": 0,
+         "positionOffset": 0
+        },
+        "forceLODLevel": -1,
+        "genericCurveSetOverride": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "uint64",
+          "$value": "0"
+         },
+         "Flags": "Default"
+        },
+        "group": "LG_Group0",
+        "highBeamConeMultiplier": 1,
+        "highBeamPitchAngle": 0,
+        "highBeamRadiusMultiplier": 2,
+        "id": "2309674763856240640",
+        "iesProfile": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "uint64",
+          "$value": "0"
+         },
+         "Flags": "Soft"
+        },
+        "initialTransform": null,
+        "innerAngle": 30,
+        "intensity": 100,
+        "isDestructible": 1,
+        "isEnabled": 1,
+        "isReplicable": 0,
+        "lightChannel": "LC_Channel1, LC_Channel2, LC_Channel3, LC_Channel4, LC_Channel5, LC_Channel6, LC_Channel7, LC_Channel8, LC_ChannelWorld",
+        "lightType": "Head",
+        "localTransform": {
+         "$type": "WorldTransform",
+         "Orientation": {
+          "$type": "Quaternion",
+          "i": 0,
+          "j": 0,
+          "k": 0,
+          "r": 1
+         },
+         "Position": {
+          "$type": "WorldPosition",
+          "x": {
+           "$type": "FixedPoint",
+           "Bits": 157309
+          },
+          "y": {
+           "$type": "FixedPoint",
+           "Bits": -381959
+          },
+          "z": {
+           "$type": "FixedPoint",
+           "Bits": 229381
+          }
+         }
+        },
+        "loopCurve": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "police_b"
+        },
+        "loopTime": 1,
+        "materialZone": "Zero",
+        "meshBrokenAppearance": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "name": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "vehicleLight8147"
+        },
+        "noSpecular": 0,
+        "onStrength": 1,
+        "outerAngle": 45,
+        "parentTransform": {
+         "HandleId": "59",
+         "Data": {
+          "$type": "entHardTransformBinding",
+          "bindName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "av_zetatech_atlus__ext01_engines_01"
+          },
+          "enabled": 1,
+          "enableMask": {
+           "$type": "entTagMask",
+           "excludedTags": {
+            "$type": "redTagList",
+            "tags": [
+             {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "NoBinding"
+             }
+            ]
+           },
+           "hardTags": {
+            "$type": "redTagList",
+            "tags": []
+           },
+           "softTags": {
+            "$type": "redTagList",
+            "tags": []
+           }
+          },
+          "slotName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "None"
+          }
+         }
+        },
+        "pathTracingLightUsage": "PTLU_Everywhere",
+        "pathTracingOverrideScaleGI": 1,
+        "placedEditorData": null,
+        "portalAngleCutoff": 0,
+        "radius": 5,
+        "rayTracedShadowsPlatform": "RLSP_All",
+        "rayTracingContactShadowRange": -1,
+        "rayTracingIntensityScale": 1,
+        "rayTracingLightSourceRadius": -1,
+        "renderSceneLayerMask": "Default",
+        "roughnessBias": 0,
+        "rtxdiShadowStartingDistance": -1,
+        "scaleEnvProbes": 100,
+        "scaleGI": 100,
+        "scaleVolFog": 0,
+        "sceneDiffuse": 1,
+        "sceneSpecular": 0,
+        "sceneSpecularScale": 100,
+        "shadowAngle": -1,
+        "shadowFadeDistance": 10,
+        "shadowFadeRange": 5,
+        "shadowRadius": -1,
+        "shadowSoftnessMode": "LSSM_Default",
+        "softness": 2,
+        "sourceRadius": 0.0500000007,
+        "spotCapsule": 0,
+        "synchronizedLoop": 0,
+        "temperature": -1,
+        "turnOffCurve": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "turnOffTime": 0.300000012,
+        "turnOnByDefault": 0,
+        "turnOnCurve": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "turnOnTime": 0.300000012,
+        "type": "LT_Point",
+        "unit": "LU_Lumen",
+        "useInEnvProbes": 0,
+        "useInFog": 0,
+        "useInGI": 0,
+        "useInParticles": 1,
+        "useInTransparents": 1
+       },
+       {
+        "$type": "vehicleLightComponent",
+        "allowDistantLight": 1,
+        "allowSeparateEmissiveColor": 0,
+        "areaRectSideA": 1,
+        "areaRectSideB": 1,
+        "areaShape": "ALS_Capsule",
+        "areaTwoSided": 1,
+        "attenuation": "LA_InverseSquare",
+        "autoHideDistance": 15,
+        "autoHideRange": 0,
+        "capsuleLength": 1,
+        "clampAttenuation": 0,
+        "colliderName": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "colliderTag": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "color": {
+         "$type": "Color",
+         "Alpha": 255,
+         "Blue": 255,
+         "Green": 79,
+         "Red": 76
+        },
+        "colorGroupSaturation": 100,
+        "contactShadows": "CSR_None",
+        "destructionEffect": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "string",
+          "$value": "base\\fx\\devices\\_damage\\street_lamps\\d_damage_street_lamp_destruction_01.effect"
+         },
+         "Flags": "Soft"
+        },
+        "directional": 0,
+        "emissiveColor": {
+         "$type": "Color",
+         "Alpha": 0,
+         "Blue": 0,
+         "Green": 0,
+         "Red": 0
+        },
+        "emissiveOnly": 0,
+        "enableContactShadows": 0,
+        "enableLocalShadows": 0,
+        "enableLocalShadowsForceStaticsOnly": 0,
+        "enableShadowAngleControl": 0,
+        "envColorGroup": "ECG_Default",
+        "EV": 0,
+        "flicker": {
+         "$type": "rendSLightFlickering",
+         "flickerPeriod": 0.200000003,
+         "flickerStrength": 0,
+         "positionOffset": 0
+        },
+        "forceLODLevel": -1,
+        "genericCurveSetOverride": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "uint64",
+          "$value": "0"
+         },
+         "Flags": "Default"
+        },
+        "group": "LG_Group0",
+        "highBeamConeMultiplier": 1,
+        "highBeamPitchAngle": 0,
+        "highBeamRadiusMultiplier": 2,
+        "id": "2309674763889795072",
+        "iesProfile": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "uint64",
+          "$value": "0"
+         },
+         "Flags": "Soft"
+        },
+        "initialTransform": null,
+        "innerAngle": 234.146515,
+        "intensity": 2000,
+        "isDestructible": 1,
+        "isEnabled": 1,
+        "isReplicable": 0,
+        "lightChannel": "LC_Channel7, LC_Channel8, LC_ChannelWorld",
+        "lightType": "Head",
+        "localTransform": {
+         "$type": "WorldTransform",
+         "Orientation": {
+          "$type": "Quaternion",
+          "i": 0.713388383,
+          "j": 0,
+          "k": 0,
+          "r": 0.700768888
+         },
+         "Position": {
+          "$type": "WorldPosition",
+          "x": {
+           "$type": "FixedPoint",
+           "Bits": -191276
+          },
+          "y": {
+           "$type": "FixedPoint",
+           "Bits": 278081
+          },
+          "z": {
+           "$type": "FixedPoint",
+           "Bits": 238945
+          }
+         }
+        },
+        "loopCurve": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "police_b"
+        },
+        "loopTime": 1,
+        "materialZone": "One",
+        "meshBrokenAppearance": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "name": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "vehicleLight0447"
+        },
+        "noSpecular": 0,
+        "onStrength": 1,
+        "outerAngle": 266.374115,
+        "parentTransform": {
+         "HandleId": "60",
+         "Data": {
+          "$type": "entHardTransformBinding",
+          "bindName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "av_zetatech_atlus__ext01_engines_01"
+          },
+          "enabled": 1,
+          "enableMask": {
+           "$type": "entTagMask",
+           "excludedTags": {
+            "$type": "redTagList",
+            "tags": [
+             {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "NoBinding"
+             }
+            ]
+           },
+           "hardTags": {
+            "$type": "redTagList",
+            "tags": []
+           },
+           "softTags": {
+            "$type": "redTagList",
+            "tags": []
+           }
+          },
+          "slotName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "None"
+          }
+         }
+        },
+        "pathTracingLightUsage": "PTLU_Everywhere",
+        "pathTracingOverrideScaleGI": 1,
+        "placedEditorData": null,
+        "portalAngleCutoff": 0,
+        "radius": 15,
+        "rayTracedShadowsPlatform": "RLSP_All",
+        "rayTracingContactShadowRange": -1,
+        "rayTracingIntensityScale": 1,
+        "rayTracingLightSourceRadius": -1,
+        "renderSceneLayerMask": "Default",
+        "roughnessBias": 0,
+        "rtxdiShadowStartingDistance": -1,
+        "scaleEnvProbes": 0,
+        "scaleGI": 0,
+        "scaleVolFog": 0,
+        "sceneDiffuse": 1,
+        "sceneSpecular": 0,
+        "sceneSpecularScale": 100,
+        "shadowAngle": -1,
+        "shadowFadeDistance": 10,
+        "shadowFadeRange": 5,
+        "shadowRadius": -1,
+        "shadowSoftnessMode": "LSSM_Default",
+        "softness": 2,
+        "sourceRadius": 0.0500000007,
+        "spotCapsule": 0,
+        "synchronizedLoop": 0,
+        "temperature": -1,
+        "turnOffCurve": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "turnOffTime": 0.300000012,
+        "turnOnByDefault": 0,
+        "turnOnCurve": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "turnOnTime": 0.300000012,
+        "type": "LT_Spot",
+        "unit": "LU_Lumen",
+        "useInEnvProbes": 0,
+        "useInFog": 0,
+        "useInGI": 0,
+        "useInParticles": 1,
+        "useInTransparents": 0
+       },
+       {
+        "$type": "entPhysicalSkinnedMeshComponent",
+        "acceptDismemberment": 1,
+        "autoHideDistance": 0,
+        "castLocalShadows": "Always",
+        "castShadows": "Always",
+        "chunkMask": "9223372036854775807",
+        "filterData": {
+         "HandleId": "61",
+         "Data": {
+          "$type": "physicsFilterData",
+          "customFilterData": null,
+          "preset": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "None"
+          },
+          "queryFilter": {
+           "$type": "physicsQueryFilter",
+           "mask1": "0",
+           "mask2": "0"
+          },
+          "simulationFilter": {
+           "$type": "physicsSimulationFilter",
+           "mask1": "0",
+           "mask2": "0"
+          }
+         }
+        },
+        "filterDataSource": "Collider",
+        "forcedLodDistance": "Default",
+        "forceLODLevel": -1,
+        "id": "2321576390444896256",
+        "isEnabled": 1,
+        "isReplicable": 0,
+        "localTransform": {
+         "$type": "WorldTransform",
+         "Orientation": {
+          "$type": "Quaternion",
+          "i": 0,
+          "j": 0,
+          "k": 0,
+          "r": 1
+         },
+         "Position": {
+          "$type": "WorldPosition",
+          "x": {
+           "$type": "FixedPoint",
+           "Bits": 0
+          },
+          "y": {
+           "$type": "FixedPoint",
+           "Bits": 0
+          },
+          "z": {
+           "$type": "FixedPoint",
+           "Bits": 0
+          }
+         }
+        },
+        "LODMode": "Appearance",
+        "mesh": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "string",
+          "$value": "base\\vehicles\\special\\av_zetatech_atlus\\entities\\meshes\\av_zetatech_atlus__ext01_engines_01.mesh"
+         },
+         "Flags": "Default"
+        },
+        "meshAppearance": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "default"
+        },
+        "name": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "av_zetatech_atlus__ext01_engines_01"
+        },
+        "navigationImpact": {
+         "$type": "NavGenNavigationSetting",
+         "navmeshImpact": "Ignored"
+        },
+        "order": 0,
+        "overrideMeshNavigationImpact": 1,
+        "parentTransform": {
+         "HandleId": "62",
+         "Data": {
+          "$type": "entHardTransformBinding",
+          "bindName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "root"
+          },
+          "enabled": 1,
+          "enableMask": {
+           "$type": "entTagMask",
+           "excludedTags": {
+            "$type": "redTagList",
+            "tags": [
+             {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "NoBinding"
+             }
+            ]
+           },
+           "hardTags": {
+            "$type": "redTagList",
+            "tags": []
+           },
+           "softTags": {
+            "$type": "redTagList",
+            "tags": []
+           }
+          },
+          "slotName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "None"
+          }
+         }
+        },
+        "renderingPlaneAnimationParam": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "renderSceneLayerMask": "Default",
+        "simulationType": "Kinematic",
+        "skinning": {
+         "HandleId": "63",
+         "Data": {
+          "$type": "entSkinningBinding",
+          "bindName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "root"
+          },
+          "enabled": 1,
+          "enableMask": {
+           "$type": "entTagMask",
+           "excludedTags": {
+            "$type": "redTagList",
+            "tags": [
+             {
+              "$type": "CName",
+              "$storage": "string",
+              "$value": "NoBinding"
+             }
+            ]
+           },
+           "hardTags": {
+            "$type": "redTagList",
+            "tags": []
+           },
+           "softTags": {
+            "$type": "redTagList",
+            "tags": []
+           }
+          }
+         }
+        },
+        "startInactive": 0,
+        "useProxyMeshAsShadowMesh": 0,
+        "useResourceSimulationType": 0,
+        "useSkinningLOD": 0,
+        "version": 1,
+        "visibilityAnimationParam": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        }
+       },
+       {
+        "$type": "entSkinnedMeshComponent",
+        "acceptDismemberment": 1,
+        "autoHideDistance": 150,
+        "castLocalShadows": "Default",
+        "castShadows": "Default",
+        "chunkMask": "9223372036854775807",
+        "forcedLodDistance": "Default",
+        "forceLODLevel": -1,
+        "id": "1273696162024812544",
+        "isEnabled": 1,
+        "isReplicable": 0,
+        "localTransform": {
+         "$type": "WorldTransform",
+         "Orientation": {
+          "$type": "Quaternion",
+          "i": 0,
+          "j": 0,
+          "k": 0,
+          "r": 1
+         },
+         "Position": {
+          "$type": "WorldPosition",
+          "x": {
+           "$type": "FixedPoint",
+           "Bits": 0
+          },
+          "y": {
+           "$type": "FixedPoint",
+           "Bits": 0
+          },
+          "z": {
+           "$type": "FixedPoint",
+           "Bits": 0
+          }
+         }
+        },
+        "LODMode": "AppearanceProxy",
+        "mesh": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "string",
+          "$value": "base\\vehicles\\special\\av_zetatech_atlus\\entities\\meshes\\av_zetatech_atlus_custom_proxy.mesh"
+         },
+         "Flags": "Obligatory"
+        },
+        "meshAppearance": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "default"
+        },
+        "name": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "AppearanceProxyMesh"
+        },
+        "navigationImpact": {
+         "$type": "NavGenNavigationSetting",
+         "navmeshImpact": "Ignored"
+        },
+        "order": 0,
+        "overrideMeshNavigationImpact": 1,
+        "parentTransform": {
+         "HandleRefId": "62"
+        },
+        "renderingPlaneAnimationParam": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        },
+        "renderSceneLayerMask": "Default",
+        "skinning": {
+         "HandleRefId": "63"
+        },
+        "useProxyMeshAsShadowMesh": 0,
+        "useSkinningLOD": 0,
+        "version": 1,
+        "visibilityAnimationParam": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "None"
+        }
+       },
+       {
+        "$type": "entVisualControllerComponent",
+        "appearanceDependency": [
+         {
+          "$type": "entVisualControllerDependency",
+          "appearanceName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "default"
+          },
+          "componentName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "av_zetatech_atlus__ext01_body_decals_trama"
+          },
+          "mesh": {
+           "DepotPath": {
+            "$type": "ResourcePath",
+            "$storage": "string",
+            "$value": "base\\vehicles\\special\\av_zetatech_atlus\\entities\\meshes\\av_zetatech_atlus__ext01_body_decals_trama.mesh"
+           },
+           "Flags": "Default"
+          }
+         },
+         {
+          "$type": "entVisualControllerDependency",
+          "appearanceName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "default"
+          },
+          "componentName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "av_zetatech_atlus__ext01_camera_guns_01"
+          },
+          "mesh": {
+           "DepotPath": {
+            "$type": "ResourcePath",
+            "$storage": "string",
+            "$value": "base\\vehicles\\special\\av_zetatech_atlus\\entities\\meshes\\av_zetatech_atlus__ext01_camera_guns_01.mesh"
+           },
+           "Flags": "Default"
+          }
+         },
+         {
+          "$type": "entVisualControllerDependency",
+          "appearanceName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "default"
+          },
+          "componentName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "av_zetatech_atlus__int01_interior_01"
+          },
+          "mesh": {
+           "DepotPath": {
+            "$type": "ResourcePath",
+            "$storage": "string",
+            "$value": "base\\vehicles\\special\\av_zetatech_atlus\\entities\\meshes\\av_zetatech_atlus__int01_interior_01.mesh"
+           },
+           "Flags": "Default"
+          }
+         },
+         {
+          "$type": "entVisualControllerDependency",
+          "appearanceName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "default"
+          },
+          "componentName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "atlus_fx_cutout"
+          },
+          "mesh": {
+           "DepotPath": {
+            "$type": "ResourcePath",
+            "$storage": "string",
+            "$value": "base\\vehicles\\special\\av_zetatech_atlus\\entities\\meshes\\av_zetatech_atlus_fx_cutout.mesh"
+           },
+           "Flags": "Default"
+          }
+         },
+         {
+          "$type": "entVisualControllerDependency",
+          "appearanceName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "default"
+          },
+          "componentName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "av_zetatech_atlus__front_policelight"
+          },
+          "mesh": {
+           "DepotPath": {
+            "$type": "ResourcePath",
+            "$storage": "string",
+            "$value": "base\\vehicles\\special\\av_zetatech_atlus\\entities\\meshes\\av_zetatech_atlus__ext01_lights_front_police.mesh"
+           },
+           "Flags": "Default"
+          }
+         },
+         {
+          "$type": "entVisualControllerDependency",
+          "appearanceName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "default"
+          },
+          "componentName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "lights_navmarkers"
+          },
+          "mesh": {
+           "DepotPath": {
+            "$type": "ResourcePath",
+            "$storage": "string",
+            "$value": "base\\vehicles\\special\\av_zetatech_atlus\\entities\\meshes\\av_zetatech_atlus__ext01_lights_body.mesh"
+           },
+           "Flags": "Default"
+          }
+         },
+         {
+          "$type": "entVisualControllerDependency",
+          "appearanceName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "default"
+          },
+          "componentName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "lights_sirens"
+          },
+          "mesh": {
+           "DepotPath": {
+            "$type": "ResourcePath",
+            "$storage": "string",
+            "$value": "base\\vehicles\\special\\av_zetatech_atlus\\entities\\meshes\\av_zetatech_atlus__ext01_lights_siren.mesh"
+           },
+           "Flags": "Default"
+          }
+         },
+         {
+          "$type": "entVisualControllerDependency",
+          "appearanceName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "default"
+          },
+          "componentName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "av_zetatech_atlus__ext01_body_01"
+          },
+          "mesh": {
+           "DepotPath": {
+            "$type": "ResourcePath",
+            "$storage": "string",
+            "$value": "base\\vehicles\\special\\av_zetatech_atlus\\entities\\meshes\\av_zetatech_atlus__ext01_body_01.mesh"
+           },
+           "Flags": "Default"
+          }
+         },
+         {
+          "$type": "entVisualControllerDependency",
+          "appearanceName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "default"
+          },
+          "componentName": {
+           "$type": "CName",
+           "$storage": "string",
+           "$value": "av_zetatech_atlus__ext01_engines_01"
+          },
+          "mesh": {
+           "DepotPath": {
+            "$type": "ResourcePath",
+            "$storage": "string",
+            "$value": "base\\vehicles\\special\\av_zetatech_atlus\\entities\\meshes\\av_zetatech_atlus__ext01_engines_01.mesh"
+           },
+           "Flags": "Default"
+          }
+         }
+        ],
+        "cookedAppearanceData": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "uint64",
+          "$value": "0"
+         },
+         "Flags": "Soft"
+        },
+        "forcedLodDistance": "CinematicVehicle",
+        "id": "14627333968358193840",
+        "isReplicable": 0,
+        "meshProxy": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "string",
+          "$value": "base\\vehicles\\special\\av_zetatech_atlus\\entities\\meshes\\av_zetatech_atlus_custom_proxy.mesh"
+         },
+         "Flags": "Obligatory"
+        },
+        "name": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "AppearanceVisualController"
+        }
+       },
+       {
+        "$type": "entMeshComponent",
+        "autoHideDistance": 0,
+        "castLocalShadows": "Always",
+        "castRayTracedGlobalShadows": "Always",
+        "castRayTracedLocalShadows": "Default",
+        "castShadows": "Always",
+        "chunkMask": "9223372036854775807",
+        "forcedLodDistance": "Default",
+        "forceLODLevel": -1,
+        "id": "9100000000000000",
+        "isEnabled": 1,
+        "isReplicable": 0,
+        "LODMode": "AlwaysVisible",
+        "localTransform": {
+         "$type": "WorldTransform",
+         "Position": {
+          "$type": "WorldPosition",
+          "x": {
+           "$type": "FixedPoint",
+           "Bits": -165151
+          },
+          "y": {
+           "$type": "FixedPoint",
+           "Bits": -103547
+          },
+          "z": {
+           "$type": "FixedPoint",
+           "Bits": 263193
+          }
+         },
+         "Orientation": {
+          "$type": "Quaternion",
+          "i": -0.5792279653395692,
+          "j": -0.4055797876726388,
+          "k": -0.4055797876726388,
+          "r": 0.5792279653395692
+         }
+        },
+        "mesh": {
+         "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "string",
+          "$value": "base\\environment\\architecture\\common\\int\\int_shuttle_a\\int_shuttle_a_addon_handle_l100_a.mesh"
+         },
+         "Flags": "Default"
+        },
+        "meshAppearance": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "default"
+        },
+        "motionBlurScale": 1,
+        "name": {
+         "$type": "CName",
+         "$storage": "string",
+         "$value": "cc_g05_rail_a"
+        },
+        "navigationImpact": {
+         "$type": "NavGenNavigationSetting",
+         "navmeshImpact": "Ignored"
+        },
+        "numInstances": 0,
+        "objectTypeID": "ROT_Static",
+        "order": 0,
+        "overrideMeshNavigationImpact": 1,
+        "parentTransform": null,
+        "renderingPlane": "RPl_Scene",
+        "renderSceneLayerMask": "Default",
+        "version": 0,
+        "visualScale": {
+         "$type": "Vector3",
+         "X": 1,
+         "Y": 1,
+         "Z": 1
+        }
+       }
+      ],
+      "cookedDataPathOverride": {
+       "DepotPath": {
+        "$type": "ResourcePath",
+        "$storage": "uint64",
+        "$value": "0"
+       },
+       "Flags": "Soft"
+      },
+      "forcedLodDistance": 5,
+      "hitRepresentationOverrides": [],
+      "inheritedVisualTags": {
+       "$type": "redTagList",
+       "tags": []
+      },
+      "looseDependencies": [],
+      "name": {
+       "$type": "CName",
+       "$storage": "string",
+       "$value": "trama_team"
+      },
+      "parametersBuffer": {
+       "$type": "entEntityParametersBuffer",
+       "parameterBuffers": []
+      },
+      "parentAppearance": {
+       "$type": "CName",
+       "$storage": "string",
+       "$value": "None"
+      },
+      "partsMasks": [],
+      "partsOverrides": [],
+      "partsValues": [],
+      "proxyMesh": {
+       "DepotPath": {
+        "$type": "ResourcePath",
+        "$storage": "string",
+        "$value": "base\\vehicles\\special\\av_zetatech_atlus\\entities\\meshes\\av_zetatech_atlus_custom_proxy.mesh"
+       },
+       "Flags": "Soft"
+      },
+      "proxyMeshAppearance": {
+       "$type": "CName",
+       "$storage": "string",
+       "$value": "None"
+      },
+      "resolvedDependencies": [
+       {
+        "DepotPath": {
+         "$type": "ResourcePath",
+         "$storage": "string",
+         "$value": "base\\vehicles\\special\\av_zetatech_atlus\\entities\\meshes\\av_zetatech_atlus_custom_proxy.mesh"
+        },
+        "Flags": "Soft"
+       },
+       {
+        "DepotPath": {
+         "$type": "ResourcePath",
+         "$storage": "string",
+         "$value": "base\\environment\\architecture\\common\\int\\int_shuttle_a\\int_shuttle_a_addon_handle_l100_a.mesh"
+        },
+        "Flags": "Soft"
+       }
+      ],
+      "visualTags": {
+       "$type": "redTagList",
+       "tags": []
+      }
+     }
+    }
+   ],
+   "baseEntity": {
+    "DepotPath": {
+     "$type": "ResourcePath",
+     "$storage": "uint64",
+     "$value": "0"
+    },
+    "Flags": "Soft"
+   },
+   "baseEntityType": {
+    "$type": "CName",
+    "$storage": "string",
+    "$value": "Zetatech_Atlus"
+   },
+   "baseType": {
+    "$type": "CName",
+    "$storage": "string",
+    "$value": "None"
+   },
+   "censorshipMapping": [],
+   "commonCookData": {
+    "DepotPath": {
+     "$type": "ResourcePath",
+     "$storage": "uint64",
+     "$value": "0"
+    },
+    "Flags": "Soft"
+   },
+   "cookingPlatform": "PLATFORM_PC",
+   "DismEffects": [],
+   "DismWoundConfig": {
+    "$type": "entdismembermentWoundsConfigSet",
+    "Configs": [
+     {
+      "HandleId": "320",
+      "Data": {
+       "$type": "entdismembermentWoundConfigContainer",
+       "AppearanceName": {
+        "$type": "CName",
+        "$storage": "string",
+        "$value": "arasaka_01"
+       },
+       "Wounds": []
+      }
+     },
+     {
+      "HandleId": "321",
+      "Data": {
+       "$type": "entdismembermentWoundConfigContainer",
+       "AppearanceName": {
+        "$type": "CName",
+        "$storage": "string",
+        "$value": "default"
+       },
+       "Wounds": []
+      }
+     },
+     {
+      "HandleId": "322",
+      "Data": {
+       "$type": "entdismembermentWoundConfigContainer",
+       "AppearanceName": {
+        "$type": "CName",
+        "$storage": "string",
+        "$value": "ncpd_01"
+       },
+       "Wounds": []
+      }
+     },
+     {
+      "HandleId": "323",
+      "Data": {
+       "$type": "entdismembermentWoundConfigContainer",
+       "AppearanceName": {
+        "$type": "CName",
+        "$storage": "string",
+        "$value": "news_01"
+       },
+       "Wounds": []
+      }
+     },
+     {
+      "HandleId": "324",
+      "Data": {
+       "$type": "entdismembermentWoundConfigContainer",
+       "AppearanceName": {
+        "$type": "CName",
+        "$storage": "string",
+        "$value": "sq006_stealth_cloaked"
+       },
+       "Wounds": []
+      }
+     },
+     {
+      "HandleId": "325",
+      "Data": {
+       "$type": "entdismembermentWoundConfigContainer",
+       "AppearanceName": {
+        "$type": "CName",
+        "$storage": "string",
+        "$value": "stealth_01"
+       },
+       "Wounds": []
+      }
+     },
+     {
+      "HandleId": "326",
+      "Data": {
+       "$type": "entdismembermentWoundConfigContainer",
+       "AppearanceName": {
+        "$type": "CName",
+        "$storage": "string",
+        "$value": "trama_team"
+       },
+       "Wounds": []
+      }
+     }
+    ]
+   },
+   "forceCompileProxy": 0,
+   "generatePlayerBlockingCollisionForProxy": 0,
+   "partType": {
+    "$type": "CName",
+    "$storage": "string",
+    "$value": "None"
+   },
+   "preset": {
+    "$type": "CName",
+    "$storage": "string",
+    "$value": "None"
+   },
+   "proxyPolyCount": 1400,
+   "Wounds": []
+  },
+  "EmbeddedFiles": []
+ }
+}

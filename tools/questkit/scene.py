@@ -1522,9 +1522,9 @@ class Scene:
         })
         return nid
 
-    def choice(self, option_indices, in_world=False, radius=1.2,
+    def choice(self, option_indices, in_world=False, no_look=False, radius=1.2,
                yaw_limit=120, offset=(0.0, 0.0, 0.0), attach_actor=None,
-               checks=None):
+               checks=None, title=''):
         """A dialogue hub. One output socket per option, in order.
 
         `checks`, if given, has one entry per option: None for a plain
@@ -1589,7 +1589,7 @@ class Scene:
             'choicePriority': 0,
             'cpoHoldInputActionSection': 0,
             'customPersistentLine': {'$type': 'scnscreenplayItemId', 'id': 4294967040},
-            'displayNameOverride': '',
+            'displayNameOverride': title,
             'doNotTurnOffPreventionSystem': 0,
             'ffStrategy': 'automatic',
             'forceAttachToScreenCondition': None,
@@ -1597,9 +1597,13 @@ class Scene:
             'interruptCapability': 'Interruptable',
             'interruptionSpeakerOverride': actor_id(None),
             'localizedDisplayNameOverride': {'unk1': '0', 'value': ''},
+            # A PROMPT IN THE WORLD turned V to a point at V's feet when taken
+            # (gig 05's playtest 2026-11-04): `auxiliaryRelativePoint` is that
+            # point. `no_look` puts it ahead.
             'lookAtParams': {'HandleId': '@lookat', 'Data': {
                 '$type': 'scnChoiceNodeNsAdaptiveLookAtParams',
-                'auxiliaryRelativePoint': {'$type': 'Vector3', 'X': 0, 'Y': 0, 'Z': 0},
+                'auxiliaryRelativePoint': {'$type': 'Vector3', 'X': 0, 'Y': 5 if no_look else 0,
+                                           'Z': 1.6 if no_look else 0},
                 'blendLimit': 0.300000012,
                 'distantSlotName': cname('Chest'),
                 'nearbySlotName': cname('Head'),
@@ -1684,7 +1688,8 @@ class Scene:
 
     def add_workspot_node(self, unique_name, path=WORKSPOT_JOHNNY,
                           entry=WORKSPOT_ENTRY, tag=None, community=None,
-                          jump_to_entry=1):
+                          jump_to_entry=1, on_slot=None, player=False,
+                          offset=None):
         """A node that puts a scene-spawned actor into a workspot IN PLACE.
 
         `community=(node_ref, entry_name)` addresses a COMMUNITY actor instead
@@ -1723,6 +1728,22 @@ class Scene:
 
         The node is deliberately TERMINAL: nothing hangs off its outputs. See
         fire_workspot() for why.
+
+        `on_slot=(community_node_ref, entry_name, slot_name)` plays the pose on
+        a VEHICLE'S OCCUPANT SLOT instead of where the actor stands: the
+        origin marker becomes an `Entity` marker naming the vehicle and the
+        slot, mounted, and the actor is put there. The shape of
+        q115_05_halo_jump.scene, which stands V on the Trauma Team AV's
+        `player_standing` (docs/gig05-av-research.md 3).
+
+        `player=True` puts V in the pose instead of an actor, with that
+        scene's own player values: hands empty, the camera limited the way
+        it limits V holding on at the AV's open door.
+
+        `offset=(x, y, z)` moves the pose from its origin by that much, in
+        the origin's own frame: the workspot instance's `localTransform`,
+        which vanilla leaves at zero. Two of the Trauma Team AV's places
+        are 20 cm apart, and a third man needs a spot of his own.
         """
         nid = self._nid()
         did = self._workspot_data(path)
@@ -1735,18 +1756,22 @@ class Scene:
             'localTransform': {
                 '$type': 'Transform',
                 'orientation': {'$type': 'Quaternion', 'i': 0, 'j': 0, 'k': 0, 'r': 1},
-                'position': {'$type': 'Vector4', 'W': 0, 'X': 0, 'Y': 0, 'Z': 0}},
+                'position': {'$type': 'Vector4', 'W': 0,
+                             'X': (offset or (0, 0, 0))[0],
+                             'Y': (offset or (0, 0, 0))[1],
+                             'Z': (offset or (0, 0, 0))[2]}},
             'originMarker': {
                 '$type': 'scnMarker',
-                'entityRef': entity_ref(),
+                'entityRef': (community_ref(on_slot[0], on_slot[1]) if on_slot
+                              else entity_ref()),
                 'isMounted': 1,
                 'localMarkerId': cname(None),
                 # THE POINT OF THE WHOLE EXERCISE: no world node. The workspot
                 # plays wherever the actor already is.
                 'nodeRef': noderef(None),
-                'slotName': cname(None),
-                'type': 'Global'},
-            'playAtActorLocation': 1,
+                'slotName': cname(on_slot[2] if on_slot else None),
+                'type': 'Entity' if on_slot else 'Global'},
+            'playAtActorLocation': 0 if on_slot else 1,
             'workspotInstanceId': {'$type': 'scnSceneWorkspotInstanceId', 'id': nid},
         })
         self.workspot_symbols.append({
@@ -1768,7 +1793,8 @@ class Scene:
             'questNode': {'HandleId': '@qn', 'Data': {
                 '$type': 'questUseWorkspotNodeDefinition',
                 'entityReference': (
-                    entity_ref(tag=tag) if tag
+                    entity_ref(node_ref='#player') if player
+                    else entity_ref(tag=tag) if tag
                     else community_ref(*community) if community
                     else entity_ref(unique_name=unique_name)),
                 'id': nid,
@@ -1786,7 +1812,7 @@ class Scene:
                     'forceEntryAnimName': cname(None),
                     'function': 'UseWorkspot',
                     'instant': 0,
-                    'isPlayer': 0,
+                    'isPlayer': 1 if player else 0,
                     'isWorkspotInfinite': 1,
                     'itemOverride': {'$type': 'workWorkspotItemOverride',
                                      'itemOverrides': [], 'propOverrides': []},
@@ -1796,22 +1822,24 @@ class Scene:
                     'maxAnimTimeLimit': 0,
                     'meshDissolvingEnabled': 1,
                     'movementType': 'Walk',
-                    'playAtActorLocation': 1,
+                    'playAtActorLocation': 0 if on_slot else 1,
                     'playerParams': {
                         '$type': 'questUseWorkspotPlayerParams',
+                        # q115_05's own values: no camera limits applied.
                         'applyCameraParams': 0,
                         'cameraSettings': {'$type': 'gameTier3CameraSettings',
-                                           'pitchBottomLimit': 45,
+                                           'pitchBottomLimit': 59.87 if player else 45,
                                            'pitchSpeedMultiplier': 1,
-                                           'pitchTopLimit': 60,
-                                           'yawLeftLimit': 60, 'yawRightLimit': 60,
+                                           'pitchTopLimit': 40.13 if player else 60,
+                                           'yawLeftLimit': 75.98 if player else 60,
+                                           'yawRightLimit': 64.02 if player else 60,
                                            'yawSpeedMultiplier': 1},
                         'cameraUseTrajectorySpace': 1,
-                        'emptyHands': 0,
-                        'parallaxSpace': 'Trajectory',
+                        'emptyHands': 1 if player else 0,
+                        'parallaxSpace': 'Camera' if player else 'Trajectory',
                         'parallaxWeight': 1,
                         'tier': 'Tier3',
-                        'vehicleProceduralCameraWeight': 1},
+                        'vehicleProceduralCameraWeight': 0 if player else 1},
                     'repeatCommandOnInterrupt': 0,
                     # Put him exactly where he stands rather than walking him in
                     # from wherever the spawn landed.
@@ -2688,7 +2716,11 @@ class Scene:
                     'version': 5,
                     'voInfo': [],
                     'workspotInstances': self.workspot_instances,
-                    'workspots': wrap(self.workspots),
+                    # SORTED BY dataId: the game searches this list as a sorted
+                    # one. Out of order, an actor got another's pose or, on a
+                    # miss, the game crashed reading index -1 (gotcha 157).
+                    'workspots': wrap(sorted(self.workspots,
+                                             key=lambda w: w['Data']['dataId']['id'])),
                 },
                 'EmbeddedFiles': [],
             },

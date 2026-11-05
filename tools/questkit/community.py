@@ -512,7 +512,8 @@ class Community(object):
                                   WB['uk11'], scale=span))
         refs.append(self.community_ref)
         for extra in self.extra:
-            # (node, pos, ref, inst_args) or, with a facing, a fifth item.
+            # (node, pos, ref, inst_args) or, with a facing, a fifth item, and
+            # a scale as a sixth.
             node, pos, ref, inst_args = extra[:4]
             extra_yaw = extra[4] if len(extra) > 4 else 0.0
             # A fifth instance argument is Uk12, which every vanilla trigger
@@ -522,7 +523,7 @@ class Community(object):
             idx = len(nodes)
             nodes.append(node)
             instances.append(instance(idx, pos, ref, *inst_args[:4], yaw=extra_yaw,
-                                      uk12=uk12))
+                                      uk12=uk12, scale=extra[5] if len(extra) > 5 else (1, 1, 1)))
             refs.append(ref)
         return sector(self.sector + '.streamingsector', nodes, instances, refs)
 

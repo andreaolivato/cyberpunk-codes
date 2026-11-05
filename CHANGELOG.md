@@ -5,6 +5,14 @@ each mod's Nexus Changelog tab.
 
 ---
 
+# Join Trauma Team
+
+## 1.0.0 (2026-11-05)
+
+- **Added: the first shift.** Three calls across Night City, flown in the Trauma Team AV with your crew.
+
+---
+
 # Return Ticket
 
 ## 1.0.1 (2026-11-02)

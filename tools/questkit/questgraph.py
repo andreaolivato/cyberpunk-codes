@@ -1165,3 +1165,379 @@ def add_journal_quest(real_path, track=1):
     return nid
 
 
+# ===========================================================================
+# VEHICLES, AND AVS ABOVE ALL. Every node below was read field for field off
+# a vanilla phase on 2026-11-03 (docs/gig05-av-research.md has the account):
+# Last Caress, `q113_05_av_flight.questphase`, flies V across the city in an
+# AV; the Heywood world story `mws_hey_07` seats and unseats a gang's
+# reinforcements. First used by gig 05. UNPLAYED.
+
+def _player_ref():
+    """The player as a gameEntityReference: the q113 seat node's
+    `characterRef` when `isPlayer` is 1, a reference of "0"."""
+    return {'$type': 'gameEntityReference',
+            'dynamicEntityUniqueName': cname(None), 'names': [],
+            'reference': {'$type': 'NodeRef', '$storage': 'uint64', '$value': '0'},
+            'sceneActorContextName': cname(None), 'slotName': cname(None),
+            'type': 'EntityRef'}
+
+
+def add_assign_seat(vehicle_ref, vehicle_entry, slot, character_ref=None,
+                    character_entry=None, player=False, assign=True,
+                    instant=True):
+    """Put a person in a vehicle's seat or occupant slot, or take them out.
+
+    `questVehicleNodeDefinition` holding a `questAssignCharacter_NodeType`,
+    q113_05 sub-phase 28 node 6 (V into `seat_back_left`, `isInstant` 0,
+    after the door is opened) and mws_hey_07_combat (a ganger into
+    `seat_front_right`, `isInstant` 1). An occupant slot takes the same node:
+    q115_03 puts Rogue and Weyland on `rogue_standing` and `weyland_pilot`,
+    and q115_05 takes V off `player_standing` with `assign` 0, `isInstant` 1.
+
+    The vehicle and the person are community bodies, the community node in
+    the long form plus the entry (gotcha 34)."""
+    nid = next(NID)
+    b.node(nid, 'questVehicleNodeDefinition', {'type': {'@handle': {
+        '$type': 'questAssignCharacter_NodeType',
+        'assign': 1 if assign else 0,
+        'characterRef': (_player_ref() if player
+                         else _entity_ref(character_ref, character_entry)),
+        'clearAssignedVehicleIdWhenUnmounting': 0,
+        'entryAnimName': cname(None),
+        'entrySlotName': cname('default'),
+        'isInstant': 1 if instant else 0,
+        'isPlayer': 1 if player else 0,
+        'slotName': cname(slot),
+        'vehicleRef': _entity_ref(vehicle_ref, vehicle_entry),
+    }}}, STD)
+    return nid
+
+
+def add_unassign_all(vehicle_ref, vehicle_entry, instant=False):
+    """Everyone out of a vehicle: `questUnassignAll_NodeType`, mws_hey_07_combat
+    (the gang's reinforcement car, `isInstant` 0)."""
+    nid = next(NID)
+    b.node(nid, 'questVehicleNodeDefinition', {'type': {'@handle': {
+        '$type': 'questUnassignAll_NodeType',
+        'clearAssignedVehicleId': 0,
+        'isInstant': 1 if instant else 0,
+        'vehicleRef': _entity_ref(vehicle_ref, vehicle_entry),
+    }}}, STD)
+    return nid
+
+
+def add_move_on_spline(vehicle_ref, vehicle_entry, spline_ref,
+                       blend='PTAIT_INSTANT', blend_time=0):
+    """Fly (or drive) a vehicle along a spline the mod ships. `Out` fires at
+    the end of the path.
+
+    `questMoveOnSpline_NodeType`, q113_05 node 4, the cruise from Hanako's
+    estate to Arasaka Tower, every field as vanilla wrote it. The Little China
+    Trauma Team AV (ma_wat_lch_01) uses `PTAIT_EASE_IN_OUT_SIN` with a blend
+    time of 1 for its descent. The spline is a `worldSpeedSplineNode`
+    (questkit.avflight)."""
+    nid = next(NID)
+    b.node(nid, 'questVehicleNodeDefinition', {'type': {'@handle': {
+        '$type': 'questMoveOnSpline_NodeType',
+        'arriveWithPivot': 0,
+        'audioCurves': {'DepotPath': {'$type': 'ResourcePath', '$storage': 'uint64',
+                                      '$value': '0'}, 'Flags': 'Default'},
+        'blendTime': blend_time,
+        'blendType': blend,
+        'overrides': None,
+        'reverseGear': 0,
+        'sceneBlendInDistance': 15,
+        'sceneBlendOutDistance': 15,
+        'splineRef': noderef(spline_ref),
+        'startFrom': 0,
+        'trafficDeletionMode': 'INSTANT',
+        'vehicleRef': _entity_ref(vehicle_ref, vehicle_entry),
+    }}}, STD)
+    return nid
+
+
+def add_toggle_door(vehicle_ref, vehicle_entry, door='seat_front_left',
+                    action='DisableAllInteractions', to_open=True, force_scene=0):
+    """A vehicle's door, or its interactions: `questToggleDoor_NodeType`.
+    q113_05 wires one beside the cruise (`seat_front_left`,
+    `DisableAllInteractions`, `toOpen` 1), which takes the AV's own Enter
+    prompt away for the flight; mws_hey_07 does the same to a trunk with
+    `forceScene` 1. `door` "invalid" is every door."""
+    nid = next(NID)
+    b.node(nid, 'questVehicleNodeDefinition', {'type': {'@handle': {
+        '$type': 'questToggleDoor_NodeType',
+        'door': door,
+        'doorAction': action,
+        'doorID': cname(None),
+        'forceScene': force_scene,
+        'toOpen': 1 if to_open else 0,
+        'vehicleRef': _entity_ref(vehicle_ref, vehicle_entry),
+    }}}, STD)
+    return nid
+
+
+def add_anim_event(object_ref, entry, event):
+    """Send an animation event to a placed object:
+    `questEntityManagerSendAnimationEvent_NodeType`, q113_05 node 23, which
+    opens the AV's door with `doorOpenFrontLeft` before V is seated."""
+    nid = next(NID)
+    b.node(nid, 'questEntityManagerNodeDefinition', {'type': {'@handle': {
+        '$type': 'questEntityManagerSendAnimationEvent_NodeType',
+        'eventName': cname(event),
+        'objectRef': _entity_ref(object_ref, entry),
+    }}}, STD)
+    return nid
+
+
+def add_restriction(record, add=True, source='default'):
+    """Apply or lift a gameplay restriction from the graph:
+    `questGameplayRestrictions_NodeType`, q113_05 (AddRestriction
+    `GameplayRestriction.VehicleScene` for the flight). The mod's own clone
+    with saving off is the one to name (docs/gameplay-restrictions.md)."""
+    nid = next(NID)
+    b.node(nid, 'questGameManagerNodeDefinition', {'type': {'@handle': {
+        '$type': 'questGameplayRestrictions_NodeType',
+        'action': 'AddRestriction' if add else 'RemoveRestriction',
+        'restrictionIDs': [{'$type': 'TweakDBID', '$storage': 'string',
+                            '$value': record}],
+        'source': cname(source),
+    }}}, STD)
+    return nid
+
+
+def add_pause_mounted(vehicle_ref, vehicle_entry, player=True, character_ref=None,
+                      character_entry=None, condition='OnMount'):
+    """Wait until someone is in the vehicle: `questCharacterMount_ConditionType`,
+    q113_05 (the phase pauses on it after each seat assignment). A workspot on
+    an AV's occupant slot counts as a mount (q115_03 waits on it for V on
+    `player_standing`)."""
+    nid = next(NID)
+    b.node(nid, 'questPauseConditionNodeDefinition', {'condition': {'@handle': {
+        '$type': 'questCharacterCondition',
+        'type': {'@handle': {
+            '$type': 'questCharacterMount_ConditionType',
+            'anyChild': 0,
+            'anyParent': 0,
+            'childIsPlayer': 1 if player else 0,
+            'childRef': (_entity_ref(None) if player
+                         else _entity_ref(character_ref, character_entry)),
+            'condition': condition,
+            'enterAnimationFinished': 0,
+            'parentIsPlayer': 0,
+            'parentRef': _entity_ref(vehicle_ref, vehicle_entry),
+            'playerVehicleName': '',
+            'role': 'Passenger',
+            'usePlayersVehicle': 0,
+            'vehicleAfiliation': 'Invalid',
+            'vehicleOrigin': 'Any',
+            'vehicleType': 'Any',
+        }},
+    }}}, STD)
+    return nid
+
+
+def add_pause_vehicle_spawned(vehicle_ref, vehicle_entry=None):
+    """Wait until a placed vehicle exists: `questVehicleSpawned_ConditionType`,
+    q113_05 (the AV, before anyone is seated)."""
+    nid = next(NID)
+    b.node(nid, 'questPauseConditionNodeDefinition', {'condition': {'@handle': {
+        '$type': 'questVehicleCondition',
+        'type': {'@handle': {
+            '$type': 'questVehicleSpawned_ConditionType',
+            'comparisonType': 'Greater',
+            'count': 0,
+            'vehicleGlobalName': cname(None),
+            'vehicleName': '',
+            'vehicleRef': _entity_ref(vehicle_ref, vehicle_entry),
+            'vehicleType': 'EntityReferenced',
+        }},
+    }}}, STD)
+    return nid
+
+
+def add_teleport_player(marker_ref, who_ref=None, who_entry=None):
+    """Put V on a marker: `questTeleportPuppetNodeDefinition`, field for
+    field off `sq021_finale.questphase` node 2 (V to
+    `#sq021_spwn_v_farm_stairs`), the look-at reset and the heal as vanilla
+    wrote them. Gig 05 uses it to stand V beside the AV's door after the
+    standing slot lets go, because where the slot leaves V is unmeasured."""
+    def uref(ref, local_player):
+        return {'@handle': {
+            '$type': 'questUniversalRef',
+            'entityReference': _entity_ref(ref),
+            'mainPlayerObject': 0,
+            'refLocalPlayer': 1 if local_player else 0}}
+    nid = next(NID)
+    b.node(nid, 'questTeleportPuppetNodeDefinition', {
+        # V by default; a community entry when `who_ref` is given (gig 05's
+        # crew, out of the AV onto their posts).
+        'entityReference': (uref(None, True) if who_ref is None else {'@handle': {
+            '$type': 'questUniversalRef',
+            'entityReference': _entity_ref(who_ref, who_entry),
+            'mainPlayerObject': 0,
+            'refLocalPlayer': 0}}),
+        # RESET, as sq021 has it. Nothing (the enum is Nothing, Reset, Set:
+        # RED4ext.SDK, quest/LookAtAction.hpp) left V facing the way V
+        # faced before the move, not the marker's way (playtest 2026-11-03).
+        # Nothing for anyone but V: the look-at turns V's camera.
+        'lookAtAction': 'Reset' if who_ref is None else 'Nothing',
+        'params': {'@handle': {
+            '$type': 'questTeleportPuppetParamsV1',
+            'destinationOffset': {'$type': 'Vector3', 'X': 0, 'Y': 0, 'Z': 0},
+            'destinationRef': uref(marker_ref, False),
+            'doNavTest': 0,
+            'healAtTeleport': 1,
+            'useFastTravelMechanism': 0,
+        }},
+        'playerLookAt': {'@handle': {
+            '$type': 'questPlayerLookAtParams',
+            # OFF. sq021's values aimed the camera at V's own position, so
+            # after every move V looked straight at the floor (playtest
+            # 2026-11-03). The marker's yaw still turns V.
+            'adjustPitch': 0, 'adjustYaw': 0,
+            'cameraInputMagToBreak': 0.2,
+            'duration': 0.25,
+            'easeIn': 1, 'easeOut': 1,
+            'endOnCameraInputApplied': 1, 'endOnTargetReached': 1,
+            'endOnTimeExceeded': 1,
+            'lookAtTarget': _entity_ref(None),
+            'maxDuration': 2,
+            'offset': {'$type': 'Vector3', 'X': 0, 'Y': 0, 'Z': 0},
+            'precision': 0.1,
+            'slotName': cname(None),
+            'useOffsetToPlayer': 1,
+        }},
+    }, STD)
+    return nid
+
+
+def _char_params(subtype):
+    return {'type': {'@handle': {
+        '$type': 'questCharacterManagerParameters_NodeType',
+        'subtype': {'@handle': subtype}}}}
+
+
+def add_reward(*records):
+    """Hand V one or more `QuestRewards` records: the game's own reward node
+    (`questGiveReward_NodeType`, mws_wat_08 node 64, Career Opportunities'
+    own payout). The money, XP and item notices are then the game's."""
+    nid = next(NID)
+    b.node(nid, 'questRewardManagerNodeDefinition', {'type': {'@handle': {
+        '$type': 'questGiveReward_NodeType',
+        'rewards': [{'$type': 'TweakDBID', '$storage': 'string', '$value': r}
+                    for r in records],
+    }}}, STD)
+    return nid
+
+
+def add_give_items(*items, notify=True):
+    """Put items in V's backpack: the game's own item node
+    (`questAddRemoveItem_NodeType`, mws_wat_08 node of type
+    questItemManagerNodeDefinition, read 2026-11-03; mode `AddItem` from the
+    SDK's EAddRemoveItemType). `sendNotification` asks for the game's item
+    card with the item's picture."""
+    def ref(value, storage):
+        return {'$type': 'gameEntityReference',
+                'dynamicEntityUniqueName': cname(None), 'names': [],
+                'reference': {'$type': 'NodeRef', '$storage': storage, '$value': value},
+                'sceneActorContextName': cname(None), 'slotName': cname(None),
+                'type': 'EntityRef'}
+    nid = next(NID)
+    b.node(nid, 'questItemManagerNodeDefinition', {'type': {'@handle': {
+        '$type': 'questAddRemoveItem_NodeType',
+        'params': [{'@handle': {
+            '$type': 'questAddRemoveItem_NodeTypeParams',
+            'entityRef': {'@handle': {
+                '$type': 'questUniversalRef',
+                'entityReference': ref('#player', 'string'),
+                'mainPlayerObject': 0, 'refLocalPlayer': 1}},
+            'flagItemAddedCallbackAsSilent': 0,
+            'isPlayer': 0,
+            'itemID': {'$type': 'TweakDBID', '$storage': 'string', '$value': item},
+            'itemIDsToIgnoreOnRemove': [],
+            'nodeType': 'AddItem',
+            'objectRef': ref('0', 'uint64'),
+            'quantity': 1,
+            'removeAllQuantity': 0,
+            'sendNotification': 1 if notify else 0,
+            'tagsToIgnoreOnRemove': [],
+            'tagToRemove': cname(None),
+        }} for item in items],
+    }}}, STD)
+    return nid
+
+
+def add_groups_attitude(group1, group2, attitude='AIA_Hostile', set_=1):
+    """Two attitude groups toward each other:
+    `questCharacterManagerParameters_SetGroupsAttitude`, mws_hey_07_combat
+    node 8 (the Trauma Team crew's group Friendly to `player`). `attitude` is
+    `AIA_Friendly`, `AIA_Neutral` or `AIA_Hostile`."""
+    nid = next(NID)
+    b.node(nid, 'questCharacterManagerNodeDefinition', _char_params({
+        '$type': 'questCharacterManagerParameters_SetGroupsAttitude',
+        'attitude': attitude,
+        'group1Name': cname(group1),
+        'group2Name': cname(group2),
+        'set': set_,
+    }), STD)
+    return nid
+
+
+def add_attitude_group(node_ref, entry, group):
+    """Put one body in an attitude group:
+    `questCharacterManagerParameters_SetAttitudeGroupForPuppet`, mws_hey_07
+    (one node per community entry)."""
+    nid = next(NID)
+    b.node(nid, 'questCharacterManagerNodeDefinition', _char_params({
+        '$type': 'questCharacterManagerParameters_SetAttitudeGroupForPuppet',
+        'groupName': cname(group),
+        'isPlayer': 0,
+        'puppetRef': _entity_ref(node_ref, entry),
+    }), STD)
+    return nid
+
+
+def add_mortality(node_ref, entry, state='Invulnerable', source=None):
+    """`questCharacterManagerParameters_SetMortality`, mws_hey_07_combat
+    node 6 (the whole Trauma Team community to `Mortal` as the fight
+    starts). `state` is `Invulnerable`, `Immortal` or `Mortal`."""
+    nid = next(NID)
+    b.node(nid, 'questCharacterManagerNodeDefinition', _char_params({
+        '$type': 'questCharacterManagerParameters_SetMortality',
+        'isPlayer': 0,
+        'puppetRef': _entity_ref(node_ref, entry),
+        'resetToDefault': 0,
+        'source': cname(source),
+        'state': state,
+    }), STD)
+    return nid
+
+
+def add_combat_target(node_ref, entry, target_ref, target_entry=None,
+                      target_player=False):
+    """Point one body's fire at another: `questCombatNodeDefinition` with a
+    `questCombatNodeParams_CombatTarget`, `duration` -1, `immediately` 1,
+    mws_hey_07_combat nodes 75 and 77 (each Tyger at a named Trauma Team
+    medic, soldier, pilot, or at `#player`). This is how the game makes a
+    gang shoot at the crew and not only at V. The `function` field is the
+    stale value WolvenKit prints on every such node; it is copied as is."""
+    nid = next(NID)
+    target = ({'$type': 'gameEntityReference', 'dynamicEntityUniqueName': cname(None),
+               'names': [], 'reference': noderef('#player'),
+               'sceneActorContextName': cname(None), 'slotName': cname(None),
+               'type': 'EntityRef'}
+              if target_player else _entity_ref(target_ref, target_entry))
+    b.node(nid, 'questCombatNodeDefinition', {
+        'entityReference': _entity_ref(node_ref, entry),
+        'function': cname('questCombatNodeParams_ShootAt'),
+        'params': {'@handle': {
+            '$type': 'questCombatNodeParams_CombatTarget',
+            'duration': -1,
+            'immediately': 1,
+            'targetNode': {'$type': 'NodeRef', '$storage': 'uint64', '$value': '0'},
+            'targetPuppet': target,
+        }},
+    }, [('CutDestination', 'CutDestination'), ('In', 'Input'), ('Success', 'Output')])
+    return nid
+
+

@@ -1,0 +1,236 @@
+{
+  "Header": {
+    "WolvenKitVersion": "8.20.0",
+    "WKitJsonVersion": "0.0.9",
+    "GameVersion": 2310,
+    "DataType": "CR2W",
+    "ArchiveFileName": "strings.json"
+  },
+  "Data": {
+    "Version": 195,
+    "BuildVersion": 0,
+    "RootChunk": {
+      "$type": "JsonResource",
+      "cookingPlatform": "PLATFORM_PC",
+      "root": {
+        "HandleId": "0",
+        "Data": {
+          "$type": "localizationPersistenceOnScreenEntries",
+          "entries": [
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Trauma Team Job",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g05-gig-title"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Trauma Team International, Night City.\n\nProbation crews wanted. Combat experience required. Paid per call, rank up after five shifts.\n\nInterviews in person at the Medical Center, Little China. Ask for intake at the staff entrance.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g05-gig-brief"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Talk to the Trauma Team recruiter",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g05-obj-recruiter"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Take the staff elevator to the roof",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g05-obj-up"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Get changed in the armory",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g05-obj-change"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Change back into your own clothes",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g05-obj-back"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Talk to the crew leader",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g05-obj-talk"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Take the elevator down",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g05-obj-down"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Board the Trauma Team AV",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g05-obj-board"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Fly to the call",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g05-obj-ride"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Clear the Scavs with Brekke",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g05-obj-hold"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Board the AV",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g05-obj-board-site"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Return to the Medical Center",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g05-obj-return"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Wait for Trauma Team to post the next shift",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g05-obj-wait"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Trauma Team recruiter",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g05-pin-pin-recruiter"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Staff elevator",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g05-pin-pin-up"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Staff elevator",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g05-pin-pin-down"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Armory",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g05-pin-pin-change"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Armory",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g05-pin-pin-back"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Crew leader",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g05-pin-pin-talk"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Trauma Team AV",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g05-pin-pin-board"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Nisha Rao",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g05-recruiter-name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Brekke",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g05-lead-name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Wrona",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g05-soldier-name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Raman",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g05-medic-name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Trauma Team client",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g05-client-name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Trauma Team Dispatch",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g05-tti-name"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Trauma Team Dispatch",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g05-tti-conv-title"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Trauma Team International, Night City.\n\nProbation crews wanted. Combat experience required. Paid per call, rank up after five shifts.\n\nInterviews in person at the Medical Center, Little China. Ask for intake at the staff entrance.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g05-msg-ad"
+            },
+            {
+              "$type": "localizationPersistenceOnScreenEntry",
+              "femaleVariant": "Shift logged. Three calls, fees paid.\n\nProbation crews are called in as shifts open. The next one will be posted here.",
+              "maleVariant": "",
+              "primaryKey": "0",
+              "secondaryKey": "cc-g05-msg-done"
+            }
+          ]
+        }
+      }
+    },
+    "EmbeddedFiles": []
+  }
+}

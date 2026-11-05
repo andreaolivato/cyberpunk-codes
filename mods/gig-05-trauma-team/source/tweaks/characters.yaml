@@ -1,0 +1,203 @@
+# Trauma Team's records: the AV, the crew, the client, the recruiter, the
+# Scavs, and the three attitude groups that set who fights whom.
+#
+# THE FIGHT IS THE GAME'S OWN TRAUMA TEAM FIGHT, `mws_hey_07` in Heywood
+# (docs/gig05-av-research.md, section 4): a Trauma Team crew and a gang each
+# in a group of their own with parent `Group_Neutral`, the gang hostile to the
+# crew, the crew friendly to V. The game sets those relations with quest nodes
+# each time; here they are records too, so they hold from the first frame a
+# body exists. The quest phase sets them again with the game's own nodes
+# (gen_questphase, `fight_groups`).
+#
+# `displayName` is LocKey#<FNV1a64 of the bare key>, the hash ArchiveXL
+# registers our own string under; the strings are in gen_localization.py.
+
+Attitudes.cc_g05_crew:
+  $type: AttitudeGroup
+  name: cc_g05_crew
+  parent: Attitudes.Group_Neutral
+Attitudes.cc_g05_gang:
+  $type: AttitudeGroup
+  name: cc_g05_gang
+  parent: Attitudes.Group_Neutral
+Attitudes.cc_g05_client:
+  $type: AttitudeGroup
+  name: cc_g05_client
+  parent: Attitudes.Group_Neutral
+Attitudes.cc_g05_aid:
+  $type: AttitudeGroup
+  name: cc_g05_aid
+  parent: Attitudes.Group_Neutral
+Attitudes.cc_g05_aid_player:
+  $type: Attitude
+  group1: Attitudes.cc_g05_aid
+  group2: Attitudes.Group_Player
+  value: Friendly
+
+Attitudes.cc_g05_crew_player:
+  $type: Attitude
+  group1: Attitudes.cc_g05_crew
+  group2: Attitudes.Group_Player
+  value: Friendly
+Attitudes.cc_g05_gang_player:
+  $type: Attitude
+  group1: Attitudes.cc_g05_gang
+  group2: Attitudes.Group_Player
+  value: Hostile
+Attitudes.cc_g05_gang_crew:
+  $type: Attitude
+  group1: Attitudes.cc_g05_gang
+  group2: Attitudes.cc_g05_crew
+  value: Hostile
+Attitudes.cc_g05_gang_client:
+  $type: Attitude
+  group1: Attitudes.cc_g05_gang
+  group2: Attitudes.cc_g05_client
+  value: Hostile
+Attitudes.cc_g05_crew_client:
+  $type: Attitude
+  group1: Attitudes.cc_g05_crew
+  group2: Attitudes.cc_g05_client
+  value: Friendly
+Attitudes.cc_g05_client_player:
+  $type: Attitude
+  group1: Attitudes.cc_g05_client
+  group2: Attitudes.Group_Player
+  value: Friendly
+
+# THE AV. The Rescue's own Trauma Team Atlus, `av_trauma.ent`: the only
+# Atlus entity with the occupant slots this gig rides on, `player_standing`
+# (V at the open door, holding on, the pose of Knockin' on Heaven's Door) and
+# `tt_1` and `tt_2` (two crew standing with rifles), and the skeleton the
+# Trauma Team flight clips are made for. The open-world Atlus
+# (`av_zetatech_atlus_basic_02.ent`) has neither. Kept invulnerable, as The
+# Rescue keeps it: a crashed AV is a shift that cannot go on.
+Vehicle.cc_g05_av:
+  $base: Vehicle.q001_trauma_av
+  entityTemplatePath: mod\trauma_team\npv\av.ent
+
+# THE CREW. The three combat records the game's own Trauma Team are made
+# of, copied the way `mws_hey.tweak` copies them, with three changes:
+#   - their own group (above), friendly to V and hostile to the gang;
+#   - `DoNotTriggerPrevention`: the base record's `TriggerPrevention` would
+#     bring the police on whoever hurts one;
+#   - no frag grenades: a crew bullet cannot hurt V while V is friendly to
+#     the shooter, but an explosion may (docs/gig05-av-research.md, 4).
+# They cannot die: the tag `Invulnerable` puts god mode on at spawn, the way
+# The Rescue's crew carry it.
+Character.cc_g05_lead:
+  $base: Character.trauma_soldier_ranged2_dian_ma
+  entityTemplatePath: mod\trauma_team\npv\crew.ent
+  baseAttitudeGroup: cc_g05_crew
+  displayName: LocKey#1991193120046305239
+  fullDisplayName: LocKey#1991193120046305239
+  skipDisplayArchetype: true
+  tags:
+    - !append-once DoNotTriggerPrevention
+    - !append-once Invulnerable
+    - !remove TriggerPrevention
+  abilities:
+    - !remove Ability.CanUseFragGrenades
+Character.cc_g05_soldier:
+  $base: Character.trauma_soldier_shotgun2_zhuo_ma_rare
+  entityTemplatePath: mod\trauma_team\npv\crew.ent
+  baseAttitudeGroup: cc_g05_crew
+  displayName: LocKey#4687542370520156293
+  fullDisplayName: LocKey#4687542370520156293
+  skipDisplayArchetype: true
+  tags:
+    - !append-once DoNotTriggerPrevention
+    - !append-once Invulnerable
+    - !remove TriggerPrevention
+  abilities:
+    - !remove Ability.CanUseFragGrenades
+# THE MEDIC, the paramedic look: the officer record the game tags
+# `Paramedic`, which is what its own medics and pilots are made of.
+Character.cc_g05_medic:
+  $base: Character.trauma_rare_officer_chao_ma
+  entityTemplatePath: mod\trauma_team\npv\crew.ent
+  baseAttitudeGroup: cc_g05_crew
+  displayName: LocKey#6323986540229553761
+  fullDisplayName: LocKey#6323986540229553761
+  skipDisplayArchetype: true
+  tags:
+    - !append-once DoNotTriggerPrevention
+    - !append-once Invulnerable
+    - !remove TriggerPrevention
+  abilities:
+    - !remove Ability.CanUseFragGrenades
+# THE MEDIC AT THE CLIENT, the roof crew's Raman (gen_community.py,
+# ROOF_CREW). The design call, 2026-11-03: he kneels at the client and does
+# not fight. A group of his own the gang has no quarrel with, and no
+# reaction, so a fight round him leaves him in his pose.
+Character.cc_g05_medic_r:
+  $base: Character.cc_g05_medic
+  baseAttitudeGroup: cc_g05_aid
+  reactionPreset: ReactionPresets.NoReaction
+
+# THE SOLDIER AT THE AV, the roof crew's Wrona: he stands guard at the door
+# with a rifle and does not move (the design call, 2026-11-03: hold the
+# bird, or at least stay still). Out of the fight the way the medic is; a
+# fighting soldier told to hold his ground still walked off.
+Character.cc_g05_soldier_r:
+  $base: Character.cc_g05_soldier
+  baseAttitudeGroup: cc_g05_aid
+  reactionPreset: ReactionPresets.NoReaction
+
+# THE CLIENT, a corpo on the ground. No reaction, so he does not get up
+# and run in a fight (gig 04's Reynaldo, `NoReaction`).
+Character.cc_g05_client:
+  $base: Character.CorpoManNoReaction
+  baseAttitudeGroup: cc_g05_client
+  reactionPreset: ReactionPresets.NoReaction
+  displayName: LocKey#8523099964301708828
+  fullDisplayName: LocKey#8523099964301708828
+  skipDisplayArchetype: true
+  tags:
+    - !append-once DoNotTriggerPrevention
+
+# THE RECRUITER, outside the Medical Center, in the green Trauma Team suit
+# with her helmet off: the game's nurse 06 in the suit's woman's cut, one
+# fixed look (tools/gig05/gen_recruiter.py). Playtest 2026-11-03: on the corpo
+# woman's record she wore a different face and suit at every load. Playtest
+# 2026-11-04: in the nurse's own tunic and clogs she "seems beach going".
+Character.cc_g05_recruiter:
+  $base: Character.CorpoWoman
+  entityTemplatePath: mod\trauma_team\npv\recruiter.ent
+  appearanceName: cc_g05_recruiter
+  reactionPreset: ReactionPresets.NoReaction
+  baseAttitudeGroup: friendly
+  displayName: LocKey#8071065652180286836
+  fullDisplayName: LocKey#8071065652180286836
+  skipDisplayArchetype: true
+  tags:
+    - !append-once DoNotTriggerPrevention
+
+# THE SCAVS, Little China's own, in the gang group. Five of the nine the
+# game places in the district: pistols, an SMG, a shotgun, a pipe wrench.
+Character.cc_g05_scav_pulsar:
+  $base: Character.lch_scavenger_grunt1_ranged1_pulsar_ma
+  baseAttitudeGroup: cc_g05_gang
+  tags:
+    - !append-once DoNotTriggerPrevention
+Character.cc_g05_scav_slaughtomatic:
+  $base: Character.lch_scavenger_grunt1_ranged1_slaughtomatic_ma
+  baseAttitudeGroup: cc_g05_gang
+  tags:
+    - !append-once DoNotTriggerPrevention
+Character.cc_g05_scav_copperhead:
+  $base: Character.lch_scavenger_grunt2_ranged2_copperhead_ma
+  baseAttitudeGroup: cc_g05_gang
+  tags:
+    - !append-once DoNotTriggerPrevention
+Character.cc_g05_scav_shotgun:
+  $base: Character.lch_scavenger_elite2_shotgun_tactician_ma
+  baseAttitudeGroup: cc_g05_gang
+  tags:
+    - !append-once DoNotTriggerPrevention
+Character.cc_g05_scav_wrench:
+  $base: Character.lch_scavenger_grunt1_melee1_pipewrench_ma
+  baseAttitudeGroup: cc_g05_gang
+  tags:
+    - !append-once DoNotTriggerPrevention
+

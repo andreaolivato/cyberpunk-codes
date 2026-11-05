@@ -1,0 +1,47 @@
+{
+  "Header": {
+    "WolvenKitVersion": "8.20.0",
+    "WKitJsonVersion": "0.0.9",
+    "GameVersion": 2310,
+    "DataType": "CR2W",
+    "ArchiveFileName": "gig05_ru-ru.lipmap"
+  },
+  "Data": {
+    "Version": 195,
+    "BuildVersion": 0,
+    "RootChunk": {
+      "$type": "animLipsyncMapping",
+      "cookingPlatform": "PLATFORM_PC",
+      "languageCodeName": {
+        "$type": "CName",
+        "$storage": "string",
+        "$value": "ru-ru"
+      },
+      "sceneEntries": [
+        {
+          "$type": "animLipsyncMappingSceneEntry",
+          "actorVoiceTags": [
+            "775942681439738191"
+          ],
+          "animSets": [
+            {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "string",
+                "$value": "mod\\trauma_team\\localization\\en-us\\lipsync\\gig05_interview\\recruiter.anims"
+              },
+              "Flags": "Soft"
+            }
+          ]
+        }
+      ],
+      "scenePaths": [
+        "819975156657214046"
+      ],
+      "scenePreviewPaths": [
+        "16350432430707505842"
+      ]
+    },
+    "EmbeddedFiles": []
+  }
+}

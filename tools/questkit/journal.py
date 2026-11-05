@@ -306,7 +306,7 @@ def codex_link(lid, class_name, real_path):
     })
 
 
-def objective(oid, suffix, anchor, links=(), extra=(), counter=0):
+def objective(oid, suffix, anchor, links=(), extra=(), counter=0, optional=0):
     """`links` is a list of (id, className, realPath) for codex_link;
     `extra` is ready-made pin entries (npc_pin) to carry as well.
     `counter` is the total of a counted objective, which the tracker shows
@@ -331,7 +331,7 @@ def objective(oid, suffix, anchor, links=(), extra=(), counter=0):
         'itemID': tweak(None),
         'journalEntryOverrideDataList': [],
         'locationPrefabRef': noderef(None),
-        'optional': 0,
+        'optional': optional,
     })
 
 

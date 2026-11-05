@@ -10566,3 +10566,21 @@ normal call". Her first call rings from her own contact.
 as referenced by the journal and missing from the shipped strings. Present
 in 1.3.0 as released. Not looked at in game: the pin may show a raw key or
 no name. The fix is to ship the string or point the pin at one that exists.
+
+## 59. The crew stood in the air after the flight home. OPEN, covered 2026-11-04
+
+Playtest of gig 05: straight after the AV landed on the roof, the crew and the AV
+stood about 0.35 m above the ground. Measured at the same spot before a shift and
+after one, in a settled game, the crew's height is 129.2 in both, with their feet
+on the roof. The collision the game has there is 128.86 and the roof it draws is
+usually at about 129.2.
+
+The working idea is that the roof draws lower until it has streamed in after a long
+fast flight. That is inference. A teleport test failed because it put V inside a
+building, so it proves nothing.
+
+Gig 05 has a hidden surface 3 cm under its slab, below the AV and the crew. It
+shows only if the drawn roof is lower.
+
+The flights home after the hidden surface went in showed no crew in the air
+(playtest, 2026-11-05). The cause is still inference, so this stays open.

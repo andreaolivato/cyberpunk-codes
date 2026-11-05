@@ -959,6 +959,27 @@ Three things about it are not obvious and all three are load-bearing:
 The full family, how one is applied, the savable measurement and the three ways
 to put a message on screen are in `docs/gameplay-restrictions.md`.
 
+## A building of the gig's own in the open world (2026-11-04)
+
+Gig 05 stands a walkway and a locker room on a roof, in the open air, out of gig
+04's interior kit. Three things decide how that is built.
+
+The kit is drawn from one side and has no collision. A closed building is two
+skins: one row of walls facing in, one facing out, with a stretched closed block
+over the top for the roof and collision boxes added by hand. A wall piece turned
+180 degrees is the outer skin. `tools/gig05/gen_community.py`, `_wall` and
+`_gap_wall`, take a plane, a facing and a run, and handle the arithmetic.
+
+Pieces butted edge to edge leave slits of sky, because nothing is drawn behind
+them. Walls run past the corners, and the ceiling runs over the tops of the walls.
+A doorway through the two skins needs its own short walls across the hollow.
+
+Doors are devices. A door needs an entry in the `.devices` patch. A door that is
+a floor terminal's child is a lift door, locked while the car is away. A sliding
+door takes less room than a swinging one when anything is mounted beside it.
+
+A working lift, with the three files it needs, is gotcha 162.
+
 ## Dev/debug infrastructure
 
 - CET dev menu (`source/cet-dev/init.lua`, deploys to

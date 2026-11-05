@@ -19,7 +19,7 @@ import importlib
 import os
 import sys
 
-GIGS = ('01', '02', '03', '04', 'fixer01')
+GIGS = ('01', '02', '03', '04', '05', 'fixer01')
 TOOLS = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
