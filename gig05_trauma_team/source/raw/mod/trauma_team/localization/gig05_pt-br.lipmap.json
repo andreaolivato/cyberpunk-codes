@@ -1,0 +1,48 @@
+{
+  "Header": {
+    "WolvenKitVersion": "10.0.0-beta.1",
+    "WKitJsonVersion": "0.0.9",
+    "GameVersion": 2500,
+    "ExportedDateTime": "2026-11-05T02:43:32.1711258Z",
+    "DataType": "CR2W",
+    "ArchiveFileName": "C:\\Users\\andre\\OneDrive\\Desktop\\cyberpunk-gigs\\gig05_trauma_team\\source\\archive\\mod\\trauma_team\\localization\\gig05_pt-br.lipmap"
+  },
+  "Data": {
+    "Version": 195,
+    "BuildVersion": 0,
+    "RootChunk": {
+      "$type": "animLipsyncMapping",
+      "cookingPlatform": "PLATFORM_PC",
+      "languageCodeName": {
+        "$type": "CName",
+        "$storage": "string",
+        "$value": "pt-br"
+      },
+      "sceneEntries": [
+        {
+          "$type": "animLipsyncMappingSceneEntry",
+          "actorVoiceTags": [
+            "775942681439738191"
+          ],
+          "animSets": [
+            {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "string",
+                "$value": "mod\\trauma_team\\localization\\en-us\\lipsync\\gig05_interview\\recruiter.anims"
+              },
+              "Flags": "Soft"
+            }
+          ]
+        }
+      ],
+      "scenePaths": [
+        "819975156657214046"
+      ],
+      "scenePreviewPaths": [
+        "16350432430707505842"
+      ]
+    },
+    "EmbeddedFiles": []
+  }
+}

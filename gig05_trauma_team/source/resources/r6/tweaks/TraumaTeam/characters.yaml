@@ -1,0 +1,156 @@
+Attitudes.cc_g05_crew:
+  $type: AttitudeGroup
+  name: cc_g05_crew
+  parent: Attitudes.Group_Neutral
+Attitudes.cc_g05_gang:
+  $type: AttitudeGroup
+  name: cc_g05_gang
+  parent: Attitudes.Group_Neutral
+Attitudes.cc_g05_client:
+  $type: AttitudeGroup
+  name: cc_g05_client
+  parent: Attitudes.Group_Neutral
+Attitudes.cc_g05_aid:
+  $type: AttitudeGroup
+  name: cc_g05_aid
+  parent: Attitudes.Group_Neutral
+Attitudes.cc_g05_aid_player:
+  $type: Attitude
+  group1: Attitudes.cc_g05_aid
+  group2: Attitudes.Group_Player
+  value: Friendly
+
+Attitudes.cc_g05_crew_player:
+  $type: Attitude
+  group1: Attitudes.cc_g05_crew
+  group2: Attitudes.Group_Player
+  value: Friendly
+Attitudes.cc_g05_gang_player:
+  $type: Attitude
+  group1: Attitudes.cc_g05_gang
+  group2: Attitudes.Group_Player
+  value: Hostile
+Attitudes.cc_g05_gang_crew:
+  $type: Attitude
+  group1: Attitudes.cc_g05_gang
+  group2: Attitudes.cc_g05_crew
+  value: Hostile
+Attitudes.cc_g05_gang_client:
+  $type: Attitude
+  group1: Attitudes.cc_g05_gang
+  group2: Attitudes.cc_g05_client
+  value: Hostile
+Attitudes.cc_g05_crew_client:
+  $type: Attitude
+  group1: Attitudes.cc_g05_crew
+  group2: Attitudes.cc_g05_client
+  value: Friendly
+Attitudes.cc_g05_client_player:
+  $type: Attitude
+  group1: Attitudes.cc_g05_client
+  group2: Attitudes.Group_Player
+  value: Friendly
+
+Vehicle.cc_g05_av:
+  $base: Vehicle.q001_trauma_av
+  entityTemplatePath: mod\trauma_team\npv\av.ent
+
+# the one who fights
+Character.cc_g05_lead:
+  $base: Character.trauma_soldier_ranged2_dian_ma
+  entityTemplatePath: mod\trauma_team\npv\crew.ent
+  baseAttitudeGroup: cc_g05_crew
+  displayName: LocKey#1991193120046305239
+  fullDisplayName: LocKey#1991193120046305239
+  skipDisplayArchetype: true
+  tags:
+    - !append-once DoNotTriggerPrevention
+    - !append-once Invulnerable
+    - !remove TriggerPrevention
+  abilities:
+    - !remove Ability.CanUseFragGrenades
+Character.cc_g05_soldier:
+  $base: Character.trauma_soldier_shotgun2_zhuo_ma_rare
+  entityTemplatePath: mod\trauma_team\npv\crew.ent
+  baseAttitudeGroup: cc_g05_crew
+  displayName: LocKey#4687542370520156293
+  fullDisplayName: LocKey#4687542370520156293
+  skipDisplayArchetype: true
+  tags:
+    - !append-once DoNotTriggerPrevention
+    - !append-once Invulnerable
+    - !remove TriggerPrevention
+  abilities:
+    - !remove Ability.CanUseFragGrenades
+Character.cc_g05_medic:
+  $base: Character.trauma_rare_officer_chao_ma
+  entityTemplatePath: mod\trauma_team\npv\crew.ent
+  baseAttitudeGroup: cc_g05_crew
+  displayName: LocKey#6323986540229553761
+  fullDisplayName: LocKey#6323986540229553761
+  skipDisplayArchetype: true
+  tags:
+    - !append-once DoNotTriggerPrevention
+    - !append-once Invulnerable
+    - !remove TriggerPrevention
+  abilities:
+    - !remove Ability.CanUseFragGrenades
+# kneels at the client
+Character.cc_g05_medic_r:
+  $base: Character.cc_g05_medic
+  baseAttitudeGroup: cc_g05_aid
+  reactionPreset: ReactionPresets.NoReaction
+
+Character.cc_g05_soldier_r:
+  $base: Character.cc_g05_soldier
+  baseAttitudeGroup: cc_g05_aid
+  reactionPreset: ReactionPresets.NoReaction
+
+# the corpo
+Character.cc_g05_client:
+  $base: Character.CorpoManNoReaction
+  baseAttitudeGroup: cc_g05_client
+  reactionPreset: ReactionPresets.NoReaction
+  displayName: LocKey#8523099964301708828
+  fullDisplayName: LocKey#8523099964301708828
+  skipDisplayArchetype: true
+  tags:
+    - !append-once DoNotTriggerPrevention
+
+Character.cc_g05_recruiter:
+  $base: Character.CorpoWoman
+  entityTemplatePath: mod\trauma_team\npv\recruiter.ent
+  appearanceName: cc_g05_recruiter
+  reactionPreset: ReactionPresets.NoReaction
+  baseAttitudeGroup: friendly
+  displayName: LocKey#8071065652180286836
+  fullDisplayName: LocKey#8071065652180286836
+  skipDisplayArchetype: true
+  tags:
+    - !append-once DoNotTriggerPrevention
+
+Character.cc_g05_scav_pulsar:
+  $base: Character.lch_scavenger_grunt1_ranged1_pulsar_ma
+  baseAttitudeGroup: cc_g05_gang
+  tags:
+    - !append-once DoNotTriggerPrevention
+Character.cc_g05_scav_slaughtomatic:
+  $base: Character.lch_scavenger_grunt1_ranged1_slaughtomatic_ma
+  baseAttitudeGroup: cc_g05_gang
+  tags:
+    - !append-once DoNotTriggerPrevention
+Character.cc_g05_scav_copperhead:
+  $base: Character.lch_scavenger_grunt2_ranged2_copperhead_ma
+  baseAttitudeGroup: cc_g05_gang
+  tags:
+    - !append-once DoNotTriggerPrevention
+Character.cc_g05_scav_shotgun:
+  $base: Character.lch_scavenger_elite2_shotgun_tactician_ma
+  baseAttitudeGroup: cc_g05_gang
+  tags:
+    - !append-once DoNotTriggerPrevention
+Character.cc_g05_scav_wrench:
+  $base: Character.lch_scavenger_grunt1_melee1_pipewrench_ma
+  baseAttitudeGroup: cc_g05_gang
+  tags:
+    - !append-once DoNotTriggerPrevention

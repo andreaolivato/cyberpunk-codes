@@ -1,0 +1,141 @@
+{
+  "Header": {
+    "WolvenKitVersion": "8.20.0",
+    "WKitJsonVersion": "0.0.9",
+    "GameVersion": 2310,
+    "ExportedDateTime": "2026-11-04T15:11:30.6308803Z",
+    "DataType": "CR2W",
+    "ArchiveFileName": "C:\\Users\\andre\\OneDrive\\Desktop\\cyberpunk-gigs\\gig05_trauma_team\\source\\archive\\mod\\trauma_team\\lift\\lift.devices"
+  },
+  "Data": {
+    "Version": 195,
+    "BuildVersion": 0,
+    "RootChunk": {
+      "$type": "gameDeviceResource",
+      "cookingPlatform": "PLATFORM_PC",
+      "data": {
+        "HandleId": "0",
+        "Data": {
+          "$type": "gameDeviceResourceData",
+          "unk1": [
+            {
+              "$type": "gameDeviceResourceData_Cls1",
+              "children": [
+                "9783228533132838568",
+                "9783229632644466779"
+              ],
+              "className": {
+                "$type": "CName",
+                "$storage": "string",
+                "$value": "LiftControllerPS"
+              },
+              "hash": "15055248099512151738",
+              "nodePosition": {
+                "$type": "Vector3",
+                "X": -1261.5,
+                "Y": 1769,
+                "Z": 18.2000008
+              },
+              "parents": []
+            },
+            {
+              "$type": "gameDeviceResourceData_Cls1",
+              "children": [],
+              "className": {
+                "$type": "CName",
+                "$storage": "string",
+                "$value": "ElevatorFloorTerminalControllerPS"
+              },
+              "hash": "9783228533132838568",
+              "nodePosition": {
+                "$type": "Vector3",
+                "X": -1259.90002,
+                "Y": 1765.66003,
+                "Z": 19.6000004
+              },
+              "parents": [
+                "15055248099512151738"
+              ]
+            },
+            {
+              "$type": "gameDeviceResourceData_Cls1",
+              "children": [
+                "3320314990957037207"
+              ],
+              "className": {
+                "$type": "CName",
+                "$storage": "string",
+                "$value": "ElevatorFloorTerminalControllerPS"
+              },
+              "hash": "9783229632644466779",
+              "nodePosition": {
+                "$type": "Vector3",
+                "X": -1262.78003,
+                "Y": 1765.81006,
+                "Z": 130.600006
+              },
+              "parents": [
+                "15055248099512151738"
+              ]
+            },
+            {
+              "$type": "gameDeviceResourceData_Cls1",
+              "children": [],
+              "className": {
+                "$type": "CName",
+                "$storage": "string",
+                "$value": "DoorControllerPS"
+              },
+              "hash": "3320314990957037207",
+              "nodePosition": {
+                "$type": "Vector3",
+                "X": -1260.75,
+                "Y": 1765.80005,
+                "Z": 129.199997
+              },
+              "parents": [
+                "9783229632644466779"
+              ]
+            },
+            {
+              "$type": "gameDeviceResourceData_Cls1",
+              "children": [],
+              "className": {
+                "$type": "CName",
+                "$storage": "string",
+                "$value": "DoorControllerPS"
+              },
+              "hash": "1430085040079766977",
+              "nodePosition": {
+                "$type": "Vector3",
+                "X": -1321.34998,
+                "Y": 1764.40002,
+                "Z": 129.199997
+              },
+              "parents": []
+            },
+            {
+              "$type": "gameDeviceResourceData_Cls1",
+              "children": [],
+              "className": {
+                "$type": "CName",
+                "$storage": "string",
+                "$value": "DoorControllerPS"
+              },
+              "hash": "11909649157641710467",
+              "nodePosition": {
+                "$type": "Vector3",
+                "X": -1309.09998,
+                "Y": 1765.15002,
+                "Z": 129.199997
+              },
+              "parents": []
+            }
+          ],
+          "version": 2
+        }
+      }
+    },
+    "EmbeddedFiles": []
+  }
+}

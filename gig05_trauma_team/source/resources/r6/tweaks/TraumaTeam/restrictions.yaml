@@ -1,0 +1,7 @@
+GameplayRestriction.cc_g05_ride:
+  $base: GameplayRestriction.VehicleScene
+  savable: false
+# boarding to street
+GameplayRestriction.cc_g05_no_travel:
+  $base: GameplayRestriction.BlockFastTravel
+  savable: false

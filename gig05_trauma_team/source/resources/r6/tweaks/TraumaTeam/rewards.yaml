@@ -1,0 +1,32 @@
+QuestRewards.sts_cc_g05_qty_silver:
+  $base: QuestRewards.sts_wbr_hil_01_completion_inline5
+  value: 1500
+QuestRewards.sts_cc_g05_money_silver:
+  $base: QuestRewards.sts_wbr_hil_01_completion_inline4
+  quantityModifiers: [ QuestRewards.sts_cc_g05_qty_silver ]
+QuestRewards.sts_cc_g05_silver:
+  $base: QuestRewards.sts_wbr_hil_01_completion
+  name: sts_cc_g05_silver
+  currencyPackage: [ QuestRewards.sts_cc_g05_money_silver ]
+
+QuestRewards.sts_cc_g05_qty_gold:
+  $base: QuestRewards.sts_wbr_hil_01_completion_inline5
+  value: 2500
+QuestRewards.sts_cc_g05_money_gold:
+  $base: QuestRewards.sts_wbr_hil_01_completion_inline4
+  quantityModifiers: [ QuestRewards.sts_cc_g05_qty_gold ]
+QuestRewards.sts_cc_g05_gold:
+  $base: QuestRewards.sts_wbr_hil_01_completion
+  name: sts_cc_g05_gold
+  currencyPackage: [ QuestRewards.sts_cc_g05_money_gold ]
+
+QuestRewards.sts_cc_g05_qty_platinum:
+  $base: QuestRewards.sts_wbr_hil_01_completion_inline5
+  value: 4000
+QuestRewards.sts_cc_g05_money_platinum:
+  $base: QuestRewards.sts_wbr_hil_01_completion_inline4
+  quantityModifiers: [ QuestRewards.sts_cc_g05_qty_platinum ]
+QuestRewards.sts_cc_g05_platinum:
+  $base: QuestRewards.sts_wbr_hil_01_completion
+  name: sts_cc_g05_platinum
+  currencyPackage: [ QuestRewards.sts_cc_g05_money_platinum ]
