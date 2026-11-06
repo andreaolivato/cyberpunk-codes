@@ -33,13 +33,31 @@
               "Flags": "Soft"
             }
           ]
+        },
+        {
+          "$type": "animLipsyncMappingSceneEntry",
+          "actorVoiceTags": [
+            "775942681439738191"
+          ],
+          "animSets": [
+            {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "string",
+                "$value": "mod\\trauma_team\\localization\\en-us\\lipsync\\gig05_repeat\\recruiter.anims"
+              },
+              "Flags": "Soft"
+            }
+          ]
         }
       ],
       "scenePaths": [
-        "819975156657214046"
+        "819975156657214046",
+        "7377828007835749620"
       ],
       "scenePreviewPaths": [
-        "16350432430707505842"
+        "16350432430707505842",
+        "13496754416965956048"
       ]
     },
     "EmbeddedFiles": []

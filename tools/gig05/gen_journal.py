@@ -52,6 +52,8 @@ PHOTO_AV = 'UIJournalIcons.cc_g05_av'
 # design call, 2026-11-03: the objective stayed, with nothing to do).
 MSG_DONE = 'cc_g05_msg_done'
 MSG_DONE_PATH = CONV_PATH + '/' + MSG_DONE
+MSG_REPEAT = 'cc_g05_msg_repeat'
+MSG_REPEAT_PATH = CONV_PATH + '/' + MSG_REPEAT
 
 import gen_community as gc  # noqa: E402
 
@@ -110,7 +112,8 @@ def tti_contact():
                    'PhoneAvatars.Avatar_Unknown', name_key='tti-name',
                    conv_entries=[message(MSG_AD, 'msg-ad', delay=MSG_AD_DELAY,
                                          attach_quest=QUEST_PATH, image=PHOTO_AV),
-                                 message(MSG_DONE, 'msg-done', delay=4)])
+                                 message(MSG_DONE, 'msg-done', delay=4),
+                                message(MSG_REPEAT, 'msg-repeat', delay=4)])
 
 
 def build():

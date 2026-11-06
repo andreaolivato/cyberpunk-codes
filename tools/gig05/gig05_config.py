@@ -238,6 +238,21 @@ def _site(name, av, yaw, client, scavs, lead, depart=None, soldier_z=None):
 # Scavs stand on that story's own security spots on the lower roof.
 SITE1 = (-2148.7, 477.7, 95.8)
 SITE1_YAW = heading((-2126.6, 492.2), SITE1)
+# THE STORY'S GUARDS ON THAT ROOF. With `sts_cct_dtn_tier_3` above 0 and V
+# outside `#sts_cct_dtn_04_tr_content_init`, the game runs the story and
+# switches this whole community on, once, until `dtn_04_finished`. These four
+# of its entries stand on the roof. The lobby and the floors below are left
+# alone. Nexus report 2026-11-06, reproduced in playtest.
+HOTEL_GUARDS_COM = ('$/03_night_city/#c_city_center/downtown/loc_sts_cct_dtn_04_prefab3MJBEHQ/'
+                    '#sts_cct_dtn_04_openworld/#sts_cct_dtn_04_streetstory/#dtn_04_com_area')
+HOTEL_ROOF_GUARDS = ['dtn_04_roof_guard_patrol_01', 'dtn_04_roof_guard_patrol_02',
+                     'dtn_04_security_roof_entrance', 'dtn_04_security_roof_higher']
+# THE HOTEL'S CAMERAS ROUND THE ROOF. One that sees V in the fight raises the alarm
+# that moves Dino's gig on. Playtest 2026-11-06. Read off exterior_-34_7_1_0.
+_HOTEL_DEVICES = ('$/03_night_city/#c_city_center/downtown/loc_sts_cct_dtn_04_prefab3MJBEHQ/'
+                  'loc_sts_cct_dtn_04_gameplay_prefabW3XQBRA/'
+                  'loc_sts_cct_dtn_04_devices_prefab5CD7R6I/')
+HOTEL_CAMERAS = [_HOTEL_DEVICES + '#dtn_04_dvc_camera_%03d' % n for n in (6, 7, 8, 9, 15)]
 # A STREET BY THE COAST, open-world Trauma Team intervention 17: open sky
 # 90 m to the north, open street 140 m to the east, the sea west (traced in
 # game, 2026-11-03). The AV comes down from the north, its door east.
@@ -280,8 +295,10 @@ SITES = [
            (-2347.7, 432.2, 7.7), (-2354.6, 428.2, 8.0)],
           (-2364.0, 425.0, 8.6), depart=SITE2_OUT, soldier_z=8.9),
     _site('site3', SITE3, SITE3_IN, (-1971.5, 1222.5, 8.9),
-          [(-1971.5, 1231.5, 9.7), (-1980.5, 1229.1, 9.0), (-1971.5, 1239.5, 10.0),
-           (-1984.5, 1236.0, 9.0), (-1958.5, 1236.0, 10.0)],
+          # 1, 3 and 5 captured in game (playtest 2026-11-06): the first
+          # spots for those three were behind a wall.
+          [(-1956.31, 1204.70, 10.95), (-1980.5, 1229.1, 9.0), (-1952.63, 1215.71, 10.95),
+           (-1984.5, 1236.0, 9.0), (-1955.64, 1230.77, 11.10)],
           (-1977.0, 1219.5, 8.9), depart=SITE3_OUT, soldier_z=8.95),
 ]
 SCAV_RECORDS = [('scav1', 'Character.cc_g05_scav_pulsar'),

@@ -69,6 +69,12 @@ STRINGS['msg-done'] = NL.join([
     'Probation crews are called in as shifts open. The next one will be '
     'posted here.',
 ])
+STRINGS['msg-repeat'] = NL.join([
+    'Repeat shifts available. Same crew, same three calls. '
+    'Ask at intake outside the Medical Center, 12 hours after your last shift.',
+    '',
+    'New shifts will be posted here.',
+])
 STRINGS['gig-brief'] = STRINGS['msg-ad']
 
 if __name__ == '__main__':

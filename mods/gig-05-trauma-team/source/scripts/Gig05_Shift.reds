@@ -54,6 +54,12 @@ public abstract class CCG05Shift {
     public static func ClientEntry() -> CName { return n"client"; }
     public static func Ride() -> TweakDBID { return t"GameplayRestriction.cc_g05_ride"; }
     public static func PoliceLock() -> CName { return n"cc_g05_shift"; }
+    // Game hours between one shift's end and the recruiter's return.
+    public static func RestHours() -> Int32 { return 12; }
+    // SHE COMES BACK ONLY WITH V THIS FAR AWAY, so she does not appear in plain
+    // sight. gig05_config.py, RECRUITER.
+    public static func Recruiter() -> Vector4 { return new Vector4(-1335.3, 1743.9, 18.2, 1.0); }
+    public static func RecruiterGap() -> Float { return 60.0; }
     // No Scav standing for this many ticks in a row, after at least this many
     // ticks of fight, is a clear roof. A body still streaming in reads as
     // none, so one empty tick proves nothing.
@@ -95,6 +101,15 @@ public abstract class CCG05Shift {
     // V back in the car after stepping out the lower one no longer reached the lift
     // (2026-11-04, a watch on LiftControllerPS.OnGoToFloor). Only this lift, found by
     // where it stands: gig05_config.py, LIFT_XY.
+    // THE RIDE IS 111 m. At the template's 2.5 m/s it took 44 s; at this speed, 32 s.
+    // Sent before every move, since the lift's own setting comes from the
+    // template (the design call, 2026-11-06).
+    public static func Hurry(ps: ref<LiftControllerPS>, game: GameInstance) -> Void {
+        let quick: ref<QuestSetLiftSpeed> = ps.ActionQuestSetLiftSpeed();
+        quick.SetProperties(3.5);
+        GameInstance.GetPersistencySystem(game).QueuePSEvent(ps.GetID(), ps.GetClassName(), quick);
+    }
+
     // A CALL PANEL brings the car to its own stop. The game's own call did nothing on
     // this lift, so the press goes straight to the lift (gotcha 162).
     public static func CallPanelPress(owner: wref<GameObject>) -> Bool {
@@ -117,6 +132,7 @@ public abstract class CCG05Shift {
             let ps: ref<LiftControllerPS> = parents[i] as LiftControllerPS;
             if IsDefined(ps) {
                 if !ps.IsMoving() {
+                    CCG05Shift.Hurry(ps, panel.GetGame());
                     let move: ref<QuestGoToFloor> = ps.ActionQuestGoToFloor();
                     move.SetProperties(at.Z > 100.0 ? 1 : 0);
                     GameInstance.GetPersistencySystem(panel.GetGame()).QueuePSEvent(ps.GetID(), ps.GetClassName(), move);
@@ -139,6 +155,7 @@ public abstract class CCG05Shift {
         }
         let ps: ref<LiftControllerPS> = lift.GetDevicePS();
         if IsDefined(ps) && !ps.IsMoving() {
+            CCG05Shift.Hurry(ps, lift.GetGame());
             let move: ref<QuestGoToFloor> = ps.ActionQuestGoToFloor();
             move.SetProperties(ps.GetActiveFloor() == 0 ? 1 : 0);
             GameInstance.GetPersistencySystem(lift.GetGame()).QueuePSEvent(ps.GetID(), ps.GetClassName(), move);
@@ -218,6 +235,7 @@ public class TraumaTeamShift extends ScriptableSystem {
         this.DevDownScavs(game, qs);
         this.Warp(game, qs, player);
         this.AtLift(game, qs, player);
+        this.NextShift(game, qs, player);
 
         if this.m_warping {
             this.Schedule(0.25);
@@ -507,6 +525,36 @@ public class TraumaTeamShift extends ScriptableSystem {
                 && z < CCG05Shift.StreetLine() {
             qs.SetFactStr("cc_g05_at_street", 1);
         }
+    }
+
+    // THE NEXT SHIFT, RestHours after the last one ended. `cc_g05_rest_start` is
+    // the quest saying a shift has just ended. A save finished on 1.0.0 never
+    // had it, so `cc_g05_rest_from` is 0 there and its V is posted at once.
+    private func NextShift(game: GameInstance, qs: ref<QuestsSystem>, player: ref<PlayerPuppet>) -> Void {
+        if qs.GetFactStr("cc_g05_shift_done") <= qs.GetFactStr("cc_g05_posted")
+                || qs.GetFactStr("cc_g05_next_shift") > 0
+                || qs.GetFactStr("q115_point_of_no_return") > 0 {
+            return;
+        }
+        let ts: ref<TimeSystem> = GameInstance.GetTimeSystem(game);
+        if !IsDefined(ts) {
+            return;
+        }
+        let hour: Int32 = Cast<Int32>(ts.GetGameTimeStamp() / 3600.0);
+        if qs.GetFactStr("cc_g05_rest_start") > 0 {
+            qs.SetFactStr("cc_g05_rest_start", 0);
+            qs.SetFactStr("cc_g05_rest_from", hour);
+            return;
+        }
+        let began: Int32 = qs.GetFactStr("cc_g05_rest_from");
+        if began > 0 && hour - began < CCG05Shift.RestHours() {
+            return;
+        }
+        if Vector4.Distance(player.GetWorldPosition(), CCG05Shift.Recruiter()) < CCG05Shift.RecruiterGap() {
+            return;
+        }
+        qs.SetFactStr("cc_g05_rest_from", 0);
+        qs.SetFactStr("cc_g05_next_shift", 1);
     }
 
     // THE SKIP: `cc_g05_warp` is the flight (1 to 4), set by the quest under a

@@ -20,7 +20,8 @@ of NPCs onto the player and drives the wanted level from script.
 the mod's own, and other gig mods can add themselves to her gig counter.
 **Return Ticket** (`mods/gig-04-return-ticket`,
 [Nexus](https://www.nexusmods.com/cyberpunk2077/mods/36829)) is her first
-gig. **Join Trauma Team** (`mods/gig-05-trauma-team`) puts V on a Trauma Team
+gig. **Join Trauma Team** (`mods/gig-05-trauma-team`,
+[Nexus](https://www.nexusmods.com/cyberpunk2077/mods/37338)) puts V on a Trauma Team
 crew, flying real AV routes across the city with a working lift and a new
 armory on a roof. All six mods
 follow the game's voice-over language and ship a translation kit

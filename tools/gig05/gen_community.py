@@ -723,6 +723,25 @@ def _walkway():
     out.append(_piece('cc_g05_walk_end', gen_room.WALL3, x1 + 0.23, y1 + 0.1, z, 90.0, (3.3 / 3.0, 1, 1)))
     door = cfg.WALK_DOOR_X
     out += _outer_walls(x0, x1, y0, y1, z, top, door)
+    # A SKIRT ROUND THE UNDERSIDE, 1 cm proud of the walls. The side of the plate
+    # below, with its window openings, showed under the outer walls from the lift
+    # (playtest 2026-11-06).
+    west, east = x0 - 0.15, x1 + 0.47
+    low, high = z - 0.7, z + 0.3
+    out += _wall('cc_g05_skirt_s', 's', y0 - 0.47, west, east, low, high)
+    out += _wall('cc_g05_skirt_n', 'n', y1 + 0.47, west, door, low, high)
+    out += _wall('cc_g05_skirt_n2', 'n', y1 + 0.21, door, east, low, high)
+    out += _wall('cc_g05_skirt_e', 'e', east, y0 - 0.47, y1 + 0.21, low, high)
+    # THE UNDERSIDE CLOSED INSIDE THE SKIRT. The plate's bottom stops short of its
+    # bounding box, so a gap stayed beside the walls (playtest 2026-11-06). A ceiling
+    # panel is drawn from below.
+    for name, a, b, north in (('cc_g05_under_w', west, door, y1 + 0.47),
+                              ('cc_g05_under_e', door, east, y1 + 0.21)):
+        n = max(1, int(round((b - a) / 3.0)))
+        step = (b - a) / n
+        for i in range(n):
+            out.append(_piece('%s%d' % (name, i), gen_room.CEILING, b - i * step, north, z - 0.6, 0.0,
+                              (step / 3.0, (north - (y0 - 0.47)) / 3.0, 1)))
     # THE WEST END, a wall with the sliding door to the locker room in it.
     out += _gap_wall('cc_g05_walk_west', 'e', x0, y0 - 0.1, y1 + 0.1, cfg.ROOM_WAY_IN, z + 2.3, z, top)
     gap1 = cfg.ROOF_DOOR_GAP[1] + 0.15

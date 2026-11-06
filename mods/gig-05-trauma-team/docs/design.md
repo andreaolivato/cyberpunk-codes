@@ -42,7 +42,24 @@ script calls only the game's functions, and the release's shared scripts need Co
    takes the lift down the side of the building, by the keypad. The pay for
    the three calls arrives with the game's own money and XP notices.
 
-Later shifts start at step 3.
+Later shifts start at step 3. Brekke's welcome and goodbye are for the first
+day only.
+
+## Repeating the shift
+
+Dispatch's texts mean new work, so a player who only wants new shifts can ignore
+the repeat. Twelve game hours after a shift the recruiter is back outside the
+Medical Center, with no marker and no objective. She returns only while V is at
+least 60 m from her, so she does not appear in plain sight. Dispatch says so
+in one text, sent after the first shift and never again.
+
+Her prompt is "Put me back on the same shift." She answers with her two lines from
+the interview about the elevator and the armory, and "Take the staff elevator to
+the roof" comes back. She leaves when V goes up, and returns after the next rest.
+The pay is the same every time. A save that finished the shift on 1.0.0 gets
+the text and the recruiter without the rest.
+
+A new shift will start from the same point in the quest, as a Dispatch text.
 
 ## The first encounter
 
@@ -123,6 +140,13 @@ behind each is in the repo's research notes; the short form:
   `weyland` and `rogue` are within 30 cm of `tt_2`. The seat node does not take
   NPCs onto those places. V is not in that scene: a pose for V on the AV's
   slot crashes the game.
+- **The hotel's own guards.** The first call's roof is the one in Dino's gig `sts_cct_dtn_04`,
+  and the game keeps guards on it from the gig's unlock until it is finished. The quest
+  switches the four on the roof off as the first flight starts and on again after the
+  third call, about 800 m away, if the gig is unlocked and unfinished. They come back without their patrol
+  orders, which the gig gives once. The five cameras round that roof stop detecting
+  when the AV reaches the roof, and detect again 25 s after it leaves. One that saw
+  V would raise the alarm that moves Dino's gig on.
 - **Flying** is the game's own node for every AV flight in its quests: the
   AV follows a flight path laid in the world, start to end. The gig ships
   its paths. The first follows the hotel roof's own arrival in at the end,

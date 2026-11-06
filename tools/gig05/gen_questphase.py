@@ -27,8 +27,14 @@ THE SHIFT, top to bottom:
   home          the flight back, the same step-off, Brekke's goodbye.
   the end       "Take the elevator down", and the optional change back at the
                 shelves (`gig05_locker_back`). On the street the pay, `shift_done`
-                +1, and Dispatch's text. The quest stays open on `cc_g05_next_shift`:
-                the next shift goes after that wait, so a finished save carries on.
+                +1, and Dispatch's text.
+  again         The wait on `cc_g05_next_shift`, set by Gig05_Shift.reds after V's
+                rest. The recruiter comes back with no marker, Dispatch's text
+                says so once, and her prompt (`gig05_repeat`) goes back to "Take
+                the staff elevator". The same shift, without the welcome and the
+                goodbye. A save finished on 1.0.0 is parked on this wait and
+                carries on from it. A new shift will come in through the same
+                wait: Dispatch's texts are for new work, she is for the repeat.
 
 WHO SETS WHICH FACT (the rest are THIS GRAPH's own):
 
@@ -47,6 +53,10 @@ WHO SETS WHICH FACT (the rest are THIS GRAPH's own):
   cc_g05_site_clear     Gig05_Shift.reds, every Scav down
   cc_g05_kit            THIS GRAPH or Gig05_Shift.reds, V has the uniform and SMG
   cc_g05_shift_done     THIS GRAPH, +1 per shift
+  cc_g05_rest_start     THIS GRAPH: Gig05_Shift.reds starts the rest and clears it
+  cc_g05_rest_from      Gig05_Shift.reds, the game hour the rest began
+  cc_g05_next_shift     Gig05_Shift.reds, or the dev menu: the rest is over
+  cc_g05_posted         THIS GRAPH, +1 per rest ended
 """
 import json
 import os
@@ -54,10 +64,12 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+import questkit.questgraph as qg  # noqa: E402
 from questkit.questgraph import (  # noqa: E402
     b, configure, add_input, add_output, add_pause_fact, add_setvar,
     add_addvar, add_journal, add_journal_quest, add_race2, add_scene,
     add_delay, add_condition_fact, add_community, add_pause_distance,
+    add_device_action,
     add_assign_seat, add_move_on_spline, add_toggle_door,
     add_anim_event, add_restriction, add_pause_mounted,
     add_pause_vehicle_spawned, add_groups_attitude, add_mortality, add_reward,
@@ -107,6 +119,23 @@ SCAV_TARGETS = {
 # stands guard at the AV (gen_community.py).
 CREW_TARGETS = {gc.ROOF_CREW[gc.LEAD]: 'scav3'}
 
+# NEW NODES SINCE 1.0.0 TAKE IDS ABOVE ITS HIGHEST, 547, and the sequence the
+# released nodes number from carries on untouched. Saves resume by id
+# (gotcha 123).
+LATE_IDS = iter(range(600, 700))
+# A RANGE OF ITS OWN for the hotel's cameras, so test saves keep their place.
+ALARM_IDS = iter(range(700, 1000))
+CAMERA = 'SurveillanceCameraControllerPS'
+
+
+def late_ids(build, ids=LATE_IDS):
+    released = qg.NID
+    qg.NID = ids
+    made = build()
+    qg.NID = released
+    return made
+
+
 chain = []
 chain.append((add_input(), 'Out'))
 
@@ -126,7 +155,7 @@ def side(nid, src=None, in_sock='In'):
 
 def objective(name, state):
     sock = {'on': 'Active', 'done': 'Succeeded'}[state]
-    step(add_journal('gameJournalQuestObjective', OBJ + name, notify=0), in_sock=sock)
+    return step(add_journal('gameJournalQuestObjective', OBJ + name, notify=0), in_sock=sock)
 
 
 def switch(entries, action='Activate', phase=None, gap=0.5):
@@ -249,7 +278,8 @@ step(add_pause_fact(P + 'hired'))
 objective('obj_recruiter', 'done')
 
 # ---- up to the roof -------------------------------------------------------
-objective('obj_up', 'on')
+# EVERY LATER SHIFT COMES IN HERE, from the wait at the bottom of the graph.
+up_again = objective('obj_up', 'on')
 # THE LIFT IS THE GAME'S, and V works it with its own keypad: nothing here moves
 # V. Playtest 2026-11-04: "just press on the keypad". Gig05_Shift.reds sets
 # `cc_g05_on_roof` as V comes up level with the roof.
@@ -283,6 +313,9 @@ b.connect((kit, 'False'), (suit, 'In'))
 b.connect((kept, 'Out'), (suit, 'In'))
 chain.append((suit, 'Out'))
 objective('obj_change', 'done')
+# THE WELCOME IS THE FIRST SHIFT'S: it introduces the crew to a new hire.
+first_day = late_ids(lambda: add_condition_fact(P + 'shift_done', 0, 'Equal'))
+step(first_day, out_sock='True')
 objective('obj_talk', 'on')
 
 # ---- boarding at the pad --------------------------------------------------
@@ -292,7 +325,8 @@ step(add_pause_distance(COM, cfg.GREET_RADIUS, entry=gc.LEAD, cmp='Less'))
 step(add_scene(SCENES + 'gig05_welcome.scene', ANCHOR_PLAYER, ['welcome_in'], ['welcome_out']),
      in_sock='welcome_in', out_sock='welcome_out')
 objective('obj_talk', 'done')
-objective('obj_board', 'on')
+board_on = objective('obj_board', 'on')
+b.connect((first_day, 'False'), (board_on, 'Active'))
 board_prompt('gig05_board_pad')
 step(add_setvar(P + 'on_shift', 1))
 step(add_restriction(NO_TRAVEL, add=True))
@@ -322,6 +356,12 @@ step(add_groups_attitude('cc_g05_crew', 'player', 'AIA_Friendly'))
 step(add_groups_attitude('traumateam', 'player', 'AIA_Friendly'))
 
 
+def site_phase(k):
+    """The first call's phase by its name: left unnamed, an entry stays in the
+    phase it was last in, which on a later shift is the third call's."""
+    return gc.SITE_PHASES[k] or 'default'
+
+
 def call_people_on(k, after):
     """A call's client and Scavs switched on at its spots, `after` seconds
     into the flight there, on a branch of their own; the client held at 1
@@ -329,7 +369,7 @@ def call_people_on(k, after):
     entry's own, the later ones phases (gen_community.SITE_PHASES)."""
     cur = (side(add_delay(after)), 'Out')
     for e in [gc.CLIENT] + gc.SCAVS:
-        for nid in (add_community('Activate', COM, entry=e, phase=gc.SITE_PHASES[k]),
+        for nid in (add_community('Activate', COM, entry=e, phase=site_phase(k)),
                     add_delay(0.5)):
             b.connect(cur, (nid, 'In'))
             cur = (nid, 'Out')
@@ -344,6 +384,33 @@ def call_people_off(after):
         nid = add_community('Deactivate', COM, entry=e)
         b.connect(cur, (nid, 'In'))
         cur = (nid, 'Out')
+
+
+def hotel_guards_off():
+    """The story's roof guards off for the shift, on a branch of their own.
+    Harmless on a save where the story has not switched them on or has
+    finished: there is nobody to switch off."""
+    cur = chain[-1]
+    for e in cfg.HOTEL_ROOF_GUARDS:
+        nid = add_community('Deactivate', cfg.HOTEL_GUARDS_COM, entry=e)
+        b.connect(cur, (nid, 'In'))
+        cur = (nid, 'Out')
+
+
+def hotel_guards_back(after):
+    """The game switches the community on only once, so nothing brings them
+    back but this. Only while the story is open: `sts_cct_dtn_tier_3` is what
+    lets it run, and `dtn_04_finished` is what ends it."""
+    open_ = add_condition_fact('sts_cct_dtn_tier_3', 0, 'Greater')
+    b.connect((side(add_delay(after)), 'Out'), (open_, 'In'))
+    unfinished = add_condition_fact('dtn_04_finished', 0, 'Equal')
+    b.connect((open_, 'True'), (unfinished, 'In'))
+    cur = (unfinished, 'True')
+    for e in cfg.HOTEL_ROOF_GUARDS:
+        for nid in (add_community('Activate', cfg.HOTEL_GUARDS_COM, entry=e, phase='default'),
+                    add_delay(0.5)):
+            b.connect(cur, (nid, 'In'))
+            cur = (nid, 'Out')
 
 
 def step_off(phase, out_ref, crew_on, ready):
@@ -419,6 +486,7 @@ def fly(i, spline):
 # call to the next and home after the third.
 BRIEFS = ['gig05_brief', 'gig05_brief2', 'gig05_brief3']
 call_people_on(0, 0)
+late_ids(hotel_guards_off)
 for k in range(3):
     # THE GAME'S OWN SOLDIERS OFF CALL 2. Its city scene hides for the shift
     # (Gig05_Shift.reds, CityScenes) and three of its soldiers stayed on the spot
@@ -431,13 +499,20 @@ for k in range(3):
     fly(k + 1, gc.FLIGHTS[k][0])
     step(add_setvar(P + 'park', 1))   # Gig05_Shift.reds levels the AV
 
+    # THE HOTEL'S CAMERAS BLIND WHILE V IS ON THEIR ROOF. Playtest 2026-11-06: one
+    # saw V in the fight and the alarm moved Dino's gig on. The game's own action
+    # for a camera, which leaves one V has shot broken.
+    if k == 0:
+        late_ids(lambda: side(add_device_action(CAMERA, 'QuestSetDetectionToFalse',
+                                                cfg.HOTEL_CAMERAS)), ALARM_IDS)
+
     # -- down at the call
     side(add_scene(SCENES + 'gig05_land_%d.scene' % (k + 1), ANCHOR_PLAYER,
                    ['land_in'], ['land_out']),
          in_sock='land_in')
     step(add_delay(2.5))
     step_off(gc.AV_PHASES[k], gc.SITE_OUT[k][0],
-             lambda k=k: switch([gc.ROOF_CREW[w] for w in gc.CREW], phase=gc.SITE_PHASES[k],
+             lambda k=k: switch([gc.ROOF_CREW[w] for w in gc.CREW], phase=site_phase(k),
                                 gap=0.1),
              1)
     objective('obj_ride', 'done')
@@ -495,6 +570,15 @@ for k in range(3):
     objective('obj_board_site', 'done')
     objective('obj_ride' if k < 2 else 'obj_return', 'on')
     call_people_off(8)
+    if k == 0:
+        # They see again once the AV has gone.
+        late_ids(lambda: b.connect((side(add_delay(25)), 'Out'),
+                                   (add_device_action(CAMERA, 'QuestSetDetectionToTrue',
+                                                      cfg.HOTEL_CAMERAS), 'In')), ALARM_IDS)
+    # THE ROOF GUARDS BACK AFTER THE LAST CALL, about 800 m from that roof. They
+    # were back 25 s after the first call, with the AV still close to them.
+    if k == 2:
+        late_ids(lambda: hotel_guards_back(2))
     if k < 2:
         call_people_on(k + 1, 10)
 
@@ -515,6 +599,9 @@ objective('obj_return', 'done')
 # BREKKE'S LAST WORD, on the pad, V beside him. Playtest 2026-11-04: the three
 # stood there and said nothing.
 step(add_delay(2.0))
+# THE FIRST SHIFT'S ONLY: its lines are about the rookie's first day.
+first_bye = late_ids(lambda: add_condition_fact(P + 'shift_done', 0, 'Equal'))
+step(first_bye, out_sock='True')
 step(add_scene(SCENES + 'gig05_bye.scene', ANCHOR_PLAYER, ['bye_in'], ['bye_out']),
      in_sock='bye_in', out_sock='bye_out')
 
@@ -522,7 +609,8 @@ step(add_scene(SCENES + 'gig05_bye.scene', ANCHOR_PLAYER, ['bye_in'], ['bye_out'
 #
 # THE WAY DOWN IS THE ROOF'S LIFT, the keypad again. `cc_g05_at_street` is set by Gig05_Shift.reds with V back at the
 # bottom; it is cleared here because a call can be at street level.
-objective('obj_down', 'on')
+down_on = objective('obj_down', 'on')
+b.connect((first_bye, 'False'), (down_on, 'Active'))
 step(add_setvar(P + 'at_street', 0))
 # CHANGING BACK IS OPTIONAL (the design call, 2026-11-04): the Get changed spot,
 # on a branch of its own. Taken, the uniform and SMG come off and V's own things go
@@ -564,6 +652,9 @@ step(add_delay(2.0))
 step(add_reward('QuestRewards.sts_cc_g05_platinum', 'QuestRewards.sts_cc_g05_gold',
                 'QuestRewards.sts_cc_g05_silver'))
 objective('obj_down', 'done')
+# THE REST STARTS NOW (Gig05_Shift.reds, NextShift). A save finished on 1.0.0
+# never passed this, and that is how the script tells it from a new shift.
+late_ids(lambda: step(add_setvar(P + 'rest_start', 1)))
 step(add_addvar(P + 'shift_done', 1))
 step(add_setvar(P + 'on_roof', 0))
 # DISPATCH SAYS WHAT COMES NEXT, and the objective says to wait for it.
@@ -571,10 +662,37 @@ step(add_delay(6.0))
 step(add_journal('gameJournalPhoneMessage', gen_journal.MSG_DONE_PATH), in_sock='Active')
 objective('obj_wait', 'on')
 
-# THE NEXT SHIFT IS NOT BUILT. The graph stops here on a fact nothing sets,
-# which keeps the quest open and the save parked on a node that will still
-# exist when the shift loop is added after it.
+# THE REST ENDS HERE. A finished save is parked on this wait, 1.0.0's too, so
+# the wait keeps its id and the way on leaves from it. Gig05_Shift.reds sets
+# the fact. The output below is never reached, and keeps its id.
 step(add_pause_fact(P + 'next_shift'))
+
+
+def next_shift():
+    step(add_setvar(P + 'next_shift', 0))
+    step(add_addvar(P + 'posted', 1))
+    # THE TEXT ONCE, after the first rest only (the design call, 2026-11-06:
+    # Dispatch's texts mean new work). The objective stays on the wait: she is
+    # there for whoever wants her, with no marker and nothing to do otherwise.
+    once = add_condition_fact(P + 'posted', 1, 'Equal')
+    step(once, out_sock='True')
+    step(add_journal('gameJournalPhoneMessage', gen_journal.MSG_REPEAT_PATH), in_sock='Active')
+    back = add_community('Activate', COM, entry=gc.RECRUITER)
+    b.connect((once, 'False'), (back, 'In'))
+    step(back)
+    # THE INTERVIEW'S LOOP: the prompt while V is near her, again if V walks off.
+    near = step(add_pause_distance(COM, cfg.TALK_RADIUS, entry=gc.RECRUITER, cmp='Less'))
+    talk = step(add_scene(SCENES + 'gig05_repeat.scene', ANCHOR_PLAYER,
+                          ['repeat_in'], ['repeat_out', 'repeat_left']),
+                in_sock='repeat_in', out_sock='repeat_out')
+    rearm = add_delay(1)
+    b.connect((talk, 'repeat_left'), (rearm, 'In'))
+    b.connect((rearm, 'Out'), (near, 'In'))
+    objective('obj_wait', 'done')
+    b.connect(chain[-1], (up_again, 'Active'))
+
+
+late_ids(next_shift)
 add_output()
 
 if __name__ == '__main__':

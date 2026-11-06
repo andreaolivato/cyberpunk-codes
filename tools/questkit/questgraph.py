@@ -448,6 +448,26 @@ def add_condition_phone_muted(group='fixer_briefs_and_debriefs'):
     return nid
 
 
+def add_device_action(controller, action, refs):
+    """One action sent to several placed devices, by long NodeRef. The game's own
+    `questDeviceManager_NodeType`, sts_cct_dtn_04_bugfixing.questphase, node 9.
+    `action` is a name the device's GetQuestActionByName knows."""
+    nid = next(NID)
+    b.node(nid, 'questInteractiveObjectManagerNodeDefinition', {'type': {'@handle': {
+        '$type': 'questDeviceManager_NodeType',
+        'params': [{'@handle': {
+            '$type': 'questDeviceManager_NodeTypeParams',
+            'actionProperties': [],
+            'deviceAction': cname(action),
+            'deviceControllerClass': cname(controller),
+            'entityRef': _entity_ref(None),
+            'objectRef': noderef(ref),
+            'slotName': cname(None),
+        }} for ref in refs],
+    }}}, STD)
+    return nid
+
+
 def add_community(action, reference, entry=None, phase=None):
     """Switch a community, or one entry of it, on or off.
 

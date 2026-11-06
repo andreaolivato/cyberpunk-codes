@@ -48,7 +48,7 @@ def wanted_ids():
     from measure_packs import EXTRA_HEXES
     sids = set(str(int(h, 16)) for h in EXTRA_HEXES)
     for pat in ('gen_scenes.py', 'splice_takes.py', 'take_vanilla.py'):
-        for f in glob.glob(os.path.join(HERE, 'gig0*', pat)):
+        for f in glob.glob(os.path.join(HERE, 'gig0*', pat)) + glob.glob(os.path.join(HERE, 'fixer0*', pat)):
             with open(f, encoding='utf-8') as fh:
                 s = fh.read()
             sids |= set(str(int(x, 16)) for x in re.findall(r"0x([0-9a-fA-F]{16})", s))

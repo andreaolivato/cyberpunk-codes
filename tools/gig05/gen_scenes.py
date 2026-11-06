@@ -4,6 +4,8 @@ r"""Trauma Team: the scenes of the first shift.
 
   gig05_interview    The recruiter outside the Medical Center. Her five
                      lines, V's three, one choice with a Body check.
+  gig05_repeat       The recruiter after a shift: a prompt, then two of her
+                     interview lines. No recording of its own.
   gig05_board_pad    "Board" at the AV's open side on the pad. No lines.
   gig05_brief        The lead's briefing, played while the AV climbs out.
   gig05_land         The soldier's call as the AV touches down at the roof.
@@ -37,6 +39,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from questkit.scene import (                                        # noqa: F401
+    locstring_ruid,
     Scene, configure, write_subtitles, write_lipmap,
     ANCHOR_PLAYER,
 )
@@ -60,6 +63,14 @@ try:
 except (OSError, ValueError):
     MEASURED = {}
 
+# THE RECRUITER'S REPEAT is her interview's recordings under the same ids, so
+# the subtitles and the voice are the ones already registered. A scene borrows
+# only the pacing and the mouths, which are looked up by scene name.
+SCENE_ALIASES = {'gig05_repeat': 'gig05_interview'}
+for _key in ('r07', 'r08'):
+    if 'gig05_interview/' + _key in MEASURED:
+        MEASURED['gig05_repeat/' + _key] = MEASURED['gig05_interview/' + _key]
+
 LIPSYNC_PICKS = os.path.join(cfg.SOURCE, 'lipsync_picks.json')
 try:
     with open(LIPSYNC_PICKS, encoding='utf-8') as _fh:
@@ -80,7 +91,7 @@ configure(
     durations=MEASURED,
     lipsync_sets=LIPSYNC_SETS,
     lipsync_lines=LIPSYNC_LINES,
-    scene_aliases={},
+    scene_aliases=SCENE_ALIASES,
 )
 
 CAST_REF = gen_community.build().community_ref
@@ -241,6 +252,33 @@ def build_interview():
     s.link_choice(c2, [e1])
     s.link_section(e2, s.end('interview_out'))
     walk_away(s, hub, RECRUITER, 'interview_left')
+    face_player(s, n)
+    return s
+
+
+# ============================================================ the repeat
+def build_repeat():
+    """The same shift again, on the player's word: she stands outside the Medical
+    Center after a shift with no marker, and a prompt over her is the whole
+    offer. New shifts arrive as Dispatch texts, so nobody has to talk to her."""
+    s = Scene('gig05_repeat', ANCHOR_PLAYER)
+    n = s.add_community_actor(RECRUITER, RECRUITER, CAST_REF)
+    v = s.add_player()
+    who = {RECRUITER: n}
+    start = s.start('repeat_in')
+    lead = s.section([], lead_ms=0, tail_ms=500)
+    hub = s.hub()
+    c1 = s.choice([s.add_option("Put me back on the same shift.", key='o20')],
+                  attach_actor=n)
+    a1, a2 = chain(s, who, v, [
+        ('G', RECRUITER, (R07, locstring_ruid('gig05_interview', 'r07')), 'r07'),
+        ('G', RECRUITER, (R08, locstring_ruid('gig05_interview', 'r08')), 'r08')])
+    s.link(start, lead)
+    s.link_section(lead, hub)
+    s.link(hub, c1)
+    s.link_choice(c1, [a1])
+    s.link_section(a2, s.end('repeat_out'))
+    walk_away(s, hub, RECRUITER, 'repeat_left')
     face_player(s, n)
     return s
 
@@ -515,7 +553,7 @@ def build_crew_4():
     return _crew_aboard('gig05_crew_4', 'crew_in', 'crew_out')
 
 
-ALL_BUILDERS = (build_interview, build_welcome, build_bye, build_locker, build_locker_back, build_board_pad,
+ALL_BUILDERS = (build_interview, build_repeat, build_welcome, build_bye, build_locker, build_locker_back, build_board_pad,
                 build_board_s1, build_board_s2, build_board_s3,
                 build_brief, build_home,
                 build_brief2, build_brief3,

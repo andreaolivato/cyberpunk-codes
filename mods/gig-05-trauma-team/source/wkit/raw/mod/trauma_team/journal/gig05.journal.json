@@ -13,17 +13,17 @@
       "$type": "gameJournalResource",
       "cookingPlatform": "PLATFORM_PC",
       "entry": {
-        "HandleId": "31",
+        "HandleId": "32",
         "Data": {
           "$type": "gameJournalRootFolderEntry",
           "entries": [
             {
-              "HandleId": "30",
+              "HandleId": "31",
               "Data": {
                 "$type": "gameJournalPrimaryFolderEntry",
                 "entries": [
                   {
-                    "HandleId": "29",
+                    "HandleId": "30",
                     "Data": {
                       "$type": "gameJournalContact",
                       "avatarID": {
@@ -33,7 +33,7 @@
                       },
                       "entries": [
                         {
-                          "HandleId": "28",
+                          "HandleId": "29",
                           "Data": {
                             "$type": "gameJournalPhoneConversation",
                             "entries": [
@@ -89,6 +89,27 @@
                                   "text": {
                                     "unk1": "0",
                                     "value": "cc-g05-msg-done"
+                                  }
+                                }
+                              },
+                              {
+                                "HandleId": "28",
+                                "Data": {
+                                  "$type": "gameJournalPhoneMessage",
+                                  "attachment": null,
+                                  "delay": 4,
+                                  "id": "cc_g05_msg_repeat",
+                                  "imageId": {
+                                    "$type": "TweakDBID",
+                                    "$storage": "uint64",
+                                    "$value": "0"
+                                  },
+                                  "isQuestImportant": 0,
+                                  "journalEntryOverrideDataList": [],
+                                  "sender": "NPC",
+                                  "text": {
+                                    "unk1": "0",
+                                    "value": "cc-g05-msg-repeat"
                                   }
                                 }
                               }

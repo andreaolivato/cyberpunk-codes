@@ -47,6 +47,7 @@ local FACTS = {
     { "cc_g05_hired",      "SKIP THE INTERVIEW. Its scene sets it as it ends" },
     { "cc_g05_board_taken","the board prompt was taken (the scene writes it; the graph clears it)" },
     { "cc_g05_site_clear", "THE ROOF IS CLEAR. Gig05_Shift.reds sets it when no Scav stands" },
+    { "cc_g05_next_shift", "END THE REST NOW: the recruiter comes back. Gig05_Shift.reds sets it" },
     { "cc_g05_dev_down",   "TEST ONLY: 1 kills every Scav still standing (the script clears it)" },
 }
 local READOUTS = {
