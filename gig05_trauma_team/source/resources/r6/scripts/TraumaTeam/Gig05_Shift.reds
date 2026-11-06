@@ -14,6 +14,11 @@ public abstract class CCG05Shift {
     public static func ClientEntry() -> CName { return n"client"; }
     public static func Ride() -> TweakDBID { return t"GameplayRestriction.cc_g05_ride"; }
     public static func PoliceLock() -> CName { return n"cc_g05_shift"; }
+    // game hours
+    public static func RestHours() -> Int32 { return 12; }
+    // nisha
+    public static func Recruiter() -> Vector4 { return new Vector4(-1335.3, 1743.9, 18.2, 1.0); }
+    public static func RecruiterGap() -> Float { return 60.0; }
     public static func ClearTicks() -> Int32 { return 3; }
     // 10s
     public static func MinFightTicks() -> Int32 { return 10; }
@@ -46,6 +51,13 @@ public abstract class CCG05Shift {
     public static func Gun() -> TweakDBID { return t"Items.Preset_Dian_Trauma"; }
     public static func SaveLock() -> CName { return n"cc_g05_aboard"; }
 
+    public static func Hurry(ps: ref<LiftControllerPS>, game: GameInstance) -> Void {
+        let quick: ref<QuestSetLiftSpeed> = ps.ActionQuestSetLiftSpeed();
+        // 32s ride
+        quick.SetProperties(3.5);
+        GameInstance.GetPersistencySystem(game).QueuePSEvent(ps.GetID(), ps.GetClassName(), quick);
+    }
+
     public static func CallPanelPress(owner: wref<GameObject>) -> Bool {
         let panel: ref<ElevatorFloorTerminal> = owner as ElevatorFloorTerminal;
         if !IsDefined(panel) {
@@ -66,6 +78,7 @@ public abstract class CCG05Shift {
             let ps: ref<LiftControllerPS> = parents[i] as LiftControllerPS;
             if IsDefined(ps) {
                 if !ps.IsMoving() {
+                    CCG05Shift.Hurry(ps, panel.GetGame());
                     let move: ref<QuestGoToFloor> = ps.ActionQuestGoToFloor();
                     // 1 = top
                     move.SetProperties(at.Z > 100.0 ? 1 : 0);
@@ -89,6 +102,7 @@ public abstract class CCG05Shift {
         }
         let ps: ref<LiftControllerPS> = lift.GetDevicePS();
         if IsDefined(ps) && !ps.IsMoving() {
+            CCG05Shift.Hurry(ps, lift.GetGame());
             let move: ref<QuestGoToFloor> = ps.ActionQuestGoToFloor();
             move.SetProperties(ps.GetActiveFloor() == 0 ? 1 : 0);
             GameInstance.GetPersistencySystem(lift.GetGame()).QueuePSEvent(ps.GetID(), ps.GetClassName(), move);
@@ -163,6 +177,7 @@ public class TraumaTeamShift extends ScriptableSystem {
         this.DevDownScavs(game, qs);
         this.Warp(game, qs, player);
         this.AtLift(game, qs, player);
+        this.NextShift(game, qs, player);
 
         if this.m_warping {
             this.Schedule(0.25);
@@ -417,6 +432,33 @@ public class TraumaTeamShift extends ScriptableSystem {
                 && z < CCG05Shift.StreetLine() {
             qs.SetFactStr("cc_g05_at_street", 1);
         }
+    }
+
+    private func NextShift(game: GameInstance, qs: ref<QuestsSystem>, player: ref<PlayerPuppet>) -> Void {
+        if qs.GetFactStr("cc_g05_shift_done") <= qs.GetFactStr("cc_g05_posted")
+                || qs.GetFactStr("cc_g05_next_shift") > 0
+                || qs.GetFactStr("q115_point_of_no_return") > 0 {
+            return;
+        }
+        let ts: ref<TimeSystem> = GameInstance.GetTimeSystem(game);
+        if !IsDefined(ts) {
+            return;
+        }
+        let hour: Int32 = Cast<Int32>(ts.GetGameTimeStamp() / 3600.0);
+        if qs.GetFactStr("cc_g05_rest_start") > 0 {
+            qs.SetFactStr("cc_g05_rest_start", 0);
+            qs.SetFactStr("cc_g05_rest_from", hour);
+            return;
+        }
+        let began: Int32 = qs.GetFactStr("cc_g05_rest_from");
+        if began > 0 && hour - began < CCG05Shift.RestHours() {
+            return;
+        }
+        if Vector4.Distance(player.GetWorldPosition(), CCG05Shift.Recruiter()) < CCG05Shift.RecruiterGap() {
+            return;
+        }
+        qs.SetFactStr("cc_g05_rest_from", 0);
+        qs.SetFactStr("cc_g05_next_shift", 1);
     }
 
     private func Warp(game: GameInstance, qs: ref<QuestsSystem>, player: ref<PlayerPuppet>) -> Void {

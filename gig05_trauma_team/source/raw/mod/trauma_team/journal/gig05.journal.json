@@ -3,7 +3,7 @@
     "WolvenKitVersion": "10.0.0-beta.1",
     "WKitJsonVersion": "0.0.9",
     "GameVersion": 2500,
-    "ExportedDateTime": "2026-11-04T23:03:13.5873951Z",
+    "ExportedDateTime": "2026-11-06T03:34:46.1122725Z",
     "DataType": "CR2W",
     "ArchiveFileName": "C:\\Users\\andre\\OneDrive\\Desktop\\cyberpunk-gigs\\gig05_trauma_team\\source\\archive\\mod\\trauma_team\\journal\\gig05.journal"
   },
@@ -100,6 +100,27 @@
                                     "value": "cc-g05-msg-done"
                                   }
                                 }
+                              },
+                              {
+                                "HandleId": "7",
+                                "Data": {
+                                  "$type": "gameJournalPhoneMessage",
+                                  "attachment": null,
+                                  "delay": 4,
+                                  "id": "cc_g05_msg_repeat",
+                                  "imageId": {
+                                    "$type": "TweakDBID",
+                                    "$storage": "uint64",
+                                    "$value": "0"
+                                  },
+                                  "isQuestImportant": 0,
+                                  "journalEntryOverrideDataList": [],
+                                  "sender": "NPC",
+                                  "text": {
+                                    "unk1": "0",
+                                    "value": "cc-g05-msg-repeat"
+                                  }
+                                }
                               }
                             ],
                             "id": "cc_g05_tti_conv",
@@ -128,28 +149,28 @@
               }
             },
             {
-              "HandleId": "7",
+              "HandleId": "8",
               "Data": {
                 "$type": "gameJournalPrimaryFolderEntry",
                 "entries": [
                   {
-                    "HandleId": "8",
+                    "HandleId": "9",
                     "Data": {
                       "$type": "gameJournalFolderEntry",
                       "entries": [
                         {
-                          "HandleId": "9",
+                          "HandleId": "10",
                           "Data": {
                             "$type": "gameJournalQuest",
                             "districtID": "Districts.Watson",
                             "entries": [
                               {
-                                "HandleId": "10",
+                                "HandleId": "11",
                                 "Data": {
                                   "$type": "gameJournalQuestPhase",
                                   "entries": [
                                     {
-                                      "HandleId": "11",
+                                      "HandleId": "12",
                                       "Data": {
                                         "$type": "gameJournalQuestObjective",
                                         "counter": 0,
@@ -160,7 +181,7 @@
                                         "districtID": "",
                                         "entries": [
                                           {
-                                            "HandleId": "12",
+                                            "HandleId": "13",
                                             "Data": {
                                               "$type": "gameJournalQuestMapPin",
                                               "enableGPS": 1,
@@ -244,7 +265,7 @@
                                       }
                                     },
                                     {
-                                      "HandleId": "13",
+                                      "HandleId": "14",
                                       "Data": {
                                         "$type": "gameJournalQuestObjective",
                                         "counter": 0,
@@ -255,7 +276,7 @@
                                         "districtID": "",
                                         "entries": [
                                           {
-                                            "HandleId": "14",
+                                            "HandleId": "15",
                                             "Data": {
                                               "$type": "gameJournalQuestMapPin",
                                               "enableGPS": 1,
@@ -339,7 +360,7 @@
                                       }
                                     },
                                     {
-                                      "HandleId": "15",
+                                      "HandleId": "16",
                                       "Data": {
                                         "$type": "gameJournalQuestObjective",
                                         "counter": 0,
@@ -350,7 +371,7 @@
                                         "districtID": "",
                                         "entries": [
                                           {
-                                            "HandleId": "16",
+                                            "HandleId": "17",
                                             "Data": {
                                               "$type": "gameJournalQuestMapPin",
                                               "enableGPS": 0,
@@ -434,7 +455,7 @@
                                       }
                                     },
                                     {
-                                      "HandleId": "17",
+                                      "HandleId": "18",
                                       "Data": {
                                         "$type": "gameJournalQuestObjective",
                                         "counter": 0,
@@ -445,7 +466,7 @@
                                         "districtID": "",
                                         "entries": [
                                           {
-                                            "HandleId": "18",
+                                            "HandleId": "19",
                                             "Data": {
                                               "$type": "gameJournalQuestMapPin",
                                               "enableGPS": 0,
@@ -529,7 +550,7 @@
                                       }
                                     },
                                     {
-                                      "HandleId": "19",
+                                      "HandleId": "20",
                                       "Data": {
                                         "$type": "gameJournalQuestObjective",
                                         "counter": 0,
@@ -540,7 +561,7 @@
                                         "districtID": "",
                                         "entries": [
                                           {
-                                            "HandleId": "20",
+                                            "HandleId": "21",
                                             "Data": {
                                               "$type": "gameJournalQuestMapPin",
                                               "enableGPS": 0,
@@ -624,7 +645,7 @@
                                       }
                                     },
                                     {
-                                      "HandleId": "21",
+                                      "HandleId": "22",
                                       "Data": {
                                         "$type": "gameJournalQuestObjective",
                                         "counter": 0,
@@ -650,7 +671,7 @@
                                       }
                                     },
                                     {
-                                      "HandleId": "22",
+                                      "HandleId": "23",
                                       "Data": {
                                         "$type": "gameJournalQuestObjective",
                                         "counter": 0,
@@ -676,7 +697,7 @@
                                       }
                                     },
                                     {
-                                      "HandleId": "23",
+                                      "HandleId": "24",
                                       "Data": {
                                         "$type": "gameJournalQuestObjective",
                                         "counter": 0,
@@ -702,7 +723,7 @@
                                       }
                                     },
                                     {
-                                      "HandleId": "24",
+                                      "HandleId": "25",
                                       "Data": {
                                         "$type": "gameJournalQuestObjective",
                                         "counter": 0,
@@ -728,7 +749,7 @@
                                       }
                                     },
                                     {
-                                      "HandleId": "25",
+                                      "HandleId": "26",
                                       "Data": {
                                         "$type": "gameJournalQuestObjective",
                                         "counter": 0,
@@ -739,7 +760,7 @@
                                         "districtID": "",
                                         "entries": [
                                           {
-                                            "HandleId": "26",
+                                            "HandleId": "27",
                                             "Data": {
                                               "$type": "gameJournalQuestMapPin",
                                               "enableGPS": 0,
@@ -823,7 +844,7 @@
                                       }
                                     },
                                     {
-                                      "HandleId": "27",
+                                      "HandleId": "28",
                                       "Data": {
                                         "$type": "gameJournalQuestObjective",
                                         "counter": 0,
@@ -834,7 +855,7 @@
                                         "districtID": "",
                                         "entries": [
                                           {
-                                            "HandleId": "28",
+                                            "HandleId": "29",
                                             "Data": {
                                               "$type": "gameJournalQuestMapPin",
                                               "enableGPS": 0,
@@ -918,7 +939,7 @@
                                       }
                                     },
                                     {
-                                      "HandleId": "29",
+                                      "HandleId": "30",
                                       "Data": {
                                         "$type": "gameJournalQuestObjective",
                                         "counter": 0,
@@ -954,7 +975,7 @@
                                 }
                               },
                               {
-                                "HandleId": "30",
+                                "HandleId": "31",
                                 "Data": {
                                   "$type": "gameJournalQuestDescription",
                                   "description": {

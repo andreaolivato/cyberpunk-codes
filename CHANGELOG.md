@@ -7,6 +7,19 @@ each mod's Nexus Changelog tab.
 
 # Join Trauma Team
 
+## 1.1.0 (2026-11-06)
+
+- **Added: repeat the shift.** 12 game hours after a shift, the recruiter is back
+  outside the Medical Center and can put you on the same shift again. On a save
+  that finished the shift on 1.0.0 she is back at once. Suggested by xxSlazy, and
+  by Hykeus on Reddit.
+- **Fixed: the hotel roof at the first call.** If Dino's last gig is unfinished, its
+  guards no longer join the fight and its cameras no longer raise the alarm. Reported
+  by KateShae.
+- **Fixed: Scavs behind a wall at the third call.** Reported by Marchello2077.
+- **Fixed: a gap under the walkway on the Medical Center roof.**
+- **Changed: the staff elevator is faster.** The ride takes 32 seconds, down from 44.
+
 ## 1.0.0 (2026-11-05)
 
 - **Added: the first shift.** Three calls across Night City, flown in the Trauma Team AV with your crew.
