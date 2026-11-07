@@ -3,7 +3,7 @@
     "WolvenKitVersion": "10.0.0-beta.1",
     "WKitJsonVersion": "0.0.9",
     "GameVersion": 2500,
-    "ExportedDateTime": "2026-11-05T05:51:59.2212986Z",
+    "ExportedDateTime": "2026-11-07T13:40:58.6932988Z",
     "DataType": "CR2W",
     "ArchiveFileName": "C:\\Users\\andre\\OneDrive\\Desktop\\cyberpunk-gigs\\gig05_trauma_team\\source\\archive\\mod\\trauma_team\\scenes\\gig05_land_3.scene"
   },
@@ -544,6 +544,76 @@
                         "voExpression": "Vo_Expression_Spoken"
                       }
                     }
+                  },
+                  {
+                    "HandleId": "4",
+                    "Data": {
+                      "$type": "scnAudioEvent",
+                      "ambientUniqueName": {
+                        "$type": "CName",
+                        "$storage": "string",
+                        "$value": "None"
+                      },
+                      "audioEventName": {
+                        "$type": "CName",
+                        "$storage": "string",
+                        "$value": "q001_sc_00c_trauma_arrives_intro_av_engines"
+                      },
+                      "duration": 0,
+                      "emitterName": {
+                        "$type": "CName",
+                        "$storage": "string",
+                        "$value": "default"
+                      },
+                      "executionTagFlags": 0,
+                      "fastForwardSupport": "MuteDuringFastForward",
+                      "id": {
+                        "$type": "scnSceneEventId",
+                        "id": "3260859620872751991"
+                      },
+                      "performer": {
+                        "$type": "scnPerformerId",
+                        "id": 1
+                      },
+                      "scalingData": null,
+                      "startTime": 0,
+                      "type": "0"
+                    }
+                  },
+                  {
+                    "HandleId": "5",
+                    "Data": {
+                      "$type": "scnAudioEvent",
+                      "ambientUniqueName": {
+                        "$type": "CName",
+                        "$storage": "string",
+                        "$value": "None"
+                      },
+                      "audioEventName": {
+                        "$type": "CName",
+                        "$storage": "string",
+                        "$value": "q001_sc_00c_trauma_arrives_intro_av_garbage"
+                      },
+                      "duration": 0,
+                      "emitterName": {
+                        "$type": "CName",
+                        "$storage": "string",
+                        "$value": "default"
+                      },
+                      "executionTagFlags": 0,
+                      "fastForwardSupport": "MuteDuringFastForward",
+                      "id": {
+                        "$type": "scnSceneEventId",
+                        "id": "2613536589585162080"
+                      },
+                      "performer": {
+                        "$type": "scnPerformerId",
+                        "id": 1
+                      },
+                      "scalingData": null,
+                      "startTime": 650,
+                      "type": "0"
+                    }
                   }
                 ],
                 "ffStrategy": "automatic",
@@ -592,7 +662,7 @@
               }
             },
             {
-              "HandleId": "4",
+              "HandleId": "6",
               "Data": {
                 "$type": "scnEndNode",
                 "ffStrategy": "automatic",

@@ -3,7 +3,7 @@
     "WolvenKitVersion": "10.0.0-beta.1",
     "WKitJsonVersion": "0.0.9",
     "GameVersion": 2500,
-    "ExportedDateTime": "2026-11-06T03:29:23.9878904Z",
+    "ExportedDateTime": "2026-11-07T13:40:44.6875379Z",
     "DataType": "CR2W",
     "ArchiveFileName": "C:\\Users\\andre\\OneDrive\\Desktop\\cyberpunk-gigs\\gig05_trauma_team\\source\\archive\\mod\\trauma_team\\scenes\\gig05_repeat.scene"
   },
@@ -22,7 +22,12 @@
           },
           "actorName": "recruiter",
           "animSets": [],
-          "bodyCinematicAnimSets": [],
+          "bodyCinematicAnimSets": [
+            {
+              "$type": "scnCinematicAnimSetSRRefId",
+              "id": 0
+            }
+          ],
           "communityParams": {
             "$type": "scnCommunityParams",
             "entryName": {
@@ -448,8 +453,33 @@
       "referencePoints": [],
       "resouresReferences": {
         "$type": "scnSRRefCollection",
-        "cinematicAnimNames": [],
-        "cinematicAnimSets": [],
+        "cinematicAnimNames": [
+          {
+            "$type": "scnAnimSetAnimNames",
+            "animationNames": [
+              {
+                "$type": "CName",
+                "$storage": "string",
+                "$value": "stand__arms_crossed_front__01__describe_right__02"
+              }
+            ]
+          }
+        ],
+        "cinematicAnimSets": [
+          {
+            "$type": "scnCinematicAnimSetSRRef",
+            "asyncAnimSet": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "string",
+                "$value": "base\\animations\\npc\\generic_characters\\female_average\\interactive_scene\\generic_female_average__stand__arms_crossed_front__01.anims"
+              },
+              "Flags": "Soft"
+            },
+            "isOverride": 1,
+            "priority": 200
+          }
+        ],
         "dynamicAnimNames": [],
         "dynamicAnimSets": [],
         "gameplayAnimNames": [],
@@ -461,7 +491,7 @@
               "DepotPath": {
                 "$type": "ResourcePath",
                 "$storage": "string",
-                "$value": "mod\\trauma_team\\localization\\en-us\\lipsync\\gig05_repeat\\recruiter.anims"
+                "$value": "mod\\trauma_team\\localization\\en-us\\lipsync\\gig05_interview\\recruiter.anims"
               },
               "Flags": "Soft"
             },
@@ -543,6 +573,26 @@
                 "events": [
                   {
                     "HandleId": "3",
+                    "Data": {
+                      "$type": "scneventsSocket",
+                      "duration": 0,
+                      "executionTagFlags": 0,
+                      "id": {
+                        "$type": "scnSceneEventId",
+                        "id": "3379803186704812874"
+                      },
+                      "osockStamp": {
+                        "$type": "scnOutputSocketStamp",
+                        "name": 2,
+                        "ordinal": 0
+                      },
+                      "scalingData": null,
+                      "startTime": 0,
+                      "type": "0"
+                    }
+                  },
+                  {
+                    "HandleId": "4",
                     "Data": {
                       "$type": "scnLookAtEvent",
                       "basicData": {
@@ -696,6 +746,28 @@
                       "name": 1,
                       "ordinal": 0
                     }
+                  },
+                  {
+                    "$type": "scnOutputSocket",
+                    "destinations": [
+                      {
+                        "$type": "scnInputSocketId",
+                        "isockStamp": {
+                          "$type": "scnInputSocketStamp",
+                          "name": 0,
+                          "ordinal": 1
+                        },
+                        "nodeId": {
+                          "$type": "scnNodeId",
+                          "id": 10
+                        }
+                      }
+                    ],
+                    "stamp": {
+                      "$type": "scnOutputSocketStamp",
+                      "name": 2,
+                      "ordinal": 0
+                    }
                   }
                 ],
                 "sectionDuration": {
@@ -705,7 +777,7 @@
               }
             },
             {
-              "HandleId": "4",
+              "HandleId": "5",
               "Data": {
                 "$type": "scnHubNode",
                 "ffStrategy": "automatic",
@@ -752,7 +824,7 @@
               }
             },
             {
-              "HandleId": "5",
+              "HandleId": "6",
               "Data": {
                 "$type": "scnChoiceNode",
                 "alwaysUseBrainGender": 0,
@@ -829,7 +901,7 @@
                   "value": ""
                 },
                 "lookAtParams": {
-                  "HandleId": "6",
+                  "HandleId": "7",
                   "Data": {
                     "$type": "scnChoiceNodeNsAdaptiveLookAtParams",
                     "auxiliaryRelativePoint": {
@@ -857,7 +929,7 @@
                   }
                 },
                 "mappinParams": {
-                  "HandleId": "7",
+                  "HandleId": "8",
                   "Data": {
                     "$type": "scnChoiceNodeNsMappinParams",
                     "locationType": "Nameplate",
@@ -994,7 +1066,7 @@
                 "reminderCondition": null,
                 "reminderParams": null,
                 "shapeParams": {
-                  "HandleId": "8",
+                  "HandleId": "9",
                   "Data": {
                     "$type": "scnInteractionShapeParams",
                     "activationBaseLength": 1,
@@ -1023,53 +1095,113 @@
               }
             },
             {
-              "HandleId": "9",
+              "HandleId": "10",
               "Data": {
                 "$type": "scnSectionNode",
                 "actorBehaviors": [],
                 "events": [
                   {
-                    "HandleId": "10",
+                    "HandleId": "11",
                     "Data": {
-                      "$type": "scnDialogLineEvent",
-                      "additionalSpeakers": {
-                        "$type": "scnAdditionalSpeakers",
-                        "executionTag": 0,
-                        "role": "Full",
-                        "speakers": []
+                      "$type": "scnChangeIdleAnimEvent",
+                      "actorComponent": {
+                        "$type": "CName",
+                        "$storage": "string",
+                        "$value": "head"
                       },
-                      "duration": 3850,
-                      "executionTagFlags": 0,
-                      "id": {
-                        "$type": "scnSceneEventId",
-                        "id": "2330751331351852380"
+                      "addIdleAnimName": {
+                        "$type": "CName",
+                        "$storage": "string",
+                        "$value": "None"
                       },
-                      "scalingData": null,
-                      "screenplayLineId": {
-                        "$type": "scnscreenplayItemId",
-                        "id": 1
-                      },
-                      "startTime": 700,
-                      "type": "0",
-                      "visualStyle": "regular",
-                      "voParams": {
-                        "$type": "scnDialogLineVoParams",
-                        "alwaysUseBrainGender": 0,
-                        "customVoEvent": {
+                      "animData": {
+                        "$type": "scneventsPlayAnimEventExData",
+                        "basic": {
+                          "$type": "scneventsPlayAnimEventData",
+                          "blendIn": 0.5,
+                          "blendInCurve": "SinusoidalEaseInOut",
+                          "blendOut": 0.5,
+                          "blendOutCurve": "SinusoidalEaseInOut",
+                          "clipEnd": 0,
+                          "clipFront": 0,
+                          "stretch": 1
+                        },
+                        "bodyPartMask": {
                           "$type": "CName",
                           "$storage": "string",
                           "$value": "None"
                         },
-                        "disableHeadMovement": 0,
-                        "ignoreSpeakerIncapacitation": 1,
-                        "isHolocallSpeaker": 0,
-                        "voContext": "Vo_Context_Quest",
-                        "voExpression": "Vo_Expression_Spoken"
-                      }
+                        "weight": 1
+                      },
+                      "animName": {
+                        "$type": "CName",
+                        "$storage": "string",
+                        "$value": "None"
+                      },
+                      "bakedFacialTransition": {
+                        "$type": "animFacialEmotionTransitionBaked",
+                        "customTransitionAnim": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "None"
+                        },
+                        "facialKey_Female": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "idle__interested__female__focused"
+                        },
+                        "facialKey_Male": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "idle__interested__male__focused"
+                        },
+                        "facialKeyWeight": 1,
+                        "timeScale": 1,
+                        "toIdleFemale": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "idle__interested__female"
+                        },
+                        "toIdleMale": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "idle__interested__male"
+                        },
+                        "toIdleNeckWeight": 0.75,
+                        "toIdleWeight": 1,
+                        "transitionDuration": 2.73000002,
+                        "transitionType": "Fast"
+                      },
+                      "convertToAdditive": 0,
+                      "duration": 2730,
+                      "executionTagFlags": 0,
+                      "eyesBlendAdditive": 1,
+                      "facialInstantTransition": 0,
+                      "id": {
+                        "$type": "scnSceneEventId",
+                        "id": "2401091034573225463"
+                      },
+                      "idleAnimName": {
+                        "$type": "CName",
+                        "$storage": "string",
+                        "$value": "None"
+                      },
+                      "isEnabled": 1,
+                      "lowerFaceBlendAdditive": 1,
+                      "muteAnimEvents": "0",
+                      "neckWeight": 1,
+                      "performer": {
+                        "$type": "scnPerformerId",
+                        "id": 1
+                      },
+                      "scalingData": null,
+                      "startTime": 0,
+                      "type": "0",
+                      "upperFaceBlendAdditive": 1
                     }
                   },
                   {
-                    "HandleId": "11",
+                    "HandleId": "12",
                     "Data": {
                       "$type": "scnLookAtEvent",
                       "basicData": {
@@ -1184,6 +1316,227 @@
                       "startTime": 0,
                       "type": "0"
                     }
+                  },
+                  {
+                    "HandleId": "13",
+                    "Data": {
+                      "$type": "scnDialogLineEvent",
+                      "additionalSpeakers": {
+                        "$type": "scnAdditionalSpeakers",
+                        "executionTag": 0,
+                        "role": "Full",
+                        "speakers": []
+                      },
+                      "duration": 3710,
+                      "executionTagFlags": 0,
+                      "id": {
+                        "$type": "scnSceneEventId",
+                        "id": "2330751331351852380"
+                      },
+                      "scalingData": null,
+                      "screenplayLineId": {
+                        "$type": "scnscreenplayItemId",
+                        "id": 1
+                      },
+                      "startTime": 700,
+                      "type": "0",
+                      "visualStyle": "regular",
+                      "voParams": {
+                        "$type": "scnDialogLineVoParams",
+                        "alwaysUseBrainGender": 0,
+                        "customVoEvent": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "None"
+                        },
+                        "disableHeadMovement": 0,
+                        "ignoreSpeakerIncapacitation": 1,
+                        "isHolocallSpeaker": 0,
+                        "voContext": "Vo_Context_Quest",
+                        "voExpression": "Vo_Expression_Spoken"
+                      }
+                    }
+                  },
+                  {
+                    "HandleId": "14",
+                    "Data": {
+                      "$type": "scnPlaySkAnimEvent",
+                      "actorComponent": {
+                        "$type": "CName",
+                        "$storage": "string",
+                        "$value": "body"
+                      },
+                      "animData": {
+                        "$type": "scneventsPlayAnimEventExData",
+                        "basic": {
+                          "$type": "scneventsPlayAnimEventData",
+                          "blendIn": 0.5,
+                          "blendInCurve": "SinusoidalEaseInOut",
+                          "blendOut": 0.5,
+                          "blendOutCurve": "SinusoidalEaseInOut",
+                          "clipEnd": 0,
+                          "clipFront": 0,
+                          "stretch": 1
+                        },
+                        "bodyPartMask": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "chest_upper_bdy"
+                        },
+                        "weight": 1
+                      },
+                      "animName": {
+                        "HandleId": "15",
+                        "Data": {
+                          "$type": "scnAnimName",
+                          "type": "direct",
+                          "unk1": [
+                            {
+                              "$type": "CName",
+                              "$storage": "string",
+                              "$value": "stand__arms_crossed_front__01__describe_right__02"
+                            }
+                          ],
+                          "unk2": []
+                        }
+                      },
+                      "blendOverride": "CopyPitch_CopyYaw",
+                      "cameraBlendInDuration": 1,
+                      "cameraBlendOutDuration": 1,
+                      "cameraParallaxSpace": "Trajectory",
+                      "cameraParallaxWeight": 0,
+                      "cameraUseTrajectorySpace": 1,
+                      "convertToAdditive": 1,
+                      "duration": 3267,
+                      "enableWorldSpaceSmoothing": 1,
+                      "executionTagFlags": 0,
+                      "eyesBlendAdditive": 1,
+                      "FPPControlActive": 0,
+                      "gameplayAnimName": {
+                        "HandleId": "16",
+                        "Data": {
+                          "$type": "scnAnimName",
+                          "type": "direct",
+                          "unk1": [
+                            {
+                              "$type": "CName",
+                              "$storage": "string",
+                              "$value": "None"
+                            }
+                          ],
+                          "unk2": []
+                        }
+                      },
+                      "genderSpecificParams": [],
+                      "id": {
+                        "$type": "scnSceneEventId",
+                        "id": "2742629835891388084"
+                      },
+                      "idleIsMountedWorkspot": 0,
+                      "isSceneCarrying": 0,
+                      "lowerFaceBlendAdditive": 1,
+                      "muteAnimEvents": "0",
+                      "neckWeight": 1,
+                      "performer": {
+                        "$type": "scnPerformerId",
+                        "id": 1
+                      },
+                      "pitchLimitBottom": 0,
+                      "pitchLimitTop": 0,
+                      "playerData": {
+                        "$type": "scnPlayerAnimData",
+                        "isEndOfCarryingAnimation": 0,
+                        "tierData": null,
+                        "unmountBodyCarry": 1,
+                        "useZSnapping": 0
+                      },
+                      "poseBlendOutWorkspot": null,
+                      "rootMotionData": {
+                        "$type": "scnPlaySkAnimRootMotionData",
+                        "customBlendInCurve": "SinusoidalEaseInOut",
+                        "customBlendInTime": -1,
+                        "enabled": 0,
+                        "meshDissolvingEnabled": 1,
+                        "originMarker": {
+                          "$type": "scnMarker",
+                          "entityRef": {
+                            "$type": "gameEntityReference",
+                            "dynamicEntityUniqueName": {
+                              "$type": "CName",
+                              "$storage": "string",
+                              "$value": "None"
+                            },
+                            "names": [],
+                            "reference": {
+                              "$type": "NodeRef",
+                              "$storage": "uint64",
+                              "$value": "0"
+                            },
+                            "sceneActorContextName": {
+                              "$type": "CName",
+                              "$storage": "string",
+                              "$value": "None"
+                            },
+                            "slotName": {
+                              "$type": "CName",
+                              "$storage": "string",
+                              "$value": "None"
+                            },
+                            "type": "EntityRef"
+                          },
+                          "isMounted": 1,
+                          "localMarkerId": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "None"
+                          },
+                          "nodeRef": {
+                            "$type": "NodeRef",
+                            "$storage": "uint64",
+                            "$value": "0"
+                          },
+                          "slotName": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "None"
+                          },
+                          "type": "Global"
+                        },
+                        "originOffset": {
+                          "$type": "Transform",
+                          "orientation": {
+                            "$type": "Quaternion",
+                            "i": 0,
+                            "j": 0,
+                            "k": 0,
+                            "r": 1
+                          },
+                          "position": {
+                            "$type": "Vector4",
+                            "W": 0,
+                            "X": 0,
+                            "Y": 0,
+                            "Z": 0
+                          }
+                        },
+                        "placementMode": "Blend",
+                        "removePitchRollRotation": 1,
+                        "snapToGround": 0,
+                        "snapToGroundEnd": 0,
+                        "snapToGroundStart": 0,
+                        "trajectoryLOD": [],
+                        "vehicleChangePhysicsState": 1,
+                        "vehicleEnabledPhysicsOnEnd": 1
+                      },
+                      "scalingData": null,
+                      "startTime": 750,
+                      "stayInScene": 0,
+                      "type": "0",
+                      "upperFaceBlendAdditive": 1,
+                      "vehicleProceduralCameraWeight": 0,
+                      "yawLimitLeft": 0,
+                      "yawLimitRight": 0
+                    }
                   }
                 ],
                 "ffStrategy": "automatic",
@@ -1227,58 +1580,18 @@
                 ],
                 "sectionDuration": {
                   "$type": "scnSceneTime",
-                  "stu": 4550
+                  "stu": 4410
                 }
               }
             },
             {
-              "HandleId": "12",
+              "HandleId": "17",
               "Data": {
                 "$type": "scnSectionNode",
                 "actorBehaviors": [],
                 "events": [
                   {
-                    "HandleId": "13",
-                    "Data": {
-                      "$type": "scnDialogLineEvent",
-                      "additionalSpeakers": {
-                        "$type": "scnAdditionalSpeakers",
-                        "executionTag": 0,
-                        "role": "Full",
-                        "speakers": []
-                      },
-                      "duration": 5270,
-                      "executionTagFlags": 0,
-                      "id": {
-                        "$type": "scnSceneEventId",
-                        "id": "2887850783470793649"
-                      },
-                      "scalingData": null,
-                      "screenplayLineId": {
-                        "$type": "scnscreenplayItemId",
-                        "id": 257
-                      },
-                      "startTime": 700,
-                      "type": "0",
-                      "visualStyle": "regular",
-                      "voParams": {
-                        "$type": "scnDialogLineVoParams",
-                        "alwaysUseBrainGender": 0,
-                        "customVoEvent": {
-                          "$type": "CName",
-                          "$storage": "string",
-                          "$value": "None"
-                        },
-                        "disableHeadMovement": 0,
-                        "ignoreSpeakerIncapacitation": 1,
-                        "isHolocallSpeaker": 0,
-                        "voContext": "Vo_Context_Quest",
-                        "voExpression": "Vo_Expression_Spoken"
-                      }
-                    }
-                  },
-                  {
-                    "HandleId": "14",
+                    "HandleId": "18",
                     "Data": {
                       "$type": "scnLookAtEvent",
                       "basicData": {
@@ -1393,6 +1706,46 @@
                       "startTime": 0,
                       "type": "0"
                     }
+                  },
+                  {
+                    "HandleId": "19",
+                    "Data": {
+                      "$type": "scnDialogLineEvent",
+                      "additionalSpeakers": {
+                        "$type": "scnAdditionalSpeakers",
+                        "executionTag": 0,
+                        "role": "Full",
+                        "speakers": []
+                      },
+                      "duration": 5040,
+                      "executionTagFlags": 0,
+                      "id": {
+                        "$type": "scnSceneEventId",
+                        "id": "2887850783470793649"
+                      },
+                      "scalingData": null,
+                      "screenplayLineId": {
+                        "$type": "scnscreenplayItemId",
+                        "id": 257
+                      },
+                      "startTime": 700,
+                      "type": "0",
+                      "visualStyle": "regular",
+                      "voParams": {
+                        "$type": "scnDialogLineVoParams",
+                        "alwaysUseBrainGender": 0,
+                        "customVoEvent": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "None"
+                        },
+                        "disableHeadMovement": 0,
+                        "ignoreSpeakerIncapacitation": 1,
+                        "isHolocallSpeaker": 0,
+                        "voContext": "Vo_Context_Quest",
+                        "voExpression": "Vo_Expression_Spoken"
+                      }
+                    }
                   }
                 ],
                 "ffStrategy": "automatic",
@@ -1436,12 +1789,12 @@
                 ],
                 "sectionDuration": {
                   "$type": "scnSceneTime",
-                  "stu": 6570
+                  "stu": 6340
                 }
               }
             },
             {
-              "HandleId": "15",
+              "HandleId": "20",
               "Data": {
                 "$type": "scnEndNode",
                 "ffStrategy": "automatic",
@@ -1454,7 +1807,7 @@
               }
             },
             {
-              "HandleId": "16",
+              "HandleId": "21",
               "Data": {
                 "$type": "scnQuestNode",
                 "ffStrategy": "automatic",
@@ -1506,24 +1859,24 @@
                   }
                 ],
                 "questNode": {
-                  "HandleId": "17",
+                  "HandleId": "22",
                   "Data": {
                     "$type": "questPauseConditionNodeDefinition",
                     "condition": {
-                      "HandleId": "18",
+                      "HandleId": "23",
                       "Data": {
                         "$type": "questDistanceCondition",
                         "type": {
-                          "HandleId": "19",
+                          "HandleId": "24",
                           "Data": {
                             "$type": "questDistanceComparison_ConditionType",
                             "comparisonType": "Greater",
                             "distanceDefinition1": {
-                              "HandleId": "20",
+                              "HandleId": "25",
                               "Data": {
                                 "$type": "questObjectDistance",
                                 "entityRef": {
-                                  "HandleId": "21",
+                                  "HandleId": "26",
                                   "Data": {
                                     "$type": "questUniversalRef",
                                     "entityReference": {
@@ -1589,7 +1942,7 @@
                               }
                             },
                             "distanceDefinition2": {
-                              "HandleId": "22",
+                              "HandleId": "27",
                               "Data": {
                                 "$type": "questValueDistance",
                                 "distanceValue": 12
@@ -1602,7 +1955,7 @@
                     "id": 8,
                     "sockets": [
                       {
-                        "HandleId": "23",
+                        "HandleId": "28",
                         "Data": {
                           "$type": "questSocketDefinition",
                           "connections": [],
@@ -1615,7 +1968,7 @@
                         }
                       },
                       {
-                        "HandleId": "24",
+                        "HandleId": "29",
                         "Data": {
                           "$type": "questSocketDefinition",
                           "connections": [],
@@ -1628,7 +1981,7 @@
                         }
                       },
                       {
-                        "HandleId": "25",
+                        "HandleId": "30",
                         "Data": {
                           "$type": "questSocketDefinition",
                           "connections": [],
@@ -1646,7 +1999,7 @@
               }
             },
             {
-              "HandleId": "26",
+              "HandleId": "31",
               "Data": {
                 "$type": "scnEndNode",
                 "ffStrategy": "automatic",
@@ -1656,6 +2009,195 @@
                 },
                 "outputSockets": [],
                 "type": "Terminating"
+              }
+            },
+            {
+              "HandleId": "32",
+              "Data": {
+                "$type": "scnQuestNode",
+                "ffStrategy": "automatic",
+                "isockMappings": [
+                  {
+                    "$type": "CName",
+                    "$storage": "string",
+                    "$value": "CutDestination"
+                  },
+                  {
+                    "$type": "CName",
+                    "$storage": "string",
+                    "$value": "In"
+                  }
+                ],
+                "nodeId": {
+                  "$type": "scnNodeId",
+                  "id": 10
+                },
+                "osockMappings": [
+                  {
+                    "$type": "CName",
+                    "$storage": "string",
+                    "$value": "Success"
+                  }
+                ],
+                "outputSockets": [
+                  {
+                    "$type": "scnOutputSocket",
+                    "destinations": [],
+                    "stamp": {
+                      "$type": "scnOutputSocketStamp",
+                      "name": 0,
+                      "ordinal": 0
+                    }
+                  }
+                ],
+                "questNode": {
+                  "HandleId": "33",
+                  "Data": {
+                    "$type": "questUseWorkspotNodeDefinition",
+                    "entityReference": {
+                      "$type": "gameEntityReference",
+                      "dynamicEntityUniqueName": {
+                        "$type": "CName",
+                        "$storage": "string",
+                        "$value": "None"
+                      },
+                      "names": [
+                        {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "recruiter"
+                        }
+                      ],
+                      "reference": {
+                        "$type": "NodeRef",
+                        "$storage": "string",
+                        "$value": "$/mod/cc_g05_cast/#cc_g05_cast_com"
+                      },
+                      "sceneActorContextName": {
+                        "$type": "CName",
+                        "$storage": "string",
+                        "$value": "None"
+                      },
+                      "slotName": {
+                        "$type": "CName",
+                        "$storage": "string",
+                        "$value": "None"
+                      },
+                      "type": "EntityRef"
+                    },
+                    "id": 10,
+                    "paramsV1": {
+                      "HandleId": "34",
+                      "Data": {
+                        "$type": "questUseWorkspotParamsV1",
+                        "changeWorkspot": 1,
+                        "continueInCombat": 0,
+                        "dangleResetSimulation": 0,
+                        "enableIdleMode": 1,
+                        "entryId": {
+                          "$type": "workWorkEntryId",
+                          "id": 4294967295
+                        },
+                        "entryTag": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "None"
+                        },
+                        "exitAnimName": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "None"
+                        },
+                        "exitEntryId": {
+                          "$type": "workWorkEntryId",
+                          "id": 4294967295
+                        },
+                        "finishAnimation": 1,
+                        "forceEntryAnimName": {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "None"
+                        },
+                        "function": "IdleOnlyMode",
+                        "instant": 0,
+                        "isPlayer": 0,
+                        "isWorkspotInfinite": 1,
+                        "jumpToEntry": 0,
+                        "maxAnimTimeLimit": 0,
+                        "meshDissolvingEnabled": 1,
+                        "movementType": "Walk",
+                        "playerParams": {
+                          "$type": "questUseWorkspotPlayerParams",
+                          "applyCameraParams": 0,
+                          "cameraSettings": {
+                            "$type": "gameTier3CameraSettings",
+                            "pitchBottomLimit": 45,
+                            "pitchSpeedMultiplier": 1,
+                            "pitchTopLimit": 60,
+                            "yawLeftLimit": 60,
+                            "yawRightLimit": 60,
+                            "yawSpeedMultiplier": 1
+                          },
+                          "cameraUseTrajectorySpace": 1,
+                          "emptyHands": 0,
+                          "parallaxSpace": "Trajectory",
+                          "parallaxWeight": 1,
+                          "tier": "Tier3",
+                          "vehicleProceduralCameraWeight": 1
+                        },
+                        "repeatCommandOnInterrupt": 1,
+                        "teleport": 1,
+                        "workExcludedGestures": [],
+                        "workspotNode": {
+                          "$type": "NodeRef",
+                          "$storage": "uint64",
+                          "$value": "0"
+                        }
+                      }
+                    },
+                    "sockets": [
+                      {
+                        "HandleId": "35",
+                        "Data": {
+                          "$type": "questSocketDefinition",
+                          "connections": [],
+                          "name": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "CutDestination"
+                          },
+                          "type": "CutDestination"
+                        }
+                      },
+                      {
+                        "HandleId": "36",
+                        "Data": {
+                          "$type": "questSocketDefinition",
+                          "connections": [],
+                          "name": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "In"
+                          },
+                          "type": "Input"
+                        }
+                      },
+                      {
+                        "HandleId": "37",
+                        "Data": {
+                          "$type": "questSocketDefinition",
+                          "connections": [],
+                          "name": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "Success"
+                          },
+                          "type": "Output"
+                        }
+                      }
+                    ]
+                  }
+                }
               }
             }
           ],

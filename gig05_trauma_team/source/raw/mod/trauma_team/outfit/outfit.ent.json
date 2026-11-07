@@ -1,0 +1,988 @@
+{
+  "Header": {
+    "WolvenKitVersion": "10.0.0-beta.1",
+    "WKitJsonVersion": "0.0.9",
+    "GameVersion": 2500,
+    "ExportedDateTime": "2026-11-07T13:40:32.9035916Z",
+    "DataType": "CR2W",
+    "ArchiveFileName": "C:\\Users\\andre\\OneDrive\\Desktop\\cyberpunk-gigs\\gig05_trauma_team\\source\\archive\\mod\\trauma_team\\outfit\\outfit.ent"
+  },
+  "Data": {
+    "Version": 195,
+    "BuildVersion": 0,
+    "RootChunk": {
+      "$type": "entEntityTemplate",
+      "appearances": [
+        {
+          "$type": "entTemplateAppearance",
+          "appearanceName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "_trauma_m"
+          },
+          "appearanceResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "mod\\trauma_team\\outfit\\outfit.app"
+            },
+            "Flags": "Soft"
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "outfit_02__trauma_\u0026Male\u0026TPP"
+          }
+        },
+        {
+          "$type": "entTemplateAppearance",
+          "appearanceName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "_trauma_w_fpp"
+          },
+          "appearanceResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "mod\\trauma_team\\outfit\\outfit.app"
+            },
+            "Flags": "Soft"
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "outfit_02__trauma_\u0026Female\u0026FPP"
+          }
+        },
+        {
+          "$type": "entTemplateAppearance",
+          "appearanceName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "_trauma_w"
+          },
+          "appearanceResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "mod\\trauma_team\\outfit\\outfit.app"
+            },
+            "Flags": "Soft"
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "outfit_02__trauma_\u0026Female\u0026TPP"
+          }
+        },
+        {
+          "$type": "entTemplateAppearance",
+          "appearanceName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "_trauma_m_fpp"
+          },
+          "appearanceResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "string",
+              "$value": "mod\\trauma_team\\outfit\\outfit.app"
+            },
+            "Flags": "Soft"
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "outfit_02__trauma_\u0026Male\u0026FPP"
+          }
+        }
+      ],
+      "backendDataOverrides": [],
+      "bindingOverrides": [],
+      "compiledData": {
+        "BufferId": "0",
+        "Flags": 7471104,
+        "Type": "WolvenKit.RED4.Archive.Buffer.RedPackage, WolvenKit.RED4, Version=10.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "Data": {
+          "Version": 4,
+          "Sections": 7,
+          "CruidIndex": 0,
+          "CruidDict": {
+            "0": "0",
+            "1": "1741696130636722176",
+            "2": "2054942014989131776",
+            "3": "1741696137397940224",
+            "4": "1741696137465049088",
+            "5": "1741696137532157952",
+            "6": "1786808606386257920",
+            "7": "2137298428911562752",
+            "8": "2243708309053874176",
+            "9": "2243708309087428608"
+          },
+          "Chunks": [
+            {
+              "$type": "gameGarmentItemObject",
+              "accumulatedTimePasssed": 0,
+              "audioResourceName": {
+                "$type": "CName",
+                "$storage": "string",
+                "$value": "None"
+              },
+              "customCameraTarget": "ECCTV_All",
+              "displayDescription": {
+                "unk1": "0",
+                "value": ""
+              },
+              "displayName": {
+                "unk1": "0",
+                "value": ""
+              },
+              "e3ObjectRevealed": 0,
+              "forceDefeatReward": 0,
+              "forceRegisterInHudManager": 0,
+              "hasVisibilityForcedInAnimSystem": 0,
+              "hitInstigatorCooldownID": {
+                "$type": "gameDelayID"
+              },
+              "isBroken": 0,
+              "isDead": 0,
+              "isHighlightedInFocusMode": 0,
+              "isIconic": 0,
+              "isScannerDataDirty": 0,
+              "isTargetedWithSmartWeapon": 0,
+              "killRewardDisabled": 0,
+              "lastEngineTime": 0,
+              "lastHitInstigatorID": {
+                "$type": "entEntityID",
+                "hash": "0"
+              },
+              "lootQuality": "Common",
+              "markAsQuest": 0,
+              "persistentState": null,
+              "playerSocket": {
+                "$type": "gamePlayerSocket"
+              },
+              "prereqListeners": [],
+              "receivedDamageHistory": [],
+              "renderSceneLayerMask": "Default",
+              "scanningComponent": null,
+              "sourceShootComponent": null,
+              "squadMemberComponent": null,
+              "statusEffectComponent": null,
+              "statusEffectListeners": [],
+              "stimBroadcaster": null,
+              "tags": {
+                "$type": "redTagList",
+                "tags": []
+              },
+              "targetShootComponent": null,
+              "uiSlotComponent": null,
+              "updateBucket": "AttachedObject",
+              "visibilityCheckDistance": 16000,
+              "visionComponent": null,
+              "willDieSoon": 0,
+              "workspotMapper": null
+            },
+            {
+              "$type": "gameinteractionsComponent",
+              "definitionResource": {
+                "DepotPath": {
+                  "$type": "ResourcePath",
+                  "$storage": "uint64",
+                  "$value": "0"
+                },
+                "Flags": "Default"
+              },
+              "id": "1741696130636722176",
+              "interactionRootOffset": {
+                "$type": "Vector3",
+                "X": 0,
+                "Y": 0,
+                "Z": 0
+              },
+              "isEnabled": 1,
+              "isReplicable": 0,
+              "layerOverrides": [],
+              "layerOverridesTemp": [],
+              "localTransform": {
+                "$type": "WorldTransform",
+                "Orientation": {
+                  "$type": "Quaternion",
+                  "i": 0,
+                  "j": 0,
+                  "k": 0,
+                  "r": 1
+                },
+                "Position": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": 0
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": 0
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 0
+                  }
+                }
+              },
+              "name": {
+                "$type": "CName",
+                "$storage": "string",
+                "$value": "component"
+              },
+              "parentTransform": null
+            },
+            {
+              "$type": "entExternalComponent",
+              "externalComponentName": {
+                "$type": "CName",
+                "$storage": "string",
+                "$value": "root"
+              },
+              "id": "2054942014989131776",
+              "isReplicable": 0,
+              "name": {
+                "$type": "CName",
+                "$storage": "string",
+                "$value": "root"
+              }
+            },
+            {
+              "$type": "gameStatsComponent",
+              "id": "1741696137397940224",
+              "isReplicable": 0,
+              "name": {
+                "$type": "CName",
+                "$storage": "string",
+                "$value": "StatsComponent"
+              },
+              "persistentState": {
+                "HandleId": "0",
+                "Data": {
+                  "$type": "gameStatsComponentPS"
+                }
+              }
+            },
+            {
+              "$type": "gameScanningComponent",
+              "autoGenerateBoundingSphere": 1,
+              "boundingSphere": {
+                "$type": "Sphere",
+                "CenterRadius2": {
+                  "$type": "Vector4",
+                  "W": -1,
+                  "X": 0,
+                  "Y": 0,
+                  "Z": 0
+                }
+              },
+              "BraindanceLayer": "Default",
+              "clues": [],
+              "cpoEnableMultiplePlayersScanningModifier": 1,
+              "currentBraindanceLayer": 0,
+              "currentHighlight": null,
+              "id": "1741696137465049088",
+              "ignoresScanningDistanceLimit": 0,
+              "isBeingScanned": 0,
+              "isBraindanceActive": 0,
+              "isBraindanceBlocked": 0,
+              "isBraindanceClue": 0,
+              "isBraindanceLayerUnlocked": 0,
+              "isBraindanceTimelineUnlocked": 0,
+              "isEntityVisible": 1,
+              "isFocusModeActive": 0,
+              "isHudManagerInitialized": 0,
+              "isReplicable": 0,
+              "isScanningCluesBlocked": 0,
+              "name": {
+                "$type": "CName",
+                "$storage": "string",
+                "$value": "scanning"
+              },
+              "objectDescription": null,
+              "OnBraindanceFppChangeCallback": null,
+              "OnBraindanceVisionModeChangeCallback": null,
+              "persistentState": {
+                "HandleId": "1",
+                "Data": {
+                  "$type": "gameScanningComponentPS",
+                  "isBlocked": 0,
+                  "isDecriptionEnabled": 1,
+                  "isScanningDisabled": 0,
+                  "objectDescriptionOverride": null,
+                  "pctScanned": 0,
+                  "scanningState": "Default",
+                  "storedClues": []
+                }
+              },
+              "scannableData": [],
+              "scanningBarText": {
+                "$type": "TweakDBID",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "timeNeeded": 0
+            },
+            {
+              "$type": "WorkspotMapperComponent",
+              "id": "1741696137532157952",
+              "isReplicable": 0,
+              "name": {
+                "$type": "CName",
+                "$storage": "string",
+                "$value": "workspotMapper"
+              },
+              "persistentState": null,
+              "priority": 0,
+              "workspotsMap": []
+            },
+            {
+              "$type": "entEffectSpawnerComponent",
+              "autoHideDistance": 0,
+              "effectDescs": [
+                {
+                  "HandleId": "2",
+                  "Data": {
+                    "$type": "entEffectDesc",
+                    "autoSpawnTag": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "_autospawn"
+                    },
+                    "compiledEffectInfo": {
+                      "$type": "worldCompiledEffectInfo",
+                      "componentNames": [],
+                      "eventsSortedByRUID": [
+                        {
+                          "$type": "worldCompiledEffectEventInfo",
+                          "componentIndexMask": "0",
+                          "eventRUID": "2084236313686671360",
+                          "flags": 1,
+                          "placementIndexMask": "0"
+                        }
+                      ],
+                      "placementInfos": [],
+                      "placementTags": [],
+                      "relativePositions": [],
+                      "relativeRotations": []
+                    },
+                    "effect": {
+                      "DepotPath": {
+                        "$type": "ResourcePath",
+                        "$storage": "string",
+                        "$value": "base\\fx\\camera\\inventory_screen\\camera_inventory_screen_switch_glitch.effect"
+                      },
+                      "Flags": "Default"
+                    },
+                    "effectName": {
+                      "$type": "CName",
+                      "$storage": "string",
+                      "$value": "paperdoll_item_switch_glitch"
+                    },
+                    "id": "1786813244749611008",
+                    "isAutoSpawn": 0,
+                    "randomWeight": 1
+                  }
+                }
+              ],
+              "forceLODLevel": -1,
+              "id": "1786808606386257920",
+              "isReplicable": 0,
+              "localTransform": {
+                "$type": "WorldTransform",
+                "Orientation": {
+                  "$type": "Quaternion",
+                  "i": 0,
+                  "j": 0,
+                  "k": 0,
+                  "r": 1
+                },
+                "Position": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": 0
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": 0
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 0
+                  }
+                }
+              },
+              "name": {
+                "$type": "CName",
+                "$storage": "string",
+                "$value": "paperdoll_item_switch"
+              },
+              "parentTransform": null,
+              "renderSceneLayerMask": "Default"
+            },
+            {
+              "$type": "gameVisionModeComponent",
+              "activeForcedHighlight": null,
+              "activeRevealRequests": [],
+              "currentDefaultHighlight": null,
+              "defaultHighlightData": null,
+              "forcedHighlights": [],
+              "id": "2137298428911562752",
+              "isFocusModeActive": 0,
+              "isReplicable": 0,
+              "name": {
+                "$type": "CName",
+                "$storage": "string",
+                "$value": "vision"
+              },
+              "persistentState": {
+                "HandleId": "3",
+                "Data": {
+                  "$type": "gameVisionModeComponentPS",
+                  "hideInDefaultMode": 0,
+                  "hideInFocusMode": 0,
+                  "inactive": 0,
+                  "questForcedMeshes": null,
+                  "questForcedModules": null,
+                  "questInactive": 0,
+                  "storedHighlightData": null
+                }
+              },
+              "slaveObjectsToHighlight": [],
+              "wasCleanedUp": 0
+            },
+            {
+              "$type": "GameplayRoleComponent",
+              "alwaysCreateMappinAsDynamic": 1,
+              "autoDeterminGameplayRole": 1,
+              "canHideMappinsByTask": 0,
+              "canShowMappinsByTask": 0,
+              "currentGameplayRole": "UnAssigned",
+              "displayAllRolesAsGeneric": 0,
+              "enabledMinimapMappins": [],
+              "forcedMappinVisualState": "None",
+              "gameplayRole": "UnAssigned",
+              "id": "2243708309053874176",
+              "isBeingScanned": 0,
+              "isCurrentTarget": 0,
+              "isForcedVisibleThroughWalls": 0,
+              "isForceHidden": 0,
+              "isGameplayRoleInitialized": 0,
+              "isHighlightedInFocusMode": 0,
+              "isReplicable": 0,
+              "isShowingMappins": 0,
+              "mappins": [],
+              "mappinsDisplayMode": "MINIMALISTIC",
+              "name": {
+                "$type": "CName",
+                "$storage": "string",
+                "$value": "GameplayRole"
+              },
+              "offsetValue": 0.0399999991,
+              "persistentState": null,
+              "priority": 0
+            },
+            {
+              "$type": "entSlotComponent",
+              "fallbackSlots": [],
+              "id": "2243708309087428608",
+              "isReplicable": 0,
+              "localTransform": {
+                "$type": "WorldTransform",
+                "Orientation": {
+                  "$type": "Quaternion",
+                  "i": 0,
+                  "j": 0,
+                  "k": 0,
+                  "r": 1
+                },
+                "Position": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": 0
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": 0
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 0
+                  }
+                }
+              },
+              "name": {
+                "$type": "CName",
+                "$storage": "string",
+                "$value": "UI_Slots"
+              },
+              "parentTransform": {
+                "HandleId": "4",
+                "Data": {
+                  "$type": "entHardTransformBinding",
+                  "bindName": {
+                    "$type": "CName",
+                    "$storage": "string",
+                    "$value": "Collider"
+                  },
+                  "enabled": 1,
+                  "enableMask": {
+                    "$type": "entTagMask",
+                    "excludedTags": {
+                      "$type": "redTagList",
+                      "tags": [
+                        {
+                          "$type": "CName",
+                          "$storage": "string",
+                          "$value": "NoBinding"
+                        }
+                      ]
+                    },
+                    "hardTags": {
+                      "$type": "redTagList",
+                      "tags": []
+                    },
+                    "softTags": {
+                      "$type": "redTagList",
+                      "tags": []
+                    }
+                  },
+                  "slotName": {
+                    "$type": "CName",
+                    "$storage": "string",
+                    "$value": "None"
+                  }
+                }
+              },
+              "slots": [
+                {
+                  "$type": "entSlot",
+                  "boneName": {
+                    "$type": "CName",
+                    "$storage": "string",
+                    "$value": "None"
+                  },
+                  "relativePosition": {
+                    "$type": "Vector3",
+                    "X": 0,
+                    "Y": 0,
+                    "Z": 0.0500000007
+                  },
+                  "relativeRotation": {
+                    "$type": "Quaternion",
+                    "i": 0,
+                    "j": 0,
+                    "k": 0,
+                    "r": 1
+                  },
+                  "slotName": {
+                    "$type": "CName",
+                    "$storage": "string",
+                    "$value": "roleMappin"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "compiledEntityLODFlags": 0,
+      "componentResolveSettings": [],
+      "components": [
+        {
+          "$type": "gameinteractionsComponent",
+          "definitionResource": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "id": "1741696130636722176",
+          "interactionRootOffset": {
+            "$type": "Vector3",
+            "X": 0,
+            "Y": 0,
+            "Z": 0
+          },
+          "isEnabled": 1,
+          "isReplicable": 0,
+          "layerOverrides": [],
+          "layerOverridesTemp": [],
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "component"
+          },
+          "parentTransform": null
+        },
+        {
+          "$type": "entExternalComponent",
+          "externalComponentName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "root"
+          },
+          "id": "2054942014989131776",
+          "isReplicable": 0,
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "root"
+          }
+        },
+        {
+          "$type": "gameStatsComponent",
+          "id": "1741696137397940224",
+          "isReplicable": 0,
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "StatsComponent"
+          },
+          "persistentState": {
+            "HandleRefId": "0"
+          }
+        },
+        {
+          "$type": "gameScanningComponent",
+          "autoGenerateBoundingSphere": 1,
+          "boundingSphere": {
+            "$type": "Sphere",
+            "CenterRadius2": {
+              "$type": "Vector4",
+              "W": -1,
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            }
+          },
+          "BraindanceLayer": "Default",
+          "clues": [],
+          "cpoEnableMultiplePlayersScanningModifier": 1,
+          "currentBraindanceLayer": 0,
+          "currentHighlight": null,
+          "id": "1741696137465049088",
+          "ignoresScanningDistanceLimit": 0,
+          "isBeingScanned": 0,
+          "isBraindanceActive": 0,
+          "isBraindanceBlocked": 0,
+          "isBraindanceClue": 0,
+          "isBraindanceLayerUnlocked": 0,
+          "isBraindanceTimelineUnlocked": 0,
+          "isEntityVisible": 1,
+          "isFocusModeActive": 0,
+          "isHudManagerInitialized": 0,
+          "isReplicable": 0,
+          "isScanningCluesBlocked": 0,
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "scanning"
+          },
+          "objectDescription": null,
+          "OnBraindanceFppChangeCallback": null,
+          "OnBraindanceVisionModeChangeCallback": null,
+          "persistentState": {
+            "HandleRefId": "1"
+          },
+          "scannableData": [],
+          "scanningBarText": {
+            "$type": "TweakDBID",
+            "$storage": "uint64",
+            "$value": "0"
+          },
+          "timeNeeded": 0
+        },
+        {
+          "$type": "WorkspotMapperComponent",
+          "id": "1741696137532157952",
+          "isReplicable": 0,
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "workspotMapper"
+          },
+          "persistentState": null,
+          "priority": 0,
+          "workspotsMap": []
+        },
+        {
+          "$type": "entEffectSpawnerComponent",
+          "autoHideDistance": 0,
+          "effectDescs": [
+            {
+              "HandleRefId": "2"
+            }
+          ],
+          "forceLODLevel": -1,
+          "id": "1786808606386257920",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "paperdoll_item_switch"
+          },
+          "parentTransform": null,
+          "renderSceneLayerMask": "Default"
+        },
+        {
+          "$type": "gameVisionModeComponent",
+          "activeForcedHighlight": null,
+          "activeRevealRequests": [],
+          "currentDefaultHighlight": null,
+          "defaultHighlightData": null,
+          "forcedHighlights": [],
+          "id": "2137298428911562752",
+          "isFocusModeActive": 0,
+          "isReplicable": 0,
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "vision"
+          },
+          "persistentState": {
+            "HandleRefId": "3"
+          },
+          "slaveObjectsToHighlight": [],
+          "wasCleanedUp": 0
+        },
+        {
+          "$type": "GameplayRoleComponent",
+          "alwaysCreateMappinAsDynamic": 1,
+          "autoDeterminGameplayRole": 1,
+          "canHideMappinsByTask": 0,
+          "canShowMappinsByTask": 0,
+          "currentGameplayRole": "UnAssigned",
+          "displayAllRolesAsGeneric": 0,
+          "enabledMinimapMappins": [],
+          "forcedMappinVisualState": "None",
+          "gameplayRole": "UnAssigned",
+          "id": "2243708309053874176",
+          "isBeingScanned": 0,
+          "isCurrentTarget": 0,
+          "isForcedVisibleThroughWalls": 0,
+          "isForceHidden": 0,
+          "isGameplayRoleInitialized": 0,
+          "isHighlightedInFocusMode": 0,
+          "isReplicable": 0,
+          "isShowingMappins": 0,
+          "mappins": [],
+          "mappinsDisplayMode": "MINIMALISTIC",
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "GameplayRole"
+          },
+          "offsetValue": 0.0399999991,
+          "persistentState": null,
+          "priority": 0
+        },
+        {
+          "$type": "entSlotComponent",
+          "fallbackSlots": [],
+          "id": "2243708309087428608",
+          "isReplicable": 0,
+          "localTransform": {
+            "$type": "WorldTransform",
+            "Orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "Position": {
+              "$type": "WorldPosition",
+              "x": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "y": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              },
+              "z": {
+                "$type": "FixedPoint",
+                "Bits": 0
+              }
+            }
+          },
+          "name": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "UI_Slots"
+          },
+          "parentTransform": {
+            "HandleRefId": "4"
+          },
+          "slots": [
+            {
+              "$type": "entSlot",
+              "boneName": {
+                "$type": "CName",
+                "$storage": "string",
+                "$value": "None"
+              },
+              "relativePosition": {
+                "$type": "Vector3",
+                "X": 0,
+                "Y": 0,
+                "Z": 0.0500000007
+              },
+              "relativeRotation": {
+                "$type": "Quaternion",
+                "i": 0,
+                "j": 0,
+                "k": 0,
+                "r": 1
+              },
+              "slotName": {
+                "$type": "CName",
+                "$storage": "string",
+                "$value": "roleMappin"
+              }
+            }
+          ]
+        }
+      ],
+      "cookingPlatform": "PLATFORM_PC",
+      "defaultAppearance": {
+        "$type": "CName",
+        "$storage": "string",
+        "$value": "default"
+      },
+      "entity": {
+        "HandleId": "5",
+        "Data": {
+          "$type": "gameGarmentItemObject",
+          "accumulatedTimePasssed": 0,
+          "audioResourceName": {
+            "$type": "CName",
+            "$storage": "string",
+            "$value": "None"
+          },
+          "customCameraTarget": "ECCTV_All",
+          "displayDescription": {
+            "unk1": "0",
+            "value": ""
+          },
+          "displayName": {
+            "unk1": "0",
+            "value": ""
+          },
+          "e3ObjectRevealed": 0,
+          "forceDefeatReward": 0,
+          "forceRegisterInHudManager": 0,
+          "hasVisibilityForcedInAnimSystem": 0,
+          "hitInstigatorCooldownID": {
+            "$type": "gameDelayID"
+          },
+          "isBroken": 0,
+          "isDead": 0,
+          "isHighlightedInFocusMode": 0,
+          "isIconic": 0,
+          "isScannerDataDirty": 0,
+          "isTargetedWithSmartWeapon": 0,
+          "killRewardDisabled": 0,
+          "lastEngineTime": 0,
+          "lastHitInstigatorID": {
+            "$type": "entEntityID",
+            "hash": "0"
+          },
+          "lootQuality": "Common",
+          "markAsQuest": 0,
+          "persistentState": null,
+          "playerSocket": {
+            "$type": "gamePlayerSocket"
+          },
+          "prereqListeners": [],
+          "receivedDamageHistory": [],
+          "renderSceneLayerMask": "Default",
+          "scanningComponent": null,
+          "sourceShootComponent": null,
+          "squadMemberComponent": null,
+          "statusEffectComponent": null,
+          "statusEffectListeners": [],
+          "stimBroadcaster": null,
+          "tags": {
+            "$type": "redTagList",
+            "tags": []
+          },
+          "targetShootComponent": null,
+          "uiSlotComponent": null,
+          "updateBucket": "AttachedObject",
+          "visibilityCheckDistance": 16000,
+          "visionComponent": null,
+          "willDieSoon": 0,
+          "workspotMapper": null
+        }
+      },
+      "includeInstanceBuffer": null,
+      "includes": [],
+      "inplaceResources": [],
+      "localData": null,
+      "resolvedDependencies": [],
+      "visualTagsSchema": null
+    },
+    "EmbeddedFiles": []
+  }
+}
