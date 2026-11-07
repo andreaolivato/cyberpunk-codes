@@ -16,6 +16,8 @@ ORDER = [
     # THE WORLD FIRST: the journal's pins and the phase read the community's
     # markers and flight paths.
     'gen_recruiter.py',
+    'gen_vest.py',
+    'gen_outfit.py',
     'gen_community.py',
     'gen_journal.py',
     'gen_localization.py',

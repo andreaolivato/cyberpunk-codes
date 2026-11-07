@@ -2608,3 +2608,69 @@ There is no substitute for playing it, but two checks catch most of it:
 `tools/check-scripts.ps1` is also an API oracle: put a probe `.reds` in the
 tree and a wrong field or method name becomes a compile error instead of a
 silent no-op in game. That is how `DynamicEntitySpec.uniqueName` was ruled out.
+
+## Body animation
+
+Read off 13 of the game's scenes with standing talks, 289 lines. Unverified in game
+on our side until a playtest says so.
+
+The base pose comes from the workspot the actor stands in. The scene does not set
+it. Entry 2 of `generic__stand_ground__stand_around__01.workspot` idles on
+`stand__2h_on_sides__01`, and `__02` on `stand__arms_crossed_front__01`.
+
+A talking gesture is a `scnPlaySkAnimEvent` on the `body` component.
+
+1. The event names a clip of the set for that idle, written `<idle>__<clip>`.
+   A clip starts and ends on its idle, so a clip for another idle snaps.
+2. `resouresReferences.cinematicAnimSets[i]` has the set.
+3. `resouresReferences.cinematicAnimNames[i]` lists every name played from it.
+4. `actors[n].bodyCinematicAnimSets` has `i`.
+
+No `ridResources`, rig or per-gender file is involved. Sets are under
+`base\animations\npc\generic_characters\<male_average or female_average>\interactive_scene\`.
+Facial gestures are the same event on `head`, with their sets in `gameplayAnimSets`.
+
+The events called idle changes in the game's scenes are facial mood: 151 of 153 are on `head`.
+
+A speaker in a stand moves on most of her own lines. The game's arms-crossed speakers
+(`mq010_04_police_talk`, `sts_wat_kab_04_receptionist`) play a `talk__neutral` loop
+under a long line and a nod, shrug or look on a short one. Some uncross their arms
+for a few lines and cross them again with `stand__a__to__stand__b__turn0__01` clips.
+A gesture that cannot show in the stand, such as a hand flick with both arms crossed,
+reads as nothing. List a set's clips by serializing its `.anims` before picking.
+
+Rate: 124 gestures on 289 lines, 0.43 a line, counting every actor. The busiest scenes
+are about 0.55 and four scenes have none, so most lines have no gesture. The clips
+are specific: yes, no, shrug, what.
+
+Timing, from 130 talking gestures: 84 start inside the actor's own
+line, 24 during someone else's and 22 between lines. `duration` is the clip's length in
+milliseconds. Blend in and out are 0.5 s, `SinusoidalEaseInOut`. Clips end by themselves
+(`stayInScene` 0). Four of the sample's scenes have no body animation at all.
+
+A workspot's random clips keep playing under a talk unless told otherwise.
+`stand_around__01` picks from knuckle cracking, neck scratching, arm stretches, shuffles
+and sighs. The game stops them with a `questUseWorkspotParamsV1` of function
+`IdleOnlyMode`, `enableIdleMode` 1 (34 nodes), or with a scene workspot node that lists
+them in `workExcludedGestures`.
+
+The 34 `IdleOnlyMode` nodes are inside scenes, each a `scnQuestNode` fired by a section's
+socket event, addressed to the community and the entry. `Scene.hold_still` writes one.
+
+**Copy a plain gesture, never a transition.** A clip with `__to__` in its name changes
+pose: its event has root motion on and a `poseBlendOutWorkspot` naming a workspot
+instance of its own scene. Pasted into a scene without that instance, it crashes the
+game the moment it fires: an access violation at exe+0xac5010 on game 2.5, in the lookup
+of that instance. 75 of the 227 body events in the sample carry such a block.
+
+Events in a section are in start order in all 134 sections read.
+
+In the builder: `Scene.use_pose(actor, POSE_...)`, then `Scene.gesture(section, actor,
+clip, start_ms)`. The `POSE_*` tables in
+`questkit/scene.py` have the clip names and lengths.
+
+Facial gestures and held moods are in the builder too: `Scene.expression(section, actor,
+clip, start_ms)` for a clip from `generic_average_male_facial_gestures.anims` or the
+female twin, and `Scene.mood(section, actor, mood, key)` for the expression held from
+then on. The game's most used held moods are `interested` with `cautious`, `focused` or
+`respectful`, and `anger` with no key.

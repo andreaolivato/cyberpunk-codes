@@ -147,8 +147,10 @@ def entries():
         # (gig05_config.py, PAD_SKIN). The quest's seat node would not take a
         # man in a pose (playtest 2026-11-03), but nothing uses that node for
         # the crew any more: the cabin scene puts them on their places.
+        # Brekke on the game's hands-on-hips stand (stand_around__03): arms at his
+        # sides read stiff (playtest 2026-11-07). His scenes play that stand's clips.
         out.append(community.Entry(who, records[who], CREW_LOOK[who], (px, py, pz), pyaw,
-                                   stand_around(1 + i)))
+                                   stand_around(3 if who == LEAD else 1 + i)))
     # THE ROOF MEDIC AND SOLDIER are records of their own: one kneels at the
     # client, the other stands guard at the AV, and both stay out of the
     # fight (characters.yaml, cc_g05_medic_r and cc_g05_soldier_r).

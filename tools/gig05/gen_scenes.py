@@ -39,7 +39,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from questkit.scene import (                                        # noqa: F401
-    locstring_ruid,
+    locstring_ruid, POSE_MAN_HANDS_ON_HIPS, POSE_WOMAN_ARMS_CROSSED,
     Scene, configure, write_subtitles, write_lipmap,
     ANCHOR_PLAYER,
 )
@@ -124,11 +124,11 @@ MEDIC_SECURED = ("TT-133 to Control. Patient NC570442 secured…", sid('0e4ba541
 #
 # HER REGISTER: intake paperwork read aloud. Short, procedural, not unkind.
 # She never sells the job.
-R01 = "A new recruit. Hope you're better than the last batch."
+R01 = "Hmm, a new recruit. Hope you're better than the last batch."
 R01B = "We need a gun. Protect the client, protect the medic, clear the scene."
 R02 = "Each shift is up to three calls, paid per call."
 R03 = "Do you have combat experience?"
-R04 = "Good. Brekke's the crew leader. He'll evaluate you at the end of the shift."
+R04 = "Good. Brekke's the crew leader. He'll evaluate you at the end of shift."
 R05 = "Now. On probation, of course."
 R06 = "Remember, we have one rule. The client lives. Everything else comes second."
 R07 = "Staff elevator's out in the tank yard, up to the roof."
@@ -139,13 +139,13 @@ R08 = "Get changed in the armory, then meet the team on the landing pad. They'll
 # HIS REGISTER: radio habits. Names, numbers, no adjectives. The crew's names are working names
 # (gen_localization).
 L_HOLD = "Hold on to the rail. Don't lean out."
-L_CALL = "The first call is a Platinum client. His biomonitor went flat on a hotel roof four minutes ago."
+L_CALL = "The first call is a Silver client. His biomonitor went flat on a hotel roof four minutes ago."
 L_THREAT = "Scavs got to him first. They're cutting his chrome out."
 L_PLAN = "We put down on the roof. Wrona holds the bird. Raman works the client."
 L_JOB = "You're with me. We clear the roof."
 L_CLEAR = "Roof's clear. Raman, talk to me."
 L_STABLE = "Client's stable. Everyone back aboard."
-L_CALL2 = "Next one is close. Gold client down in the street by the water."
+L_CALL2 = "Next one is close. Silver client down in the street by the water."
 L_PLAN2 = "Same drill. Wrona holds, Raman on the client, you with me."
 L_CALL3 = "Last call, Kabuki. Client's down. Scavs all around."
 L_PLAN3 = "Clear it fast, then we go home."
@@ -178,6 +178,27 @@ def face_player(s, actor):
         s.look_at(sec, actor, player, start_time=0)
 
 
+# WHAT THEY DO, line by line. A pair is the clip and its start in the section; the
+# line starts at 700, and a third value is (weight, stretch). Nisha's are of her
+# arms-crossed stand: one nod at "Good", soft and slow, and the hand that shows the
+# way to the elevator. Playtest 2026-11-07: a clip on every line was too much, and
+# a full-strength nod at V's answer and again at "Good" read as headbanging.
+GESTURE_AFTER_MS = 900
+GESTURE = {
+    'r04': ('yes__neutral__01', 750, (0.6, 1.3)),   # "Good"
+    'r07': ('describe_right__02', 750),         # the way to the elevator
+    'l21': ('head_flick_up__02', 750),    # "I'm Brekke": chin up
+    'l22': ('no__neutral__03', 2200),     # "Not you, not me."
+    'l23': ('rh_flick__03', 2100),        # "Get in the AV."
+    'l26': ('shrug__01', 1600),           # "I won't argue."
+}
+# THE FACE, on top of the hands. Brekke's is behind his mask, so he has none.
+EXPRESSION = {'r06': 'no__firm__female__01'}
+# THE OTHER PERSON WHILE V TALKS: nothing at present.
+LISTEN_MS = 300
+LISTEN = {}
+
+
 def chain(s, people, v, seq, tail=600):
     """One section per line. ('N', who, text, key) is one of ours;
     ('V', (text, sid), key) is V; ('G', who, (text, sid), key) is another
@@ -190,17 +211,39 @@ def chain(s, people, v, seq, tail=600):
             _w, (text, vsid), key = t
             secs.append(s.section([s.add_line(v, text, key=key, vanilla_sid=vsid)],
                                   tail_ms=tail_ms))
+            listen(s, secs[-1], people, key)
         elif t[0] == 'G':
             _w, who, (text, vsid), key = t
             secs.append(s.section([s.add_line(people[who], text, key=key,
                                               vanilla_sid=vsid)], tail_ms=tail_ms))
+            act(s, secs[-1], people[who], key)
         else:
             _w, who, text, key = t
             secs.append(s.section([s.add_line(people[who], text, key=key)],
                                   tail_ms=tail_ms))
+            act(s, secs[-1], people[who], key)
     for x, y in zip(secs, secs[1:]):
         s.link_section(x, y)
     return secs[0], secs[-1]
+
+
+def act(s, section, actor, key):
+    if not s.has_pose(actor):
+        return
+    if key in GESTURE:
+        moves = GESTURE[key] if isinstance(GESTURE[key], list) else [GESTURE[key]]
+        for move in moves:
+            clip, start = move[:2]
+            weight, stretch = move[2] if len(move) > 2 else (1, 1)
+            s.gesture(section, actor, clip, start, weight, stretch)
+    if key in EXPRESSION:
+        s.expression(section, actor, EXPRESSION[key], GESTURE_AFTER_MS)
+
+
+def listen(s, section, people, key):
+    for actor in people.values():
+        if key in LISTEN and s.has_pose(actor):
+            s.gesture(section, actor, LISTEN[key], LISTEN_MS)
 
 
 def walk_away(s, hub, entry, left_name):
@@ -222,6 +265,7 @@ def build_interview():
     when, the rule and the way up."""
     s = Scene('gig05_interview', ANCHOR_PLAYER)
     n = s.add_community_actor(RECRUITER, RECRUITER, CAST_REF)
+    s.use_pose(n, POSE_WOMAN_ARMS_CROSSED)
     v = s.add_player()
     who = {RECRUITER: n}
     start = s.start('interview_in')
@@ -243,6 +287,7 @@ def build_interview():
                                ('N', RECRUITER, R07, 'r07'),
                                ('N', RECRUITER, R08, 'r08'),
                                ('V', V_NOVA, 'v03')])
+    s.mood(a1, n, 'interested', 'focused')
     s.link(start, lead)
     s.link_section(lead, hub)
     s.link(hub, c1)
@@ -252,6 +297,7 @@ def build_interview():
     s.link_choice(c2, [e1])
     s.link_section(e2, s.end('interview_out'))
     walk_away(s, hub, RECRUITER, 'interview_left')
+    s.hold_still(lead, CAST_REF, RECRUITER)
     face_player(s, n)
     return s
 
@@ -263,6 +309,7 @@ def build_repeat():
     offer. New shifts arrive as Dispatch texts, so nobody has to talk to her."""
     s = Scene('gig05_repeat', ANCHOR_PLAYER)
     n = s.add_community_actor(RECRUITER, RECRUITER, CAST_REF)
+    s.use_pose(n, POSE_WOMAN_ARMS_CROSSED)
     v = s.add_player()
     who = {RECRUITER: n}
     start = s.start('repeat_in')
@@ -273,12 +320,14 @@ def build_repeat():
     a1, a2 = chain(s, who, v, [
         ('G', RECRUITER, (R07, locstring_ruid('gig05_interview', 'r07')), 'r07'),
         ('G', RECRUITER, (R08, locstring_ruid('gig05_interview', 'r08')), 'r08')])
+    s.mood(a1, n, 'interested', 'focused')
     s.link(start, lead)
     s.link_section(lead, hub)
     s.link(hub, c1)
     s.link_choice(c1, [a1])
     s.link_section(a2, s.end('repeat_out'))
     walk_away(s, hub, RECRUITER, 'repeat_left')
+    s.hold_still(lead, CAST_REF, RECRUITER)
     face_player(s, n)
     return s
 
@@ -371,9 +420,22 @@ build_board_s1, build_board_s2, build_board_s3 = (_board_site(k) for k in range(
 
 
 # ============================================================ in the air
-def _aboard(name, entry, exit_, seq, speakers, bodies=None):
+# THE AV'S OWN SOUNDS, from The Rescue (q001_00c_rescuing_girl), where the Trauma
+# AV lands at the apartment: the engines coming down and the street's rubbish blown
+# about it. Its door sounds stay out, because this AV flies with the door open. Its
+# hover loop runs under every flight from Gig05_Shift.reds (Engines). Its
+# take-off sound is heard from the ground and pulled away from V aboard (playtest
+# 2026-11-07), so it is out too. Played from a crew member aboard,
+# so the scene never takes the AV off its flight path.
+SOUND_LAND = [('q001_sc_00c_trauma_arrives_intro_av_engines', 0, 'MuteDuringFastForward'),
+              ('q001_sc_00c_trauma_arrives_intro_av_garbage', 650, 'MuteDuringFastForward')]
+
+
+def _aboard(name, entry, exit_, seq, speakers, bodies=None, sounds=(), after=()):
     """`bodies` maps a speaker to the community entry that plays him: on the
-    ground at a call that is the roof crew (gen_community.ROOF_CREW)."""
+    ground at a call that is the roof crew (gen_community.ROOF_CREW). `sounds`
+    play from the first speaker in the first section. `after` is more lines,
+    built after the end node so a released scene keeps its node numbers."""
     s = Scene(name, ANCHOR_PLAYER)
     bodies = bodies or {}
     who = {w: s.add_community_actor(bodies.get(w, w), bodies.get(w, w), CAST_REF)
@@ -382,7 +444,15 @@ def _aboard(name, entry, exit_, seq, speakers, bodies=None):
     start = s.start(entry)
     first, last = chain(s, who, v, seq)
     s.link(start, first)
-    s.link_section(last, s.end(exit_))
+    end = s.end(exit_)
+    if after:
+        more, more_last = chain(s, who, v, after)
+        s.link_section(last, more)
+        s.link_section(more_last, end)
+    else:
+        s.link_section(last, end)
+    for event, at, ff in sounds:
+        s.sound(first, who[speakers[0]], event, at, fast_forward=ff)
     return s
 
 
@@ -390,11 +460,14 @@ def _on_pad(name, entry, exit_, seq):
     """The lead on the roof, turned to V."""
     s = Scene(name, ANCHOR_PLAYER)
     n = s.add_community_actor(LEAD, LEAD, CAST_REF)
+    s.use_pose(n, POSE_MAN_HANDS_ON_HIPS)
     v = s.add_player()
     start = s.start(entry)
     first, last = chain(s, {LEAD: n}, v, seq)
+    s.mood(first, n, 'interested', 'focused')
     s.link(start, first)
     s.link_section(last, s.end(exit_))
+    s.hold_still(first, CAST_REF, LEAD)
     face_player(s, n)
     return s
 
@@ -442,8 +515,11 @@ def build_land(n):
     seq = {1: [('G', SOLDIER, SOLDIER_LANDING, 'g01')],
            2: [('N', LEAD, L_LAND2, 'l14')],
            3: [('N', LEAD, L_LAND3, 'l15')]}[n]
+    # NO WARNING FROM WRONA AFTER Brekke's CALL: the crew leave the cabin about 3 s
+    # after touchdown (gen_questphase.py, step_off), before a second line could
+    # start (playtest 2026-11-07, never heard).
     return _aboard('gig05_land_%d' % n, 'land_in', 'land_out', seq,
-                   [SOLDIER] if n == 1 else [LEAD])
+                   [SOLDIER] if n == 1 else [LEAD], sounds=SOUND_LAND)
 
 
 def build_stable(n):

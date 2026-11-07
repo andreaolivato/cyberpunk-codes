@@ -87,7 +87,7 @@ V speaks only lines the game already recorded (`docs/conventions.md`).
 ### The first flight
 
 Fixed: the roof to a hotel roof, 1.9 km, about a minute in the air.
-The briefing plays during the climb. The client is a Platinum whose
+The briefing plays during the climb. The client has a Silver package, and his
 biomonitor went flat on the roof. Five Scavs are pulling his cyberware.
 
 The crew are introduced here. The lead speaks the briefing. The soldier
@@ -96,9 +96,9 @@ own recordings of The Rescue's Trauma Team crew.
 
 ### The uniform and the first pay
 
-V puts on the Trauma Team uniform (`Items.Trauma_Team_Outfit`) at the locker
-room's shelves, which adds it to the backpack first unless Career
-Opportunities already gave it. After the shift, changing back at the same
+V puts on the Trauma Team uniform (`Items.cc_g05_outfit`, the game's uniform with
+the crew's chest vest) at the locker room's shelves, which adds it to the backpack
+first. After the shift, changing back at the same
 shelves is an optional objective. Taken, V's own outfit and weapon go back and
 the uniform stays in the backpack. Left, V goes home in the uniform.
 
@@ -251,11 +251,15 @@ Not built yet. The plan:
   twice in a shift.
 - **Twists.** A second wave of the same gang. A flatline clock: stable in
   90 seconds or the client is lost. Without a clock, a client cannot die.
-- **Pay.** Per incident, through the game's own reward records: Silver
-  1,500, Gold 2,500, Platinum 4,000, a lost client 500 at any tier. An
-  incident is about one NCPD hustle's fight, and a Platinum call pays the
-  median hustle (3,900 across the game). A job V can repeat daily stays
-  under the one-off gigs (median about 8,000).
+- **Pay.** Per shift 8,000, through three of the game's own reward records,
+  1,500, 2,500 and 4,000. An incident is about one NCPD hustle's fight, and the
+  third record pays the median hustle (3,900 across the game). A job V can repeat
+  daily stays at the one-off gigs' median (about 8,000).
+- **Client tiers.** A crew on probation gets Silver clients, the lowest of Trauma
+  Team's three premium packages: Silver, Gold and Platinum. Platinum answers in three
+  minutes ("Biomon claims Trauma'll be here in three minutes"), so it goes to a senior
+  crew. The first client's biomonitor went flat four minutes ago, inside the game's
+  "Seven minutes or a refund".
 - **Rank.** Probationer, then Operator after 5 shifts (Platinum clients,
   pay up 15 percent), then Senior Operator after 15 (pay up 30 percent). A short
   voiced beat at each.

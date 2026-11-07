@@ -3798,3 +3798,12 @@ Never renumber. Append.
      `cs_cct_dtn_intervention_disabled` removes a running intervention scene as well.
      Read the district from the spot's NodeRef in its sector: the map name can be
      wrong (gig 05's coast spot is Downtown's). Street story branches have no such fact.
+
+166. **A worn item's root entity keeps `defaultAppearance: default`.** The game spawns
+     the item's own entity on that look and puts the real one on the player from the
+     record's appearance name. Point `defaultAppearance` at a real row and the item's
+     entity also wears that row, whatever V's body or camera: a female V in first
+     person wore the male third-person uniform, helmet included, around the camera.
+     The game's `player_outfit_item.ent` and item mods all say `default`. The worn
+     look is built from the appearance's `partsValues`. An appearance with only
+     `components` and no compiled package draws nothing on V.

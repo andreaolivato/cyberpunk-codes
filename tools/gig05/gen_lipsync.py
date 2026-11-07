@@ -69,7 +69,9 @@ def main():
     if args.rebuild:
         rebuild_cache()
     catalogue = load_catalogue()
-    scenes = [build() for build in gs.ALL_BUILDERS]
+    # A SCENE THAT BORROWS ANOTHER'S RECORDINGS BORROWS ITS MOUTHS (gen_scenes,
+    # SCENE_ALIASES): the same clip under the same id needs no set of its own.
+    scenes = [s for s in (build() for build in gs.ALL_BUILDERS) if s.name not in gs.SCENE_ALIASES]
     actors = {c['actor'] for c in CHARACTERS.values()}
     lines = mouth_lines(scenes, actors, gv.VOMAP_OUT, RAW, catalogue)
     sets, names = build_mouths(lines, MOD, 'mod' + chr(92) + MOD_NAME,

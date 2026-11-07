@@ -124,7 +124,7 @@ CREW_TARGETS = {gc.ROOF_CREW[gc.LEAD]: 'scav3'}
 # (gotcha 123).
 LATE_IDS = iter(range(600, 700))
 # A RANGE OF ITS OWN for the hotel's cameras, so test saves keep their place.
-ALARM_IDS = iter(range(700, 1000))
+ALARM_IDS = iter(range(700, 800))
 CAMERA = 'SurveillanceCameraControllerPS'
 
 
@@ -304,7 +304,7 @@ step(add_delay(0.5))
 # ONCE: V keeps the uniform and the SMG between shifts, and a second copy of the
 # outfit is a second tile in the wardrobe.
 kit = step(add_condition_fact(P + 'kit', 0, 'Equal'))
-give = add_give_items('Items.Trauma_Team_Outfit', 'Items.Preset_Dian_Trauma')
+give = add_give_items('Items.cc_g05_outfit', 'Items.Preset_Dian_Trauma')
 b.connect((kit, 'True'), (give, 'In'))
 kept = add_setvar(P + 'kit', 1)
 b.connect((give, 'Out'), (kept, 'In'))
@@ -321,9 +321,9 @@ objective('obj_talk', 'on')
 # ---- boarding at the pad --------------------------------------------------
 # BREKKE MEETS V AT THE AV. Playtest 2026-11-04: walking up to three people
 # who said nothing felt wrong. The board prompt waits for the end of it.
-step(add_pause_distance(COM, cfg.GREET_RADIUS, entry=gc.LEAD, cmp='Less'))
-step(add_scene(SCENES + 'gig05_welcome.scene', ANCHOR_PLAYER, ['welcome_in'], ['welcome_out']),
-     in_sock='welcome_in', out_sock='welcome_out')
+near_lead = step(add_pause_distance(COM, cfg.GREET_RADIUS, entry=gc.LEAD, cmp='Less'))
+welcome = step(add_scene(SCENES + 'gig05_welcome.scene', ANCHOR_PLAYER, ['welcome_in'], ['welcome_out']),
+               in_sock='welcome_in', out_sock='welcome_out')
 objective('obj_talk', 'done')
 board_on = objective('obj_board', 'on')
 b.connect((first_day, 'False'), (board_on, 'Active'))
@@ -602,8 +602,8 @@ step(add_delay(2.0))
 # THE FIRST SHIFT'S ONLY: its lines are about the rookie's first day.
 first_bye = late_ids(lambda: add_condition_fact(P + 'shift_done', 0, 'Equal'))
 step(first_bye, out_sock='True')
-step(add_scene(SCENES + 'gig05_bye.scene', ANCHOR_PLAYER, ['bye_in'], ['bye_out']),
-     in_sock='bye_in', out_sock='bye_out')
+bye = step(add_scene(SCENES + 'gig05_bye.scene', ANCHOR_PLAYER, ['bye_in'], ['bye_out']),
+           in_sock='bye_in', out_sock='bye_out')
 
 # ---- down to the street, and the end of the shift -------------------------
 #
@@ -643,8 +643,7 @@ step(add_groups_attitude('traumateam', 'player', 'AIA_Neutral'))
 
 # ---- the pay --------------------------------------------------------------
 #
-# One payment per call, at the tier its briefing named: Platinum, Gold,
-# Silver, with the game's own reward node after the fade has finished: the
+# One payment per call, with the game's own reward node after the fade has finished: the
 # fade node returns at once, so 1.5 s after it the screen is only just back
 # and the XP bar played unseen (playtest 2026-11-04), and from the script as
 # the screen came back no notice was seen at all (playtest 2026-11-03).

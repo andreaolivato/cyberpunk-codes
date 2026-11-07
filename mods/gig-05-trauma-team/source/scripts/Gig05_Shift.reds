@@ -92,7 +92,7 @@ public abstract class CCG05Shift {
         return pos.X > -1325.0 && pos.X < -1255.0 && pos.Y > 1755.0 && pos.Y < 1775.0;
     }
     public static func StreetLine() -> Float { return 19.5; }
-    public static func Outfit() -> TweakDBID { return t"Items.Trauma_Team_Outfit"; }
+    public static func Outfit() -> TweakDBID { return t"Items.cc_g05_outfit"; }
     public static func Gun() -> TweakDBID { return t"Items.Preset_Dian_Trauma"; }
     public static func SaveLock() -> CName { return n"cc_g05_aboard"; }
 
@@ -603,6 +603,7 @@ public class TraumaTeamShift extends ScriptableSystem {
         if ArraySize(avs) == 0 || !IsDefined(avs[0]) {
             return;
         }
+        this.Engines(avs[0], false);
         let at: EulerAngles;
         at.Pitch = 0.0;
         at.Roll = 0.0;
@@ -610,6 +611,30 @@ public class TraumaTeamShift extends ScriptableSystem {
         let tf: ref<TeleportationFacility> = GameInstance.GetTeleportationFacility(game);
         if IsDefined(tf) {
             tf.Teleport(avs[0], avs[0].GetWorldPosition(), at);
+        }
+    }
+
+    // THE AV'S ENGINES FOR THE WHOLE FLIGHT: the hover loop from The Rescue
+    // (q001_00c_rescuing_girl), on the AV as the game plays it there. It starts
+    // with `cc_g05_shield`, set as each flight begins, and stops with
+    // `cc_g05_park`, at touchdown, where the landing sounds take over. The
+    // game stops it the same way, with its own `_loop_stop` event.
+    private func EnginesAt(game: GameInstance, on: Bool) -> Void {
+        if !this.ResolveCommunity() {
+            return;
+        }
+        let avs: array<ref<GameObject>>;
+        GetGameObjectsFromSpawnerEntityID(this.m_comId, [n"av"], game, avs);
+        if ArraySize(avs) > 0 && IsDefined(avs[0]) {
+            this.Engines(avs[0], on);
+        }
+    }
+
+    private func Engines(av: ref<GameObject>, on: Bool) -> Void {
+        if on {
+            GameObject.PlaySoundEvent(av, n"q001_sc_00c_trauma_arrives_intro_av_engines_loop");
+        } else {
+            GameObject.PlaySoundEvent(av, n"q001_sc_00c_trauma_arrives_intro_av_engines_loop_stop");
         }
     }
 
@@ -629,6 +654,7 @@ public class TraumaTeamShift extends ScriptableSystem {
         }
         if qs.GetFactStr("cc_g05_shield") == 1 {
             qs.SetFactStr("cc_g05_shield", 0);
+            this.EnginesAt(game, true);
             if IsDefined(gms) {
                 gms.AddGodMode(player.GetEntityID(), gameGodModeType.Invulnerable, n"cc_g05_ready");
             }

@@ -168,6 +168,12 @@ if ((Test-Path $tweaksSrc) -and (Get-ChildItem $tweaksSrc -Filter *.yaml -EA 0))
     Copy-Item "$tweaksSrc\*" $tweaksDst -Recurse -Force
 }
 
+# PLAIN CODE ONLY. Every .reds, .yaml and .archive.xl in the staged copy loses
+# its comments, and the stripper refuses if the code would change. The source
+# keeps its comments; only what reaches a player's disk is stripped.
+& python (Join-Path $PSScriptRoot "strip_comments.py") strip $scriptsDst $tweaksDst $archiveDst
+if ($LASTEXITCODE -ne 0) { Remove-Item $stage -Recurse -Force; throw "strip_comments.py refused the staged copy" }
+
 # ------------------------------------------------------------- 4) verify stage
 $staged = Get-ChildItem $stage -Recurse -File
 if (-not $staged) { throw "Nothing staged" }
@@ -291,6 +297,16 @@ try {
             $b = [System.BitConverter]::ToString(
                 [System.Security.Cryptography.MD5]::Create().ComputeHash([System.IO.File]::ReadAllBytes($deployed)))
             if ($a -eq $b) { Write-Host "    identical     $($e.FullName)" }
+            elseif ($e.FullName -match '\.(reds|yaml|yml|xl)$') {
+                # The zip's copy is stripped. Compare code, comments set aside.
+                $tmp = Join-Path $env:TEMP ("cc-same-" + [guid]::NewGuid() + [IO.Path]::GetExtension($e.FullName))
+                [System.IO.Compression.ZipFileExtensions]::ExtractToFile($e, $tmp, $true)
+                & python (Join-Path $PSScriptRoot "strip_comments.py") same $tmp $deployed
+                $sameCode = ($LASTEXITCODE -eq 0)
+                Remove-Item $tmp -Force
+                if ($sameCode) { Write-Host "    same code     $($e.FullName)" }
+                else { Write-Host "    DIFFERS       $($e.FullName)"; $mismatch++ }
+            }
             else { Write-Host "    DIFFERS       $($e.FullName)"; $mismatch++ }
         }
     }

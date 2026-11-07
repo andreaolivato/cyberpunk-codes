@@ -87,7 +87,9 @@ foreach ($src in $jsonSources) {
 # .anims joined on 2026-10-26: each actor's lipsync set, assembled by the gig's
 # gen_lipsync.py. Unlike the other two it is NOT committed, because it carries
 # copies of vanilla animations; a build without it runs gen_lipsync first.
-$binaryExts = @(".wem", ".xbm", ".anims")
+# .mesh joined on 2026-11-07: gig 05's vest, refitted by gen_vest.py. Not committed,
+# for the same reason as .anims; a build without it runs gen_vest first.
+$binaryExts = @(".wem", ".xbm", ".anims", ".mesh")
 $binaries = Get-ChildItem $raw -Recurse -File | Where-Object { $binaryExts -contains $_.Extension.ToLower() }
 foreach ($src in $binaries) {
     $rel = $src.FullName.Substring($raw.Length + 1)

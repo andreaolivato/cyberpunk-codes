@@ -354,6 +354,57 @@ def estimate_ms(text):
     return min(MS_MAX, MS_BASE + MS_PER_CHAR * len(text))
 
 
+# STANDING POSES AND THEIR TALKING GESTURES, in milliseconds, read off the game's
+# sets. The idle is what the named workspot's entry 2 plays. Each clip's full name
+# in the set is `<idle>__<clip>`. docs/scene-playbook.md, "Body animation".
+SK_ANIM_EVENT = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'sk_anim_event.json')
+SK_FACE_EVENT = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'sk_face_event.json')
+SK_MOOD_EVENT = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'sk_mood_event.json')
+_FACIAL = chr(92).join(['base', 'animations', 'facial', '%s_average', 'interactive_scene',
+                        'generic_average_%s_facial_gestures.anims'])
+_INTERACTIVE = chr(92).join(['base', 'animations', 'npc', 'generic_characters', '%s', 'interactive_scene',
+                             'generic_%s__%s.anims'])
+POSE_MAN_HANDS_AT_SIDES = {   # generic__stand_ground__stand_around__01
+    'idle': 'stand__2h_on_sides__01',
+    'set': _INTERACTIVE % ('male_average', 'male_average', 'stand__2h_on_sides__01'),
+    'clips': {'talk__neutral__01': 3800, 'talk__neutral__02': 4233, 'talk__confident__01': 2867,
+              'rh_flick__02': 2700, '2h_flick__05': 3900, 'describe_front__02': 3933,
+              'no__head__01': 2667, 'yes__head__01': 3667, 'shrug__narrow__01': 1933,
+              'what__neutral__05': 2933, 'head_flick_up__02': 1100, 'head_flick_up__03': 1633,
+              'head_flick_down__01': 2433, 'head_flick_down__03': 2400, 'me__03': 3067,
+              'rh_flick__06': 1467},
+    'face_set': _FACIAL % ('male', 'male'),
+    'faces': {'emotional_gesture__confident__male__01': 4767, 'emotional_gesture__sceptical__male__02': 3667,
+              'yes__approval__male__01': 3200, 'emotional_gesture__impressed__male__01': 4500},
+    'sex': 'male'}
+POSE_MAN_HANDS_ON_HIPS = {   # generic__stand_ground__stand_around__03
+    'idle': 'stand__2h_on_hip__01',
+    'set': _INTERACTIVE % ('male_average', 'male_average', 'stand__2h_on_hip__01'),
+    'clips': {'talk__neutral__01': 5333, 'talk__neutral__02': 3433, 'rh_flick__01': 2400,
+              'rh_flick__02': 2433, 'rh_flick__03': 1833, 'shrug__01': 2400, 'shrug__02': 3233,
+              'no__neutral__01': 2933, 'no__neutral__03': 2200, 'yes__neutral__01': 1333,
+              'yes__neutral__02': 2533, 'head_flick_up__01': 1800, 'head_flick_up__02': 1400,
+              'describe_front__01': 2600},
+    'face_set': _FACIAL % ('male', 'male'),
+    'faces': {'emotional_gesture__confident__male__01': 4767, 'emotional_gesture__sceptical__male__02': 3667,
+              'yes__approval__male__01': 3200, 'emotional_gesture__impressed__male__01': 4500},
+    'sex': 'male'}
+POSE_WOMAN_ARMS_CROSSED = {   # generic__stand_ground__stand_around__02
+    'idle': 'stand__arms_crossed_front__01',
+    'set': _INTERACTIVE % ('female_average', 'female_average', 'stand__arms_crossed_front__01'),
+    'clips': {'talk__neutral__02': 6500, 'talk__neutral__04': 5933, 'talk__neutral__09': 3967,
+              'lh_flick__01': 2200, 'lh_flick__02': 3033, 'lh_flick__03': 2967,
+              'rh_flick__02': 3767, 'shrug__01': 3000, 'shrug__02': 2500,
+              'no__neutral__04': 4100, 'no__neutral__05': 4233, 'yes__neutral__01': 2167,
+              'yes__neutral__02': 2767, 'yes__neutral__07': 1867,
+              'head_flick_up__03': 1500, 'head_flick_down__01': 1333,
+              'head_flick_down__02': 1467, 'describe_front__01': 3100,
+              'describe_right__02': 3267, 'what_is_this__neutral__01': 2200,
+              'shift_center_front__01': 2667},
+    'face_set': _FACIAL % ('female', 'female'),
+    'faces': {'yes__quick_nod__female__01': 1667, 'no__firm__female__01': 2433},
+    'sex': 'female'}
+
 def line_ms(text, scene=None, key=None):
     if scene and key:
         ms = MEASURED.get('%s/%s' % (scene, key))
@@ -668,6 +719,11 @@ class Scene:
         self.holocall_keys = set()
         # Lines pointed at a vanilla stringId instead of one of ours, reported
         # at write time so a reuse can never happen by accident or unnoticed.
+        self.poses = {}
+        self.anim_sets = []
+        self.anim_names = []
+        self.face_sets = []
+        self.face_names = []
         self.reused = []
         # Who SPOKE each reused line, by actor id. Kept beside `reused` rather
         # than inside it because two other tools unpack that list as 3-tuples.
@@ -2594,6 +2650,187 @@ class Scene:
             'type': '0',
         }})
 
+    def use_pose(self, actor, pose):
+        """Say which `POSE_*` an actor stands in, so `gesture` can name its clips.
+        The pose must be the idle of the workspot the actor is in: every clip in a
+        vanilla set starts and ends on that idle."""
+        self.poses[actor] = pose
+        if pose['set'] not in self.anim_sets:
+            self.anim_sets.append(pose['set'])
+            self.anim_names.append([])
+        index = self.anim_sets.index(pose['set'])
+        node = next(a for a in self.actors if a['actorId']['id'] == actor)
+        ids = node['bodyCinematicAnimSets']
+        if not any(i['id'] == index for i in ids):
+            ids.append({'$type': 'scnCinematicAnimSetSRRefId', 'id': index})
+
+    def expression(self, section, actor, clip, start_time):
+        """A facial gesture of the actor's pose: the same event on `head`, with its set
+        in `gameplayAnimSets`. Nothing on the actor points at that set."""
+        pose = self.poses[actor]
+        if clip not in pose['faces']:
+            raise SystemExit('%s: no facial clip %s' % (self.name, clip))
+        duration = pose['faces'][clip]
+        node = self._node(section)
+        end = node['sectionDuration']['stu']
+        if start_time + duration > end:
+            raise SystemExit('%s: %s ends at %d, after its section at %d'
+                             % (self.name, clip, start_time + duration, end))
+        if pose['face_set'] not in self.face_sets:
+            self.face_sets.append(pose['face_set'])
+            self.face_names.append([])
+        names = self.face_names[self.face_sets.index(pose['face_set'])]
+        if clip not in names:
+            names.append(clip)
+        with open(SK_FACE_EVENT, encoding='utf-8') as fh:
+            ev = json.load(fh)
+        data = ev['Data']
+        data['animName']['Data']['unk1'] = [cname(clip)]
+        data['duration'] = duration
+        data['id'] = {'$type': 'scnSceneEventId',
+                      'id': ruid('ev-face/%s/%d/%d/%d' % (self.name, section, actor, start_time))}
+        data['performer'] = {'$type': 'scnPerformerId', 'id': self.actor_performer(actor)}
+        data['startTime'] = start_time
+        node['events'].append(ev)
+
+    def mood(self, section, actor, mood, key, start_time=0):
+        """The face the actor holds from here on: `scnChangeIdleAnimEvent` on `head`,
+        copied from the game's own, with its timing. `mood` and `key` are the game's
+        words, as in `idle__interested__male__focused`."""
+        with open(SK_MOOD_EVENT, encoding='utf-8') as fh:
+            ev = json.load(fh)
+        data = ev['Data']
+        baked = data['bakedFacialTransition']
+        baked['toIdleMale'] = cname('idle__%s__male' % mood)
+        baked['toIdleFemale'] = cname('idle__%s__female' % mood)
+        baked['facialKey_Male'] = cname('idle__%s__male__%s' % (mood, key))
+        baked['facialKey_Female'] = cname('idle__%s__female__%s' % (mood, key))
+        data['id'] = {'$type': 'scnSceneEventId',
+                      'id': ruid('ev-mood/%s/%d/%d/%d' % (self.name, section, actor, start_time))}
+        data['performer'] = {'$type': 'scnPerformerId', 'id': self.actor_performer(actor)}
+        data['startTime'] = start_time
+        node = self._node(section)
+        end = node['sectionDuration']['stu']
+        if start_time + data['duration'] > end:
+            data['duration'] = end - start_time
+        node['events'].append(ev)
+
+    def has_pose(self, actor):
+        return actor in self.poses
+
+    def gesture(self, section, actor, clip, start_time, weight=1, stretch=1):
+        """Play one talking gesture of the actor's pose in a section.
+
+        `scnPlaySkAnimEvent` copied whole from the game's own
+        sts_bls_ina_05_archibald.scene (sk_anim_event.json). A clip needs its set
+        and its name in `resouresReferences` and the set's id on the actor, which
+        `use_pose` and `build` write. It blends in and out by 0.5 s and ends on
+        the idle. See docs/scene-playbook.md, "Body animation".
+        """
+        pose = self.poses[actor]
+        if clip not in pose['clips']:
+            raise SystemExit('%s: %s has no clip %s' % (self.name, pose['idle'], clip))
+        # SOFTER AND SLOWER the game's way: 12 of its body gestures play at a weight
+        # of 0.5 to 0.82 or stretched to 1.2 to 1.3 times, the rest at 1 and 1.
+        duration = int(round(pose['clips'][clip] * stretch))
+        node = self._node(section)
+        end = node['sectionDuration']['stu']
+        if start_time + duration > end:
+            raise SystemExit('%s: %s ends at %d, after its section at %d'
+                             % (self.name, clip, start_time + duration, end))
+        name = '%s__%s' % (pose['idle'], clip)
+        names = self.anim_names[self.anim_sets.index(pose['set'])]
+        if name not in names:
+            names.append(name)
+        with open(SK_ANIM_EVENT, encoding='utf-8') as fh:
+            ev = json.load(fh)
+        data = ev['Data']
+        # A POSE CHANGE IS NOT A GESTURE. Its event names a workspot instance of its
+        # own scene, and a scene without that instance crashes the game when the
+        # event fires (playtest 2026-11-07, exe+0xac5010).
+        if data['poseBlendOutWorkspot'] or data['rootMotionData']['enabled']:
+            raise SystemExit('sk_anim_event.json must be a plain gesture')
+        data['animName']['Data']['unk1'] = [cname(name)]
+        data['duration'] = duration
+        data['animData']['weight'] = weight
+        data['animData']['basic']['stretch'] = stretch
+        data['id'] = {'$type': 'scnSceneEventId',
+                      'id': ruid('ev-sk/%s/%d/%d/%d' % (self.name, section, actor, start_time))}
+        data['performer'] = {'$type': 'scnPerformerId', 'id': self.actor_performer(actor)}
+        data['startTime'] = start_time
+        node['events'].append(ev)
+
+    def sound(self, section, actor, event, start_time=0, emitter='default',
+              fast_forward='MuteDuringFastForward'):
+        """Play one of the game's sound events from an actor in a section.
+
+        `scnAudioEvent` as the game's own scenes write it: q001_00c_rescuing_girl
+        plays the Trauma AV's engines on the AV actor's `vehicle_general_emitter`,
+        sq024_05b_trauma_team plays the crash on a person's `default` emitter. The
+        event name is a Wwise event from `eventsmetadata.json`; nothing ships."""
+        node = self._node(section)
+        node['events'].append({'HandleId': '@au', 'Data': {
+            '$type': 'scnAudioEvent',
+            'ambientUniqueName': cname(None),
+            'audioEventName': cname(event),
+            'duration': 0,
+            'emitterName': cname(emitter),
+            'executionTagFlags': 0,
+            'fastForwardSupport': fast_forward,
+            'id': {'$type': 'scnSceneEventId',
+                   'id': ruid('ev-au/%s/%d/%s/%d' % (self.name, section, event, start_time))},
+            'performer': {'$type': 'scnPerformerId', 'id': self.actor_performer(actor)},
+            'scalingData': None,
+            'startTime': start_time,
+            'type': '0'}})
+
+    def hold_still(self, section, community, entry):
+        """Stop the random clips of a community actor's workspot from this section on.
+        The game's own way: a quest node inside the scene, fired by the section's event
+        socket (sts_wat_nid_01_hal.scene, nodes 108 and 243). Call it after every other
+        node of a released scene, so no node changes its number."""
+        nid = self._nid()
+        self.nodes.append({
+            '$type': 'scnQuestNode',
+            'ffStrategy': 'automatic',
+            'isockMappings': [cname('CutDestination'), cname('In')],
+            'nodeId': node_id(nid),
+            'osockMappings': [cname('Success')],
+            'outputSockets': [osock(0, 0, [])],
+            'questNode': {'HandleId': '@qn', 'Data': {
+                '$type': 'questUseWorkspotNodeDefinition',
+                'entityReference': community_ref(community, entry),
+                'id': nid,
+                'paramsV1': {'HandleId': '@qp', 'Data': {
+                    '$type': 'questUseWorkspotParamsV1',
+                    'changeWorkspot': 1, 'continueInCombat': 0, 'dangleResetSimulation': 0,
+                    'enableIdleMode': 1,
+                    'entryId': {'$type': 'workWorkEntryId', 'id': 4294967295},
+                    'entryTag': cname(None), 'exitAnimName': cname(None),
+                    'exitEntryId': {'$type': 'workWorkEntryId', 'id': 4294967295},
+                    'finishAnimation': 1, 'forceEntryAnimName': cname(None),
+                    'function': 'IdleOnlyMode', 'instant': 0, 'isPlayer': 0,
+                    'isWorkspotInfinite': 1, 'jumpToEntry': 0, 'maxAnimTimeLimit': 0,
+                    'meshDissolvingEnabled': 1, 'movementType': 'Walk',
+                    'playerParams': {
+                        '$type': 'questUseWorkspotPlayerParams',
+                        'applyCameraParams': 0,
+                        'cameraSettings': {'$type': 'gameTier3CameraSettings',
+                                           'pitchBottomLimit': 45, 'pitchSpeedMultiplier': 1,
+                                           'pitchTopLimit': 60, 'yawLeftLimit': 60,
+                                           'yawRightLimit': 60, 'yawSpeedMultiplier': 1},
+                        'cameraUseTrajectorySpace': 1, 'emptyHands': 0,
+                        'parallaxSpace': 'Trajectory', 'parallaxWeight': 1,
+                        'tier': 'Tier3', 'vehicleProceduralCameraWeight': 1},
+                    'repeatCommandOnInterrupt': 1, 'teleport': 1,
+                    'workExcludedGestures': [], 'workspotNode': noderef(None),
+                }},
+                'sockets': [quest_socket('CutDestination', 'CutDestination'),
+                            quest_socket('In', 'Input'), quest_socket('Success', 'Output')],
+            }},
+        })
+        self.fire_event(section, nid)
+
     def fire_event(self, section, target, start_time=0):
         """Fire a terminal quest node from a section at a given time.
 
@@ -2645,6 +2882,11 @@ class Scene:
                 return [wrap(v) for v in obj]
             return obj
 
+        # EVENTS IN START ORDER: all 134 sections read off the game's scenes are.
+        if self.poses:
+            for n in self.nodes:
+                if n['$type'] == 'scnSectionNode':
+                    n['events'].sort(key=lambda e: e['Data'].get('startTime', 0))
         graph = []
         for n in self.nodes:
             handle[0] += 1
@@ -2691,9 +2933,20 @@ class Scene:
                     'referencePoints': [],
                     'resouresReferences': {
                         '$type': 'scnSRRefCollection',
-                        'cinematicAnimNames': [], 'cinematicAnimSets': [],
+                        'cinematicAnimNames': [
+                            {'$type': 'scnAnimSetAnimNames', 'animationNames': [cname(n) for n in names]}
+                            for names in self.anim_names],
+                        'cinematicAnimSets': [
+                            {'$type': 'scnCinematicAnimSetSRRef', 'asyncAnimSet': resref(p, 'Soft'),
+                             'isOverride': 1, 'priority': 200}
+                            for p in self.anim_sets],
                         'dynamicAnimNames': [], 'dynamicAnimSets': [],
-                        'gameplayAnimNames': [], 'gameplayAnimSets': [],
+                        'gameplayAnimNames': [
+                            {'$type': 'scnAnimSetAnimNames', 'animationNames': [cname(n) for n in names]}
+                            for names in self.face_names],
+                        'gameplayAnimSets': [
+                            {'$type': 'scnGameplayAnimSetSRRef', 'asyncAnimSet': resref(p, 'Soft')}
+                            for p in self.face_sets],
                         # What scnActorDef.lipsyncAnimSet.id indexes. Vanilla's
                         # entries here name UNCOOKED paths that ship in no
                         # archive, so the shipped game must be resolving lipsync

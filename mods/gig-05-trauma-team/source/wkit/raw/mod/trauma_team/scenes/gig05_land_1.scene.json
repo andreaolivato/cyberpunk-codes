@@ -394,7 +394,7 @@
       "ridResources": [],
       "sceneCategoryTag": "dialoguesQuests",
       "sceneGraph": {
-        "HandleId": "5",
+        "HandleId": "7",
         "Data": {
           "$type": "scnSceneGraph",
           "endNodes": [
@@ -484,6 +484,76 @@
                         "voExpression": "Vo_Expression_Spoken"
                       }
                     }
+                  },
+                  {
+                    "HandleId": "4",
+                    "Data": {
+                      "$type": "scnAudioEvent",
+                      "ambientUniqueName": {
+                        "$type": "CName",
+                        "$storage": "string",
+                        "$value": "None"
+                      },
+                      "audioEventName": {
+                        "$type": "CName",
+                        "$storage": "string",
+                        "$value": "q001_sc_00c_trauma_arrives_intro_av_engines"
+                      },
+                      "duration": 0,
+                      "emitterName": {
+                        "$type": "CName",
+                        "$storage": "string",
+                        "$value": "default"
+                      },
+                      "executionTagFlags": 0,
+                      "fastForwardSupport": "MuteDuringFastForward",
+                      "id": {
+                        "$type": "scnSceneEventId",
+                        "id": "3398165431658763241"
+                      },
+                      "performer": {
+                        "$type": "scnPerformerId",
+                        "id": 1
+                      },
+                      "scalingData": null,
+                      "startTime": 0,
+                      "type": "0"
+                    }
+                  },
+                  {
+                    "HandleId": "5",
+                    "Data": {
+                      "$type": "scnAudioEvent",
+                      "ambientUniqueName": {
+                        "$type": "CName",
+                        "$storage": "string",
+                        "$value": "None"
+                      },
+                      "audioEventName": {
+                        "$type": "CName",
+                        "$storage": "string",
+                        "$value": "q001_sc_00c_trauma_arrives_intro_av_garbage"
+                      },
+                      "duration": 0,
+                      "emitterName": {
+                        "$type": "CName",
+                        "$storage": "string",
+                        "$value": "default"
+                      },
+                      "executionTagFlags": 0,
+                      "fastForwardSupport": "MuteDuringFastForward",
+                      "id": {
+                        "$type": "scnSceneEventId",
+                        "id": "2809221098250657190"
+                      },
+                      "performer": {
+                        "$type": "scnPerformerId",
+                        "id": 1
+                      },
+                      "scalingData": null,
+                      "startTime": 650,
+                      "type": "0"
+                    }
                   }
                 ],
                 "ffStrategy": "automatic",
@@ -532,7 +602,7 @@
               }
             },
             {
-              "HandleId": "4",
+              "HandleId": "6",
               "Data": {
                 "$type": "scnEndNode",
                 "ffStrategy": "automatic",

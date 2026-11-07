@@ -80,8 +80,16 @@ The script therefore ships what is already in `source\wkit\packed`, and diffs
 every file against the copy deployed in the game folder, which is the build that
 was played.
 
-- plain files (`.xl`, `.reds`, `.yaml`) must hash-match
+- plain files (`.xl`, `.reds`, `.yaml`) must match the deployed copy's code
 - the `.archive` is compared by size, because a hash match is not achievable
+
+### It ships code with no comments
+
+The `.reds`, `.yaml` and `.archive.xl` in a zip have no comments. They sit in the
+game folder as text a player can open. `tools\strip_comments.py` strips the staged
+copy, and the source keeps its comments. It refuses if the code of a file would
+change, or if a comment is left. The diff against the game folder compares those
+files by code, with comments set aside.
 
 Pass `-Rebuild` when you want fresh output, and expect the archive line
 to say "same size" rather than "identical".

@@ -7,6 +7,20 @@ each mod's Nexus Changelog tab.
 
 # Join Trauma Team
 
+## 1.1.1 (2026-11-07)
+
+- **Changed: Nisha Rao is recorded by a professional voice actor: Patti Knox.**
+- **Changed: The uniform you receive now includes the armored vest.** It is a new item,
+  given at the armory on your next shift. Suggested by EbonTusk.
+- **Changed: Added body animations to Nisha and Brekke while they talk, to make it
+  feel more natural.**
+- **Changed: clients are no longer Platinum or Gold.** They'd require a much faster
+  response time and wouldn't employ a rookie. Many people pointed out this lore error
+  on my part on Reddit, Instagram, and TikTok. Clients are now indicated as Silver.
+- **Added: the AV's engine sound during the flight, and its landing sounds.** From the
+  Trauma Team landing in The Rescue.
+  Suggested by Shibataa11 and Marchello2077.
+
 ## 1.1.0 (2026-11-06)
 
 - **Added: repeat the shift.** 12 game hours after a shift, the recruiter is back
