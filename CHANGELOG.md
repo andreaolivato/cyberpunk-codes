@@ -7,6 +7,20 @@ each mod's Nexus Changelog tab.
 
 # Join Trauma Team
 
+## 1.2.3 (2026-11-09)
+
+- **Fixed: the office chairs faced away from their desks.** Reported by Shalopoot.
+- **Fixed: you could walk through the bench in the armory, and could not walk between the
+  office desks.** Reported by Shalopoot.
+- **Fixed: you could walk through the chairs, the filing cabinets, the coffee table and
+  one end of the sofa.**
+- **Fixed: the office counter stood partly inside the wall, and the break room counters
+  stood away from it.**
+- **Fixed: the office filing cabinets had drawers but no cabinet.**
+- **Fixed: the office monitors were empty frames with no screen.**
+- **Fixed: sunlight came in along the walls of the rooms on the roof.**
+- **Removed: the empty planters in the corners of the office and the break room.**
+
 ## 1.2.2 (2026-11-09)
 
 - **Fixed: with They Will Remember installed, the crew could turn hostile and could not
