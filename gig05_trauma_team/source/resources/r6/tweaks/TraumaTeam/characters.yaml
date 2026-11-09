@@ -154,3 +154,23 @@ Character.cc_g05_scav_wrench:
   baseAttitudeGroup: cc_g05_gang
   tags:
     - !append-once DoNotTriggerPrevention
+
+Character.cc_g05_staff_m:
+  $base: Character.CorpoManNoReaction
+  baseAttitudeGroup: friendly
+  tags:
+    - !append-once DoNotTriggerPrevention
+Character.cc_g05_staff_w:
+  $base: Character.CorpoWoman
+  reactionPreset: ReactionPresets.NoReaction
+  baseAttitudeGroup: friendly
+  tags:
+    - !append-once DoNotTriggerPrevention
+
+Character.cc_g05_crewmate:
+  $base: Character.CorpoManNoReaction
+  entityTemplatePath: mod\trauma_team\npv\crew.ent
+  baseAttitudeGroup: friendly
+  tags:
+    - !append-once DoNotTriggerPrevention
+    - !append-once Invulnerable

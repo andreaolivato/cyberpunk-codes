@@ -7,6 +7,25 @@ each mod's Nexus Changelog tab.
 
 # Join Trauma Team
 
+## 1.2.0 (2026-11-09)
+
+- **Changed: Brekke is now recorded by a professional voice actor: CinematicTactics.**
+- **Added: a helmet HUD display while you wear the uniform.** REC LIVE, the team feed,
+  the clock and a heart trace, all done in Trauma Team's colours. Hold L to turn it off and on. 
+  Suggested by 7DeadlyJinxs.
+- **Added: an office and a break room on the roof.** Staff at work,
+  Trauma Team logos on the walls, and various interior decor. 
+  Suggested by sdn-v5p, dura0210, Kinertia, xxSlazy and Marchello2077.
+- **Added: the Trauma Drama arcade cabinet in the break room.** You can play it.
+  Suggested by sdn-v5p.
+- **Added: two crewmen off duty in the armory.** Suggested by 7DeadlyJinxs.
+- **Added: two more pads on the roof, each with an AV and crew.** While you are on the
+  roof the AVs take off, fly a circuit and land again. Suggested by 7DeadlyJinxs.
+- **Added: landing lights on every pad.** Suggested by 7DeadlyJinxs.
+- **Added: windows along the walkway.** Suggested by Kinertia.
+- **Fixed: the uniform's inventory picture was blank.** Reported by Kinertia.
+- **Fixed: a parked car could block the elevator at street level.** Reported by Kinertia.
+
 ## 1.1.1 (2026-11-07)
 
 - **Changed: Nisha Rao is recorded by a professional voice actor: Patti Knox.**

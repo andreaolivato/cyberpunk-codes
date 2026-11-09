@@ -1,9 +1,9 @@
 {
   "Header": {
-    "WolvenKitVersion": "8.20.0",
+    "WolvenKitVersion": "10.0.0-beta.1",
     "WKitJsonVersion": "0.0.9",
-    "GameVersion": 2310,
-    "ExportedDateTime": "2026-11-04T15:11:30.6308803Z",
+    "GameVersion": 2500,
+    "ExportedDateTime": "2026-11-09T00:49:25.8326237Z",
     "DataType": "CR2W",
     "ArchiveFileName": "C:\\Users\\andre\\OneDrive\\Desktop\\cyberpunk-gigs\\gig05_trauma_team\\source\\archive\\mod\\trauma_team\\lift\\lift.devices"
   },
@@ -127,6 +127,40 @@
                 "$type": "Vector3",
                 "X": -1309.09998,
                 "Y": 1765.15002,
+                "Z": 129.199997
+              },
+              "parents": []
+            },
+            {
+              "$type": "gameDeviceResourceData_Cls1",
+              "children": [],
+              "className": {
+                "$type": "CName",
+                "$storage": "string",
+                "$value": "DoorControllerPS"
+              },
+              "hash": "17095491012592956166",
+              "nodePosition": {
+                "$type": "Vector3",
+                "X": -1321.43005,
+                "Y": 1778.19995,
+                "Z": 129.199997
+              },
+              "parents": []
+            },
+            {
+              "$type": "gameDeviceResourceData_Cls1",
+              "children": [],
+              "className": {
+                "$type": "CName",
+                "$storage": "string",
+                "$value": "DoorControllerPS"
+              },
+              "hash": "276994706569002109",
+              "nodePosition": {
+                "$type": "Vector3",
+                "X": -1321.43005,
+                "Y": 1752.59998,
                 "Z": 129.199997
               },
               "parents": []

@@ -129,11 +129,102 @@ public class TraumaTeamShift extends ScriptableSystem {
     private let m_warping: Bool;
     private let m_warpTicks: Int32;
     private let m_scavsSeen: Bool;
+    private let m_helmet: ref<TraumaTeamHelmet>;
+    private let m_hudWorn: Bool;
+    private let m_visorOpen: Bool;
+    private let m_lDown: Bool;
+    private let m_lToken: Int32;
+    private let m_hudLoop: Bool;
 
     private func OnAttach() -> Void {
         this.m_fresh = true;
         this.m_comTick = -1;
         this.Schedule(6.0);
+    }
+
+    private cb func OnKey(evt: ref<KeyInputEvent>) {
+        if NotEquals(evt.GetKey(), EInputKey.IK_L) {
+            return;
+        }
+        if Equals(evt.GetAction(), EInputAction.IACT_Press) {
+            if !this.m_lDown {
+                this.m_lDown = true;
+                this.m_lToken += 1;
+                let cb: ref<CCG05VisorHold> = new CCG05VisorHold();
+                cb.system = this;
+                cb.token = this.m_lToken;
+                GameInstance.GetDelaySystem(this.GetGameInstance()).DelayCallback(cb, 0.5, false);
+            }
+        } else {
+            if Equals(evt.GetAction(), EInputAction.IACT_Release) {
+                this.m_lDown = false;
+                this.m_lToken += 1;
+            }
+        }
+        return;
+    }
+
+    public func VisorHeld(token: Int32) -> Void {
+        if !this.m_lDown || token != this.m_lToken || !this.m_hudWorn {
+            return;
+        }
+        let game: GameInstance = this.GetGameInstance();
+        let ui: ref<IBlackboard> = GameInstance.GetBlackboardSystem(game).Get(GetAllBlackboardDefs().UI_System);
+        if IsDefined(ui) && ui.GetBool(GetAllBlackboardDefs().UI_System.IsInMenu) {
+            return;
+        }
+        this.m_visorOpen = !this.m_visorOpen;
+        let player: ref<PlayerPuppet> = GameInstance.GetPlayerSystem(game).GetLocalPlayerMainGameObject() as PlayerPuppet;
+        let qs: ref<QuestsSystem> = GameInstance.GetQuestsSystem(game);
+        if IsDefined(player) && IsDefined(qs) {
+            if !this.m_visorOpen {
+                this.m_helmet.HideAll();
+                this.m_hudWorn = false;
+            }
+            this.Helmet(game, qs, player);
+        }
+    }
+
+    private let m_offDutyKnown: Bool;
+    private let m_offDutyWas: Int32;
+    private let m_offDutyAt: Float;
+
+    private func ChangingBack(game: GameInstance, qs: ref<QuestsSystem>) -> Bool {
+        let now: Float = EngineTime.ToFloat(GameInstance.GetSimTime(game));
+        let v: Int32 = qs.GetFactStr("cc_g05_off_duty");
+        if this.m_offDutyKnown && this.m_offDutyWas <= 0 && v > 0 {
+            this.m_offDutyAt = now;
+        }
+        this.m_offDutyKnown = true;
+        this.m_offDutyWas = v;
+        return v > 0 && this.m_offDutyAt > 0.0 && now - this.m_offDutyAt < 3.0;
+    }
+
+    public func HelmetLoop() -> Void {
+        let game: GameInstance = this.GetGameInstance();
+        let qs: ref<QuestsSystem> = GameInstance.GetQuestsSystem(game);
+        let ps: ref<PlayerSystem> = GameInstance.GetPlayerSystem(game);
+        if !IsDefined(qs) || !IsDefined(ps) || !IsDefined(this.m_helmet) || !this.m_hudWorn {
+            this.m_hudLoop = false;
+            return;
+        }
+        if this.ChangingBack(game, qs) {
+            this.m_helmet.HideAll();
+            this.m_hudWorn = false;
+            this.m_visorOpen = false;
+            this.m_hudLoop = false;
+            return;
+        }
+        let player: ref<PlayerPuppet> = ps.GetLocalPlayerMainGameObject() as PlayerPuppet;
+        if IsDefined(player) && !this.m_visorOpen && !this.m_helmet.IsShown() {
+            this.Helmet(game, qs, player);
+        }
+        if IsDefined(player) {
+            this.m_helmet.Poll(player);
+        }
+        let cb: ref<CCG05HelmetLoop> = new CCG05HelmetLoop();
+        cb.system = this;
+        GameInstance.GetDelaySystem(game).DelayCallback(cb, 0.25, false);
     }
 
     public func Schedule(delay: Float) -> Void {
@@ -178,6 +269,8 @@ public class TraumaTeamShift extends ScriptableSystem {
         this.Warp(game, qs, player);
         this.AtLift(game, qs, player);
         this.NextShift(game, qs, player);
+        this.Helmet(game, qs, player);
+        this.RoofTraffic(game, qs, player);
 
         if this.m_warping {
             this.Schedule(0.25);
@@ -194,6 +287,7 @@ public class TraumaTeamShift extends ScriptableSystem {
     }
 
     private func AfterLoad(qs: ref<QuestsSystem>, player: ref<PlayerPuppet>) -> Void {
+        GameInstance.GetCallbackSystem().RegisterCallback(n"Input/Key", this, n"OnKey");
         qs.SetFactStr("cc_g05_warp", 0);
         if qs.GetFactStr("cc_g05_on_shift") > 0 {
             StatusEffectHelper.RemoveStatusEffect(player, CCG05Shift.Ride());
@@ -417,6 +511,69 @@ public class TraumaTeamShift extends ScriptableSystem {
         this.Disarm(eq, player);
     }
 
+    private func Helmet(game: GameInstance, qs: ref<QuestsSystem>, player: ref<PlayerPuppet>) -> Void {
+        if !IsDefined(this.m_helmet) {
+            this.m_helmet = new TraumaTeamHelmet();
+        }
+        let worn: Bool = false;
+        let data: ref<EquipmentSystemPlayerData> = EquipmentSystem.GetData(player);
+        if IsDefined(data) && !this.ChangingBack(game, qs) {
+            let on: ItemID = data.GetItemInEquipSlot(gamedataEquipmentArea.Outfit, 0);
+            worn = ItemID.IsValid(on) && ItemID.GetTDBID(on) == CCG05Shift.Outfit();
+        }
+        if !worn {
+            this.m_helmet.HideAll();
+            this.m_hudWorn = false;
+            this.m_visorOpen = false;
+            return;
+        }
+        if this.m_visorOpen {
+            this.m_helmet.Hide();
+            this.m_helmet.ShowNote(game);
+            return;
+        }
+        this.m_helmet.Show(player, !this.m_hudWorn);
+        this.m_helmet.Update(game);
+        this.m_hudWorn = true;
+        if !this.m_hudLoop {
+            this.m_hudLoop = true;
+            let cb: ref<CCG05HelmetLoop> = new CCG05HelmetLoop();
+            cb.system = this;
+            GameInstance.GetDelaySystem(game).DelayCallback(cb, 0.25, false);
+        }
+    }
+
+    private let m_nextFly: array<Float>;
+    private let m_wasFlying: array<Bool>;
+
+    private func RoofTraffic(game: GameInstance, qs: ref<QuestsSystem>, player: ref<PlayerPuppet>) -> Void {
+        let now: Float = EngineTime.ToFloat(GameInstance.GetSimTime(game));
+        if ArraySize(this.m_nextFly) < 2 {
+            this.m_nextFly = [now + RandRangeF(40.0, 90.0), now + RandRangeF(70.0, 150.0)];
+            this.m_wasFlying = [false, false];
+        }
+        let p: Vector4 = player.GetWorldPosition();
+        let onRoof: Bool = p.Z > CCG05Shift.RoofLine() - 2.0 && p.X > -1396.0 && p.X < -1257.0
+            && p.Y > 1739.0 && p.Y < 1826.0;
+        let k: Int32 = 0;
+        while k < 2 {
+            let fact: String = "cc_g05_fly_x" + IntToString(k);
+            let flying: Bool = qs.GetFactStr(fact) > 0;
+            if this.m_wasFlying[k] && !flying {
+                this.m_nextFly[k] = now + RandRangeF(60.0, 150.0);
+            }
+            this.m_wasFlying[k] = flying;
+            if !onRoof && !flying {
+                this.m_nextFly[k] = MaxF(this.m_nextFly[k], now + RandRangeF(40.0, 90.0));
+            }
+            if onRoof && !flying && now >= this.m_nextFly[k] {
+                qs.SetFactStr(fact, 1);
+                this.m_wasFlying[k] = true;
+            }
+            k += 1;
+        }
+    }
+
     private func AtLift(game: GameInstance, qs: ref<QuestsSystem>, player: ref<PlayerPuppet>) -> Void {
         let pos: Vector4 = player.GetWorldPosition();
         let z: Float = pos.Z;
@@ -431,6 +588,52 @@ public class TraumaTeamShift extends ScriptableSystem {
         if qs.GetFactStr("cc_g05_on_shift") > 0 && qs.GetFactStr("cc_g05_at_street") <= 0
                 && z < CCG05Shift.StreetLine() {
             qs.SetFactStr("cc_g05_at_street", 1);
+        }
+        this.ClearShaft(game, player);
+    }
+
+    private let m_shaftCleared: array<EntityID>;
+
+    private func ClearShaft(game: GameInstance, player: ref<PlayerPuppet>) -> Void {
+        let axis: Vector4 = new Vector4(CCG05Shift.LiftX(), CCG05Shift.LiftY(), 0.0, 1.0);
+        let at: Vector4 = player.GetWorldPosition();
+        at.Z = 0.0;
+        if Vector4.Distance(at, axis) > 60.0 {
+            return;
+        }
+        let query: TargetSearchQuery = TSQ_NPC();
+        query.testedSet = TargetingSet.Complete;
+        query.includeSecondaryTargets = false;
+        query.ignoreInstigator = true;
+        query.maxDistance = 80.0;
+        query.filterObjectByDistance = true;
+        let parts: array<TS_TargetPartInfo>;
+        GameInstance.GetTargetingSystem(game).GetTargetParts(player, query, parts);
+        let i: Int32 = 0;
+        while i < ArraySize(parts) {
+            let car: ref<VehicleObject> = TS_TargetPartInfo.GetComponent(parts[i]).GetEntity() as VehicleObject;
+            if IsDefined(car) && !ArrayContains(this.m_shaftCleared, car.GetEntityID()) {
+                let p: Vector4 = car.GetWorldPosition();
+                let flat: Vector4 = new Vector4(p.X, p.Y, 0.0, 1.0);
+                if Vector4.Distance(flat, axis) < 4.5 && p.Z < CCG05Shift.RoofLine() - 20.0
+                        && !car.IsPlayerVehicle()
+                        && VehicleComponent.GetNumberOfOccupiedSlots(game, car) == 0 {
+                    ArrayPush(this.m_shaftCleared, car.GetEntityID());
+                    this.DisposeByName(car);
+                }
+            }
+            i += 1;
+        }
+    }
+
+    private func DisposeByName(body: ref<IScriptable>) -> Void {
+        let cls: ref<ReflectionClass> = Reflection.GetClassOf(body);
+        if !IsDefined(cls) {
+            return;
+        }
+        let fn: ref<ReflectionMemberFunc> = cls.GetFunction(n"Dispose");
+        if IsDefined(fn) {
+            fn.Call(body);
         }
     }
 
@@ -729,6 +932,27 @@ public class TraumaTeamShift extends ScriptableSystem {
             i += 1;
         }
         return dead;
+    }
+}
+
+public class CCG05VisorHold extends DelayCallback {
+    public let system: wref<TraumaTeamShift>;
+    public let token: Int32;
+
+    public func Call() -> Void {
+        if IsDefined(this.system) {
+            this.system.VisorHeld(this.token);
+        }
+    }
+}
+
+public class CCG05HelmetLoop extends DelayCallback {
+    public let system: wref<TraumaTeamShift>;
+
+    public func Call() -> Void {
+        if IsDefined(this.system) {
+            this.system.HelmetLoop();
+        }
     }
 }
 

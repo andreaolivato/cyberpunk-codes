@@ -3,7 +3,7 @@
     "WolvenKitVersion": "10.0.0-beta.1",
     "WKitJsonVersion": "0.0.9",
     "GameVersion": 2500,
-    "ExportedDateTime": "2026-11-07T13:35:05.2145240Z",
+    "ExportedDateTime": "2026-11-09T00:52:49.4866893Z",
     "DataType": "CR2W",
     "ArchiveFileName": "C:\\Users\\andre\\OneDrive\\Desktop\\cyberpunk-gigs\\gig05_trauma_team\\source\\archive\\mod\\trauma_team\\scenes\\gig05_welcome.scene"
   },
@@ -457,7 +457,7 @@
         "vpEntries": [
           {
             "$type": "scnlocLocStoreEmbeddedVariantPayloadEntry",
-            "content": "You are the probation hire.",
+            "content": "You\u0027re the probation hire.",
             "variantId": {
               "$type": "scnlocVariantId",
               "ruid": "3449354541780544974"
@@ -465,7 +465,7 @@
           },
           {
             "$type": "scnlocLocStoreEmbeddedVariantPayloadEntry",
-            "content": "You are the probation hire.",
+            "content": "You\u0027re the probation hire.",
             "variantId": {
               "$type": "scnlocVariantId",
               "ruid": "2357923377499316807"
@@ -473,7 +473,7 @@
           },
           {
             "$type": "scnlocLocStoreEmbeddedVariantPayloadEntry",
-            "content": "I\u0027m Brekke, crew leader. Wrona, security. Raman, medical. You do what we say.",
+            "content": "I\u0027m Brekke, crew leader. Wrona, security. Raman, medical. And your job is to do what we say.",
             "variantId": {
               "$type": "scnlocVariantId",
               "ruid": "2501731885897988697"
@@ -481,7 +481,7 @@
           },
           {
             "$type": "scnlocLocStoreEmbeddedVariantPayloadEntry",
-            "content": "I\u0027m Brekke, crew leader. Wrona, security. Raman, medical. You do what we say.",
+            "content": "I\u0027m Brekke, crew leader. Wrona, security. Raman, medical. And your job is to do what we say.",
             "variantId": {
               "$type": "scnlocVariantId",
               "ruid": "3393369939035473480"
@@ -489,7 +489,7 @@
           },
           {
             "$type": "scnlocLocStoreEmbeddedVariantPayloadEntry",
-            "content": "Up there the client comes first. Not you, not me.",
+            "content": "Now, out there the client comes first. Not you, not me.",
             "variantId": {
               "$type": "scnlocVariantId",
               "ruid": "3377930380374817712"
@@ -497,7 +497,7 @@
           },
           {
             "$type": "scnlocLocStoreEmbeddedVariantPayloadEntry",
-            "content": "Up there the client comes first. Not you, not me.",
+            "content": "Now, out there the client comes first. Not you, not me.",
             "variantId": {
               "$type": "scnlocVariantId",
               "ruid": "3100763494338444313"
@@ -788,7 +788,7 @@
                         "transitionType": "Fast"
                       },
                       "convertToAdditive": 0,
-                      "duration": 2650,
+                      "duration": 2300,
                       "executionTagFlags": 0,
                       "eyesBlendAdditive": 1,
                       "facialInstantTransition": 0,
@@ -942,7 +942,7 @@
                         "role": "Full",
                         "speakers": []
                       },
-                      "duration": 1950,
+                      "duration": 1600,
                       "executionTagFlags": 0,
                       "id": {
                         "$type": "scnSceneEventId",
@@ -1036,7 +1036,7 @@
                 ],
                 "sectionDuration": {
                   "$type": "scnSceneTime",
-                  "stu": 2650
+                  "stu": 2300
                 }
               }
             },
@@ -1382,7 +1382,7 @@
                         "role": "Full",
                         "speakers": []
                       },
-                      "duration": 5810,
+                      "duration": 7000,
                       "executionTagFlags": 0,
                       "id": {
                         "$type": "scnSceneEventId",
@@ -1635,7 +1635,7 @@
                 ],
                 "sectionDuration": {
                   "$type": "scnSceneTime",
-                  "stu": 6510
+                  "stu": 7700
                 }
               }
             },
@@ -1772,7 +1772,7 @@
                         "role": "Full",
                         "speakers": []
                       },
-                      "duration": 3790,
+                      "duration": 4260,
                       "executionTagFlags": 0,
                       "id": {
                         "$type": "scnSceneEventId",
@@ -2025,7 +2025,7 @@
                 ],
                 "sectionDuration": {
                   "$type": "scnSceneTime",
-                  "stu": 4490
+                  "stu": 4960
                 }
               }
             },
@@ -2162,7 +2162,7 @@
                         "role": "Full",
                         "speakers": []
                       },
-                      "duration": 2770,
+                      "duration": 2430,
                       "executionTagFlags": 0,
                       "id": {
                         "$type": "scnSceneEventId",
@@ -2265,7 +2265,7 @@
                       "genderSpecificParams": [],
                       "id": {
                         "$type": "scnSceneEventId",
-                        "id": "2338336402420238337"
+                        "id": "3432671493488916039"
                       },
                       "idleIsMountedWorkspot": 0,
                       "isSceneCarrying": 0,
@@ -2364,7 +2364,7 @@
                         "vehicleEnabledPhysicsOnEnd": 1
                       },
                       "scalingData": null,
-                      "startTime": 2100,
+                      "startTime": 1150,
                       "stayInScene": 0,
                       "type": "0",
                       "upperFaceBlendAdditive": 1,
@@ -2415,7 +2415,7 @@
                 ],
                 "sectionDuration": {
                   "$type": "scnSceneTime",
-                  "stu": 4070
+                  "stu": 3730
                 }
               }
             },
