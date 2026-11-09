@@ -7,6 +7,11 @@ each mod's Nexus Changelog tab.
 
 # Join Trauma Team
 
+## 1.2.2 (2026-11-09)
+
+- **Fixed: with They Will Remember installed, the crew could turn hostile and could not
+  be killed, and the shift got stuck.** Reported by Reins00 and accher.
+
 ## 1.2.1 (2026-11-09)
 
 - **Fixed: the vest was missing on saves that started before 1.1.1.** Get changed in

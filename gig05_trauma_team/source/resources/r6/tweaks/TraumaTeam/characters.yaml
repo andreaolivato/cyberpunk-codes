@@ -55,9 +55,14 @@ Vehicle.cc_g05_av:
   $base: Vehicle.q001_trauma_av
   entityTemplatePath: mod\trauma_team\npv\av.ent
 
+Factions.cc_g05_crew:
+  $base: Factions.TraumaTeam
+  enumName: Classified
+
 # the one who fights
 Character.cc_g05_lead:
   $base: Character.trauma_soldier_ranged2_dian_ma
+  affiliation: Factions.cc_g05_crew
   entityTemplatePath: mod\trauma_team\npv\crew.ent
   baseAttitudeGroup: cc_g05_crew
   displayName: LocKey#1991193120046305239
@@ -71,6 +76,7 @@ Character.cc_g05_lead:
     - !remove Ability.CanUseFragGrenades
 Character.cc_g05_soldier:
   $base: Character.trauma_soldier_shotgun2_zhuo_ma_rare
+  affiliation: Factions.cc_g05_crew
   entityTemplatePath: mod\trauma_team\npv\crew.ent
   baseAttitudeGroup: cc_g05_crew
   displayName: LocKey#4687542370520156293
@@ -84,6 +90,7 @@ Character.cc_g05_soldier:
     - !remove Ability.CanUseFragGrenades
 Character.cc_g05_medic:
   $base: Character.trauma_rare_officer_chao_ma
+  affiliation: Factions.cc_g05_crew
   entityTemplatePath: mod\trauma_team\npv\crew.ent
   baseAttitudeGroup: cc_g05_crew
   displayName: LocKey#6323986540229553761
