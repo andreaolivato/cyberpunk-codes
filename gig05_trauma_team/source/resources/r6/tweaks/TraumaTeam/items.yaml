@@ -1,9 +1,14 @@
 Items.cc_g05_outfit:
   $base: Items.Trauma_Team_Outfit
   entityName: cc_g05_outfit
+  displayName: LocKey#13945250868948293756
 
 UIIcon.outfit_cc_g05_outfit_outfit_02__trauma__Female_TPP_:
-  $base: UIIcon.outfit_player_outfit_item_outfit_02__trauma__Female_TPP_
+  $type: UIIcon
+  atlasResourcePath: mod\trauma_team\gui\outfit.inkatlas
+  atlasPartName: outfit
 
 UIIcon.outfit_cc_g05_outfit_outfit_02__trauma__Male_TPP_:
-  $base: UIIcon.outfit_player_outfit_item_outfit_02__trauma__Male_TPP_
+  $type: UIIcon
+  atlasResourcePath: mod\trauma_team\gui\outfit.inkatlas
+  atlasPartName: outfit

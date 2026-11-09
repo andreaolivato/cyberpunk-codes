@@ -1,0 +1,118 @@
+{
+  "Header": {
+    "WolvenKitVersion": "10.0.0-beta.1",
+    "WKitJsonVersion": "0.0.9",
+    "GameVersion": 2500,
+    "ExportedDateTime": "2026-11-09T07:23:13.6891820Z",
+    "DataType": "CR2W",
+    "ArchiveFileName": "C:\\Users\\andre\\OneDrive\\Desktop\\cyberpunk-gigs\\gig05_trauma_team\\source\\archive\\mod\\trauma_team\\gui\\outfit.inkatlas"
+  },
+  "Data": {
+    "Version": 195,
+    "BuildVersion": 0,
+    "RootChunk": {
+      "$type": "inkTextureAtlas",
+      "activeTexture": "StaticTexture",
+      "cookingPlatform": "PLATFORM_PC",
+      "dynamicTexture": {
+        "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "uint64",
+          "$value": "0"
+        },
+        "Flags": "Soft"
+      },
+      "dynamicTextureSlot": {
+        "$type": "inkDynamicTextureSlot",
+        "parts": [],
+        "texture": {
+          "DepotPath": {
+            "$type": "ResourcePath",
+            "$storage": "uint64",
+            "$value": "0"
+          },
+          "Flags": "Soft"
+        }
+      },
+      "isSingleTextureMode": 1,
+      "parts": [],
+      "slices": [],
+      "slots": {
+        "Elements": [
+          {
+            "$type": "inkTextureSlot",
+            "parts": [
+              {
+                "$type": "inkTextureAtlasMapper",
+                "clippingRectInPixels": {
+                  "$type": "Rect",
+                  "bottom": 0,
+                  "left": 0,
+                  "right": 0,
+                  "top": 0
+                },
+                "clippingRectInUVCoords": {
+                  "$type": "RectF",
+                  "Bottom": 0.8125,
+                  "Left": 0.078125,
+                  "Right": 0.921875,
+                  "Top": 0.1875
+                },
+                "partName": {
+                  "$type": "CName",
+                  "$storage": "string",
+                  "$value": "outfit"
+                }
+              }
+            ],
+            "slices": [],
+            "texture": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "string",
+                "$value": "mod\\trauma_team\\gui\\outfit.xbm"
+              },
+              "Flags": "Soft"
+            }
+          },
+          {
+            "$type": "inkTextureSlot",
+            "parts": [],
+            "slices": [],
+            "texture": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Soft"
+            }
+          },
+          {
+            "$type": "inkTextureSlot",
+            "parts": [],
+            "slices": [],
+            "texture": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Soft"
+            }
+          }
+        ]
+      },
+      "texture": {
+        "DepotPath": {
+          "$type": "ResourcePath",
+          "$storage": "uint64",
+          "$value": "0"
+        },
+        "Flags": "Soft"
+      },
+      "textureResolution": "UltraHD_3840_2160"
+    },
+    "EmbeddedFiles": []
+  }
+}

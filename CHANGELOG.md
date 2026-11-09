@@ -7,6 +7,14 @@ each mod's Nexus Changelog tab.
 
 # Join Trauma Team
 
+## 1.2.1 (2026-11-09)
+
+- **Fixed: the vest was missing on saves that started before 1.1.1.** Get changed in
+  the armory to receive the new uniform. Reported by EbonTusk: thanks for testing it
+  again and again, and for the detailed reports.
+- **Changed: the uniform is now named Trauma Team Crew Uniform, with its own picture
+  showing the vest.** It can be told apart from the game's Trauma Team Outfit.
+
 ## 1.2.0 (2026-11-09)
 
 - **Changed: Brekke is now recorded by a professional voice actor: CinematicTactics.**

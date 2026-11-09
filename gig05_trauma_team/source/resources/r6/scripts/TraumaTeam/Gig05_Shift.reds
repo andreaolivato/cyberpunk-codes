@@ -135,6 +135,8 @@ public class TraumaTeamShift extends ScriptableSystem {
     private let m_lDown: Bool;
     private let m_lToken: Int32;
     private let m_hudLoop: Bool;
+    private let m_changedKnown: Bool;
+    private let m_changedWas: Int32;
 
     private func OnAttach() -> Void {
         this.m_fresh = true;
@@ -352,6 +354,13 @@ public class TraumaTeamShift extends ScriptableSystem {
         }
 
         this.CityScenes(qs, onShift);
+
+        let changed: Int32 = qs.GetFactStr("cc_g05_changed");
+        if this.m_changedKnown && this.m_changedWas <= 0 && changed > 0 {
+            qs.SetFactStr("cc_g05_dressed", 0);
+        }
+        this.m_changedKnown = true;
+        this.m_changedWas = changed;
 
         let wear: Bool = qs.GetFactStr("cc_g05_off_duty") <= 0
             && (onShift || qs.GetFactStr("cc_g05_suit_up") > 0);
