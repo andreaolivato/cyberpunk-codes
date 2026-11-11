@@ -7,6 +7,10 @@ each mod's Nexus Changelog tab.
 
 # Join Trauma Team
 
+## 1.2.4 (2026-11-11)
+
+- **Changed: minor improvements to speech lines.**
+
 ## 1.2.3 (2026-11-09)
 
 - **Fixed: the office chairs faced away from their desks.** Reported by Shalopoot.
@@ -88,6 +92,10 @@ each mod's Nexus Changelog tab.
 
 # Return Ticket
 
+## 1.0.2 (2026-11-11)
+
+- **Changed: minor improvements to speech lines.**
+
 ## 1.0.1 (2026-11-02)
 
 - **Added: game 2.31 support.** It needs the helper mods' last versions
@@ -119,6 +127,10 @@ Needs the Hodan Warsame mod, game 2.5 with Phantom Liberty, and ArchiveXL
 
 # Hodan Warsame
 
+## 1.0.1 (2026-11-11)
+
+- **Changed: minor improvements to speech lines.**
+
 ## 1.0.0 (2026-11-01)
 
 - **Added: Hodan Warsame, a new fixer in Charter Hill.** She calls you the
@@ -134,6 +146,10 @@ Needs the Hodan Warsame mod, game 2.5 with Phantom Liberty, and ArchiveXL
 ---
 
 # Acceptable Loss
+
+## 1.2.1 (2026-11-11)
+
+- **Changed: minor improvements to speech lines.**
 
 ## 1.2.0 (2026-10-27)
 
@@ -184,6 +200,10 @@ Needs the Hodan Warsame mod, game 2.5 with Phantom Liberty, and ArchiveXL
 ---
 
 # Dead Ringer
+
+## 1.3.1 (2026-11-11)
+
+- **Changed: minor improvements to speech lines.**
 
 ## 1.3.0 (2026-10-27)
 
@@ -315,6 +335,10 @@ Needs the Hodan Warsame mod, game 2.5 with Phantom Liberty, and ArchiveXL
 # Negative Balance
 
 Releases are on the [Nexus page](https://www.nexusmods.com/cyberpunk2077/mods/32694).
+
+## 2.4.1 (2026-11-11)
+
+- **Changed: minor improvements to speech lines.**
 
 ## 2.4.0 (2026-10-27)
 

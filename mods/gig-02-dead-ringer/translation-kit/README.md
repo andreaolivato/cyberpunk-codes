@@ -21,7 +21,8 @@ Everything that is original to the gig needs to be translated:
 - the shard
 - the breach on the relay
 - the notices and alerts on screen
-- the subtitles for the NPCs invented for this gig: Char and the merc.
+- the dialogue buttons.
+- the subtitles for the characters invented for this gig: Char and the merc.
 - (optional) the voice of Char and the merc.
 
 All these texts require a translation and this guide shows how to create
@@ -49,7 +50,10 @@ Nothing else.
    entry and type your translation into `femaleVariant` over the English.
    If `maleVariant` is not empty, translate it too. Never ever change
    `secondaryKey`. It must always stay the same. Save.
-3. Open `lines.json` in the same folder: the subtitles of Char and the merc:
+3. Open `lines.json` in the same folder.
+   The dialogue buttons are plain English: type your translation into
+   `femaleVariant` and `maleVariant` over it, as in `strings.json`.
+   The subtitles of Char and the merc look like this:
 
    ```
    <kiroshi l="eng" o="Heh. They didn't even make it out of the car." t="Heh. They didn't even make it out of the car." b="" a=""/>

@@ -1,9 +1,9 @@
 {
   "Header": {
-    "WolvenKitVersion": "8.20.0",
+    "WolvenKitVersion": "10.0.0-beta.1",
     "WKitJsonVersion": "0.0.9",
-    "GameVersion": 2310,
-    "ExportedDateTime": "2026-09-15T15:00:09.8410055Z",
+    "GameVersion": 2500,
+    "ExportedDateTime": "2026-11-05T12:40:42.9239943Z",
     "DataType": "CR2W",
     "ArchiveFileName": "C:\\Users\\andre\\OneDrive\\Desktop\\cyberpunk-gigs\\gig03_acceptable_loss\\source\\archive\\mod\\worlds\\03_night_city\\_compiled\\default\\cc_g03_cast.streamingsector"
   },
@@ -27,65 +27,12 @@
       "nodeData": {
         "BufferId": "0",
         "Flags": 4063232,
-        "Type": "WolvenKit.RED4.Archive.Buffer.worldNodeDataBuffer, WolvenKit.RED4, Version=8.20.0.0, Culture=neutral, PublicKeyToken=null",
+        "Type": "WolvenKit.RED4.Archive.Buffer.worldNodeDataBuffer, WolvenKit.RED4, Version=10.0.0.0, Culture=neutral, PublicKeyToken=null",
         "Data": [
           {
-            "Id": "0",
-            "NodeIndex": 0,
-            "Position": {
-              "$type": "Vector4",
-              "W": 0,
-              "X": -1969.88403,
-              "Y": 377.747986,
-              "Z": 8.04599953
-            },
-            "Orientation": {
-              "$type": "Quaternion",
-              "i": 0,
-              "j": 0,
-              "k": 0.649448037,
-              "r": 0.760405958
-            },
-            "Scale": {
-              "$type": "Vector3",
-              "X": 1,
-              "Y": 1,
-              "Z": 1
-            },
-            "Pivot": {
-              "$type": "Vector3",
-              "X": 0,
-              "Y": 0,
-              "Z": 0
-            },
-            "Bounds": {
-              "$type": "Box",
-              "Max": {
-                "$type": "Vector4",
-                "W": 0,
-                "X": -1969.88403,
-                "Y": 377.747986,
-                "Z": 8.04599953
-              },
-              "Min": {
-                "$type": "Vector4",
-                "W": 0,
-                "X": -1969.88403,
-                "Y": 377.747986,
-                "Z": 8.04599953
-              }
-            },
-            "QuestPrefabRefHash": {
-              "$type": "NodeRef",
-              "$storage": "string",
-              "$value": "$/mod/cc_g03_cast/#cc_g03_cast_dino"
-            },
-            "UkHash1": {
-              "$type": "NodeRef",
-              "$storage": "uint64",
-              "$value": "0"
-            },
-            "CookedPrefabData": {
+            "$type": "worldCompiledNodeInstanceSetupInfo",
+            "dataGroup": "Base",
+            "externalInplaceResourceHash": {
               "DepotPath": {
                 "$type": "ResourcePath",
                 "$storage": "uint64",
@@ -93,71 +40,145 @@
               },
               "Flags": "Default"
             },
-            "MaxStreamingDistance": 120,
-            "UkFloat1": 100,
-            "Uk10": 1024,
-            "Uk11": 512,
-            "Uk12": 0,
-            "Uk13": "0",
-            "Uk14": "0"
-          },
-          {
-            "Id": "0",
-            "NodeIndex": 1,
-            "Position": {
-              "$type": "Vector4",
-              "W": 0,
+            "globalNodeId": {
+              "$type": "worldGlobalNodeID",
+              "hash": "4467217108580636293"
+            },
+            "instanceIndex": 0,
+            "nodeFlags": "FLAG_AllowForceStreamIn, FLAG_IsInterior, FLAG_NoCollision, FLAG_Quest, FLAG_Building, FLAG_IsExludedOnConsole",
+            "nodeIdx": "0",
+            "patchedNode": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "preboostStreamingRefPoint": {
+              "$type": "Vector3",
               "X": -1969.88403,
               "Y": 377.747986,
               "Z": 8.04599953
             },
-            "Orientation": {
-              "$type": "Quaternion",
-              "i": 0,
-              "j": 0,
-              "k": 0,
-              "r": 1
+            "proxyMeshId": {
+              "$type": "worldGlobalNodeID",
+              "hash": "0"
             },
-            "Scale": {
+            "scale": {
+              "$type": "Vector3",
+              "X": 1,
+              "Y": 1,
+              "Z": 1
+            },
+            "secondaryRefPointDistance": 1.50463277E-36,
+            "secondaryRefPointPosition": {
+              "$type": "Vector3",
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "streamingDistance": 7.17464814E-43,
+            "streamingPriority": "0",
+            "streamingRefPoint": {
+              "$type": "Vector3",
+              "X": -1969.88403,
+              "Y": 377.747986,
+              "Z": 8.04599953
+            },
+            "todvisMask": "17096",
+            "transform": {
+              "$type": "Transform",
+              "orientation": {
+                "$type": "Quaternion",
+                "i": 0,
+                "j": 0,
+                "k": 0.649448037,
+                "r": 0.760405958
+              },
+              "position": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -1969.88403,
+                "Y": 377.747986,
+                "Z": 8.04599953
+              }
+            }
+          },
+          {
+            "$type": "worldCompiledNodeInstanceSetupInfo",
+            "dataGroup": "Base",
+            "externalInplaceResourceHash": {
+              "DepotPath": {
+                "$type": "ResourcePath",
+                "$storage": "uint64",
+                "$value": "0"
+              },
+              "Flags": "Default"
+            },
+            "globalNodeId": {
+              "$type": "worldGlobalNodeID",
+              "hash": "15179348187359754822"
+            },
+            "instanceIndex": 0,
+            "nodeFlags": "FLAG_AllowForceStreamIn, FLAG_IsInterior, FLAG_NoCollision, FLAG_Quest, FLAG_Building, FLAG_IsExludedOnConsole",
+            "nodeIdx": "0",
+            "patchedNode": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "preboostStreamingRefPoint": {
+              "$type": "Vector3",
+              "X": -1969.88403,
+              "Y": 377.747986,
+              "Z": 8.04599953
+            },
+            "proxyMeshId": {
+              "$type": "worldGlobalNodeID",
+              "hash": "0"
+            },
+            "scale": {
               "$type": "Vector3",
               "X": 50,
               "Y": 50,
               "Z": 50
             },
-            "Pivot": {
+            "secondaryRefPointDistance": 1.50463295E-36,
+            "secondaryRefPointPosition": {
               "$type": "Vector3",
               "X": 0,
               "Y": 0,
               "Z": 0
             },
-            "Bounds": {
-              "$type": "Box",
-              "Max": {
-                "$type": "Vector4",
-                "W": 0,
-                "X": -1969.88403,
-                "Y": 377.747986,
-                "Z": 8.04599953
+            "streamingDistance": 7.17464814E-43,
+            "streamingPriority": "0",
+            "streamingRefPoint": {
+              "$type": "Vector3",
+              "X": -1969.88403,
+              "Y": 377.747986,
+              "Z": 8.04599953
+            },
+            "todvisMask": "17096",
+            "transform": {
+              "$type": "Transform",
+              "orientation": {
+                "$type": "Quaternion",
+                "i": 0,
+                "j": 0,
+                "k": 0,
+                "r": 1
               },
-              "Min": {
+              "position": {
                 "$type": "Vector4",
                 "W": 0,
                 "X": -1969.88403,
                 "Y": 377.747986,
                 "Z": 8.04599953
               }
-            },
-            "QuestPrefabRefHash": {
-              "$type": "NodeRef",
-              "$storage": "string",
-              "$value": "$/mod/cc_g03_cast/#cc_g03_cast_com"
-            },
-            "UkHash1": {
-              "$type": "NodeRef",
-              "$storage": "uint64",
-              "$value": "0"
-            },
-            "CookedPrefabData": {
+            }
+          },
+          {
+            "$type": "worldCompiledNodeInstanceSetupInfo",
+            "dataGroup": "Base",
+            "externalInplaceResourceHash": {
               "DepotPath": {
                 "$type": "ResourcePath",
                 "$storage": "uint64",
@@ -165,85 +186,67 @@
               },
               "Flags": "Default"
             },
-            "MaxStreamingDistance": 120,
-            "UkFloat1": 100,
-            "Uk10": 1024,
-            "Uk11": 512,
-            "Uk12": 0,
-            "Uk13": "0",
-            "Uk14": "0"
-          },
-          {
-            "Id": "0",
-            "NodeIndex": 2,
-            "Position": {
-              "$type": "Vector4",
-              "W": 0,
+            "globalNodeId": {
+              "$type": "worldGlobalNodeID",
+              "hash": "13103314541688867964"
+            },
+            "instanceIndex": 0,
+            "nodeFlags": "FLAG_BoostedToPrefabDistance, FLAG_IsInterior, FLAG_PrefabProxyMesh, FLAG_Decoration, FLAG_IsExludedOnConsole, FLAG_Culling_IsForceCulledAlways, FLAG_Culling_IsForceCulledNearPeripheral, FLAG_AllowDistanceBoosting, FLAG_IsExludedOnNextGenConsoles",
+            "nodeIdx": "295368",
+            "patchedNode": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "preboostStreamingRefPoint": {
+              "$type": "Vector3",
               "X": -1969.88403,
               "Y": 377.747986,
               "Z": 6.046
             },
-            "Orientation": {
-              "$type": "Quaternion",
-              "i": 0,
-              "j": 0,
-              "k": 0,
-              "r": 1
+            "proxyMeshId": {
+              "$type": "worldGlobalNodeID",
+              "hash": "0"
             },
-            "Scale": {
+            "scale": {
               "$type": "Vector3",
               "X": 1,
               "Y": 1,
               "Z": 1
             },
-            "Pivot": {
+            "secondaryRefPointDistance": 1.88079132E-36,
+            "secondaryRefPointPosition": {
               "$type": "Vector3",
               "X": 0,
               "Y": 0,
               "Z": 0
             },
-            "Bounds": {
-              "$type": "Box",
-              "Max": {
-                "$type": "Vector4",
-                "W": 0,
-                "X": -1969.88403,
-                "Y": 377.747986,
-                "Z": 6.046
+            "streamingDistance": 1.82953528E-40,
+            "streamingPriority": "19",
+            "streamingRefPoint": {
+              "$type": "Vector3",
+              "X": -1969.88403,
+              "Y": 377.747986,
+              "Z": 6.046
+            },
+            "todvisMask": "17076",
+            "transform": {
+              "$type": "Transform",
+              "orientation": {
+                "$type": "Quaternion",
+                "i": 0,
+                "j": 0,
+                "k": 0,
+                "r": 1
               },
-              "Min": {
+              "position": {
                 "$type": "Vector4",
                 "W": 0,
                 "X": -1969.88403,
                 "Y": 377.747986,
                 "Z": 6.046
               }
-            },
-            "QuestPrefabRefHash": {
-              "$type": "NodeRef",
-              "$storage": "string",
-              "$value": "$/mod/cc_g03_cast/#cc_g03_bar_area"
-            },
-            "UkHash1": {
-              "$type": "NodeRef",
-              "$storage": "uint64",
-              "$value": "0"
-            },
-            "CookedPrefabData": {
-              "DepotPath": {
-                "$type": "ResourcePath",
-                "$storage": "uint64",
-                "$value": "0"
-              },
-              "Flags": "Default"
-            },
-            "MaxStreamingDistance": 2760.11133,
-            "UkFloat1": 90.03862,
-            "Uk10": 1056,
-            "Uk11": 65024,
-            "Uk12": 1,
-            "Uk13": "0",
-            "Uk14": "0"
+            }
           }
         ]
       },
@@ -398,10 +401,10 @@
             "$type": "worldTriggerAreaNode",
             "color": {
               "$type": "Color",
-              "Alpha": 0,
-              "Blue": 0,
-              "Green": 0,
-              "Red": 0
+              "Alpha": 128,
+              "Blue": 160,
+              "Green": 160,
+              "Red": 255
             },
             "debugName": {
               "$type": "CName",
@@ -463,7 +466,227 @@
         }
       ],
       "persistentNodeIndex": 0,
-      "persistentNodes": [],
+      "persistentNodes": [
+        {
+          "$type": "worldCompiledNodeInstanceSetupInfo",
+          "dataGroup": "Base",
+          "externalInplaceResourceHash": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "globalNodeId": {
+            "$type": "worldGlobalNodeID",
+            "hash": "4467217108580636293"
+          },
+          "instanceIndex": 0,
+          "nodeFlags": "FLAG_AllowForceStreamIn, FLAG_IsInterior, FLAG_NoCollision, FLAG_Quest, FLAG_Building, FLAG_IsExludedOnConsole",
+          "nodeIdx": "0",
+          "patchedNode": {
+            "$type": "NodeRef",
+            "$storage": "uint64",
+            "$value": "0"
+          },
+          "preboostStreamingRefPoint": {
+            "$type": "Vector3",
+            "X": -1969.88403,
+            "Y": 377.747986,
+            "Z": 8.04599953
+          },
+          "proxyMeshId": {
+            "$type": "worldGlobalNodeID",
+            "hash": "0"
+          },
+          "scale": {
+            "$type": "Vector3",
+            "X": 1,
+            "Y": 1,
+            "Z": 1
+          },
+          "secondaryRefPointDistance": 1.50463277E-36,
+          "secondaryRefPointPosition": {
+            "$type": "Vector3",
+            "X": 0,
+            "Y": 0,
+            "Z": 0
+          },
+          "streamingDistance": 7.17464814E-43,
+          "streamingPriority": "0",
+          "streamingRefPoint": {
+            "$type": "Vector3",
+            "X": -1969.88403,
+            "Y": 377.747986,
+            "Z": 8.04599953
+          },
+          "todvisMask": "17096",
+          "transform": {
+            "$type": "Transform",
+            "orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0.649448037,
+              "r": 0.760405958
+            },
+            "position": {
+              "$type": "Vector4",
+              "W": 0,
+              "X": -1969.88403,
+              "Y": 377.747986,
+              "Z": 8.04599953
+            }
+          }
+        },
+        {
+          "$type": "worldCompiledNodeInstanceSetupInfo",
+          "dataGroup": "Base",
+          "externalInplaceResourceHash": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "globalNodeId": {
+            "$type": "worldGlobalNodeID",
+            "hash": "15179348187359754822"
+          },
+          "instanceIndex": 0,
+          "nodeFlags": "FLAG_AllowForceStreamIn, FLAG_IsInterior, FLAG_NoCollision, FLAG_Quest, FLAG_Building, FLAG_IsExludedOnConsole",
+          "nodeIdx": "0",
+          "patchedNode": {
+            "$type": "NodeRef",
+            "$storage": "uint64",
+            "$value": "0"
+          },
+          "preboostStreamingRefPoint": {
+            "$type": "Vector3",
+            "X": -1969.88403,
+            "Y": 377.747986,
+            "Z": 8.04599953
+          },
+          "proxyMeshId": {
+            "$type": "worldGlobalNodeID",
+            "hash": "0"
+          },
+          "scale": {
+            "$type": "Vector3",
+            "X": 50,
+            "Y": 50,
+            "Z": 50
+          },
+          "secondaryRefPointDistance": 1.50463295E-36,
+          "secondaryRefPointPosition": {
+            "$type": "Vector3",
+            "X": 0,
+            "Y": 0,
+            "Z": 0
+          },
+          "streamingDistance": 7.17464814E-43,
+          "streamingPriority": "0",
+          "streamingRefPoint": {
+            "$type": "Vector3",
+            "X": -1969.88403,
+            "Y": 377.747986,
+            "Z": 8.04599953
+          },
+          "todvisMask": "17096",
+          "transform": {
+            "$type": "Transform",
+            "orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "position": {
+              "$type": "Vector4",
+              "W": 0,
+              "X": -1969.88403,
+              "Y": 377.747986,
+              "Z": 8.04599953
+            }
+          }
+        },
+        {
+          "$type": "worldCompiledNodeInstanceSetupInfo",
+          "dataGroup": "Base",
+          "externalInplaceResourceHash": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "globalNodeId": {
+            "$type": "worldGlobalNodeID",
+            "hash": "13103314541688867964"
+          },
+          "instanceIndex": 0,
+          "nodeFlags": "FLAG_BoostedToPrefabDistance, FLAG_IsInterior, FLAG_PrefabProxyMesh, FLAG_Decoration, FLAG_IsExludedOnConsole, FLAG_Culling_IsForceCulledAlways, FLAG_Culling_IsForceCulledNearPeripheral, FLAG_AllowDistanceBoosting, FLAG_IsExludedOnNextGenConsoles",
+          "nodeIdx": "295368",
+          "patchedNode": {
+            "$type": "NodeRef",
+            "$storage": "uint64",
+            "$value": "0"
+          },
+          "preboostStreamingRefPoint": {
+            "$type": "Vector3",
+            "X": -1969.88403,
+            "Y": 377.747986,
+            "Z": 6.046
+          },
+          "proxyMeshId": {
+            "$type": "worldGlobalNodeID",
+            "hash": "0"
+          },
+          "scale": {
+            "$type": "Vector3",
+            "X": 1,
+            "Y": 1,
+            "Z": 1
+          },
+          "secondaryRefPointDistance": 1.88079132E-36,
+          "secondaryRefPointPosition": {
+            "$type": "Vector3",
+            "X": 0,
+            "Y": 0,
+            "Z": 0
+          },
+          "streamingDistance": 1.82953528E-40,
+          "streamingPriority": "19",
+          "streamingRefPoint": {
+            "$type": "Vector3",
+            "X": -1969.88403,
+            "Y": 377.747986,
+            "Z": 6.046
+          },
+          "todvisMask": "17076",
+          "transform": {
+            "$type": "Transform",
+            "orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "position": {
+              "$type": "Vector4",
+              "W": 0,
+              "X": -1969.88403,
+              "Y": 377.747986,
+              "Z": 6.046
+            }
+          }
+        }
+      ],
       "variantIndices": [0
       ],
       "variantNodes": [],

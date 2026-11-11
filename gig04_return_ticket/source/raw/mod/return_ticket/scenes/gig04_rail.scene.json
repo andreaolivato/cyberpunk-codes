@@ -1,9 +1,9 @@
 {
   "Header": {
-    "WolvenKitVersion": "8.20.0",
+    "WolvenKitVersion": "10.0.0-beta.1",
     "WKitJsonVersion": "0.0.9",
-    "GameVersion": 2310,
-    "ExportedDateTime": "2026-11-01T06:41:54.1828556Z",
+    "GameVersion": 2500,
+    "ExportedDateTime": "2026-11-06T18:25:24.7704384Z",
     "DataType": "CR2W",
     "ArchiveFileName": "C:\\Users\\andre\\OneDrive\\Desktop\\cyberpunk-gigs\\gig04_return_ticket\\source\\archive\\mod\\return_ticket\\scenes\\gig04_rail.scene"
   },
@@ -441,32 +441,8 @@
                           "Data": {
                             "$type": "questCharacterCombat_ConditionType",
                             "inverted": 1,
-                            "isPlayer": 1,
-                            "objectRef": {
-                              "$type": "gameEntityReference",
-                              "dynamicEntityUniqueName": {
-                                "$type": "CName",
-                                "$storage": "string",
-                                "$value": "None"
-                              },
-                              "names": [],
-                              "reference": {
-                                "$type": "NodeRef",
-                                "$storage": "uint64",
-                                "$value": "0"
-                              },
-                              "sceneActorContextName": {
-                                "$type": "CName",
-                                "$storage": "string",
-                                "$value": "None"
-                              },
-                              "slotName": {
-                                "$type": "CName",
-                                "$storage": "string",
-                                "$value": "None"
-                              },
-                              "type": "EntityRef"
-                            }
+                            "isPlayer": 0,
+                            "objectRef": null
                           }
                         }
                       }

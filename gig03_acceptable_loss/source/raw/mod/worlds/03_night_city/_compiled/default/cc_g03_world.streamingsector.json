@@ -1,9 +1,9 @@
 {
   "Header": {
-    "WolvenKitVersion": "8.20.0",
+    "WolvenKitVersion": "10.0.0-beta.1",
     "WKitJsonVersion": "0.0.9",
-    "GameVersion": 2310,
-    "ExportedDateTime": "2026-09-09T13:26:07.9587628Z",
+    "GameVersion": 2500,
+    "ExportedDateTime": "2026-11-05T12:40:43.9779078Z",
     "DataType": "CR2W",
     "ArchiveFileName": "C:\\Users\\andre\\OneDrive\\Desktop\\cyberpunk-gigs\\gig03_acceptable_loss\\source\\archive\\mod\\worlds\\03_night_city\\_compiled\\default\\cc_g03_world.streamingsector"
   },
@@ -27,65 +27,12 @@
       "nodeData": {
         "BufferId": "0",
         "Flags": 4063232,
-        "Type": "WolvenKit.RED4.Archive.Buffer.worldNodeDataBuffer, WolvenKit.RED4, Version=8.20.0.0, Culture=neutral, PublicKeyToken=null",
+        "Type": "WolvenKit.RED4.Archive.Buffer.worldNodeDataBuffer, WolvenKit.RED4, Version=10.0.0.0, Culture=neutral, PublicKeyToken=null",
         "Data": [
           {
-            "Id": "0",
-            "NodeIndex": 0,
-            "Position": {
-              "$type": "Vector4",
-              "W": 0,
-              "X": -95.6210022,
-              "Y": -5211.43115,
-              "Z": 87.8850021
-            },
-            "Orientation": {
-              "$type": "Quaternion",
-              "i": 0,
-              "j": 0,
-              "k": 0,
-              "r": 1
-            },
-            "Scale": {
-              "$type": "Vector3",
-              "X": 1,
-              "Y": 1,
-              "Z": 1
-            },
-            "Pivot": {
-              "$type": "Vector3",
-              "X": 0,
-              "Y": 0,
-              "Z": 0
-            },
-            "Bounds": {
-              "$type": "Box",
-              "Max": {
-                "$type": "Vector4",
-                "W": 0,
-                "X": -95.6210022,
-                "Y": -5211.43115,
-                "Z": 87.8850021
-              },
-              "Min": {
-                "$type": "Vector4",
-                "W": 0,
-                "X": -95.6210022,
-                "Y": -5211.43115,
-                "Z": 87.8850021
-              }
-            },
-            "QuestPrefabRefHash": {
-              "$type": "NodeRef",
-              "$storage": "string",
-              "$value": "$/03_night_city/se5/#cc_g03_shard_container"
-            },
-            "UkHash1": {
-              "$type": "NodeRef",
-              "$storage": "uint64",
-              "$value": "0"
-            },
-            "CookedPrefabData": {
+            "$type": "worldCompiledNodeInstanceSetupInfo",
+            "dataGroup": "Base",
+            "externalInplaceResourceHash": {
               "DepotPath": {
                 "$type": "ResourcePath",
                 "$storage": "uint64",
@@ -93,13 +40,67 @@
               },
               "Flags": "Default"
             },
-            "MaxStreamingDistance": 164.710114,
-            "UkFloat1": 50,
-            "Uk10": 1056,
-            "Uk11": 10762,
-            "Uk12": 0,
-            "Uk13": "0",
-            "Uk14": "0"
+            "globalNodeId": {
+              "$type": "worldGlobalNodeID",
+              "hash": "4882064241385502893"
+            },
+            "instanceIndex": 0,
+            "nodeFlags": "FLAG_IsInterior, FLAG_PrefabProxyMesh, FLAG_Building, FLAG_IsExludedOnConsole",
+            "nodeIdx": "308682",
+            "patchedNode": {
+              "$type": "NodeRef",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "preboostStreamingRefPoint": {
+              "$type": "Vector3",
+              "X": -95.6210022,
+              "Y": -5211.43115,
+              "Z": 87.8850021
+            },
+            "proxyMeshId": {
+              "$type": "worldGlobalNodeID",
+              "hash": "0"
+            },
+            "scale": {
+              "$type": "Vector3",
+              "X": 1,
+              "Y": 1,
+              "Z": 1
+            },
+            "secondaryRefPointDistance": 1.88079096E-36,
+            "secondaryRefPointPosition": {
+              "$type": "Vector3",
+              "X": 0,
+              "Y": 0,
+              "Z": 0
+            },
+            "streamingDistance": 1.50807741E-41,
+            "streamingPriority": "0",
+            "streamingRefPoint": {
+              "$type": "Vector3",
+              "X": -95.6210022,
+              "Y": -5211.43115,
+              "Z": 87.8850021
+            },
+            "todvisMask": "16968",
+            "transform": {
+              "$type": "Transform",
+              "orientation": {
+                "$type": "Quaternion",
+                "i": 0,
+                "j": 0,
+                "k": 0,
+                "r": 1
+              },
+              "position": {
+                "$type": "Vector4",
+                "W": 0,
+                "X": -95.6210022,
+                "Y": -5211.43115,
+                "Z": 87.8850021
+              }
+            }
           }
         ]
       },
@@ -141,7 +142,7 @@
                 "buffer": {
                   "BufferId": "1",
                   "Flags": 4063232,
-                  "Type": "WolvenKit.RED4.Archive.Buffer.RedPackage, WolvenKit.RED4, Version=8.20.0.0, Culture=neutral, PublicKeyToken=null",
+                  "Type": "WolvenKit.RED4.Archive.Buffer.RedPackage, WolvenKit.RED4, Version=10.0.0.0, Culture=neutral, PublicKeyToken=null",
                   "Data": {
                     "Version": 4,
                     "Sections": 6,
@@ -267,7 +268,81 @@
         }
       ],
       "persistentNodeIndex": 0,
-      "persistentNodes": [],
+      "persistentNodes": [
+        {
+          "$type": "worldCompiledNodeInstanceSetupInfo",
+          "dataGroup": "Base",
+          "externalInplaceResourceHash": {
+            "DepotPath": {
+              "$type": "ResourcePath",
+              "$storage": "uint64",
+              "$value": "0"
+            },
+            "Flags": "Default"
+          },
+          "globalNodeId": {
+            "$type": "worldGlobalNodeID",
+            "hash": "4882064241385502893"
+          },
+          "instanceIndex": 0,
+          "nodeFlags": "FLAG_IsInterior, FLAG_PrefabProxyMesh, FLAG_Building, FLAG_IsExludedOnConsole",
+          "nodeIdx": "308682",
+          "patchedNode": {
+            "$type": "NodeRef",
+            "$storage": "uint64",
+            "$value": "0"
+          },
+          "preboostStreamingRefPoint": {
+            "$type": "Vector3",
+            "X": -95.6210022,
+            "Y": -5211.43115,
+            "Z": 87.8850021
+          },
+          "proxyMeshId": {
+            "$type": "worldGlobalNodeID",
+            "hash": "0"
+          },
+          "scale": {
+            "$type": "Vector3",
+            "X": 1,
+            "Y": 1,
+            "Z": 1
+          },
+          "secondaryRefPointDistance": 1.88079096E-36,
+          "secondaryRefPointPosition": {
+            "$type": "Vector3",
+            "X": 0,
+            "Y": 0,
+            "Z": 0
+          },
+          "streamingDistance": 1.50807741E-41,
+          "streamingPriority": "0",
+          "streamingRefPoint": {
+            "$type": "Vector3",
+            "X": -95.6210022,
+            "Y": -5211.43115,
+            "Z": 87.8850021
+          },
+          "todvisMask": "16968",
+          "transform": {
+            "$type": "Transform",
+            "orientation": {
+              "$type": "Quaternion",
+              "i": 0,
+              "j": 0,
+              "k": 0,
+              "r": 1
+            },
+            "position": {
+              "$type": "Vector4",
+              "W": 0,
+              "X": -95.6210022,
+              "Y": -5211.43115,
+              "Z": 87.8850021
+            }
+          }
+        }
+      ],
       "variantIndices": [0
       ],
       "variantNodes": [],

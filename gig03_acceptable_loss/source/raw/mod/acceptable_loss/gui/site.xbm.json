@@ -1,9 +1,9 @@
 {
   "Header": {
-    "WolvenKitVersion": "8.20.0",
+    "WolvenKitVersion": "10.0.0-beta.1",
     "WKitJsonVersion": "0.0.9",
-    "GameVersion": 2310,
-    "ExportedDateTime": "2026-10-27T08:16:09.4185156Z",
+    "GameVersion": 2500,
+    "ExportedDateTime": "2026-11-11T14:18:33.4185156Z",
     "DataType": "CR2W",
     "ArchiveFileName": "C:\\Users\\andre\\OneDrive\\Desktop\\cyberpunk-gigs\\gig03_acceptable_loss\\source\\archive\\mod\\acceptable_loss\\gui\\site.xbm"
   },
@@ -37,6 +37,7 @@
             "header": {
               "$type": "rendRenderTextureBlobHeader",
               "flags": 1,
+              "formatOverride": "TEXFMT_NULL",
               "histogramData": [],
               "mipMapInfo": [
                 {
@@ -199,6 +200,7 @@
         "$type": "STextureGroupSetup",
         "allowTextureDowngrade": 1,
         "alphaToCoverageThreshold": 0,
+        "astcQuality": "ASTC_None",
         "compression": "TCM_None",
         "group": "TEXG_Generic_UI",
         "hasMipchain": 1,

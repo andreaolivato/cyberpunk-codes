@@ -1,6 +1,6 @@
 # Only if you record Char and the merc in your language
 
-This voice map points each of their lines at a clip you supply. Put the
+This voice map points each of the lines at a clip you supply. Put the
 clips (`.wem`) under `source\archive\mod\dead_ringer_translation\vo\` in
 the project, named as the map says (`gig02_group3__q07.wem` and so on). Copy this
 `vomap.json.json` next to `strings.json.json` under `raw`, right-click
