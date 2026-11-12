@@ -273,6 +273,7 @@ public class TraumaTeamShift extends ScriptableSystem {
         this.NextShift(game, qs, player);
         this.Helmet(game, qs, player);
         this.RoofTraffic(game, qs, player);
+        this.Colleagues(game, qs);
 
         if this.m_warping {
             this.Schedule(0.25);
@@ -285,6 +286,19 @@ public class TraumaTeamShift extends ScriptableSystem {
                 // idle
                 this.Schedule(3.0);
             }
+        }
+    }
+
+    private func Colleagues(game: GameInstance, qs: ref<QuestsSystem>) -> Void {
+        if qs.GetFactStr("cc_g05_hired") <= 0 {
+            return;
+        }
+        let att: ref<AttitudeSystem> = GameInstance.GetAttitudeSystem(game);
+        if !IsDefined(att) {
+            return;
+        }
+        if NotEquals(att.GetAttitudeRelation(n"traumateam", n"player"), EAIAttitude.AIA_Friendly) {
+            att.SetAttitudeGroupRelationPersistent(n"traumateam", n"player", EAIAttitude.AIA_Friendly);
         }
     }
 
@@ -843,6 +857,10 @@ public class TraumaTeamShift extends ScriptableSystem {
         let lead: ref<ScriptedPuppet> = this.FindInCommunity(game, names[0]);
         if IsDefined(lead) && ScriptedPuppet.IsAlive(lead) {
             ArrayPush(crew, lead);
+        }
+        let soldier: ref<ScriptedPuppet> = this.FindInCommunity(game, names[1]);
+        if IsDefined(soldier) && ScriptedPuppet.IsAlive(soldier) {
+            ArrayPush(crew, soldier);
         }
         let client: ref<ScriptedPuppet> = this.FindInCommunity(game, CCG05Shift.ClientEntry());
 

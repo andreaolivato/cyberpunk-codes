@@ -3,7 +3,7 @@
     "WolvenKitVersion": "10.0.0-beta.1",
     "WKitJsonVersion": "0.0.9",
     "GameVersion": 2500,
-    "ExportedDateTime": "2026-11-11T14:28:33.0648612Z",
+    "ExportedDateTime": "2026-11-12T14:26:19.3842084Z",
     "DataType": "CR2W",
     "ArchiveFileName": "C:\\Users\\andre\\OneDrive\\Desktop\\cyberpunk-gigs\\gig05_trauma_team\\source\\archive\\mod\\trauma_team\\scenes\\gig05_repeat.scene"
   },
@@ -579,6 +579,26 @@
                       "executionTagFlags": 0,
                       "id": {
                         "$type": "scnSceneEventId",
+                        "id": "3379804286216441085"
+                      },
+                      "osockStamp": {
+                        "$type": "scnOutputSocketStamp",
+                        "name": 3,
+                        "ordinal": 0
+                      },
+                      "scalingData": null,
+                      "startTime": 0,
+                      "type": "0"
+                    }
+                  },
+                  {
+                    "HandleId": "4",
+                    "Data": {
+                      "$type": "scneventsSocket",
+                      "duration": 0,
+                      "executionTagFlags": 0,
+                      "id": {
+                        "$type": "scnSceneEventId",
                         "id": "3379803186704812874"
                       },
                       "osockStamp": {
@@ -592,7 +612,7 @@
                     }
                   },
                   {
-                    "HandleId": "4",
+                    "HandleId": "5",
                     "Data": {
                       "$type": "scnLookAtEvent",
                       "basicData": {
@@ -768,6 +788,28 @@
                       "name": 2,
                       "ordinal": 0
                     }
+                  },
+                  {
+                    "$type": "scnOutputSocket",
+                    "destinations": [
+                      {
+                        "$type": "scnInputSocketId",
+                        "isockStamp": {
+                          "$type": "scnInputSocketStamp",
+                          "name": 0,
+                          "ordinal": 1
+                        },
+                        "nodeId": {
+                          "$type": "scnNodeId",
+                          "id": 11
+                        }
+                      }
+                    ],
+                    "stamp": {
+                      "$type": "scnOutputSocketStamp",
+                      "name": 3,
+                      "ordinal": 0
+                    }
                   }
                 ],
                 "sectionDuration": {
@@ -777,7 +819,7 @@
               }
             },
             {
-              "HandleId": "5",
+              "HandleId": "6",
               "Data": {
                 "$type": "scnHubNode",
                 "ffStrategy": "automatic",
@@ -824,7 +866,7 @@
               }
             },
             {
-              "HandleId": "6",
+              "HandleId": "7",
               "Data": {
                 "$type": "scnChoiceNode",
                 "alwaysUseBrainGender": 0,
@@ -901,7 +943,7 @@
                   "value": ""
                 },
                 "lookAtParams": {
-                  "HandleId": "7",
+                  "HandleId": "8",
                   "Data": {
                     "$type": "scnChoiceNodeNsAdaptiveLookAtParams",
                     "auxiliaryRelativePoint": {
@@ -929,7 +971,7 @@
                   }
                 },
                 "mappinParams": {
-                  "HandleId": "8",
+                  "HandleId": "9",
                   "Data": {
                     "$type": "scnChoiceNodeNsMappinParams",
                     "locationType": "Nameplate",
@@ -1066,7 +1108,7 @@
                 "reminderCondition": null,
                 "reminderParams": null,
                 "shapeParams": {
-                  "HandleId": "9",
+                  "HandleId": "10",
                   "Data": {
                     "$type": "scnInteractionShapeParams",
                     "activationBaseLength": 1,
@@ -1095,13 +1137,33 @@
               }
             },
             {
-              "HandleId": "10",
+              "HandleId": "11",
               "Data": {
                 "$type": "scnSectionNode",
                 "actorBehaviors": [],
                 "events": [
                   {
-                    "HandleId": "11",
+                    "HandleId": "12",
+                    "Data": {
+                      "$type": "scneventsSocket",
+                      "duration": 0,
+                      "executionTagFlags": 0,
+                      "id": {
+                        "$type": "scnSceneEventId",
+                        "id": "3043808926342838919"
+                      },
+                      "osockStamp": {
+                        "$type": "scnOutputSocketStamp",
+                        "name": 2,
+                        "ordinal": 0
+                      },
+                      "scalingData": null,
+                      "startTime": 0,
+                      "type": "0"
+                    }
+                  },
+                  {
+                    "HandleId": "13",
                     "Data": {
                       "$type": "scnChangeIdleAnimEvent",
                       "actorComponent": {
@@ -1201,7 +1263,7 @@
                     }
                   },
                   {
-                    "HandleId": "12",
+                    "HandleId": "14",
                     "Data": {
                       "$type": "scnLookAtEvent",
                       "basicData": {
@@ -1318,7 +1380,7 @@
                     }
                   },
                   {
-                    "HandleId": "13",
+                    "HandleId": "15",
                     "Data": {
                       "$type": "scnDialogLineEvent",
                       "additionalSpeakers": {
@@ -1358,7 +1420,7 @@
                     }
                   },
                   {
-                    "HandleId": "14",
+                    "HandleId": "16",
                     "Data": {
                       "$type": "scnPlaySkAnimEvent",
                       "actorComponent": {
@@ -1386,7 +1448,7 @@
                         "weight": 1
                       },
                       "animName": {
-                        "HandleId": "15",
+                        "HandleId": "17",
                         "Data": {
                           "$type": "scnAnimName",
                           "type": "direct",
@@ -1413,7 +1475,7 @@
                       "eyesBlendAdditive": 1,
                       "FPPControlActive": 0,
                       "gameplayAnimName": {
-                        "HandleId": "16",
+                        "HandleId": "18",
                         "Data": {
                           "$type": "scnAnimName",
                           "type": "direct",
@@ -1576,6 +1638,28 @@
                       "name": 1,
                       "ordinal": 0
                     }
+                  },
+                  {
+                    "$type": "scnOutputSocket",
+                    "destinations": [
+                      {
+                        "$type": "scnInputSocketId",
+                        "isockStamp": {
+                          "$type": "scnInputSocketStamp",
+                          "name": 0,
+                          "ordinal": 1
+                        },
+                        "nodeId": {
+                          "$type": "scnNodeId",
+                          "id": 12
+                        }
+                      }
+                    ],
+                    "stamp": {
+                      "$type": "scnOutputSocketStamp",
+                      "name": 2,
+                      "ordinal": 0
+                    }
                   }
                 ],
                 "sectionDuration": {
@@ -1585,13 +1669,13 @@
               }
             },
             {
-              "HandleId": "17",
+              "HandleId": "19",
               "Data": {
                 "$type": "scnSectionNode",
                 "actorBehaviors": [],
                 "events": [
                   {
-                    "HandleId": "18",
+                    "HandleId": "20",
                     "Data": {
                       "$type": "scnLookAtEvent",
                       "basicData": {
@@ -1708,7 +1792,7 @@
                     }
                   },
                   {
-                    "HandleId": "19",
+                    "HandleId": "21",
                     "Data": {
                       "$type": "scnDialogLineEvent",
                       "additionalSpeakers": {
@@ -1794,7 +1878,7 @@
               }
             },
             {
-              "HandleId": "20",
+              "HandleId": "22",
               "Data": {
                 "$type": "scnEndNode",
                 "ffStrategy": "automatic",
@@ -1807,7 +1891,7 @@
               }
             },
             {
-              "HandleId": "21",
+              "HandleId": "23",
               "Data": {
                 "$type": "scnQuestNode",
                 "ffStrategy": "automatic",
@@ -1843,11 +1927,11 @@
                         "isockStamp": {
                           "$type": "scnInputSocketStamp",
                           "name": 0,
-                          "ordinal": 0
+                          "ordinal": 1
                         },
                         "nodeId": {
                           "$type": "scnNodeId",
-                          "id": 9
+                          "id": 13
                         }
                       }
                     ],
@@ -1859,24 +1943,24 @@
                   }
                 ],
                 "questNode": {
-                  "HandleId": "22",
+                  "HandleId": "24",
                   "Data": {
                     "$type": "questPauseConditionNodeDefinition",
                     "condition": {
-                      "HandleId": "23",
+                      "HandleId": "25",
                       "Data": {
                         "$type": "questDistanceCondition",
                         "type": {
-                          "HandleId": "24",
+                          "HandleId": "26",
                           "Data": {
                             "$type": "questDistanceComparison_ConditionType",
                             "comparisonType": "Greater",
                             "distanceDefinition1": {
-                              "HandleId": "25",
+                              "HandleId": "27",
                               "Data": {
                                 "$type": "questObjectDistance",
                                 "entityRef": {
-                                  "HandleId": "26",
+                                  "HandleId": "28",
                                   "Data": {
                                     "$type": "questUniversalRef",
                                     "entityReference": {
@@ -1942,7 +2026,7 @@
                               }
                             },
                             "distanceDefinition2": {
-                              "HandleId": "27",
+                              "HandleId": "29",
                               "Data": {
                                 "$type": "questValueDistance",
                                 "distanceValue": 12
@@ -1955,7 +2039,7 @@
                     "id": 8,
                     "sockets": [
                       {
-                        "HandleId": "28",
+                        "HandleId": "30",
                         "Data": {
                           "$type": "questSocketDefinition",
                           "connections": [],
@@ -1968,7 +2052,7 @@
                         }
                       },
                       {
-                        "HandleId": "29",
+                        "HandleId": "31",
                         "Data": {
                           "$type": "questSocketDefinition",
                           "connections": [],
@@ -1981,7 +2065,7 @@
                         }
                       },
                       {
-                        "HandleId": "30",
+                        "HandleId": "32",
                         "Data": {
                           "$type": "questSocketDefinition",
                           "connections": [],
@@ -1999,7 +2083,7 @@
               }
             },
             {
-              "HandleId": "31",
+              "HandleId": "33",
               "Data": {
                 "$type": "scnEndNode",
                 "ffStrategy": "automatic",
@@ -2012,7 +2096,7 @@
               }
             },
             {
-              "HandleId": "32",
+              "HandleId": "34",
               "Data": {
                 "$type": "scnQuestNode",
                 "ffStrategy": "automatic",
@@ -2051,7 +2135,7 @@
                   }
                 ],
                 "questNode": {
-                  "HandleId": "33",
+                  "HandleId": "35",
                   "Data": {
                     "$type": "questUseWorkspotNodeDefinition",
                     "entityReference": {
@@ -2087,7 +2171,7 @@
                     },
                     "id": 10,
                     "paramsV1": {
-                      "HandleId": "34",
+                      "HandleId": "36",
                       "Data": {
                         "$type": "questUseWorkspotParamsV1",
                         "changeWorkspot": 1,
@@ -2157,7 +2241,7 @@
                     },
                     "sockets": [
                       {
-                        "HandleId": "35",
+                        "HandleId": "37",
                         "Data": {
                           "$type": "questSocketDefinition",
                           "connections": [],
@@ -2170,7 +2254,7 @@
                         }
                       },
                       {
-                        "HandleId": "36",
+                        "HandleId": "38",
                         "Data": {
                           "$type": "questSocketDefinition",
                           "connections": [],
@@ -2183,7 +2267,7 @@
                         }
                       },
                       {
-                        "HandleId": "37",
+                        "HandleId": "39",
                         "Data": {
                           "$type": "questSocketDefinition",
                           "connections": [],
@@ -2191,6 +2275,346 @@
                             "$type": "CName",
                             "$storage": "string",
                             "$value": "Success"
+                          },
+                          "type": "Output"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "HandleId": "40",
+              "Data": {
+                "$type": "scnQuestNode",
+                "ffStrategy": "automatic",
+                "isockMappings": [
+                  {
+                    "$type": "CName",
+                    "$storage": "string",
+                    "$value": "CutDestination"
+                  },
+                  {
+                    "$type": "CName",
+                    "$storage": "string",
+                    "$value": "In"
+                  }
+                ],
+                "nodeId": {
+                  "$type": "scnNodeId",
+                  "id": 11
+                },
+                "osockMappings": [
+                  {
+                    "$type": "CName",
+                    "$storage": "string",
+                    "$value": "Out"
+                  }
+                ],
+                "outputSockets": [
+                  {
+                    "$type": "scnOutputSocket",
+                    "destinations": [],
+                    "stamp": {
+                      "$type": "scnOutputSocketStamp",
+                      "name": 0,
+                      "ordinal": 0
+                    }
+                  }
+                ],
+                "questNode": {
+                  "HandleId": "41",
+                  "Data": {
+                    "$type": "questFactsDBManagerNodeDefinition",
+                    "id": 11,
+                    "sockets": [
+                      {
+                        "HandleId": "42",
+                        "Data": {
+                          "$type": "questSocketDefinition",
+                          "connections": [],
+                          "name": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "CutDestination"
+                          },
+                          "type": "CutDestination"
+                        }
+                      },
+                      {
+                        "HandleId": "43",
+                        "Data": {
+                          "$type": "questSocketDefinition",
+                          "connections": [],
+                          "name": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "In"
+                          },
+                          "type": "Input"
+                        }
+                      },
+                      {
+                        "HandleId": "44",
+                        "Data": {
+                          "$type": "questSocketDefinition",
+                          "connections": [],
+                          "name": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "Out"
+                          },
+                          "type": "Output"
+                        }
+                      }
+                    ],
+                    "type": {
+                      "HandleId": "45",
+                      "Data": {
+                        "$type": "questSetVar_NodeType",
+                        "factName": "cc_g05_said_yes",
+                        "setExactValue": 1,
+                        "value": 0
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "HandleId": "46",
+              "Data": {
+                "$type": "scnQuestNode",
+                "ffStrategy": "automatic",
+                "isockMappings": [
+                  {
+                    "$type": "CName",
+                    "$storage": "string",
+                    "$value": "CutDestination"
+                  },
+                  {
+                    "$type": "CName",
+                    "$storage": "string",
+                    "$value": "In"
+                  }
+                ],
+                "nodeId": {
+                  "$type": "scnNodeId",
+                  "id": 12
+                },
+                "osockMappings": [
+                  {
+                    "$type": "CName",
+                    "$storage": "string",
+                    "$value": "Out"
+                  }
+                ],
+                "outputSockets": [
+                  {
+                    "$type": "scnOutputSocket",
+                    "destinations": [],
+                    "stamp": {
+                      "$type": "scnOutputSocketStamp",
+                      "name": 0,
+                      "ordinal": 0
+                    }
+                  }
+                ],
+                "questNode": {
+                  "HandleId": "47",
+                  "Data": {
+                    "$type": "questFactsDBManagerNodeDefinition",
+                    "id": 12,
+                    "sockets": [
+                      {
+                        "HandleId": "48",
+                        "Data": {
+                          "$type": "questSocketDefinition",
+                          "connections": [],
+                          "name": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "CutDestination"
+                          },
+                          "type": "CutDestination"
+                        }
+                      },
+                      {
+                        "HandleId": "49",
+                        "Data": {
+                          "$type": "questSocketDefinition",
+                          "connections": [],
+                          "name": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "In"
+                          },
+                          "type": "Input"
+                        }
+                      },
+                      {
+                        "HandleId": "50",
+                        "Data": {
+                          "$type": "questSocketDefinition",
+                          "connections": [],
+                          "name": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "Out"
+                          },
+                          "type": "Output"
+                        }
+                      }
+                    ],
+                    "type": {
+                      "HandleId": "51",
+                      "Data": {
+                        "$type": "questSetVar_NodeType",
+                        "factName": "cc_g05_said_yes",
+                        "setExactValue": 1,
+                        "value": 1
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "HandleId": "52",
+              "Data": {
+                "$type": "scnQuestNode",
+                "ffStrategy": "automatic",
+                "isockMappings": [
+                  {
+                    "$type": "CName",
+                    "$storage": "string",
+                    "$value": "CutDestination"
+                  },
+                  {
+                    "$type": "CName",
+                    "$storage": "string",
+                    "$value": "In"
+                  }
+                ],
+                "nodeId": {
+                  "$type": "scnNodeId",
+                  "id": 13
+                },
+                "osockMappings": [
+                  {
+                    "$type": "CName",
+                    "$storage": "string",
+                    "$value": "True"
+                  },
+                  {
+                    "$type": "CName",
+                    "$storage": "string",
+                    "$value": "False"
+                  }
+                ],
+                "outputSockets": [
+                  {
+                    "$type": "scnOutputSocket",
+                    "destinations": [],
+                    "stamp": {
+                      "$type": "scnOutputSocketStamp",
+                      "name": 0,
+                      "ordinal": 0
+                    }
+                  },
+                  {
+                    "$type": "scnOutputSocket",
+                    "destinations": [
+                      {
+                        "$type": "scnInputSocketId",
+                        "isockStamp": {
+                          "$type": "scnInputSocketStamp",
+                          "name": 0,
+                          "ordinal": 0
+                        },
+                        "nodeId": {
+                          "$type": "scnNodeId",
+                          "id": 9
+                        }
+                      }
+                    ],
+                    "stamp": {
+                      "$type": "scnOutputSocketStamp",
+                      "name": 0,
+                      "ordinal": 1
+                    }
+                  }
+                ],
+                "questNode": {
+                  "HandleId": "53",
+                  "Data": {
+                    "$type": "questConditionNodeDefinition",
+                    "condition": {
+                      "HandleId": "54",
+                      "Data": {
+                        "$type": "questFactsDBCondition",
+                        "type": {
+                          "HandleId": "55",
+                          "Data": {
+                            "$type": "questVarComparison_ConditionType",
+                            "comparisonType": "Greater",
+                            "factName": "cc_g05_said_yes",
+                            "value": 0
+                          }
+                        }
+                      }
+                    },
+                    "id": 13,
+                    "sockets": [
+                      {
+                        "HandleId": "56",
+                        "Data": {
+                          "$type": "questSocketDefinition",
+                          "connections": [],
+                          "name": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "CutDestination"
+                          },
+                          "type": "CutDestination"
+                        }
+                      },
+                      {
+                        "HandleId": "57",
+                        "Data": {
+                          "$type": "questSocketDefinition",
+                          "connections": [],
+                          "name": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "In"
+                          },
+                          "type": "Input"
+                        }
+                      },
+                      {
+                        "HandleId": "58",
+                        "Data": {
+                          "$type": "questSocketDefinition",
+                          "connections": [],
+                          "name": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "True"
+                          },
+                          "type": "Output"
+                        }
+                      },
+                      {
+                        "HandleId": "59",
+                        "Data": {
+                          "$type": "questSocketDefinition",
+                          "connections": [],
+                          "name": {
+                            "$type": "CName",
+                            "$storage": "string",
+                            "$value": "False"
                           },
                           "type": "Output"
                         }

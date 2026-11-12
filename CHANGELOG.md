@@ -7,6 +7,14 @@ each mod's Nexus Changelog tab.
 
 # Join Trauma Team
 
+## 1.3.0 (2026-11-12)
+
+- **Fixed: walking away from the recruiter before the conversation ended didn't allow for the scene to move to the next objective.** Reported by michael280188 and yeetskeet1243234.
+- **Added: red gloves on the Trauma Team uniform.** Suggested by RevampedRandom.
+- **Added: Trauma Team squads around the city are friendly after V joins the quest.** Suggested by RevampedRandom.
+- **Added: the Trauma Team landing red warning hologram.** Shows at every landing. Suggested by RevampedRandom.
+- **Changed: Wrona fights.** Still covering the AV (no walking) but shoots. Suggested by RevampedRandom.
+
 ## 1.2.4 (2026-11-11)
 
 - **Changed: minor improvements to speech lines.**
