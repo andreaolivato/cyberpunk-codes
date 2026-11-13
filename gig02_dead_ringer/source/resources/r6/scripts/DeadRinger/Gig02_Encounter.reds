@@ -992,8 +992,10 @@ public class DeadRingerEncounter extends ScriptableSystem {
                     }
                     if ps.IsBreached() {
                         qs.SetFactStr("cc_g02_ap_breached", 1);
+                        dev.CCGig02MarkQuest(false);
                         return;
                     }
+                    dev.CCGig02MarkQuest(true);
                 }
             }
             i += 1;
@@ -1394,7 +1396,20 @@ public func FinalizeNetrunnerDive(state: HackingMinigameState) -> Void {
             if IsDefined(qs) && qs.GetFactStr("cc_g02_ap_breached") == 0 {
                 qs.SetFactStr("cc_g02_ap_breached", 1);
             }
+            let box: ref<Device> = owner as Device;
+            if IsDefined(box) {
+                box.CCGig02MarkQuest(false);
+            }
         }
+    }
+}
+
+@addMethod(Device)
+public func CCGig02MarkQuest(on: Bool) -> Void {
+    if NotEquals(this.IsQuest(), on) {
+        let evt: ref<SetAsQuestImportantEvent> = new SetAsQuestImportantEvent();
+        evt.SetImportant(on);
+        this.QueueEvent(evt);
     }
 }
 

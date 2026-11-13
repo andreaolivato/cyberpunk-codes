@@ -33,7 +33,7 @@ public abstract class CCGig02Places {
 
     // railing
     public static func LeanPose() -> Vector4 {
-        return new Vector4(-1177.941000, 2033.495000, 20.078000, 1.0);
+        return new Vector4(-1176.295000, 2033.241000, 20.078000, 1.0);
     }
 
     // chair by the parlor door

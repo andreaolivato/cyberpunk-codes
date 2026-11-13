@@ -217,6 +217,11 @@ Needs the Hodan Warsame mod, game 2.5 with Phantom Liberty, and ArchiveXL
 
 # Dead Ringer
 
+## 1.3.2 (2026-11-13)
+
+- **Fixed: Improved position for leaning near the rail while waiting for Char.** Reported by sattyre.
+- **Fixed: the access point in Wakako's parlor now has its own glowing effect to stand out in the scanner.** Reported by sattyre.
+
 ## 1.3.1 (2026-11-11)
 
 - **Changed: minor improvements to speech lines.**
