@@ -27,6 +27,13 @@ This repo also has the translation kits for my gigs, if you want to translate th
 - [Return Ticket](mods/gig-04-return-ticket/translation-kit/README.md)
 - [Join Trauma Team](mods/gig-05-trauma-team/translation-kit/README.md)
 
+These are the World Builder source files exported from the game for the gigs where I create a new room or corridor. The source file must be opened in World Builder and exported to be imported into WolvenKit.
+
+- [Return Ticket building](mods/gig-04-return-ticket/world-builder/Return_Ticket_building.json)
+- [Join Trauma Team roof](mods/gig-05-trauma-team/world-builder/Join_Trauma_Team_roof.json)
+
+If you want to check them or edit them, copy the file into `bin\x64\plugins\cyber_engine_tweaks\mods\entSpawner\data\objects`, then load it from the Projects tab in World Builder.
+
 And a guide if you want to create your own gig for the new fixer I created, Hodan Warsame:
 
 - [Writing a gig for Hodan Warsame](mods/fixer-01/docs/design.md)
