@@ -1,0 +1,43 @@
+{
+  "Header": {
+    "WolvenKitVersion": "10.0.0-beta.1",
+    "WKitJsonVersion": "0.0.9",
+    "GameVersion": 2500,
+    "ExportedDateTime": "2026-11-13T02:49:37.5682277Z",
+    "DataType": "CR2W",
+    "ArchiveFileName": "C:\\Users\\andre\\OneDrive\\Desktop\\cyberpunk-gigs\\0_cc_cosmopolitan_patch\\source\\archive\\mod\\cc_cosmopolitan_patch\\localization\\subtitles_jp-jp.json"
+  },
+  "Data": {
+    "Version": 195,
+    "BuildVersion": 0,
+    "RootChunk": {
+      "$type": "JsonResource",
+      "cookingPlatform": "PLATFORM_PC",
+      "root": {
+        "HandleId": "0",
+        "Data": {
+          "$type": "localizationPersistenceSubtitleMap",
+          "entries": [
+            {
+              "$type": "localizationPersistenceSubtitleMapEntry",
+              "subtitleFile": {
+                "DepotPath": {
+                  "$type": "ResourcePath",
+                  "$storage": "string",
+                  "$value": "mod\\cc_cosmopolitan_patch\\localization\\lines_jp-jp.json"
+                },
+                "Flags": "Soft"
+              },
+              "subtitleGroup": {
+                "$type": "CName",
+                "$storage": "string",
+                "$value": "quest"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "EmbeddedFiles": []
+  }
+}

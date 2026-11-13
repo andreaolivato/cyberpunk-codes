@@ -16,6 +16,7 @@ My mods on Nexus Mods:
 - [Hodan Warsame](https://www.nexusmods.com/cyberpunk2077/mods/36816)
 - [Return Ticket](https://www.nexusmods.com/cyberpunk2077/mods/36829)
 - [Join Trauma Team](https://www.nexusmods.com/cyberpunk2077/mods/37338)
+- [Negative Balance and Dead Ringer - Cosmopolitan Night City Patch](https://www.nexusmods.com/cyberpunk2077/mods/38282)
 
 This repo also has the translation kits for my gigs, if you want to translate them into your language:
 

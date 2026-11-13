@@ -5,6 +5,14 @@ each mod's Nexus Changelog tab.
 
 ---
 
+# Negative Balance and Dead Ringer - Cosmopolitan Night City Patch
+
+## 1.0.0 (2026-11-13)
+
+- **Added: with Cosmopolitan Night City, Wakako's eight cut lines in Dead Ringer speak Japanese and Mama Welles's cut line in Negative Balance speaks Spanish.**
+
+---
+
 # Join Trauma Team
 
 ## 1.3.0 (2026-11-12)
