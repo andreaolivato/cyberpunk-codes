@@ -15,6 +15,10 @@ each mod's Nexus Changelog tab.
 
 # Join Trauma Team
 
+## 1.3.1 (2026-11-15)
+
+- **Fixed: it was possible for the recruiter to be killed and never spawned again.** If you still don't see her, walk away for about a block then come back and she'll be there. Reported by WongChonSilver.
+
 ## 1.3.0 (2026-11-12)
 
 - **Fixed: walking away from the recruiter before the conversation ended didn't allow for the scene to move to the next objective.** Reported by michael280188 and yeetskeet1243234.

@@ -12,6 +12,7 @@ public abstract class CCG05Shift {
         return [n"lead_r", n"soldier_r", n"medic_r"];
     }
     public static func ClientEntry() -> CName { return n"client"; }
+    public static func RecruiterEntry() -> CName { return n"recruiter"; }
     public static func Ride() -> TweakDBID { return t"GameplayRestriction.cc_g05_ride"; }
     public static func PoliceLock() -> CName { return n"cc_g05_shift"; }
     // game hours
@@ -19,6 +20,9 @@ public abstract class CCG05Shift {
     // nisha
     public static func Recruiter() -> Vector4 { return new Vector4(-1335.3, 1743.9, 18.2, 1.0); }
     public static func RecruiterGap() -> Float { return 60.0; }
+    public static func LostNear() -> Float { return 25.0; }
+    public static func LostOff() -> Float { return 10.0; }
+    public static func LostTicks() -> Int32 { return 5; }
     public static func ClearTicks() -> Int32 { return 3; }
     // 10s
     public static func MinFightTicks() -> Int32 { return 10; }
@@ -137,6 +141,7 @@ public class TraumaTeamShift extends ScriptableSystem {
     private let m_hudLoop: Bool;
     private let m_changedKnown: Bool;
     private let m_changedWas: Int32;
+    private let m_lostTicks: Int32;
 
     private func OnAttach() -> Void {
         this.m_fresh = true;
@@ -271,6 +276,7 @@ public class TraumaTeamShift extends ScriptableSystem {
         this.Warp(game, qs, player);
         this.AtLift(game, qs, player);
         this.NextShift(game, qs, player);
+        this.RecruiterWatch(game, qs, player);
         this.Helmet(game, qs, player);
         this.RoofTraffic(game, qs, player);
         this.Colleagues(game, qs);
@@ -685,6 +691,46 @@ public class TraumaTeamShift extends ScriptableSystem {
         }
         qs.SetFactStr("cc_g05_rest_from", 0);
         qs.SetFactStr("cc_g05_next_shift", 1);
+    }
+
+    private func RecruiterWatch(game: GameInstance, qs: ref<QuestsSystem>, player: ref<PlayerPuppet>) -> Void {
+        let lost: Int32 = qs.GetFactStr("cc_g05_recruiter_lost");
+        let far: Float = Vector4.Distance(player.GetWorldPosition(), CCG05Shift.Recruiter());
+        if lost == 2 {
+            if far >= CCG05Shift.RecruiterGap() {
+                qs.SetFactStr("cc_g05_recruiter_lost", 3);
+            }
+            return;
+        }
+        let first: Bool = qs.GetFactStr("cc_g05_ad_go") > 0 && qs.GetFactStr("cc_g05_hired") <= 0;
+        let done: Int32 = qs.GetFactStr("cc_g05_shift_done");
+        let again: Bool = done > 0 && qs.GetFactStr("cc_g05_posted") >= done
+            && qs.GetFactStr("cc_g05_on_shift") <= 0 && qs.GetFactStr("cc_g05_on_roof") <= 0;
+        if !first && !again {
+            this.m_lostTicks = 0;
+            return;
+        }
+        let her: ref<ScriptedPuppet> = this.FindInCommunity(game, CCG05Shift.RecruiterEntry());
+        let alive: Bool = IsDefined(her) && ScriptedPuppet.IsAlive(her);
+        if alive {
+            let gms: ref<GodModeSystem> = GameInstance.GetGodModeSystem(game);
+            if IsDefined(gms) && !gms.HasGodMode(her.GetEntityID(), gameGodModeType.Invulnerable) {
+                gms.AddGodMode(her.GetEntityID(), gameGodModeType.Invulnerable, n"cc_g05_recruiter");
+            }
+        }
+        if lost != 0 || far > CCG05Shift.LostNear() {
+            this.m_lostTicks = 0;
+            return;
+        }
+        if alive && Vector4.Distance(her.GetWorldPosition(), CCG05Shift.Recruiter()) < CCG05Shift.LostOff() {
+            this.m_lostTicks = 0;
+            return;
+        }
+        this.m_lostTicks += 1;
+        if this.m_lostTicks >= CCG05Shift.LostTicks() {
+            this.m_lostTicks = 0;
+            qs.SetFactStr("cc_g05_recruiter_lost", 1);
+        }
     }
 
     private func Warp(game: GameInstance, qs: ref<QuestsSystem>, player: ref<PlayerPuppet>) -> Void {
