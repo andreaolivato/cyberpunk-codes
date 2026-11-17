@@ -15,6 +15,23 @@ each mod's Nexus Changelog tab.
 
 # Join Trauma Team
 
+## 1.4.0 (2026-11-18)
+
+- **Added: a second shift with three new calls and new enemies.**
+- **Added: Brekke's VO on the second shift, thanks again to CinematicTactics.**
+- **Added: the recruiter now asks which shift V wants to replay, and the player can
+  choose freely.**
+- **Added: on the second shift the AV takes off without a mission, and Brekke gets
+  the first call while on board.**
+- **Added: on the second shift the enemies open fire while the AV approaches, making
+  the whole scene more immersive.**
+- **Added: a timer for the client's biomon.** The helmet HUD now shows the client's
+  state, stability and the time left to kill every hostile before they flatline.
+- **Added: a client dies if the timer runs out.** This has consequences for the
+  payout and the outcome.
+- **Changed: faster flights, and faster flight skips.**
+- **Fixed: gang members could walk into the AV during the fight scene.**
+
 ## 1.3.1 (2026-11-15)
 
 - **Fixed: it was possible for the recruiter to be killed and never spawned again.** If you still don't see her, walk away for about a block then come back and she'll be there. Reported by WongChonSilver.

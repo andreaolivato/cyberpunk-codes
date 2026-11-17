@@ -12,6 +12,74 @@ public abstract class CCG05Shift {
         return [n"lead_r", n"soldier_r", n"medic_r"];
     }
     public static func ClientEntry() -> CName { return n"client"; }
+    public static func CommunityRef2() -> String { return "$/mod/cc_g05_cast2/#cc_g05_cast2_com"; }
+    public static func Gang(call: Int32) -> array<CName> {
+        if call == 1 {
+            return [n"six1", n"six2", n"six3", n"six4", n"six_sn", n"six5", n"six6", n"six7"];
+        }
+        if call == 2 {
+            return [n"ani1", n"ani2", n"ani3", n"ani4", n"ani5"];
+        }
+        if call == 3 {
+            return [n"val1", n"val2", n"val3", n"val4", n"runner"];
+        }
+        return CCG05Shift.ScavEntries();
+    }
+    public static func Client2(call: Int32) -> CName {
+        if call == 1 { return n"client_a"; }
+        if call == 2 { return n"client_b"; }
+        return n"client_c";
+    }
+    public static func MonSeconds(call: Int32) -> Int32 {
+        if call > 10 { return call == 11 ? 180 : call == 12 ? 150 : 140; }
+        return call == 1 ? 140 : call == 2 ? 60 : 90;
+    }
+    public static func MonStart(call: Int32) -> Float {
+        if call > 10 { return call == 11 ? 75.0 : call == 12 ? 70.0 : 70.0; }
+        return call == 1 ? 70.0 : call == 2 ? 60.0 : 65.0;
+    }
+    public static func LostFact(call: Int32) -> String {
+        return call > 10 ? "cc_g05_s1_lost" + IntToString(call - 10) : "cc_g05_s2_lost" + IntToString(call);
+    }
+    public static func MonFill() -> Float { return 6.0; }
+    public static func FirstWave(name: CName) -> Bool {
+        return Equals(name, n"six1") || Equals(name, n"six2") || Equals(name, n"six3") || Equals(name, n"six4")
+            || Equals(name, n"six_sn");
+    }
+    public static func IsDown(npc: ref<ScriptedPuppet>) -> Bool {
+        if !ScriptedPuppet.IsAlive(npc) || ScriptedPuppet.IsDefeated(npc) || ScriptedPuppet.IsUnconscious(npc) {
+            return true;
+        }
+        let bb: ref<IBlackboard> = npc.GetPuppetStateBlackboard();
+        return IsDefined(bb) && bb.GetBool(GetAllBlackboardDefs().PuppetState.IsBodyDisposed);
+    }
+    public static func GangDown(npc: ref<ScriptedPuppet>) -> Void {
+        let agent: ref<AttitudeAgent> = npc.GetAttitudeAgent();
+        if !IsDefined(agent) || NotEquals(agent.GetAttitudeGroup(), n"cc_g05_gang") {
+            return;
+        }
+        let sys: ref<TraumaTeamShift> = GameInstance.GetScriptableSystemsContainer(npc.GetGame())
+            .Get(n"CyberpunkCodes.Gig05.TraumaTeamShift") as TraumaTeamShift;
+        if IsDefined(sys) {
+            sys.Poke();
+        }
+    }
+    public static func NearClient() -> Float { return 9.0; }
+    public static func Text(key: CName, english: String) -> String {
+        let t: String = GetLocalizedTextByKey(key);
+        if StrLen(t) == 0 || Equals(t, NameToString(key)) {
+            return english;
+        }
+        return t;
+    }
+    public static func Card(call: Int32) -> String {
+        if call == 11 { return CCG05Shift.Text(n"cc-g05-card-s1-1", "Biomon alarm // Scavs on site"); }
+        if call == 12 { return CCG05Shift.Text(n"cc-g05-card-s1-2", "Client down // Scavs on site"); }
+        if call == 13 { return CCG05Shift.Text(n"cc-g05-card-s1-3", "Client down // Scavs all around"); }
+        if call == 1 { return CCG05Shift.Text(n"cc-g05-card-1", "Gunshot wounds // 6th Street on site"); }
+        if call == 2 { return CCG05Shift.Text(n"cc-g05-card-2", "Multiple gunshot wounds // Shooters on site"); }
+        return CCG05Shift.Text(n"cc-g05-card-3", "Cardiac arrest // Biomon signal unstable");
+    }
     public static func RecruiterEntry() -> CName { return n"recruiter"; }
     public static func Ride() -> TweakDBID { return t"GameplayRestriction.cc_g05_ride"; }
     public static func PoliceLock() -> CName { return n"cc_g05_shift"; }
@@ -29,9 +97,23 @@ public abstract class CCG05Shift {
     // 60s
     public static func NoShowTicks() -> Int32 { return 60; }
     public static func ShieldTicks() -> Int32 { return 4; }
-    public static func WarpStop(i: Int32) -> Float { return i == 4 ? 90.0 : 420.0; }
+    public static func WarpStop(i: Int32) -> Float {
+        if i == 5 { return 210.0; }
+        if i == 6 { return 200.0; }
+        if i == 7 { return 210.0; }
+        if i == 4 || i == 8 { return 90.0; }
+        return 420.0;
+    }
+    public static func NearReach(i: Int32) -> Float {
+        if i == 5 { return 340.0; }
+        if i == 6 { return 330.0; }
+        if i == 7 { return 250.0; }
+        if i == 8 { return 380.0; }
+        return CCG05Shift.WarpStop(i) + 150.0;
+    }
+    public static func SkipSeconds() -> Float { return 3.0; }
     // x8
-    public static func WarpSpeed() -> Float { return 8.0; }
+    public static func WarpSpeed() -> Float { return 64.0; }
     // 30s
     public static func WarpTicks() -> Int32 { return 120; }
     // 4 = home
@@ -42,6 +124,10 @@ public abstract class CCG05Shift {
         if i == 2 { return new Vector4(-2370.2, 419.2, 8.7, 1.0); }
         // kabuki plaza
         if i == 3 { return new Vector4(-1971.5, 1213.5, 8.9, 1.0); }
+        if i == 5 { return new Vector4(-1121.36, -332.56, 55.36, 1.0); }
+        if i == 6 { return new Vector4(-1248.78, 68.53, 8.01, 1.0); }
+        if i == 7 { return new Vector4(-2431.02, -631.33, 7.32, 1.0); }
+        if i == 8 { return new Vector4(-1362.0, 1785.0, 129.2, 1.0); }
         return new Vector4(-1082.6, 1751.1, 129.2, 1.0);
     }
     public static func LiftX() -> Float { return -1261.5; }
@@ -262,11 +348,18 @@ public class TraumaTeamShift extends ScriptableSystem {
         this.Ad(qs);
         let fighting: Bool = qs.GetFactStr("cc_g05_fight_on") > 0;
         if fighting {
-            this.Fight(game, qs, player);
+            this.m_monOffAt = 0;
+            this.Fight(game, qs, player, true);
         } else {
             this.m_fightTicks = 0;
             this.m_emptyTicks = 0;
             this.m_scavsSeen = false;
+            if this.m_monOffAt == 0 {
+                this.m_monOffAt = this.m_tick + 5;
+            }
+            if this.m_tick >= this.m_monOffAt {
+                this.MonitorOff(game);
+            }
         }
         this.Shift(game, qs, player);
         this.Park(game, qs);
@@ -274,6 +367,7 @@ public class TraumaTeamShift extends ScriptableSystem {
         this.Ready(game, qs, player);
         this.DevDownScavs(game, qs);
         this.Warp(game, qs, player);
+        this.NearLanding(qs, player);
         this.AtLift(game, qs, player);
         this.NextShift(game, qs, player);
         this.RecruiterWatch(game, qs, player);
@@ -333,6 +427,8 @@ public class TraumaTeamShift extends ScriptableSystem {
         let scenes: array<String>;
         // downtown
         ArrayPush(scenes, "cs_cct_dtn_intervention_disabled");
+        ArrayPush(scenes, "cs_cct_cpz_intervention_disabled");
+        ArrayPush(scenes, "cs_hey_spr_intervention_disabled");
         let i: Int32 = 0;
         while i < ArraySize(scenes) {
             let mine: String = "cc_g05_scene_off_" + IntToString(i);
@@ -705,7 +801,8 @@ public class TraumaTeamShift extends ScriptableSystem {
         let first: Bool = qs.GetFactStr("cc_g05_ad_go") > 0 && qs.GetFactStr("cc_g05_hired") <= 0;
         let done: Int32 = qs.GetFactStr("cc_g05_shift_done");
         let again: Bool = done > 0 && qs.GetFactStr("cc_g05_posted") >= done
-            && qs.GetFactStr("cc_g05_on_shift") <= 0 && qs.GetFactStr("cc_g05_on_roof") <= 0;
+            && qs.GetFactStr("cc_g05_on_shift") <= 0 && qs.GetFactStr("cc_g05_on_roof") <= 0
+            && qs.GetFactStr("cc_g05_s2_go") <= 0;
         if !first && !again {
             this.m_lostTicks = 0;
             return;
@@ -733,6 +830,20 @@ public class TraumaTeamShift extends ScriptableSystem {
         }
     }
 
+    private func NearLanding(qs: ref<QuestsSystem>, player: ref<PlayerPuppet>) -> Void {
+        let n: Int32 = qs.GetFactStr("cc_g05_fly_n");
+        if n <= 0 || qs.GetFactStr("cc_g05_near_land") > 0 {
+            return;
+        }
+        let p: Vector4 = player.GetWorldPosition();
+        let to: Vector4 = CCG05Shift.Landing(n);
+        let dx: Float = p.X - to.X;
+        let dy: Float = p.Y - to.Y;
+        if SqrtF(dx * dx + dy * dy) < CCG05Shift.NearReach(n) {
+            qs.SetFactStr("cc_g05_near_land", 1);
+        }
+    }
+
     private func Warp(game: GameInstance, qs: ref<QuestsSystem>, player: ref<PlayerPuppet>) -> Void {
         let i: Int32 = qs.GetFactStr("cc_g05_warp");
         if i <= 0 {
@@ -742,13 +853,14 @@ public class TraumaTeamShift extends ScriptableSystem {
         if !IsDefined(ts) {
             return;
         }
+        let p: Vector4 = player.GetWorldPosition();
         if !this.m_warping {
             this.m_warping = true;
             this.m_warpTicks = 0;
-            ts.SetTimeDilation(n"cc_g05_warp", CCG05Shift.WarpSpeed());
+            let left: Float = CCG05SkipTable.Left(i, p.X, p.Y);
+            ts.SetTimeDilation(n"cc_g05_warp", ClampF(left / CCG05Shift.SkipSeconds(), 1.0, CCG05Shift.WarpSpeed()));
         }
         this.m_warpTicks += 1;
-        let p: Vector4 = player.GetWorldPosition();
         let to: Vector4 = CCG05Shift.Landing(i);
         // flat distance
         p.Z = 0.0;
@@ -870,10 +982,11 @@ public class TraumaTeamShift extends ScriptableSystem {
             return;
         }
         qs.SetFactStr("cc_g05_dev_down", 0);
-        let scavs: array<CName> = CCG05Shift.ScavEntries();
+        let call: Int32 = qs.GetFactStr("cc_g05_s2_call");
+        let scavs: array<CName> = CCG05Shift.Gang(call);
         let i: Int32 = 0;
         while i < ArraySize(scavs) {
-            let s: ref<ScriptedPuppet> = this.FindInCommunity(game, scavs[i]);
+            let s: ref<ScriptedPuppet> = call > 0 ? this.FindIn2(game, scavs[i]) : this.FindInCommunity(game, scavs[i]);
             if IsDefined(s) && ScriptedPuppet.IsAlive(s) {
                 StatusEffectHelper.ApplyStatusEffect(s, t"BaseStatusEffect.ForceKill");
             }
@@ -895,8 +1008,10 @@ public class TraumaTeamShift extends ScriptableSystem {
         qs.SetFactStr("cc_g05_ad_go", 1);
     }
 
-    private func Fight(game: GameInstance, qs: ref<QuestsSystem>, player: ref<PlayerPuppet>) -> Void {
-        this.m_fightTicks += 1;
+    private func Fight(game: GameInstance, qs: ref<QuestsSystem>, player: ref<PlayerPuppet>, step: Bool) -> Void {
+        if step {
+            this.m_fightTicks += 1;
+        }
         let crew: array<ref<ScriptedPuppet>>;
         let names: array<CName> = CCG05Shift.RoofCrewEntries();
         let i: Int32 = 0;
@@ -908,39 +1023,196 @@ public class TraumaTeamShift extends ScriptableSystem {
         if IsDefined(soldier) && ScriptedPuppet.IsAlive(soldier) {
             ArrayPush(crew, soldier);
         }
-        let client: ref<ScriptedPuppet> = this.FindInCommunity(game, CCG05Shift.ClientEntry());
+        let call: Int32 = qs.GetFactStr("cc_g05_s2_call");
+        let client: ref<ScriptedPuppet> = call > 0 ? this.FindIn2(game, CCG05Shift.Client2(call))
+                                                   : this.FindInCommunity(game, CCG05Shift.ClientEntry());
 
         let standing: Int32 = 0;
-        let scavs: array<CName> = CCG05Shift.ScavEntries();
+        let firstWave: Int32 = 0;
+        let near: Bool = false;
+        let runnerUp: Bool = false;
+        let scavs: array<CName> = CCG05Shift.Gang(call);
         i = 0;
         while i < ArraySize(scavs) {
-            let scav: ref<ScriptedPuppet> = this.FindInCommunity(game, scavs[i]);
-            if IsDefined(scav) && ScriptedPuppet.IsAlive(scav) && !ScriptedPuppet.IsDefeated(scav) {
+            let scav: ref<ScriptedPuppet> = call > 0 ? this.FindIn2(game, scavs[i]) : this.FindInCommunity(game, scavs[i]);
+            if call > 0 && IsDefined(scav) {
+                this.m_scavsSeen = true;
+            }
+            let up: Bool = call > 0 ? IsDefined(scav) && !CCG05Shift.IsDown(scav)
+                                    : IsDefined(scav) && ScriptedPuppet.IsAlive(scav) && !ScriptedPuppet.IsDefeated(scav);
+            if up {
                 standing += 1;
                 this.m_scavsSeen = true;
-                this.Wake(scav, player);
-                let j: Int32 = 0;
-                while j < ArraySize(crew) {
-                    this.Quarrel(scav, crew[j]);
-                    j += 1;
+                if call == 1 && CCG05Shift.FirstWave(scavs[i]) {
+                    firstWave += 1;
                 }
-                if IsDefined(client) && ScriptedPuppet.IsAlive(client) {
-                    this.Quarrel(scav, client);
+                if IsDefined(client) && Vector4.Distance(scav.GetWorldPosition(), client.GetWorldPosition()) < CCG05Shift.NearClient() {
+                    near = true;
+                }
+                if Equals(scavs[i], n"runner") {
+                    runnerUp = true;
+                    if step && this.m_fightTicks >= 8 && this.m_fightTicks % 6 == 0 {
+                        GameObject.SendForceRevealObjectEvent(scav, true, n"cc_g05_trace", player.GetEntityID(), 3.0);
+                    }
+                } else {
+                    if step {
+                        this.Wake(scav, player);
+                        let j: Int32 = 0;
+                        while j < ArraySize(crew) {
+                            this.Quarrel(scav, crew[j]);
+                            j += 1;
+                        }
+                        if IsDefined(client) && ScriptedPuppet.IsAlive(client) {
+                            this.Quarrel(scav, client);
+                        }
+                    }
                 }
             }
             i += 1;
         }
 
-        if standing == 0 {
-            this.m_emptyTicks += 1;
-        } else {
-            this.m_emptyTicks = 0;
+        if step {
+            if standing == 0 {
+                this.m_emptyTicks += 1;
+            } else {
+                this.m_emptyTicks = 0;
+            }
+            let due: Int32 = this.m_scavsSeen ? CCG05Shift.MinFightTicks() : CCG05Shift.NoShowTicks();
+            if this.m_emptyTicks >= CCG05Shift.ClearTicks() && this.m_fightTicks >= due
+                    && qs.GetFactStr("cc_g05_site_clear") <= 0 {
+                qs.SetFactStr("cc_g05_site_clear", 1);
+            }
         }
-        let due: Int32 = this.m_scavsSeen ? CCG05Shift.MinFightTicks() : CCG05Shift.NoShowTicks();
-        if this.m_emptyTicks >= CCG05Shift.ClearTicks() && this.m_fightTicks >= due
-                && qs.GetFactStr("cc_g05_site_clear") <= 0 {
-            qs.SetFactStr("cc_g05_site_clear", 1);
+        let s1: Int32 = qs.GetFactStr("cc_g05_s1_call");
+        let mon: Int32 = call > 0 ? call : s1 > 0 ? 10 + s1 : 0;
+        if mon > 0 {
+            this.Monitor(game, qs, mon, client, standing, firstWave, near || runnerUp, step);
         }
+    }
+
+    public func Poke() -> Void {
+        let game: GameInstance = this.GetGameInstance();
+        let qs: ref<QuestsSystem> = GameInstance.GetQuestsSystem(game);
+        let player: ref<PlayerPuppet> = GameInstance.GetPlayerSystem(game).GetLocalPlayerMainGameObject() as PlayerPuppet;
+        if IsDefined(qs) && IsDefined(player) && qs.GetFactStr("cc_g05_fight_on") > 0
+                && (qs.GetFactStr("cc_g05_s2_call") > 0 || qs.GetFactStr("cc_g05_s1_call") > 0) {
+            this.Fight(game, qs, player, false);
+        }
+    }
+
+    private let m_wave2At: Int32;
+    private let m_monOffAt: Int32;
+
+    private func Monitor(game: GameInstance, qs: ref<QuestsSystem>, call: Int32, client: ref<ScriptedPuppet>,
+                         standing: Int32, firstWave: Int32, critical: Bool, step: Bool) -> Void {
+        if qs.GetFactStr("cc_g05_call_over") > 0 {
+            return;
+        }
+        let lostFact: String = CCG05Shift.LostFact(call);
+        let total: Int32 = CCG05Shift.MonSeconds(call);
+        if qs.GetFactStr("cc_g05_mon_on") != call {
+            qs.SetFactStr("cc_g05_mon_on", call);
+            qs.SetFactStr(lostFact, 0);
+            qs.SetFactStr("cc_g05_mon_left", total);
+            qs.SetFactStr("cc_g05_mon_state", 0);
+            qs.SetFactStr("cc_g05_mon_hp", Cast<Int32>(CCG05Shift.MonStart(call) * 10.0));
+            this.m_wave2At = 0;
+        }
+        let left: Int32 = qs.GetFactStr("cc_g05_mon_left");
+        let state: Int32 = qs.GetFactStr("cc_g05_mon_state");
+        let hp: Float = Cast<Float>(qs.GetFactStr("cc_g05_mon_hp")) / 10.0;
+
+        if call == 1 && qs.GetFactStr("cc_g05_wave2") <= 0 && this.m_fightTicks >= 6
+                && (firstWave <= 2 || left * 2 < total) {
+            qs.SetFactStr("cc_g05_wave2", 1);
+            this.m_wave2At = this.m_tick;
+        }
+        let wavesDone: Bool = call != 1
+            || qs.GetFactStr("cc_g05_wave2") > 0 && (this.m_wave2At == 0 || this.m_tick - this.m_wave2At >= 6);
+        let clear: Bool = standing == 0 && wavesDone
+            && (this.m_scavsSeen || this.m_fightTicks >= CCG05Shift.NoShowTicks());
+
+        if state == 0 {
+            if clear {
+                state = 1;
+            } else {
+                if step {
+                    left -= critical ? 2 : 1;
+                }
+                if left <= 0 {
+                    left = 0;
+                    state = 3;
+                    qs.SetFactStr(lostFact, 1);
+                    this.KillClient(game, client);
+                }
+                hp = CCG05Shift.MonStart(call) * Cast<Float>(left) / Cast<Float>(total);
+            }
+        }
+        if state == 1 && step {
+            hp = MinF(100.0, hp + CCG05Shift.MonFill());
+            if hp >= 100.0 {
+                state = 2;
+            }
+        }
+        if state == 2 && clear {
+            qs.SetFactStr("cc_g05_call_over", 1);
+        }
+        if state == 3 && clear {
+            qs.SetFactStr("cc_g05_call_over", 2);
+        }
+        qs.SetFactStr("cc_g05_mon_left", Max(0, left));
+        qs.SetFactStr("cc_g05_mon_state", state);
+        qs.SetFactStr("cc_g05_mon_hp", Cast<Int32>(hp * 10.0));
+
+        if IsDefined(this.m_helmet) {
+            let card: String = CCG05Shift.Card(call);
+            if call == 3 && critical && state == 0 && standing > 0 && this.m_fightTicks >= 6 {
+                card = CCG05Shift.Text(n"cc-g05-card-trace", "Biomon interference // Tracing source");
+            }
+            this.m_helmet.SetMonitor(state, hp, left, critical && state == 0, standing, card);
+            this.m_helmet.Update(game);
+        }
+    }
+
+    private func KillClient(game: GameInstance, client: ref<ScriptedPuppet>) -> Void {
+        if !IsDefined(client) {
+            return;
+        }
+        let gms: ref<GodModeSystem> = GameInstance.GetGodModeSystem(game);
+        if IsDefined(gms) {
+            gms.RemoveGodMode(client.GetEntityID(), gameGodModeType.Immortal, n"cc_g05_client");
+        }
+        StatusEffectHelper.ApplyStatusEffect(client, t"BaseStatusEffect.ForceKill");
+    }
+
+    private func MonitorOff(game: GameInstance) -> Void {
+        if IsDefined(this.m_helmet) {
+            this.m_helmet.SetMonitor(-1, 0.0, 0, false, 0, "");
+        }
+    }
+
+    public func DebugPeople() -> String {
+        let game: GameInstance = this.GetGameInstance();
+        let player: ref<PlayerPuppet> = GameInstance.GetPlayerSystem(game).GetLocalPlayerMainGameObject() as PlayerPuppet;
+        let out: String = "";
+        let names: array<CName> = [n"client_a", n"client_b", n"client_c"];
+        let k: Int32 = 1;
+        while k <= 3 {
+            for g in CCG05Shift.Gang(k) {
+                ArrayPush(names, g);
+            }
+            k += 1;
+        }
+        for name in names {
+            let e: ref<ScriptedPuppet> = this.FindIn2(game, name);
+            if IsDefined(e) {
+                let p: Vector4 = e.GetWorldPosition();
+                out += NameToString(name) + (CCG05Shift.IsDown(e) ? " down " : " up ")
+                    + FloatToStringPrec(p.X, 1) + " " + FloatToStringPrec(p.Y, 1) + " " + FloatToStringPrec(p.Z, 1)
+                    + (IsDefined(player) ? " " + FloatToStringPrec(Vector4.Distance(p, player.GetWorldPosition()), 0) : "") + "\n";
+            }
+        }
+        return StrLen(out) == 0 ? "nobody" : out;
     }
 
     private func Wake(npc: ref<ScriptedPuppet>, player: ref<PlayerPuppet>) -> Void {
@@ -1006,6 +1278,46 @@ public class TraumaTeamShift extends ScriptableSystem {
         }
         return dead;
     }
+
+    private let m_com2Tick: Int32;
+    private let m_com2Ok: Bool;
+    private let m_com2Id: EntityID;
+
+    private func ResolveCommunity2() -> Bool {
+        if this.m_com2Tick != this.m_tick || !this.m_com2Ok {
+            let nref: NodeRef = CreateNodeRef(CCG05Shift.CommunityRef2());
+            let root: GlobalNodeRef;
+            let g: GlobalNodeRef = ResolveNodeRef(nref, root);
+            this.m_com2Ok = GlobalNodeRef.IsDefined(g);
+            this.m_com2Id = Cast<EntityID>(g);
+            this.m_com2Tick = this.m_tick;
+        }
+        return this.m_com2Ok;
+    }
+
+    private func FindIn2(game: GameInstance, entry: CName) -> ref<ScriptedPuppet> {
+        let dead: ref<ScriptedPuppet>;
+        if !this.ResolveCommunity2() {
+            return null;
+        }
+        let objects: array<ref<GameObject>>;
+        GetGameObjectsFromSpawnerEntityID(this.m_com2Id, [entry], game, objects);
+        let i: Int32 = 0;
+        while i < ArraySize(objects) {
+            let puppet: ref<ScriptedPuppet> = objects[i] as ScriptedPuppet;
+            if IsDefined(puppet) {
+                if ScriptedPuppet.IsAlive(puppet) {
+                    return puppet;
+                }
+                if !IsDefined(dead) {
+                    dead = puppet;
+                }
+            }
+            i += 1;
+        }
+        return dead;
+    }
+
 }
 
 public class CCG05VisorHold extends DelayCallback {
@@ -1053,4 +1365,18 @@ protected cb func OnExecuteButtonAction(widget: wref<inkWidget>) -> Bool {
         return true;
     }
     return wrappedMethod(widget);
+}
+
+@wrapMethod(NPCPuppet)
+protected cb func OnDeath(evt: ref<gameDeathEvent>) -> Bool {
+    let r: Bool = wrappedMethod(evt);
+    CCG05Shift.GangDown(this);
+    return r;
+}
+
+@wrapMethod(ScriptedPuppet)
+protected cb func OnDefeated(evt: ref<DefeatedEvent>) -> Bool {
+    let r: Bool = wrappedMethod(evt);
+    CCG05Shift.GangDown(this);
+    return r;
 }

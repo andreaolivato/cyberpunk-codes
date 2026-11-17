@@ -30,3 +30,14 @@ QuestRewards.sts_cc_g05_platinum:
   $base: QuestRewards.sts_wbr_hil_01_completion
   name: sts_cc_g05_platinum
   currencyPackage: [ QuestRewards.sts_cc_g05_money_platinum ]
+
+QuestRewards.sts_cc_g05_qty_lost:
+  $base: QuestRewards.sts_wbr_hil_01_completion_inline5
+  value: 500
+QuestRewards.sts_cc_g05_money_lost:
+  $base: QuestRewards.sts_wbr_hil_01_completion_inline4
+  quantityModifiers: [ QuestRewards.sts_cc_g05_qty_lost ]
+QuestRewards.sts_cc_g05_lost:
+  $base: QuestRewards.sts_wbr_hil_01_completion
+  name: sts_cc_g05_lost
+  currencyPackage: [ QuestRewards.sts_cc_g05_money_lost ]

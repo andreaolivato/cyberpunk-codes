@@ -179,3 +179,123 @@ Character.cc_g05_crewmate:
   tags:
     - !append-once DoNotTriggerPrevention
     - !append-once Invulnerable
+
+Character.cc_g05_six_saratoga:
+  $base: Character.rey_sixthstreet_hooligan_ranged1_saratoga_ma
+  baseAttitudeGroup: cc_g05_gang
+  tags:
+    - !append-once DoNotTriggerPrevention
+Character.cc_g05_six_ajax:
+  $base: Character.rey_sixthstreet_patrol2_ranged2_ajax_wa
+  baseAttitudeGroup: cc_g05_gang
+  tags:
+    - !append-once DoNotTriggerPrevention
+Character.cc_g05_six_shotgun:
+  $base: Character.rey_sixthstreet_menace1_shotgun2_tactician_ma
+  baseAttitudeGroup: cc_g05_gang
+  tags:
+    - !append-once DoNotTriggerPrevention
+Character.cc_g05_six_veteran:
+  $base: Character.arr_sixthstreet_veteran3_ranged2_ajax_ma
+  baseAttitudeGroup: cc_g05_gang
+  tags:
+    - !append-once DoNotTriggerPrevention
+Character.cc_g05_six_sniper:
+  $base: Character.arr_sixthstreet_sniper2_sniper2_grad_ma_rare
+  baseAttitudeGroup: cc_g05_gang
+  tags:
+    - !append-once DoNotTriggerPrevention
+Character.cc_g05_six_carnage:
+  $base: Character.arr_sixthstreet_prepers3_shotgun3_carnage_ma_rare
+  baseAttitudeGroup: cc_g05_gang
+  tags:
+    - !append-once DoNotTriggerPrevention
+Character.cc_g05_six_grenadier:
+  $base: Character.arr_sixthstreet_prepers3_grenadier2_nova_ma_rare
+  baseAttitudeGroup: cc_g05_gang
+  tags:
+    - !append-once DoNotTriggerPrevention
+Character.cc_g05_six_nova:
+  $base: Character.rey_sixthstreet_hooligan_ranged1_nova_wa
+  baseAttitudeGroup: cc_g05_gang
+  tags:
+    - !append-once DoNotTriggerPrevention
+Character.cc_g05_ani_pulsar:
+  $base: Character.animals_grunt1_ranged1_pulsar_mb
+  baseAttitudeGroup: cc_g05_gang
+  tags:
+    - !append-once DoNotTriggerPrevention
+Character.cc_g05_ani_hammer:
+  $base: Character.animals_grunt2_melee2_hammer_mb
+  baseAttitudeGroup: cc_g05_gang
+  tags:
+    - !append-once DoNotTriggerPrevention
+Character.cc_g05_ani_burya:
+  $base: Character.animals_bouncer2_ranged2_burya_mb
+  baseAttitudeGroup: cc_g05_gang
+  tags:
+    - !append-once DoNotTriggerPrevention
+Character.cc_g05_ani_carnage:
+  $base: Character.animals_elite2_shotgun3_carnage_wba_elite
+  baseAttitudeGroup: cc_g05_gang
+  tags:
+    - !append-once DoNotTriggerPrevention
+Character.cc_g05_ani_overture:
+  $base: Character.animals_grunt2_ranged2_overture_mb
+  baseAttitudeGroup: cc_g05_gang
+  tags:
+    - !append-once DoNotTriggerPrevention
+Character.cc_g05_val_dual:
+  $base: Character.spr_valentinos_elite2_ranged3_dual_ma_rare
+  baseAttitudeGroup: cc_g05_gang
+  tags:
+    - !append-once DoNotTriggerPrevention
+Character.cc_g05_val_testera:
+  $base: Character.spr_valentinos_shotgun3_shotgun3_testera_ma_elite
+  baseAttitudeGroup: cc_g05_gang
+  tags:
+    - !append-once DoNotTriggerPrevention
+Character.cc_g05_val_ajax:
+  $base: Character.spr_valentinos_grunt2_ranged2_ajax_ma
+  baseAttitudeGroup: cc_g05_gang
+  tags:
+    - !append-once DoNotTriggerPrevention
+Character.cc_g05_val_machete:
+  $base: Character.spr_valentinos_grunt2_melee2_machete_ma
+  baseAttitudeGroup: cc_g05_gang
+  tags:
+    - !append-once DoNotTriggerPrevention
+Character.cc_g05_runner:
+  $base: Character.generic_netrunner_netrunner_chao_ma_rare
+  baseAttitudeGroup: cc_g05_gang
+  reactionPreset: ReactionPresets.NoReaction
+  tags:
+    - !append-once DoNotTriggerPrevention
+
+Character.cc_g05_client_a:
+  $base: Character.CorpoManBig
+  baseAttitudeGroup: cc_g05_client
+  reactionPreset: ReactionPresets.NoReaction
+  displayName: LocKey#8523099964301708828
+  fullDisplayName: LocKey#8523099964301708828
+  skipDisplayArchetype: true
+  tags:
+    - !append-once DoNotTriggerPrevention
+Character.cc_g05_client_b:
+  $base: Character.CorpoWoman
+  baseAttitudeGroup: cc_g05_client
+  reactionPreset: ReactionPresets.NoReaction
+  displayName: LocKey#8523099964301708828
+  fullDisplayName: LocKey#8523099964301708828
+  skipDisplayArchetype: true
+  tags:
+    - !append-once DoNotTriggerPrevention
+Character.cc_g05_client_c:
+  $base: Character.CorpoManAfterWork
+  baseAttitudeGroup: cc_g05_client
+  reactionPreset: ReactionPresets.NoReaction
+  displayName: LocKey#8523099964301708828
+  fullDisplayName: LocKey#8523099964301708828
+  skipDisplayArchetype: true
+  tags:
+    - !append-once DoNotTriggerPrevention

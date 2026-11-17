@@ -77,11 +77,14 @@ streaming:
   blocks:
     - mod\worlds\03_night_city\_compiled\default\cc_g05_cast.streamingblock
     - mod\worlds\03_night_city\_compiled\default\cc_g05_staff.streamingblock
+    - mod\worlds\03_night_city\_compiled\default\cc_g05_cast2.streamingblock
 quest:
   phases:
     - path: mod\trauma_team\quest\gig05.questphase
       parent: cyberpunk2077.quest
     - path: mod\trauma_team\quest\gig05_roof.questphase
+      parent: cyberpunk2077.quest
+    - path: mod\trauma_team\quest\gig05_shift2.questphase
       parent: cyberpunk2077.quest
     - path: mod\trauma_team\quest\gig05_rescue.questphase
       parent: cyberpunk2077.quest

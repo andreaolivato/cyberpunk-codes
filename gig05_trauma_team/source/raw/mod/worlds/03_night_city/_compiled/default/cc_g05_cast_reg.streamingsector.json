@@ -3,7 +3,7 @@
     "WolvenKitVersion": "10.0.0-beta.1",
     "WKitJsonVersion": "0.0.9",
     "GameVersion": 2500,
-    "ExportedDateTime": "2026-11-06T03:54:50.2227966Z",
+    "ExportedDateTime": "2026-11-14T23:36:36.5916588Z",
     "DataType": "CR2W",
     "ArchiveFileName": "C:\\Users\\andre\\OneDrive\\Desktop\\cyberpunk-gigs\\gig05_trauma_team\\source\\archive\\mod\\worlds\\03_night_city\\_compiled\\default\\cc_g05_cast_reg.streamingsector"
   },
@@ -693,13 +693,235 @@
                                   }
                                 ]
                               }
+                            },
+                            {
+                              "HandleId": "13",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "alwaysSpawned": "true_",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "av_zetatech_atlus_basic_01_trama_team"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "s2_site1"
+                                },
+                                "prefetchAppearance": 0,
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "categories": [],
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g05_cast/#cc_g05_cast_av_s2_site1"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            },
+                            {
+                              "HandleId": "14",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "alwaysSpawned": "true_",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "av_zetatech_atlus_basic_01_trama_team"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "s2_site2"
+                                },
+                                "prefetchAppearance": 0,
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "categories": [],
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g05_cast/#cc_g05_cast_av_s2_site2"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            },
+                            {
+                              "HandleId": "15",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "alwaysSpawned": "true_",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "av_zetatech_atlus_basic_01_trama_team"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "s2_site3"
+                                },
+                                "prefetchAppearance": 0,
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "categories": [],
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g05_cast/#cc_g05_cast_av_s2_site3"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            },
+                            {
+                              "HandleId": "16",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "alwaysSpawned": "true_",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "av_zetatech_atlus_basic_01_trama_team"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "s2_site1_dep"
+                                },
+                                "prefetchAppearance": 0,
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "categories": [],
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g05_cast/#cc_g05_cast_av_s2_site1_dep"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            },
+                            {
+                              "HandleId": "17",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "alwaysSpawned": "true_",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "av_zetatech_atlus_basic_01_trama_team"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "s2_site2_dep"
+                                },
+                                "prefetchAppearance": 0,
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "categories": [],
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g05_cast/#cc_g05_cast_av_s2_site2_dep"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            },
+                            {
+                              "HandleId": "18",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "alwaysSpawned": "true_",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "av_zetatech_atlus_basic_01_trama_team"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "s2_site3_dep"
+                                },
+                                "prefetchAppearance": 0,
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "categories": [],
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g05_cast/#cc_g05_cast_av_s2_site3_dep"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
                             }
                           ],
                           "spawnInView": "default__true_"
                         }
                       },
                       {
-                        "HandleId": "13",
+                        "HandleId": "19",
                         "Data": {
                           "$type": "communitySpawnEntry",
                           "characterRecordId": {
@@ -715,7 +937,7 @@
                           "initializers": [],
                           "phases": [
                             {
-                              "HandleId": "14",
+                              "HandleId": "20",
                               "Data": {
                                 "$type": "communitySpawnPhase",
                                 "alwaysSpawned": "true_",
@@ -756,7 +978,7 @@
                         }
                       },
                       {
-                        "HandleId": "15",
+                        "HandleId": "21",
                         "Data": {
                           "$type": "communitySpawnEntry",
                           "characterRecordId": {
@@ -772,7 +994,7 @@
                           "initializers": [],
                           "phases": [
                             {
-                              "HandleId": "16",
+                              "HandleId": "22",
                               "Data": {
                                 "$type": "communitySpawnPhase",
                                 "alwaysSpawned": "true_",
@@ -813,7 +1035,7 @@
                         }
                       },
                       {
-                        "HandleId": "17",
+                        "HandleId": "23",
                         "Data": {
                           "$type": "communitySpawnEntry",
                           "characterRecordId": {
@@ -829,7 +1051,7 @@
                           "initializers": [],
                           "phases": [
                             {
-                              "HandleId": "18",
+                              "HandleId": "24",
                               "Data": {
                                 "$type": "communitySpawnPhase",
                                 "alwaysSpawned": "true_",
@@ -870,7 +1092,7 @@
                         }
                       },
                       {
-                        "HandleId": "19",
+                        "HandleId": "25",
                         "Data": {
                           "$type": "communitySpawnEntry",
                           "characterRecordId": {
@@ -886,7 +1108,7 @@
                           "initializers": [],
                           "phases": [
                             {
-                              "HandleId": "20",
+                              "HandleId": "26",
                               "Data": {
                                 "$type": "communitySpawnPhase",
                                 "alwaysSpawned": "true_",
@@ -923,7 +1145,7 @@
                               }
                             },
                             {
-                              "HandleId": "21",
+                              "HandleId": "27",
                               "Data": {
                                 "$type": "communitySpawnPhase",
                                 "alwaysSpawned": "true_",
@@ -960,7 +1182,7 @@
                               }
                             },
                             {
-                              "HandleId": "22",
+                              "HandleId": "28",
                               "Data": {
                                 "$type": "communitySpawnPhase",
                                 "alwaysSpawned": "true_",
@@ -995,13 +1217,124 @@
                                   }
                                 ]
                               }
+                            },
+                            {
+                              "HandleId": "29",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "alwaysSpawned": "true_",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "corpo__traumateam_ma__leader__soldier_lvl1"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "s2_site1"
+                                },
+                                "prefetchAppearance": 0,
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "categories": [],
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g05_cast/#cc_g05_cast_lead_r_s2_site1"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            },
+                            {
+                              "HandleId": "30",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "alwaysSpawned": "true_",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "corpo__traumateam_ma__leader__soldier_lvl1"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "s2_site2"
+                                },
+                                "prefetchAppearance": 0,
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "categories": [],
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g05_cast/#cc_g05_cast_lead_r_s2_site2"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            },
+                            {
+                              "HandleId": "31",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "alwaysSpawned": "true_",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "corpo__traumateam_ma__leader__soldier_lvl1"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "s2_site3"
+                                },
+                                "prefetchAppearance": 0,
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "categories": [],
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g05_cast/#cc_g05_cast_lead_r_s2_site3"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
                             }
                           ],
                           "spawnInView": "default__true_"
                         }
                       },
                       {
-                        "HandleId": "23",
+                        "HandleId": "32",
                         "Data": {
                           "$type": "communitySpawnEntry",
                           "characterRecordId": {
@@ -1017,7 +1350,7 @@
                           "initializers": [],
                           "phases": [
                             {
-                              "HandleId": "24",
+                              "HandleId": "33",
                               "Data": {
                                 "$type": "communitySpawnPhase",
                                 "alwaysSpawned": "true_",
@@ -1054,7 +1387,7 @@
                               }
                             },
                             {
-                              "HandleId": "25",
+                              "HandleId": "34",
                               "Data": {
                                 "$type": "communitySpawnPhase",
                                 "alwaysSpawned": "true_",
@@ -1091,7 +1424,7 @@
                               }
                             },
                             {
-                              "HandleId": "26",
+                              "HandleId": "35",
                               "Data": {
                                 "$type": "communitySpawnPhase",
                                 "alwaysSpawned": "true_",
@@ -1126,13 +1459,124 @@
                                   }
                                 ]
                               }
+                            },
+                            {
+                              "HandleId": "36",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "alwaysSpawned": "true_",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "corpo__traumateam_ma_soldier__lvl2_01"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "s2_site1"
+                                },
+                                "prefetchAppearance": 0,
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "categories": [],
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g05_cast/#cc_g05_cast_soldier_r_s2_site1"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            },
+                            {
+                              "HandleId": "37",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "alwaysSpawned": "true_",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "corpo__traumateam_ma_soldier__lvl2_01"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "s2_site2"
+                                },
+                                "prefetchAppearance": 0,
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "categories": [],
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g05_cast/#cc_g05_cast_soldier_r_s2_site2"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            },
+                            {
+                              "HandleId": "38",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "alwaysSpawned": "true_",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "corpo__traumateam_ma_soldier__lvl2_01"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "s2_site3"
+                                },
+                                "prefetchAppearance": 0,
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "categories": [],
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g05_cast/#cc_g05_cast_soldier_r_s2_site3"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
                             }
                           ],
                           "spawnInView": "default__true_"
                         }
                       },
                       {
-                        "HandleId": "27",
+                        "HandleId": "39",
                         "Data": {
                           "$type": "communitySpawnEntry",
                           "characterRecordId": {
@@ -1148,7 +1592,7 @@
                           "initializers": [],
                           "phases": [
                             {
-                              "HandleId": "28",
+                              "HandleId": "40",
                               "Data": {
                                 "$type": "communitySpawnPhase",
                                 "alwaysSpawned": "true_",
@@ -1185,7 +1629,7 @@
                               }
                             },
                             {
-                              "HandleId": "29",
+                              "HandleId": "41",
                               "Data": {
                                 "$type": "communitySpawnPhase",
                                 "alwaysSpawned": "true_",
@@ -1222,7 +1666,7 @@
                               }
                             },
                             {
-                              "HandleId": "30",
+                              "HandleId": "42",
                               "Data": {
                                 "$type": "communitySpawnPhase",
                                 "alwaysSpawned": "true_",
@@ -1257,13 +1701,124 @@
                                   }
                                 ]
                               }
+                            },
+                            {
+                              "HandleId": "43",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "alwaysSpawned": "true_",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "corpo__traumateam_ma_paramedic__lvl1_01"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "s2_site1"
+                                },
+                                "prefetchAppearance": 0,
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "categories": [],
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g05_cast/#cc_g05_cast_medic_r_s2_site1"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            },
+                            {
+                              "HandleId": "44",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "alwaysSpawned": "true_",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "corpo__traumateam_ma_paramedic__lvl1_01"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "s2_site2"
+                                },
+                                "prefetchAppearance": 0,
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "categories": [],
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g05_cast/#cc_g05_cast_medic_r_s2_site2"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            },
+                            {
+                              "HandleId": "45",
+                              "Data": {
+                                "$type": "communitySpawnPhase",
+                                "alwaysSpawned": "true_",
+                                "appearances": [
+                                  {
+                                    "$type": "CName",
+                                    "$storage": "string",
+                                    "$value": "corpo__traumateam_ma_paramedic__lvl1_01"
+                                  }
+                                ],
+                                "phaseName": {
+                                  "$type": "CName",
+                                  "$storage": "string",
+                                  "$value": "s2_site3"
+                                },
+                                "prefetchAppearance": 0,
+                                "timePeriods": [
+                                  {
+                                    "$type": "communityPhaseTimePeriod",
+                                    "categories": [],
+                                    "hour": "Day",
+                                    "isSequence": 0,
+                                    "markings": [],
+                                    "quantity": 1,
+                                    "spotNodeRefs": [
+                                      {
+                                        "$type": "NodeRef",
+                                        "$storage": "string",
+                                        "$value": "$/mod/cc_g05_cast/#cc_g05_cast_medic_r_s2_site3"
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
                             }
                           ],
                           "spawnInView": "default__true_"
                         }
                       },
                       {
-                        "HandleId": "31",
+                        "HandleId": "46",
                         "Data": {
                           "$type": "communitySpawnEntry",
                           "characterRecordId": {
@@ -1279,7 +1834,7 @@
                           "initializers": [],
                           "phases": [
                             {
-                              "HandleId": "32",
+                              "HandleId": "47",
                               "Data": {
                                 "$type": "communitySpawnPhase",
                                 "alwaysSpawned": "true_",
@@ -1316,7 +1871,7 @@
                               }
                             },
                             {
-                              "HandleId": "33",
+                              "HandleId": "48",
                               "Data": {
                                 "$type": "communitySpawnPhase",
                                 "alwaysSpawned": "true_",
@@ -1353,7 +1908,7 @@
                               }
                             },
                             {
-                              "HandleId": "34",
+                              "HandleId": "49",
                               "Data": {
                                 "$type": "communitySpawnPhase",
                                 "alwaysSpawned": "true_",
@@ -1394,7 +1949,7 @@
                         }
                       },
                       {
-                        "HandleId": "35",
+                        "HandleId": "50",
                         "Data": {
                           "$type": "communitySpawnEntry",
                           "characterRecordId": {
@@ -1410,7 +1965,7 @@
                           "initializers": [],
                           "phases": [
                             {
-                              "HandleId": "36",
+                              "HandleId": "51",
                               "Data": {
                                 "$type": "communitySpawnPhase",
                                 "alwaysSpawned": "true_",
@@ -1447,7 +2002,7 @@
                               }
                             },
                             {
-                              "HandleId": "37",
+                              "HandleId": "52",
                               "Data": {
                                 "$type": "communitySpawnPhase",
                                 "alwaysSpawned": "true_",
@@ -1484,7 +2039,7 @@
                               }
                             },
                             {
-                              "HandleId": "38",
+                              "HandleId": "53",
                               "Data": {
                                 "$type": "communitySpawnPhase",
                                 "alwaysSpawned": "true_",
@@ -1525,7 +2080,7 @@
                         }
                       },
                       {
-                        "HandleId": "39",
+                        "HandleId": "54",
                         "Data": {
                           "$type": "communitySpawnEntry",
                           "characterRecordId": {
@@ -1541,7 +2096,7 @@
                           "initializers": [],
                           "phases": [
                             {
-                              "HandleId": "40",
+                              "HandleId": "55",
                               "Data": {
                                 "$type": "communitySpawnPhase",
                                 "alwaysSpawned": "true_",
@@ -1578,7 +2133,7 @@
                               }
                             },
                             {
-                              "HandleId": "41",
+                              "HandleId": "56",
                               "Data": {
                                 "$type": "communitySpawnPhase",
                                 "alwaysSpawned": "true_",
@@ -1615,7 +2170,7 @@
                               }
                             },
                             {
-                              "HandleId": "42",
+                              "HandleId": "57",
                               "Data": {
                                 "$type": "communitySpawnPhase",
                                 "alwaysSpawned": "true_",
@@ -1656,7 +2211,7 @@
                         }
                       },
                       {
-                        "HandleId": "43",
+                        "HandleId": "58",
                         "Data": {
                           "$type": "communitySpawnEntry",
                           "characterRecordId": {
@@ -1672,7 +2227,7 @@
                           "initializers": [],
                           "phases": [
                             {
-                              "HandleId": "44",
+                              "HandleId": "59",
                               "Data": {
                                 "$type": "communitySpawnPhase",
                                 "alwaysSpawned": "true_",
@@ -1709,7 +2264,7 @@
                               }
                             },
                             {
-                              "HandleId": "45",
+                              "HandleId": "60",
                               "Data": {
                                 "$type": "communitySpawnPhase",
                                 "alwaysSpawned": "true_",
@@ -1746,7 +2301,7 @@
                               }
                             },
                             {
-                              "HandleId": "46",
+                              "HandleId": "61",
                               "Data": {
                                 "$type": "communitySpawnPhase",
                                 "alwaysSpawned": "true_",
@@ -1787,7 +2342,7 @@
                         }
                       },
                       {
-                        "HandleId": "47",
+                        "HandleId": "62",
                         "Data": {
                           "$type": "communitySpawnEntry",
                           "characterRecordId": {
@@ -1803,7 +2358,7 @@
                           "initializers": [],
                           "phases": [
                             {
-                              "HandleId": "48",
+                              "HandleId": "63",
                               "Data": {
                                 "$type": "communitySpawnPhase",
                                 "alwaysSpawned": "true_",
@@ -1840,7 +2395,7 @@
                               }
                             },
                             {
-                              "HandleId": "49",
+                              "HandleId": "64",
                               "Data": {
                                 "$type": "communitySpawnPhase",
                                 "alwaysSpawned": "true_",
@@ -1877,7 +2432,7 @@
                               }
                             },
                             {
-                              "HandleId": "50",
+                              "HandleId": "65",
                               "Data": {
                                 "$type": "communitySpawnPhase",
                                 "alwaysSpawned": "true_",
@@ -1918,7 +2473,7 @@
                         }
                       },
                       {
-                        "HandleId": "51",
+                        "HandleId": "66",
                         "Data": {
                           "$type": "communitySpawnEntry",
                           "characterRecordId": {
@@ -1934,7 +2489,7 @@
                           "initializers": [],
                           "phases": [
                             {
-                              "HandleId": "52",
+                              "HandleId": "67",
                               "Data": {
                                 "$type": "communitySpawnPhase",
                                 "alwaysSpawned": "true_",
@@ -1971,7 +2526,7 @@
                               }
                             },
                             {
-                              "HandleId": "53",
+                              "HandleId": "68",
                               "Data": {
                                 "$type": "communitySpawnPhase",
                                 "alwaysSpawned": "true_",
@@ -2008,7 +2563,7 @@
                               }
                             },
                             {
-                              "HandleId": "54",
+                              "HandleId": "69",
                               "Data": {
                                 "$type": "communitySpawnPhase",
                                 "alwaysSpawned": "true_",
@@ -2312,6 +2867,150 @@
                 "$type": "AISpotPersistentData",
                 "globalNodeId": {
                   "$type": "worldGlobalNodeID",
+                  "hash": "15173743508657034371"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -146978897
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": -43589304
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 7256145
+                  }
+                },
+                "yaw": 150
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "15173744608168662582"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -163680092
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": 8982364
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 1049886
+                  }
+                },
+                "yaw": -6
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "15173745707680290793"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -318638653
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": -82749685
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 959447
+                  }
+                },
+                "yaw": 76
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "1123055854983402637"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -146978897
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": -43589304
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 7256145
+                  }
+                },
+                "yaw": 42
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "8452653170135649704"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -163680092
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": 8982364
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 1049886
+                  }
+                },
+                "yaw": 123
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "17377578002903283135"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -318638653
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": -82749685
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 959447
+                  }
+                },
+                "yaw": 10
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
                   "hash": "10964936706541118847"
                 },
                 "isEnabled": 1,
@@ -2456,6 +3155,78 @@
                 "$type": "AISpotPersistentData",
                 "globalNodeId": {
                   "$type": "worldGlobalNodeID",
+                  "hash": "16249574419541369019"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -146459852
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": -42808115
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 7256145
+                  }
+                },
+                "yaw": 122.005386
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "16249575519052997230"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -164469145
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": 9502720
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 1004011
+                  }
+                },
+                "yaw": 108.434952
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "16249576618564625441"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -319422464
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": -83270041
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 913571
+                  }
+                },
+                "yaw": 80.5376816
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
                   "hash": "10055940777382676788"
                 },
                 "isEnabled": 1,
@@ -2528,6 +3299,78 @@
                 "$type": "AISpotPersistentData",
                 "globalNodeId": {
                   "$type": "worldGlobalNodeID",
+                  "hash": "5545162981581704265"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -146502148
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": -43864555
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 7256145
+                  }
+                },
+                "yaw": 240
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "5545159683046819632"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -164227578
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": 9039907
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 1004011
+                  }
+                },
+                "yaw": 84
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "5545160782558447843"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -318771832
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": -83283835
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 913571
+                  }
+                },
+                "yaw": 166
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
                   "hash": "7266064757159181056"
                 },
                 "isEnabled": 1,
@@ -2595,6 +3438,78 @@
                   }
                 },
                 "yaw": -0
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "9140702109591192173"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -146317796
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": -43150049
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 7256145
+                  }
+                },
+                "yaw": -56.3987617
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "9140698811056307540"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -164126471
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": 9645270
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 1004011
+                  }
+                },
+                "yaw": 33.9550171
+              },
+              {
+                "$type": "AISpotPersistentData",
+                "globalNodeId": {
+                  "$type": "worldGlobalNodeID",
+                  "hash": "9140699910567935751"
+                },
+                "isEnabled": 1,
+                "worldPosition": {
+                  "$type": "WorldPosition",
+                  "x": {
+                    "$type": "FixedPoint",
+                    "Bits": -319080343
+                  },
+                  "y": {
+                    "$type": "FixedPoint",
+                    "Bits": -83412221
+                  },
+                  "z": {
+                    "$type": "FixedPoint",
+                    "Bits": 904396
+                  }
+                },
+                "yaw": 146.309937
               },
               {
                 "$type": "AISpotPersistentData",

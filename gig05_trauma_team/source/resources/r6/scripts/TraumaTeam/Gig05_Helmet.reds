@@ -7,6 +7,23 @@ public class TraumaTeamHelmet {
     private let m_clock: ref<inkText>;
     private let m_rate: ref<inkText>;
     private let m_beat: Int32;
+    private let m_monOn: Bool;
+    private let m_monState: Int32;
+    private let m_monHp: Float;
+    private let m_monLeft: Int32;
+    private let m_monCrit: Bool;
+    private let m_monHostiles: Int32;
+    private let m_monCard: String;
+    private let m_panel: ref<inkCanvas>;
+    private let m_segs: array<ref<inkRectangle>>;
+    private let m_pState: ref<inkText>;
+    private let m_pPct: ref<inkText>;
+    private let m_pClock: ref<inkText>;
+    private let m_pClockLabel: ref<inkText>;
+    private let m_pHost: ref<inkText>;
+    private let m_pCard: ref<inkText>;
+    private let m_pGlow: ref<inkImage>;
+    private let m_pShown: Int32;
     private let m_quiet: Bool;
     private let m_scanning: Bool;
     private let m_inMenu: Bool;
@@ -248,6 +265,10 @@ public class TraumaTeamHelmet {
         this.m_tint = null;
         this.m_clock = null;
         this.m_rate = null;
+        this.m_panel = null;
+        this.m_pState = null;
+        ArrayClear(this.m_segs);
+        this.m_pShown = -1;
     }
 
     public func HideAll() -> Void {
@@ -262,8 +283,106 @@ public class TraumaTeamHelmet {
             this.m_clock.SetText(this.Two(GameTime.Hours(t)) + ":" + this.Two(GameTime.Minutes(t)));
         }
         if IsDefined(this.m_rate) {
-            this.m_beat = 68 + RandRange(0, 10);
-            this.m_rate.SetText("HR " + (this.m_beat < 100 ? "0" : "") + IntToString(this.m_beat));
+            let red: Bool = false;
+            if this.m_monOn {
+                this.m_beat = this.m_monState == 3 ? 0
+                    : Cast<Int32>(150.0 - this.m_monHp * 0.7) + RandRange(-3, 4);
+                red = this.m_monState == 3 || this.m_monState == 0 && (this.m_monCrit || this.m_monHp < 30.0);
+            } else {
+                this.m_beat = 68 + RandRange(0, 10);
+            }
+            this.m_rate.SetText("HR " + (this.m_beat < 100 ? "0" : "") + (this.m_beat < 10 ? "0" : "")
+                                + IntToString(this.m_beat));
+            this.m_rate.SetTintColor(red ? TraumaTeamHelmet.Red() : TraumaTeamHelmet.Pale());
+        }
+        this.Panel();
+    }
+
+    public func SetMonitor(state: Int32, hp: Float, left: Int32, critical: Bool, hostiles: Int32, card: String) -> Void {
+        this.m_monOn = state >= 0;
+        this.m_monState = state;
+        this.m_monHp = hp;
+        this.m_monLeft = left;
+        this.m_monCrit = critical;
+        this.m_monHostiles = hostiles;
+        this.m_monCard = card;
+        this.Panel();
+    }
+
+    public static func Amber() -> HDRColor { return new HDRColor(1.10, 0.62, 0.12, 1.0); }
+
+    private func Panel() -> Void {
+        if !IsDefined(this.m_panel) {
+            return;
+        }
+        this.m_panel.SetVisible(this.m_monOn);
+        if !this.m_monOn {
+            this.m_pShown = -1;
+            return;
+        }
+        let st: Int32 = this.m_monState;
+        let word: String;
+        let color: HDRColor;
+        if st == 3 {
+            word = CCG05Shift.Text(n"cc-g05-hud-flatline", "Flatline");
+            color = TraumaTeamHelmet.Red();
+        } else {
+            if st == 2 {
+                word = CCG05Shift.Text(n"cc-g05-hud-stable", "Stable");
+                color = TraumaTeamHelmet.Green();
+            } else {
+                if st == 1 {
+                    word = CCG05Shift.Text(n"cc-g05-hud-stabilizing", "Stabilizing");
+                    color = TraumaTeamHelmet.Green();
+                } else {
+                    if this.m_monCrit || this.m_monHp < 30.0 {
+                        word = CCG05Shift.Text(n"cc-g05-hud-critical", "Critical");
+                        color = TraumaTeamHelmet.Red();
+                    } else {
+                        word = CCG05Shift.Text(n"cc-g05-hud-unstable", "Unstable");
+                        color = TraumaTeamHelmet.Amber();
+                    }
+                }
+            }
+        }
+        this.m_pState.SetText(word);
+        this.m_pState.SetTintColor(color);
+        this.m_pGlow.SetTintColor(color);
+        let lit: Int32 = Cast<Int32>(this.m_monHp / 5.0 + 0.5);
+        let i: Int32 = 0;
+        while i < ArraySize(this.m_segs) {
+            let on: Bool = i < lit && st != 3;
+            this.m_segs[i].SetTintColor(st == 3 ? TraumaTeamHelmet.Red() : (on ? color : TraumaTeamHelmet.Green()));
+            this.m_segs[i].SetOpacity(on ? 0.95 : (st == 3 ? 0.35 : 0.14));
+            i += 1;
+        }
+        this.m_pPct.SetText(IntToString(Cast<Int32>(this.m_monHp + 0.5)) + "%");
+        let s: Int32 = Max(0, this.m_monLeft);
+        this.m_pClock.SetText(st == 0 ? this.Two(s / 60) + ":" + this.Two(s % 60) : "--:--");
+        this.m_pClock.SetTintColor(st == 0 && (this.m_monCrit || s < 30) ? TraumaTeamHelmet.Red() : TraumaTeamHelmet.Pale());
+        this.m_pClockLabel.SetText(st == 0 && this.m_monCrit
+            ? CCG05Shift.Text(n"cc-g05-hud-flatline-fast", "Flatline in  x2")
+            : CCG05Shift.Text(n"cc-g05-hud-flatline-in", "Flatline in"));
+        this.m_pHost.SetText(IntToString(this.m_monHostiles));
+        this.m_pHost.SetTintColor(this.m_monHostiles > 0 ? TraumaTeamHelmet.Red() : TraumaTeamHelmet.Green());
+        this.m_pCard.SetText(this.m_monCard);
+        if st != this.m_pShown {
+            this.m_pState.StopAllAnimations();
+            this.m_pState.SetOpacity(1.0);
+            this.m_pGlow.StopAllAnimations();
+            if st == 3 {
+                this.Fade(this.m_pState, 1.0, 0.2, 0.45, 0.0, true);
+                this.Fade(this.m_pGlow, 0.25, 0.0, 0.45, 0.0, true);
+            } else {
+                this.m_pGlow.SetOpacity(st == 2 ? 0.18 : 0.08);
+                if this.m_pShown >= 0 {
+                    let q: Bool = this.m_quiet;
+                    this.m_quiet = false;
+                    this.Boot(this.m_pState, 0.0);
+                    this.m_quiet = q;
+                }
+            }
+            this.m_pShown = st;
         }
     }
 
@@ -298,6 +417,42 @@ public class TraumaTeamHelmet {
         this.Side(root, k, true);
         this.Side(root, k, false);
         this.Footer(root, k);
+        this.ClientPanel(root, k);
+    }
+
+    private func ClientPanel(root: ref<inkCanvas>, k: Float) -> Void {
+        let w: Float = 400.0;
+        let g: ref<inkCanvas> = this.Group(root, inkEAnchor.CenterLeft, new Vector2(0.0, 0.5),
+                                           new inkMargin(210.0 * k, 0.0, 0.0, 0.0), w, 300.0, k);
+        this.m_panel = g;
+        this.Bar(g, 0.0, 20.0, 3.0, 22.0, TraumaTeamHelmet.Red(), 0.95, 0.0, 0.5);
+        this.Words(g, CCG05Shift.Text(n"cc-g05-hud-client", "Client"), 18, n"Semi-Bold", TraumaTeamHelmet.Pale(),
+                   0.95, 4, 12.0, 20.0, 0.0, 0.5);
+        this.Words(g, "//  BIOMON LINK", 12, n"Medium", TraumaTeamHelmet.Green(), 0.75, 6, 96.0, 21.0, 0.0, 0.5);
+        this.Bar(g, 0.0, 44.0, w, 2.0, TraumaTeamHelmet.Green(), 0.5, 0.0, 0.5);
+        this.Bar(g, w - 30.0, 44.0, 30.0, 4.0, TraumaTeamHelmet.Red(), 0.9, 0.0, 0.5);
+        this.m_pGlow = this.Picture(g, n"glow", 90.0, 80.0, 260.0, 56.0, TraumaTeamHelmet.Green(), 0.08, 0.5, 0.5);
+        this.m_pState = this.Words(g, "", 30, n"Semi-Bold", TraumaTeamHelmet.Pale(), 1.0, 5, 0.0, 80.0, 0.0, 0.5);
+        ArrayClear(this.m_segs);
+        let i: Int32 = 0;
+        while i < 20 {
+            let seg: ref<inkRectangle> = this.Bar(g, Cast<Float>(i) * 20.0, 120.0, 16.0, 14.0,
+                                                  TraumaTeamHelmet.Green(), 0.14, 0.0, 0.5);
+            ArrayPush(this.m_segs, seg);
+            i += 1;
+        }
+        this.Words(g, CCG05Shift.Text(n"cc-g05-hud-stability", "Stability"), 12, n"Medium", TraumaTeamHelmet.Green(),
+                   0.8, 6, 0.0, 148.0, 0.0, 0.5);
+        this.m_pPct = this.Words(g, "", 16, n"Semi-Bold", TraumaTeamHelmet.Pale(), 0.95, 3, w, 148.0, 1.0, 0.5);
+        this.m_pClockLabel = this.Words(g, "", 12, n"Medium", TraumaTeamHelmet.Green(), 0.8, 6, 0.0, 184.0, 0.0, 0.5);
+        this.m_pClock = this.Words(g, "", 30, n"Semi-Bold", TraumaTeamHelmet.Pale(), 0.95, 4, w, 182.0, 1.0, 0.5);
+        this.Words(g, CCG05Shift.Text(n"cc-g05-hud-hostiles", "Hostiles"), 12, n"Medium", TraumaTeamHelmet.Green(),
+                   0.8, 6, 0.0, 220.0, 0.0, 0.5);
+        this.m_pHost = this.Words(g, "", 16, n"Semi-Bold", TraumaTeamHelmet.Pale(), 0.95, 3, w, 220.0, 1.0, 0.5);
+        this.Bar(g, 0.0, 242.0, w, 1.0, TraumaTeamHelmet.Green(), 0.35, 0.0, 0.5);
+        this.m_pCard = this.Words(g, "", 12, n"Medium", TraumaTeamHelmet.Pale(), 0.8, 4, 0.0, 262.0, 0.0, 0.5);
+        this.m_pShown = -1;
+        this.Panel();
     }
 
     private func Header(root: ref<inkCanvas>, k: Float) -> Void {
