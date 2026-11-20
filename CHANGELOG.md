@@ -15,6 +15,11 @@ each mod's Nexus Changelog tab.
 
 # Join Trauma Team
 
+## 1.4.1 (2026-11-20)
+
+- **Fixed: V could die right after landing before even being able to return fire.** Added safeguard to make V take damage only after the animation has completed. Reported by HarryX10.
+- **Fixed: with Equipment-EX, V remained without clothes after changing back from the uniform.** Added support for Equipment-EX. Reported by gidziigidzii.
+
 ## 1.4.0 (2026-11-18)
 
 - **Added: a second shift with three new calls and new enemies.**

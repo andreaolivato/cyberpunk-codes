@@ -96,7 +96,10 @@ public abstract class CCG05Shift {
     public static func MinFightTicks() -> Int32 { return 10; }
     // 60s
     public static func NoShowTicks() -> Int32 { return 60; }
-    public static func ShieldTicks() -> Int32 { return 4; }
+    public static func ShieldAfter() -> Float { return 4.0; }
+    public static func ShieldCap() -> Float { return 20.0; }
+    public static func OrphanTicks() -> Int32 { return 30; }
+    public static func EqxWaitTicks() -> Int32 { return 10; }
     public static func WarpStop(i: Int32) -> Float {
         if i == 5 { return 210.0; }
         if i == 6 { return 200.0; }
@@ -215,7 +218,16 @@ public class TraumaTeamShift extends ScriptableSystem {
     private persistent let m_gunBefore: ItemID;
     private let m_locked: Bool;
     private let m_policeOff: Bool;
-    private let m_shieldTick: Int32;
+    private let m_shieldReady: Int32;
+    private let m_readyAt: Float;
+    private let m_freeAt: Float;
+    private let m_loopToken: Int32;
+    private let m_loopAt: Float;
+    private let m_shieldOn: Bool;
+    private let m_orphanTicks: Int32;
+    private persistent let m_eqxWasOn: Bool;
+    private persistent let m_eqxBack: Bool;
+    private let m_eqxWaits: Int32;
     private let m_warping: Bool;
     private let m_warpTicks: Int32;
     private let m_scavsSeen: Bool;
@@ -405,6 +417,8 @@ public class TraumaTeamShift extends ScriptableSystem {
     private func AfterLoad(qs: ref<QuestsSystem>, player: ref<PlayerPuppet>) -> Void {
         GameInstance.GetCallbackSystem().RegisterCallback(n"Input/Key", this, n"OnKey");
         qs.SetFactStr("cc_g05_warp", 0);
+        this.m_shieldReady = 0;
+        this.ShieldOn(this.GetGameInstance(), player, false);
         if qs.GetFactStr("cc_g05_on_shift") > 0 {
             StatusEffectHelper.RemoveStatusEffect(player, CCG05Shift.Ride());
         } else {
@@ -488,6 +502,8 @@ public class TraumaTeamShift extends ScriptableSystem {
         if !wear && qs.GetFactStr("cc_g05_dressed") > 0 {
             qs.SetFactStr("cc_g05_dressed", 0);
             this.Undress(game, player);
+        } else {
+            this.EqxBack(game, player);
         }
     }
 
@@ -507,8 +523,12 @@ public class TraumaTeamShift extends ScriptableSystem {
             outfit = this.FindItem(ts, player, CCG05Shift.Outfit());
         }
         let data: ref<EquipmentSystemPlayerData> = EquipmentSystem.GetData(player);
-        if IsDefined(data) {
+        let inUniform: Bool = IsDefined(data)
+            && ItemID.GetTDBID(data.GetItemInEquipSlot(gamedataEquipmentArea.Outfit, 0)) == CCG05Shift.Outfit();
+        if IsDefined(data) && !inUniform {
             this.m_before = data.GetItemInEquipSlot(gamedataEquipmentArea.Outfit, 0);
+            this.m_eqxWasOn = CCG05Eqx.IsActive(game);
+            this.m_eqxBack = false;
         }
         let req: ref<EquipRequest> = new EquipRequest();
         req.owner = player;
@@ -633,7 +653,31 @@ public class TraumaTeamShift extends ScriptableSystem {
             eq.QueueRequest(off);
         }
         this.m_before = ItemID.None();
+        this.m_eqxBack = this.m_eqxWasOn;
+        this.m_eqxWasOn = false;
+        this.m_eqxWaits = 0;
         this.Disarm(eq, player);
+    }
+
+    private func EqxBack(game: GameInstance, player: ref<PlayerPuppet>) -> Void {
+        if !this.m_eqxBack {
+            return;
+        }
+        let data: ref<EquipmentSystemPlayerData> = EquipmentSystem.GetData(player);
+        if !IsDefined(data) {
+            return;
+        }
+        if ItemID.GetTDBID(data.GetItemInEquipSlot(gamedataEquipmentArea.Outfit, 0)) == CCG05Shift.Outfit() {
+            this.m_eqxWaits += 1;
+            if this.m_eqxWaits >= CCG05Shift.EqxWaitTicks() {
+                this.m_eqxBack = false;
+                this.m_eqxWaits = 0;
+            }
+            return;
+        }
+        this.m_eqxBack = false;
+        this.m_eqxWaits = 0;
+        CCG05Eqx.Reactivate(game);
     }
 
     private func Helmet(game: GameInstance, qs: ref<QuestsSystem>, player: ref<PlayerPuppet>) -> Void {
@@ -914,26 +958,23 @@ public class TraumaTeamShift extends ScriptableSystem {
     }
 
     private func Ready(game: GameInstance, qs: ref<QuestsSystem>, player: ref<PlayerPuppet>) -> Void {
-        let gms: ref<GodModeSystem> = GameInstance.GetGodModeSystem(game);
-        if this.m_shieldTick > 0 && this.m_tick - this.m_shieldTick >= CCG05Shift.ShieldTicks() {
-            this.m_shieldTick = 0;
-            if IsDefined(gms) {
-                gms.RemoveGodMode(player.GetEntityID(), gameGodModeType.Invulnerable, n"cc_g05_ready");
-            }
-        }
         if qs.GetFactStr("cc_g05_shield") == 1 {
             qs.SetFactStr("cc_g05_shield", 0);
+            this.m_shieldReady = 0;
             this.EnginesAt(game, true);
-            if IsDefined(gms) {
-                gms.AddGodMode(player.GetEntityID(), gameGodModeType.Invulnerable, n"cc_g05_ready");
-            }
+            this.ShieldOn(game, player, true);
         }
         let ready: Int32 = qs.GetFactStr("cc_g05_ready");
         if ready <= 0 {
+            this.ShieldWatch(game, qs, player);
             return;
         }
         qs.SetFactStr("cc_g05_ready", 0);
-        this.m_shieldTick = this.m_tick;
+        this.m_shieldReady = ready;
+        this.m_readyAt = EngineTime.ToFloat(GameInstance.GetSimTime(game));
+        this.m_freeAt = 0.0;
+        this.m_orphanTicks = 0;
+        this.StartShieldLoop();
         // 2 = pad, no weapon
         if ready != 1 {
             return;
@@ -954,6 +995,124 @@ public class TraumaTeamShift extends ScriptableSystem {
             }
             eqs.QueueRequest(req);
         }
+    }
+
+    private func ShieldWatch(game: GameInstance, qs: ref<QuestsSystem>, player: ref<PlayerPuppet>) -> Void {
+        let now: Float = EngineTime.ToFloat(GameInstance.GetSimTime(game));
+        if this.m_shieldReady > 0 {
+            if now < this.m_readyAt {
+                this.m_readyAt = now;
+                this.m_freeAt = 0.0;
+            }
+            if now < this.m_loopAt || now - this.m_loopAt > 1.0 {
+                this.StartShieldLoop();
+            }
+            return;
+        }
+        if qs.GetFactStr("cc_g05_aboard") <= 0 && this.ShieldLeft(game, player) {
+            this.m_orphanTicks += 1;
+            if this.m_orphanTicks >= CCG05Shift.OrphanTicks() {
+                this.ShieldOn(game, player, false);
+            }
+        } else {
+            this.m_orphanTicks = 0;
+        }
+    }
+
+    private func ShieldLeft(game: GameInstance, player: ref<PlayerPuppet>) -> Bool {
+        if this.m_shieldOn || IsDefined(this.m_shieldMod) {
+            return true;
+        }
+        let gms: ref<GodModeSystem> = GameInstance.GetGodModeSystem(game);
+        if !IsDefined(gms) {
+            return false;
+        }
+        let sources: array<CName> = gms.GetGodModeSources(player.GetEntityID(), gameGodModeType.Invulnerable);
+        return ArrayContains(sources, n"cc_g05_ready");
+    }
+
+    private func StartShieldLoop() -> Void {
+        this.m_loopToken += 1;
+        this.ShieldLoop(this.m_loopToken);
+    }
+
+    public func ShieldLoop(token: Int32) -> Void {
+        if token != this.m_loopToken || this.m_shieldReady <= 0 {
+            return;
+        }
+        let game: GameInstance = this.GetGameInstance();
+        let ps: ref<PlayerSystem> = GameInstance.GetPlayerSystem(game);
+        let player: ref<PlayerPuppet> = IsDefined(ps) ? ps.GetLocalPlayerMainGameObject() as PlayerPuppet : null;
+        if !IsDefined(player) {
+            return;
+        }
+        let now: Float = EngineTime.ToFloat(GameInstance.GetSimTime(game));
+        this.m_loopAt = now;
+        if this.m_freeAt <= 0.0 && this.Free(game, player, this.m_shieldReady == 1) {
+            this.m_freeAt = now;
+            let qs: ref<QuestsSystem> = GameInstance.GetQuestsSystem(game);
+            if IsDefined(qs) {
+                qs.SetFactStr("cc_g05_dbg_free_ms", Max(1, Cast<Int32>((now - this.m_readyAt) * 1000.0)));
+            }
+        }
+        if this.m_freeAt > 0.0 && now - this.m_freeAt >= CCG05Shift.ShieldAfter()
+                || now - this.m_readyAt >= CCG05Shift.ShieldCap() {
+            this.m_shieldReady = 0;
+            this.ShieldOn(game, player, false);
+            return;
+        }
+        let cb: ref<CCG05ShieldLoop> = new CCG05ShieldLoop();
+        cb.system = this;
+        cb.token = token;
+        GameInstance.GetDelaySystem(game).DelayCallback(cb, 0.25, false);
+    }
+
+    private let m_shieldMod: ref<gameStatModifierData>;
+
+    private func ShieldOn(game: GameInstance, player: ref<PlayerPuppet>, on: Bool) -> Void {
+        let gms: ref<GodModeSystem> = GameInstance.GetGodModeSystem(game);
+        let stats: ref<StatsSystem> = GameInstance.GetStatsSystem(game);
+        let id: StatsObjectID = Cast<StatsObjectID>(player.GetEntityID());
+        if IsDefined(stats) && IsDefined(this.m_shieldMod) {
+            stats.RemoveModifier(id, this.m_shieldMod);
+        }
+        this.m_shieldMod = null;
+        if IsDefined(gms) {
+            let sources: array<CName> = gms.GetGodModeSources(player.GetEntityID(), gameGodModeType.Invulnerable);
+            let i: Int32 = 0;
+            while i < 8 && ArrayContains(sources, n"cc_g05_ready") {
+                gms.RemoveGodMode(player.GetEntityID(), gameGodModeType.Invulnerable, n"cc_g05_ready");
+                sources = gms.GetGodModeSources(player.GetEntityID(), gameGodModeType.Invulnerable);
+                i += 1;
+            }
+        }
+        this.m_shieldOn = on;
+        this.m_orphanTicks = 0;
+        if !on {
+            return;
+        }
+        if IsDefined(gms) {
+            gms.AddGodMode(player.GetEntityID(), gameGodModeType.Invulnerable, n"cc_g05_ready");
+        }
+        if IsDefined(stats) {
+            this.m_shieldMod = RPGManager.CreateStatModifier(gamedataStatType.IsInvulnerable, gameStatModifierType.Additive, 1.0);
+            stats.AddModifier(id, this.m_shieldMod);
+        }
+    }
+
+    private func Free(game: GameInstance, player: ref<PlayerPuppet>, armed: Bool) -> Bool {
+        if VehicleComponent.IsMountedToVehicle(game, player) {
+            return false;
+        }
+        let tier: Int32 = player.GetPlayerStateMachineBlackboard().GetInt(GetAllBlackboardDefs().PlayerStateMachine.HighLevel);
+        if tier > EnumInt(gamePSMHighLevel.SceneTier1) {
+            return false;
+        }
+        if armed {
+            let ts: ref<TransactionSystem> = GameInstance.GetTransactionSystem(game);
+            return IsDefined(ts) && IsDefined(ts.GetItemInSlot(player, t"AttachmentSlots.WeaponRight"));
+        }
+        return true;
     }
 
     private func Regroup(game: GameInstance, qs: ref<QuestsSystem>) -> Void {
@@ -1337,6 +1496,43 @@ public class CCG05HelmetLoop extends DelayCallback {
     public func Call() -> Void {
         if IsDefined(this.system) {
             this.system.HelmetLoop();
+        }
+    }
+}
+
+public abstract class CCG05Eqx {
+    public static func Call(game: GameInstance, fn: CName) -> Variant {
+        let sys: ref<ScriptableSystem> = GameInstance.GetScriptableSystemsContainer(game).Get(n"EquipmentEx.OutfitSystem");
+        if !IsDefined(sys) {
+            return ToVariant(false);
+        }
+        let cls: ref<ReflectionClass> = Reflection.GetClassOf(sys);
+        if !IsDefined(cls) {
+            return ToVariant(false);
+        }
+        let f: ref<ReflectionMemberFunc> = cls.GetFunction(fn);
+        if !IsDefined(f) {
+            return ToVariant(false);
+        }
+        return f.Call(sys);
+    }
+
+    public static func IsActive(game: GameInstance) -> Bool {
+        return FromVariant<Bool>(CCG05Eqx.Call(game, n"IsActive"));
+    }
+
+    public static func Reactivate(game: GameInstance) -> Void {
+        CCG05Eqx.Call(game, n"Reactivate");
+    }
+}
+
+public class CCG05ShieldLoop extends DelayCallback {
+    public let system: wref<TraumaTeamShift>;
+    public let token: Int32;
+
+    public func Call() -> Void {
+        if IsDefined(this.system) {
+            this.system.ShieldLoop(this.token);
         }
     }
 }
