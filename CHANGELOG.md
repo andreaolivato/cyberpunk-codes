@@ -134,6 +134,10 @@ each mod's Nexus Changelog tab.
 
 # Return Ticket
 
+## 1.1.0 (2026-11-20)
+
+- **Changed: Hodan's calls are rewritten and recorded again.**
+
 ## 1.0.2 (2026-11-11)
 
 - **Changed: minor improvements to speech lines.**
@@ -168,6 +172,11 @@ Needs the Hodan Warsame mod, game 2.5 with Phantom Liberty, and ArchiveXL
 ---
 
 # Hodan Warsame
+
+## 1.1.0 (2026-11-20)
+
+- **Changed: Hodan's introduction call and the story she tells are rewritten and recorded again.**
+- **Added: a new line in her introduction call.**
 
 ## 1.0.1 (2026-11-11)
 

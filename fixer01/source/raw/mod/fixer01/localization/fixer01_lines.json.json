@@ -1,9 +1,9 @@
 {
   "Header": {
-    "WolvenKitVersion": "8.20.0",
+    "WolvenKitVersion": "10.0.0-beta.1",
     "WKitJsonVersion": "0.0.9",
-    "GameVersion": 2310,
-    "ExportedDateTime": "2026-11-01T06:47:50.0400407Z",
+    "GameVersion": 2500,
+    "ExportedDateTime": "2026-11-13T10:57:15.6870112Z",
     "DataType": "CR2W",
     "ArchiveFileName": "C:\\Users\\andre\\OneDrive\\Desktop\\cyberpunk-gigs\\fixer01\\source\\archive\\mod\\fixer01\\localization\\fixer01_lines.json"
   },
@@ -20,21 +20,27 @@
           "entries": [
             {
               "$type": "localizationPersistenceSubtitleEntry",
-              "femaleVariant": "V, right? Hodan Warsame here. I work in Charter Hill, only with the best.",
-              "maleVariant": "V, right? Hodan Warsame here. I work in Charter Hill, only with the best.",
+              "femaleVariant": "Is this V? This is Hodan. I run operations in Charter Hill and your reputation has caught my attention.",
+              "maleVariant": "Is this V? This is Hodan. I run operations in Charter Hill and your reputation has caught my attention.",
               "stringId": "2340334354786415606"
             },
             {
               "$type": "localizationPersistenceSubtitleEntry",
-              "femaleVariant": "Heard about you. You get in and you get out. Some of my work is quiet, some isn\u0027t. Most of my clients have a problem with a corp.",
-              "maleVariant": "Heard about you. You get in and you get out. Some of my work is quiet, some isn\u0027t. Most of my clients have a problem with a corp.",
+              "femaleVariant": "I make it my business to know who\u0027s capable. And you\u0027re known for getting the job done.",
+              "maleVariant": "I make it my business to know who\u0027s capable. And you\u0027re known for getting the job done.",
               "stringId": "2340333255274787395"
             },
             {
               "$type": "localizationPersistenceSubtitleEntry",
-              "femaleVariant": "I\u0027ll send you my number and the address. If you\u0027re looking for work in Charter Hill, call me.",
-              "maleVariant": "I\u0027ll send you my number and the address. If you\u0027re looking for work in Charter Hill, call me.",
+              "femaleVariant": "I\u0027ll send you my contact details and address. If you\u0027re ever in Charter Hill, you know where to find me. Otherwise, I\u0027ll be in touch when I have work for you.",
+              "maleVariant": "I\u0027ll send you my contact details and address. If you\u0027re ever in Charter Hill, you know where to find me. Otherwise, I\u0027ll be in touch when I have work for you.",
               "stringId": "2340332155763159184"
+            },
+            {
+              "$type": "localizationPersistenceSubtitleEntry",
+              "femaleVariant": "Some assignments require discretion. Others demand a more direct approach. Corps tend to be on the other side of my contracts.",
+              "maleVariant": "Some assignments require discretion. Others demand a more direct approach. Corps tend to be on the other side of my contracts.",
+              "stringId": "2317216120110083603"
             },
             {
               "$type": "localizationPersistenceSubtitleEntry",
@@ -74,32 +80,32 @@
             },
             {
               "$type": "localizationPersistenceSubtitleEntry",
-              "femaleVariant": "Mogadishu. Good family, law school. Then Orbital Air hired me as a lawyer at the spaceport.",
-              "maleVariant": "Mogadishu. Good family, law school. Then Orbital Air hired me as a lawyer at the spaceport.",
+              "femaleVariant": "I\u0027m from Mogadishu. Good family, an excellent education and a promising career in law. Orbital Air offered me a position at the spaceport and it all seemed so promising at the time.",
+              "maleVariant": "I\u0027m from Mogadishu. Good family, an excellent education and a promising career in law. Orbital Air offered me a position at the spaceport and it all seemed so promising at the time.",
               "stringId": "2856653106473120511"
             },
             {
               "$type": "localizationPersistenceSubtitleEntry",
-              "femaleVariant": "So I read the contracts. People signed for years on a station and never paid off the debt. They were written so nobody could.",
-              "maleVariant": "So I read the contracts. People signed for years on a station and never paid off the debt. They were written so nobody could.",
+              "femaleVariant": "Then I started reading the contracts I was drafting. Workers signed away years of their lives, trapped in debts they could never repay.",
+              "maleVariant": "Then I started reading the contracts I was drafting. Workers signed away years of their lives, trapped in debts they could never repay.",
               "stringId": "2727298280323514567"
             },
             {
               "$type": "localizationPersistenceSubtitleEntry",
-              "femaleVariant": "I started helping the smugglers who got people out. Inside a year I was running things.",
-              "maleVariant": "I started helping the smugglers who got people out. Inside a year I was running things.",
+              "femaleVariant": "I began working with smugglers to get those people out. Within a year, I was running things.",
+              "maleVariant": "I began working with smugglers to get those people out. Within a year, I was running things.",
               "stringId": "2727297180811886356"
             },
             {
               "$type": "localizationPersistenceSubtitleEntry",
-              "femaleVariant": "Orbital Air found out, ambushed us. Most of my crew and passengers didn\u0027t make it out. I escaped to Night City.",
-              "maleVariant": "Orbital Air found out, ambushed us. Most of my crew and passengers didn\u0027t make it out. I escaped to Night City.",
+              "femaleVariant": "Orbital Air found out and ambushed us. Most of my crew and passengers didn\u0027t make it out and I escaped to Night City.",
+              "maleVariant": "Orbital Air found out and ambushed us. Most of my crew and passengers didn\u0027t make it out and I escaped to Night City.",
               "stringId": "2727296081300258145"
             },
             {
               "$type": "localizationPersistenceSubtitleEntry",
-              "femaleVariant": "Now I find mercs. Some of my clients are suits fighting other suits. The rest have a problem with a corp. So do I.",
-              "maleVariant": "Now I find mercs. Some of my clients are suits fighting other suits. The rest have a problem with a corp. So do I.",
+              "femaleVariant": "Now I work with mercs. Most of my jobs involve corps fighting each other. Everyone loves a dead suit. So do I.",
+              "maleVariant": "Now I work with mercs. Most of my jobs involve corps fighting each other. Everyone loves a dead suit. So do I.",
               "stringId": "2727294981788629934"
             },
             {
@@ -230,32 +236,32 @@
             },
             {
               "$type": "localizationPersistenceSubtitleEntry",
-              "femaleVariant": "Mogadishu. Good family, law school. Then Orbital Air hired me as a lawyer at the spaceport.",
-              "maleVariant": "Mogadishu. Good family, law school. Then Orbital Air hired me as a lawyer at the spaceport.",
+              "femaleVariant": "I\u0027m from Mogadishu. Good family, an excellent education and a promising career in law. Orbital Air offered me a position at the spaceport and it all seemed so promising at the time.",
+              "maleVariant": "I\u0027m from Mogadishu. Good family, an excellent education and a promising career in law. Orbital Air offered me a position at the spaceport and it all seemed so promising at the time.",
               "stringId": "3101862681826764838"
             },
             {
               "$type": "localizationPersistenceSubtitleEntry",
-              "femaleVariant": "So I read the contracts. People signed for years on a station and never paid off the debt. They were written so nobody could.",
-              "maleVariant": "So I read the contracts. People signed for years on a station and never paid off the debt. They were written so nobody could.",
+              "femaleVariant": "Then I started reading the contracts I was drafting. Workers signed away years of their lives, trapped in debts they could never repay.",
+              "maleVariant": "Then I started reading the contracts I was drafting. Workers signed away years of their lives, trapped in debts they could never repay.",
               "stringId": "2925455761818348428"
             },
             {
               "$type": "localizationPersistenceSubtitleEntry",
-              "femaleVariant": "I started helping the smugglers who got people out. Inside a year I was running things.",
-              "maleVariant": "I started helping the smugglers who got people out. Inside a year I was running things.",
+              "femaleVariant": "I began working with smugglers to get those people out. Within a year, I was running things.",
+              "maleVariant": "I began working with smugglers to get those people out. Within a year, I was running things.",
               "stringId": "2925456861329976639"
             },
             {
               "$type": "localizationPersistenceSubtitleEntry",
-              "femaleVariant": "Orbital Air found out, ambushed us. Most of my crew and passengers didn\u0027t make it out. I escaped to Night City.",
-              "maleVariant": "Orbital Air found out, ambushed us. Most of my crew and passengers didn\u0027t make it out. I escaped to Night City.",
+              "femaleVariant": "Orbital Air found out and ambushed us. Most of my crew and passengers didn\u0027t make it out and I escaped to Night City.",
+              "maleVariant": "Orbital Air found out and ambushed us. Most of my crew and passengers didn\u0027t make it out and I escaped to Night City.",
               "stringId": "2925453562795092006"
             },
             {
               "$type": "localizationPersistenceSubtitleEntry",
-              "femaleVariant": "Now I find mercs. Some of my clients are suits fighting other suits. The rest have a problem with a corp. So do I.",
-              "maleVariant": "Now I find mercs. Some of my clients are suits fighting other suits. The rest have a problem with a corp. So do I.",
+              "femaleVariant": "Now I work with mercs. Most of my jobs involve corps fighting each other. Everyone loves a dead suit. So do I.",
+              "maleVariant": "Now I work with mercs. Most of my jobs involve corps fighting each other. Everyone loves a dead suit. So do I.",
               "stringId": "2925454662306720217"
             },
             {
